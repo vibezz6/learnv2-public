@@ -6,6 +6,7 @@ import {
   Moon,
   Search,
   Settings,
+  Star,
   Sun,
   Timer,
   BarChart3,
@@ -22,6 +23,7 @@ import { useEffect, useState } from "react";
 const nav = [
   { to: "/", label: "Command", icon: Home, end: true },
   { to: "/subjects", label: "Subjects", icon: BookOpen },
+  { to: "/bookmarks", label: "Saved", icon: Star },
   { to: "/review", label: "Review", icon: Brain },
   { to: "/stats", label: "Stats", icon: BarChart3 },
   { to: "/timer", label: "Timer", icon: Timer },

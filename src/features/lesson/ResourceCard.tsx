@@ -1,5 +1,6 @@
 import type { Resource } from "@/curriculum/types";
-import { ExternalLink, BookOpen, Video, FileText, GraduationCap, Dumbbell } from "lucide-react";
+import { useBookmarks } from "@/stores/bookmarks";
+import { ExternalLink, BookOpen, Video, FileText, GraduationCap, Dumbbell, Star } from "lucide-react";
 
 const typeConfig: Record<
   Resource["type"],
@@ -12,13 +13,23 @@ const typeConfig: Record<
   book: { label: "Book", icon: BookOpen, color: "var(--accent)" },
 };
 
-export function ResourceCard({ resource }: { resource: Resource }) {
+export function ResourceCard({
+  resource,
+  nodeId,
+  resourceIndex,
+}: {
+  resource: Resource;
+  nodeId: string;
+  resourceIndex: number;
+}) {
   const config = typeConfig[resource.type];
   const Icon = config.icon;
+  const isBookmarked = useBookmarks((s) => s.isResourceBookmarked(nodeId, resourceIndex));
+  const toggleResourceBookmark = useBookmarks((s) => s.toggleResourceBookmark);
 
   return (
     <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 transition hover:border-[var(--accent)]/30 hover:-translate-y-0.5">
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2 flex items-center justify-between gap-2">
         <span
           className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold"
           style={{ color: config.color, border: `1px solid ${config.color}33`, background: `${config.color}11` }}
@@ -26,6 +37,19 @@ export function ResourceCard({ resource }: { resource: Resource }) {
           <Icon size={12} />
           {config.label}
         </span>
+        <button
+          type="button"
+          onClick={() => toggleResourceBookmark(nodeId, resourceIndex)}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          aria-pressed={isBookmarked}
+          className="rounded-[var(--radius)] p-1.5 text-[var(--text-muted)] transition hover:bg-white/5 hover:text-[var(--warning)]"
+        >
+          <Star
+            size={16}
+            fill={isBookmarked ? "currentColor" : "none"}
+            className={isBookmarked ? "text-[var(--warning)]" : undefined}
+          />
+        </button>
       </div>
       <a
         href={resource.url}

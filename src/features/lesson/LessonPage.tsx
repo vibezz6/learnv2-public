@@ -145,8 +145,8 @@ export function LessonPage() {
             defaultOpen
           >
             <div className="grid min-w-0 gap-3">
-              {node.resources.map((r) => (
-                <ResourceCard key={r.url} resource={r} />
+              {node.resources.map((r, i) => (
+                <ResourceCard key={r.url} resource={r} nodeId={node.id} resourceIndex={i} />
               ))}
             </div>
           </CollapsibleSection>

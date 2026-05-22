@@ -9,6 +9,7 @@ import { LessonPage } from "@/features/lesson/LessonPage";
 import { QuizRoutePage } from "@/features/quiz/QuizRoutePage";
 import { SettingsPage } from "@/features/settings/SettingsPage";
 import { NotesPage } from "@/features/notes/NotesPage";
+import { BookmarksPage } from "@/features/bookmarks/BookmarksPage";
 import { ReviewPage } from "@/features/review/ReviewPage";
 import { StatsPage } from "@/features/stats/StatsPage";
 import { TimerPage } from "@/features/timer/TimerPage";
@@ -25,6 +26,7 @@ export function App() {
             <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
             <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
             <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
+            <Route path="bookmarks" element={<BookmarksPage />} />
             <Route path="review" element={<ReviewPage />} />
             <Route path="stats" element={<StatsPage />} />
             <Route path="timer" element={<TimerPage />} />
