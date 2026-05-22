@@ -102,7 +102,7 @@ export function AppShell() {
           ))}
         </nav>
         <div className="border-t border-[var(--border)] p-3">
-          <Badge>Batch 3 · Notes + SRS</Badge>
+          <Badge>Batch 4 · Parity</Badge>
         </div>
       </aside>
 
@@ -134,9 +134,34 @@ export function AppShell() {
           </div>
         </header>
 
-        <main className="flex-1">
+        <main className="flex-1 pb-[var(--mobile-nav-height)] md:pb-0">
           <Outlet />
         </main>
+
+        <nav
+          className={cn(
+            "app-chrome fixed inset-x-0 bottom-0 z-20 flex h-[var(--mobile-nav-height)] items-stretch border-t border-[var(--border)] bg-[var(--bg-glass)] backdrop-blur-xl md:hidden",
+            focusMode && "hidden",
+          )}
+          aria-label="Mobile navigation"
+        >
+          {nav.slice(0, 5).map(({ to, label, icon: Icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                cn(
+                  "flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] transition",
+                  isActive ? "text-[var(--accent)]" : "text-[var(--text-muted)]",
+                )
+              }
+            >
+              <Icon size={18} />
+              {label}
+            </NavLink>
+          ))}
+        </nav>
       </div>
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />

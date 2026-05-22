@@ -5,6 +5,11 @@ import { Badge, Button, Card } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
+import { DailyChallengeWidget } from "./widgets/DailyChallengeWidget";
+import { EulerQuizMastery } from "./widgets/EulerQuizMastery";
+import { MathInspiredSection } from "./widgets/MathInspiredSection";
+import { StreakCalendar } from "./widgets/StreakCalendar";
+import { TrackRecommendation } from "./widgets/TrackRecommendation";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -23,15 +28,16 @@ export function DashboardPage() {
   const reviewedToday = getDailyReviewCount();
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-8">
+    <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 md:p-8 md:pb-8">
       <section className="stagger-item space-y-2">
-        <Badge>Batch 3 · Notes + SRS</Badge>
+        <Badge>Batch 4 · IQ maxxing</Badge>
         <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
           Neural Command Center
         </h1>
         {stats && (
           <p className="text-[var(--text-muted)]">
             Level {stats.level} · {stats.completedNodes}/{stats.totalNodes} lessons · {stats.totalXp} XP
+            {stats.streakCurrent > 0 && ` · ${stats.streakCurrent} day streak`}
           </p>
         )}
       </section>
@@ -40,7 +46,7 @@ export function DashboardPage() {
         <Card glow className="stagger-item md:col-span-2">
           <div className="mb-3 flex items-center gap-2 text-[var(--accent)]">
             <Target size={18} />
-            <span className="font-medium">Continue</span>
+            <span className="font-medium">Today</span>
           </div>
           {target ? (
             <>
@@ -89,17 +95,49 @@ export function DashboardPage() {
         </Card>
       </section>
 
+      <section className="grid gap-4 lg:grid-cols-2">
+        <div className="stagger-item">
+          <DailyChallengeWidget />
+        </div>
+        {subjects.length > 0 && (
+          <div className="stagger-item">
+            <TrackRecommendation subjects={subjects} />
+          </div>
+        )}
+      </section>
+
+      {stats && stats.completedNodes > 0 && (
+        <section className="stagger-item">
+          <Card>
+            <StreakCalendar dailyMinutes={stats.dailyMinutes} />
+          </Card>
+        </section>
+      )}
+
+      {subjects.length > 0 && (
+        <section className="stagger-item">
+          <EulerQuizMastery subjects={subjects} />
+        </section>
+      )}
+
+      {stats && (
+        <section className="stagger-item">
+          <MathInspiredSection completedNodes={stats.completedNodes} totalNodes={stats.totalNodes} />
+        </section>
+      )}
+
       <Card className="stagger-item">
         <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
           <Sparkles size={16} />
-          <span className="text-sm font-medium">Batch 3 shipped</span>
+          <span className="text-sm font-medium">Batch 4 shipped</span>
         </div>
         <p className="text-sm text-[var(--text-muted)]">
-          Guided notes · AI review · mentor quiz · SRS review queue · ⌘K search.
+          Math widgets · daily challenge · tracks · stats · timer · achievements · PWA.
         </p>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
           Press <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-xs">F</kbd>{" "}
-          for focus mode on any lesson.
+          for focus mode · <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-xs">⌘K</kbd>{" "}
+          to search.
         </p>
       </Card>
     </div>

@@ -42,6 +42,7 @@ export interface ProgressData {
   recentlyVisited: Array<{ nodeId: string; visitedAt: number }>;
   dailyReviews: Record<string, number>;
   reviewStreak: { current: number; longest: number; lastReviewDate: string | null };
+  dailyChallenges: Record<string, boolean>;
 }
 
 export const MAX_DAILY_REVIEWS = 10;
@@ -70,8 +71,11 @@ export interface Stats {
   completedNodes: number;
   totalNodes: number;
   streakCurrent: number;
+  streakLongest: number;
+  totalStudyMinutes: number;
   dailyGoal: number;
   todayMinutes: number;
+  dailyMinutes: Record<string, number>;
 }
 
 export function getToday(): string {
@@ -102,6 +106,7 @@ function defaultProgress(): ProgressData {
     recentlyVisited: [],
     dailyReviews: {},
     reviewStreak: { current: 0, longest: 0, lastReviewDate: null },
+    dailyChallenges: {},
   };
 }
 
@@ -157,6 +162,14 @@ interface ProgressState {
   getRemainingReviewCount: (subjects: Subject[]) => number;
   getReviewStreak: () => ProgressData["reviewStreak"];
   getReviewStats: () => ReviewStats;
+  getQuizScoreForNode: (nodeId: string) => number | null;
+  addStudyTime: (seconds: number, nodeId?: string) => void;
+  isDailyChallengeCompleted: (challengeId: string) => boolean;
+  completeDailyChallenge: (challengeId: string, xpReward: number) => void;
+  exportData: () => string;
+  importData: (json: string) => { success: boolean; error?: string };
+  resetProgress: () => void;
+  clearLevelUpPending: () => void;
   importFromV1: () => { success: boolean; message: string };
 }
 
@@ -235,8 +248,11 @@ export const useProgress = create<ProgressState>()(
           completedNodes,
           totalNodes,
           streakCurrent: d.streaks.current,
+          streakLongest: d.streaks.longest,
+          totalStudyMinutes: d.totalStudyMinutes,
           dailyGoal: d.dailyGoal,
           todayMinutes: d.dailyMinutes[getToday()] ?? 0,
+          dailyMinutes: d.dailyMinutes,
         };
       },
 
@@ -390,6 +406,93 @@ export const useProgress = create<ProgressState>()(
         };
       },
 
+      getQuizScoreForNode: (nodeId) => {
+        const scores = get().data.nodes[nodeId]?.quizScores ?? [];
+        if (scores.length === 0) return null;
+        return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      },
+
+      addStudyTime: (seconds, nodeId) =>
+        set((state) => {
+          const data = structuredClone(state.data);
+          const minutes = seconds / 60;
+          data.totalStudyMinutes += minutes;
+          const today = getToday();
+          data.dailyMinutes[today] = (data.dailyMinutes[today] || 0) + minutes;
+          if (nodeId) {
+            if (!data.nodes[nodeId]) data.nodes[nodeId] = emptyNodeProgress();
+            data.nodes[nodeId].timeSpentMinutes += minutes;
+          }
+          if (data.streaks.lastStudyDate !== today) {
+            const yesterday = new Date();
+            yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+            const yStr = `${yesterday.getUTCFullYear()}-${String(yesterday.getUTCMonth() + 1).padStart(2, "0")}-${String(yesterday.getUTCDate()).padStart(2, "0")}`;
+            if (data.streaks.lastStudyDate === yStr) data.streaks.current += 1;
+            else data.streaks.current = 1;
+            if (data.streaks.current > data.streaks.longest) {
+              data.streaks.longest = data.streaks.current;
+            }
+            data.streaks.lastStudyDate = today;
+          }
+          return { data };
+        }),
+
+      isDailyChallengeCompleted: (challengeId) => {
+        const todayKey = `${getToday()}_${challengeId}`;
+        return get().data.dailyChallenges[todayKey] === true;
+      },
+
+      completeDailyChallenge: (challengeId, xpReward) =>
+        set((state) => {
+          const data = structuredClone(state.data);
+          const todayKey = `${getToday()}_${challengeId}`;
+          if (!data.dailyChallenges[todayKey]) {
+            data.dailyChallenges[todayKey] = true;
+            const oldLevel = Math.floor(data.totalXp / 500) + 1;
+            data.totalXp += xpReward;
+            const newLevel = Math.floor(data.totalXp / 500) + 1;
+            if (newLevel > oldLevel) data.levelUpPending = newLevel;
+          }
+          return { data };
+        }),
+
+      exportData: () => {
+        const keys: Record<string, string | null> = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith("learnv2_") || key.startsWith("learnapp_"))) {
+            keys[key] = localStorage.getItem(key);
+          }
+        }
+        return JSON.stringify({ version: 2, keys }, null, 2);
+      },
+
+      importData: (json) => {
+        try {
+          const parsed = JSON.parse(json) as { version?: number; keys: Record<string, string | null> };
+          if (!parsed.keys) return { success: false, error: "Invalid export format." };
+          for (const [key, value] of Object.entries(parsed.keys)) {
+            if (value === null) localStorage.removeItem(key);
+            else localStorage.setItem(key, value);
+          }
+          const raw = localStorage.getItem(V2_STORAGE_KEY);
+          if (raw) {
+            const data = JSON.parse(raw) as { state?: { data?: ProgressData } };
+            if (data.state?.data) set({ data: { ...defaultProgress(), ...data.state.data } });
+          }
+          return { success: true };
+        } catch {
+          return { success: false, error: "Failed to parse import file." };
+        }
+      },
+
+      resetProgress: () => set({ data: defaultProgress() }),
+
+      clearLevelUpPending: () =>
+        set((state) => ({
+          data: { ...state.data, levelUpPending: null },
+        })),
+
       importFromV1: () => {
         try {
           const raw = localStorage.getItem(V1_STORAGE_KEY);
@@ -402,6 +505,7 @@ export const useProgress = create<ProgressState>()(
               recentlyVisited: parsed.recentlyVisited ?? [],
               dailyReviews: parsed.dailyReviews ?? {},
               reviewStreak: parsed.reviewStreak ?? { current: 0, longest: 0, lastReviewDate: null },
+              dailyChallenges: parsed.dailyChallenges ?? {},
             },
           });
           return { success: true, message: "Imported Learn-v1 progress successfully." };
