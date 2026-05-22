@@ -29,76 +29,97 @@ export function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 md:p-8 md:pb-8">
-      <section className="stagger-item space-y-2">
+      {/* Page header — identity + stats bar */}
+      <section className="stagger-item space-y-1.5">
         <Badge>v2.0.0</Badge>
         <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
           Neural Command Center
         </h1>
         {stats && (
-          <p className="text-[var(--text-muted)]">
+          <p className="text-sm text-[var(--text-muted)]">
             Level {stats.level} · {stats.completedNodes}/{stats.totalNodes} lessons · {stats.totalXp} XP
             {stats.streakCurrent > 0 && ` · ${stats.streakCurrent} day streak`}
           </p>
         )}
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <Card glow className="stagger-item md:col-span-2">
-          <div className="mb-3 flex items-center gap-2 text-[var(--accent)]">
-            <Target size={18} />
-            <span className="font-medium">Today</span>
+      {/* Hero — Continue Learning (full-width, dominant) */}
+      <section className="stagger-item">
+        <Card
+          glow
+          className="border-l-2 border-l-[var(--accent)]"
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <Target size={14} className="text-[var(--accent)]" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
+              Continue Learning
+            </span>
           </div>
           {target ? (
-            <>
-              <h2 className="text-xl font-semibold text-[var(--text-heading)]">{target.node.name}</h2>
-              <p className="mt-2 text-sm text-[var(--text-muted)]">{target.subject.name}</p>
+            <div className="flex items-start justify-between gap-6">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-2xl font-bold tracking-tight text-[var(--text-heading)]">
+                  {target.node.name}
+                </h2>
+                <p className="mt-1.5 text-sm font-medium text-[var(--accent-2)]">
+                  {target.subject.name}
+                </p>
+              </div>
               <Link
                 to={`/subjects/${target.subject.id}/${target.node.id}`}
-                className="mt-4 inline-block"
+                className="shrink-0"
               >
-                <Button>
-                  Open lesson
+                <Button className="px-6 py-2.5 text-base">
+                  Continue
                   <ArrowRight size={16} />
                 </Button>
               </Link>
-            </>
+            </div>
           ) : (
             <p className="text-sm text-[var(--text-muted)]">
               Import v1 progress in Settings, or start from Subjects.
             </p>
           )}
         </Card>
+      </section>
 
+      {/* Secondary row — review + daily challenge + track (equal weight, calm) */}
+      <section className="grid gap-4 md:grid-cols-3">
+        {/* Review — visible but subdued */}
         <Card className="stagger-item">
           <div className="mb-3 flex items-center gap-2 text-[var(--accent-2)]">
-            <Brain size={18} />
-            <span className="font-medium">Review</span>
+            <Brain size={16} />
+            <span className="text-sm font-medium">Review</span>
           </div>
           {reviewDue > 0 ? (
             <>
-              <p className="text-2xl font-bold text-[var(--text-heading)]">{reviewDue}</p>
-              <p className="text-sm text-[var(--text-muted)]">
-                lessons due · {reviewedToday} reviewed today
-              </p>
-              <Link to="/review" className="mt-4 inline-block">
-                <Button variant="secondary">
-                  Open review queue
-                  <ArrowRight size={16} />
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-mono text-2xl font-semibold text-[var(--text-heading)]">
+                  {reviewDue}
+                </span>
+                <span className="text-sm text-[var(--text-muted)]">due</span>
+              </div>
+              {reviewedToday > 0 && (
+                <p className="mt-0.5 text-xs text-[var(--text-muted)]">{reviewedToday} reviewed today</p>
+              )}
+              <Link to="/review" className="mt-3 inline-block">
+                <Button variant="secondary" className="text-sm">
+                  Start review
+                  <ArrowRight size={14} />
                 </Button>
               </Link>
             </>
           ) : (
             <p className="text-sm text-[var(--text-muted)]">
-              No reviews due. Complete lessons to start spaced repetition.
+              No reviews due.
             </p>
           )}
         </Card>
-      </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
         <div className="stagger-item">
           <DailyChallengeWidget />
         </div>
+
         {subjects.length > 0 && (
           <div className="stagger-item">
             <TrackRecommendation subjects={subjects} />
@@ -106,6 +127,7 @@ export function DashboardPage() {
         )}
       </section>
 
+      {/* Streak calendar — only once there's data to show */}
       {stats && stats.completedNodes > 0 && (
         <section className="stagger-item">
           <Card>
@@ -114,18 +136,21 @@ export function DashboardPage() {
         </section>
       )}
 
+      {/* Quiz mastery — collapsed by default */}
       {subjects.length > 0 && (
         <section className="stagger-item">
           <EulerQuizMastery subjects={subjects} />
         </section>
       )}
 
+      {/* Math widgets — collapsed by default */}
       {stats && (
         <section className="stagger-item">
           <MathInspiredSection completedNodes={stats.completedNodes} totalNodes={stats.totalNodes} />
         </section>
       )}
 
+      {/* Footer hints */}
       <Card className="stagger-item">
         <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
           <Sparkles size={16} />
