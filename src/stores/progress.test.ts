@@ -72,6 +72,7 @@ describe("progress migrateAllFromV1", () => {
     expect(result.message).toContain("No Learn-v1 data");
     expect(result.details.progress).toBe(false);
     expect(result.details.notesMerged).toBe(0);
+    expect(result.details.takeawaysMerged).toBe(0);
     expect(result.details.themeMigrated).toBe(false);
     expect(result.details.resourceBookmarksMerged).toBe(0);
     expect(result.details.lessonBookmarksMerged).toBe(0);

@@ -5,6 +5,7 @@ import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import {
   mergeBookmarksFromV1,
   mergeLegacyNotes,
+  mergeTakeawaysFromV1,
   migrateThemeFromV1,
   normalizeV1Progress,
   verifySrsDates,
@@ -524,6 +525,7 @@ export const useProgress = create<ProgressState>()(
       migrateAllFromV1: () => {
         const progressResult = get().importFromV1();
         const notesMerged = mergeLegacyNotes();
+        const takeawaysMerged = mergeTakeawaysFromV1();
         const { resourceMerged, lessonMerged } = mergeBookmarksFromV1();
         const themeMigrated = migrateThemeFromV1(localStorage, { force: true });
         const srsDatesPreserved = verifySrsDates();
@@ -531,6 +533,7 @@ export const useProgress = create<ProgressState>()(
         const parts: string[] = [];
         if (progressResult.success) parts.push("progress");
         if (notesMerged > 0) parts.push(`${notesMerged} legacy notes`);
+        if (takeawaysMerged > 0) parts.push(`${takeawaysMerged} takeaways`);
         if (resourceMerged > 0 || lessonMerged > 0) {
           parts.push(`${resourceMerged + lessonMerged} bookmarks`);
         }
@@ -539,6 +542,7 @@ export const useProgress = create<ProgressState>()(
         const success =
           progressResult.success ||
           notesMerged > 0 ||
+          takeawaysMerged > 0 ||
           resourceMerged > 0 ||
           lessonMerged > 0 ||
           themeMigrated;
@@ -552,6 +556,7 @@ export const useProgress = create<ProgressState>()(
           details: {
             progress: progressResult.success,
             notesMerged,
+            takeawaysMerged,
             themeMigrated,
             srsDatesPreserved,
             resourceBookmarksMerged: resourceMerged,

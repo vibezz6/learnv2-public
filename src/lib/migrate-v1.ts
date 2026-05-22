@@ -11,6 +11,7 @@ const V1_NOTES = "learnapp_notes_v1";
 const V1_THEME = "learnapp_theme_v1";
 const V1_RESOURCE_BOOKMARKS = "learnapp_bookmarks_v1";
 const V1_LESSON_BOOKMARKS = "learnapp_lesson_bookmarks_v1";
+const V1_TAKEAWAYS = "learnapp_takeaways_v1";
 const V2_NOTE_SESSIONS = "learnapp_note_sessions_v2";
 const V2_PREFERENCES = "learnv2_preferences";
 
@@ -27,6 +28,7 @@ export interface BookmarksMigrationResult {
 export interface MigrationDetails {
   progress: boolean;
   notesMerged: number;
+  takeawaysMerged: number;
   themeMigrated: boolean;
   srsDatesPreserved: boolean;
   resourceBookmarksMerged: number;
@@ -84,6 +86,55 @@ export function mergeLegacyNotes(storage: Storage = localStorage): number {
       tags: ["migrated-v1"],
       createdAt: note.updatedAt,
       updatedAt: note.updatedAt,
+    };
+    merged++;
+  }
+
+  if (merged > 0) {
+    storage.setItem(V2_NOTE_SESSIONS, JSON.stringify(sessions));
+  }
+  return merged;
+}
+
+function normalizeTakeawaysText(value: unknown): string | null {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || null;
+  }
+  if (Array.isArray(value)) {
+    const items = value
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => item.trim())
+      .filter(Boolean);
+    return items.length > 0 ? items.join("\n") : null;
+  }
+  return null;
+}
+
+/** Merge v1 lesson takeaways into note session responses.takeaways. */
+export function mergeTakeawaysFromV1(storage: Storage = localStorage): number {
+  const takeaways = readJson<Record<string, unknown>>(storage, V1_TAKEAWAYS);
+  if (!takeaways) return 0;
+
+  const sessions = readJson<Record<string, NoteSession>>(storage, V2_NOTE_SESSIONS) ?? {};
+  let merged = 0;
+  const now = Date.now();
+
+  for (const [nodeId, raw] of Object.entries(takeaways)) {
+    const text = normalizeTakeawaysText(raw);
+    if (!text || sessions[nodeId]) continue;
+    const subjectId = inferSubjectId(nodeId);
+    if (!subjectId) continue;
+
+    sessions[nodeId] = {
+      nodeId,
+      subjectId,
+      responses: { takeaways: text },
+      review: null,
+      mentorSession: null,
+      tags: ["migrated-v1"],
+      createdAt: now,
+      updatedAt: now,
     };
     merged++;
   }
