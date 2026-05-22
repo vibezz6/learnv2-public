@@ -1,5 +1,21 @@
 import { useState, useEffect, useCallback, useRef, memo, type ReactNode } from 'react';
 import { ChevronDown, ChevronUp, ChevronRight, Eye, EyeOff, Lightbulb, BookOpen, RotateCcw } from 'lucide-react';
+import { cn } from '@/lib/cn';
+
+const touchTarget =
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius)] px-4 text-sm font-medium transition touch-manipulation';
+
+const btnStyles = {
+  primary: cn(
+    touchTarget,
+    'bg-[var(--accent)] text-[#041410] hover:brightness-110 shadow-[var(--accent-glow)]',
+  ),
+  secondary: cn(
+    touchTarget,
+    'border border-[var(--border-strong)] bg-[var(--bg-elevated)] text-[var(--text)] hover:border-[var(--accent)]',
+  ),
+  ghost: cn(touchTarget, 'text-[var(--text-muted)] hover:bg-white/5 hover:text-[var(--text)]'),
+};
 
 /* ───────── CollapsibleSection ───────── */
 interface CollapsibleSectionProps {
@@ -41,19 +57,8 @@ const CollapsibleSection = memo(function CollapsibleSection({
   }, [isOpen, storageKey]);
 
   useEffect(() => {
-    if (isOpen) {
-      const el = contentRef.current;
-      if (el) {
-        setMaxHeight(`${el.scrollHeight}px`);
-        const timeout = setTimeout(() => {
-          setMaxHeight('2000px');
-        }, 300);
-        return () => clearTimeout(timeout);
-      } else {
-        setMaxHeight('2000px');
-      }
-    } else {
-      const el = contentRef.current;
+    const el = contentRef.current;
+    if (!isOpen) {
       if (el) {
         setMaxHeight(`${el.scrollHeight}px`);
         requestAnimationFrame(() => {
@@ -62,7 +67,27 @@ const CollapsibleSection = memo(function CollapsibleSection({
       } else {
         setMaxHeight('0px');
       }
+      return;
     }
+
+    if (!el) {
+      setMaxHeight('9999px');
+      return;
+    }
+
+    const syncHeight = () => {
+      setMaxHeight(`${el.scrollHeight}px`);
+    };
+
+    syncHeight();
+    const timeout = setTimeout(syncHeight, 300);
+    const observer = new ResizeObserver(syncHeight);
+    observer.observe(el);
+
+    return () => {
+      clearTimeout(timeout);
+      observer.disconnect();
+    };
   }, [isOpen]);
 
   const toggle = useCallback(() => setIsOpen(prev => !prev), []);
@@ -71,27 +96,19 @@ const CollapsibleSection = memo(function CollapsibleSection({
 
   return (
     <div
+      className="mb-3 min-w-0 overflow-hidden"
       style={{
         borderLeft: `3px solid ${accent}`,
         background: 'var(--bg-card)',
         borderRadius: 'var(--radius)',
         boxShadow: 'var(--shadow-sm)',
-        overflow: 'hidden',
-        marginBottom: 12,
       }}
     >
       <div
         id={`section-header-${id}`}
         onClick={toggle}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          padding: '12px 16px',
-          cursor: 'pointer',
-          userSelect: 'none',
-          transition: 'background 0.15s ease',
-        }}
+        className="flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-3 py-3 sm:px-4"
+        style={{ transition: 'background 0.15s ease' }}
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
@@ -109,25 +126,28 @@ const CollapsibleSection = memo(function CollapsibleSection({
           e.currentTarget.style.background = 'transparent';
         }}
       >
-        <span style={{ color: accent, display: 'flex', alignItems: 'center' }}>{icon}</span>
-        <span className="font-semibold" style={{ flex: 1, color: 'var(--text-h)' }}>{title}</span>
+        <span className="flex shrink-0 items-center" style={{ color: accent }}>
+          {icon}
+        </span>
+        <span className="min-w-0 flex-1 break-words font-semibold" style={{ color: 'var(--text-h)' }}>
+          {title}
+        </span>
         {count !== undefined && count > 0 && (
           <span
-            className="badge"
+            className="shrink-0 rounded px-2 py-0.5 text-[11px] font-semibold"
             style={{
               background: 'var(--accent-bg)',
               color: 'var(--accent)',
               border: '1px solid var(--accent-border)',
-              fontSize: 11,
             }}
           >
             {count}
           </span>
         )}
         {isOpen ? (
-          <ChevronUp size={18} style={{ color: 'var(--text-muted)' }} />
+          <ChevronUp size={18} className="shrink-0" style={{ color: 'var(--text-muted)' }} />
         ) : (
-          <ChevronDown size={18} style={{ color: 'var(--text-muted)' }} />
+          <ChevronDown size={18} className="shrink-0" style={{ color: 'var(--text-muted)' }} />
         )}
       </div>
       <div
@@ -135,13 +155,13 @@ const CollapsibleSection = memo(function CollapsibleSection({
         role="region"
         aria-labelledby={`section-header-${id}`}
         ref={contentRef}
+        className="min-w-0 overflow-hidden"
         style={{
           maxHeight: maxHeight,
-          overflow: 'hidden',
           transition: 'max-height 0.3s ease-in-out',
         }}
       >
-        <div style={{ padding: '0 16px 12px 16px' }}>{children}</div>
+        <div className="min-w-0 break-words px-3 pb-3 sm:px-4 sm:pb-4">{children}</div>
       </div>
     </div>
   );
@@ -311,70 +331,51 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
 
   return (
     <div
-      className="card"
-      style={{
-        overflow: 'hidden',
-        marginBottom: 12,
-        borderRadius: 'var(--radius-md)',
-        transition: 'box-shadow 0.2s ease, transform 0.2s ease',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-        e.currentTarget.style.transform = 'translateY(-1px)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = '';
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
+      className="mb-3 min-w-0 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-[var(--shadow-md)]"
     >
       {/* Problem header — always visible */}
       <div
+        className="min-w-0 break-words px-3 py-3 sm:px-4 sm:py-3.5"
         style={{
           borderLeft: `4px solid ${accent}`,
-          padding: '14px 16px',
           background: 'var(--warning-bg)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+        <div className="mb-2 flex min-w-0 flex-wrap items-center gap-2">
           <BookOpen size={16} style={{ color: accent, flexShrink: 0 }} />
-          <span className="font-semibold text-sm" style={{ color: 'var(--text-h)' }}>
+          <span className="text-sm font-semibold" style={{ color: 'var(--text-h)' }}>
             Problem {index + 1}
           </span>
           {state.phase !== 'thinking' && (
             <span
-              className="badge text-xs"
+              className="ml-auto shrink-0 rounded px-2 py-0.5 text-xs font-semibold"
               style={{
                 background: allStepsRevealed ? 'var(--success-bg)' : 'var(--accent-bg)',
                 color: allStepsRevealed ? 'var(--success)' : 'var(--accent)',
                 border: `1px solid ${allStepsRevealed ? 'var(--success)' : 'var(--accent-border)'}`,
-                marginLeft: 'auto',
               }}
             >
               {allStepsRevealed ? 'Complete' : `${state.stepsRevealed}/${totalSteps} steps`}
             </span>
           )}
         </div>
-        <div style={{ color: 'var(--text)', whiteSpace: 'pre-wrap', lineHeight: '160%', fontSize: 'var(--fs-base)' }}>{problem}</div>
+        <div
+          className="break-words whitespace-pre-wrap leading-[160%]"
+          style={{ color: 'var(--text)', fontSize: 'var(--fs-base, 1rem)' }}
+        >
+          {problem}
+        </div>
       </div>
 
       {/* Phase: Thinking — "Try it yourself" prompt */}
       {state.phase === 'thinking' && (
-        <div style={{ padding: '16px' }}>
+        <div className="px-3 py-4 sm:px-4">
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: '12px 16px',
-              borderRadius: 'var(--radius-sm)',
-              background: 'var(--accent-bg)',
-              border: '1px solid var(--accent-border)',
-              marginBottom: 12,
-            }}
+            className="mb-3 flex min-w-0 flex-col gap-3 rounded-[var(--radius-sm)] border border-[var(--accent-border)] bg-[var(--accent-bg)] p-3 sm:flex-row sm:items-center sm:p-4"
           >
             <Lightbulb size={20} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-            <div style={{ flex: 1 }}>
-              <div className="font-semibold text-sm" style={{ color: 'var(--text-h)', marginBottom: 4 }}>
+            <div className="min-w-0 flex-1">
+              <div className="mb-1 text-sm font-semibold" style={{ color: 'var(--text-h)' }}>
                 Try it yourself first
               </div>
               <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -382,34 +383,18 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
               </div>
             </div>
             <div
-              className="text-xs"
-              style={{
-                color: 'var(--accent)',
-                fontFamily: 'var(--mono)',
-                background: 'var(--bg)',
-                padding: '4px 10px',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid var(--border)',
-                whiteSpace: 'nowrap',
-              }}
+              className="self-start rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1 font-mono text-xs sm:self-center"
+              style={{ color: 'var(--accent)' }}
             >
               {formatTime(thinkSeconds)}
             </div>
           </div>
           <button
-            className="btn-primary"
+            className={cn(btnStyles.primary, 'w-full')}
             onClick={startSolving}
             tabIndex={0}
             onKeyDown={(e) => handleKeyDown(e, startSolving)}
             aria-label="Start solving - show solution steps"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              width: '100%',
-              justifyContent: 'center',
-              minHeight: 44,
-            }}
           >
             <Eye size={16} />
             I'm ready — show me the solution
@@ -419,9 +404,9 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
 
       {/* Phase: Solving / Complete — Step-by-step reveal with SVG progress ring */}
       {(state.phase === 'solving' || state.phase === 'complete') && (
-        <div style={{ padding: '0 16px 16px' }}>
+        <div className="min-w-0 px-3 pb-4 sm:px-4">
           {/* SVG Progress ring + step counter */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+          <div className="mb-3.5 flex min-w-0 items-center gap-3 sm:gap-3.5">
             <svg
               viewBox="0 0 44 44"
               style={{ width: 44, height: 44, flexShrink: 0 }}
@@ -450,8 +435,8 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
                 {state.stepsRevealed}/{totalSteps}
               </text>
             </svg>
-            <div>
-              <div className="text-sm" style={{ color: 'var(--text-h)', fontWeight: 600 }}>
+            <div className="min-w-0">
+              <div className="text-sm font-semibold" style={{ color: 'var(--text-h)' }}>
                 {allStepsRevealed ? 'All steps revealed' : `Step ${state.stepsRevealed} of ${totalSteps}`}
               </div>
               {thinkSeconds > 0 && (
@@ -463,20 +448,14 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
           </div>
 
           {/* Revealed steps */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="flex flex-col gap-2">
             {steps.slice(0, state.stepsRevealed).map((step: string, i: number) => (
               <div
                 key={i}
+                className="flex min-w-0 gap-2.5 rounded-[var(--radius-sm)] px-3 py-2.5 sm:gap-2.5 sm:px-3.5"
                 style={{
-                  display: 'flex',
-                  gap: 10,
-                  padding: '10px 14px',
-                  borderRadius: 'var(--radius-sm)',
                   background: 'var(--success-bg)',
                   borderLeft: `3px solid ${allStepsRevealed ? 'var(--success)' : accent}`,
-                  opacity: 1,
-                  transform: 'translateY(0)',
-                  transition: 'opacity 0.3s ease, transform 0.3s ease',
                 }}
               >
                 <div
@@ -498,7 +477,10 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
                 >
                   {i + 1}
                 </div>
-                <div style={{ color: 'var(--text)', lineHeight: '160%', whiteSpace: 'pre-wrap', flex: 1, fontSize: 'var(--fs-sm)' }}>
+                <div
+                  className="min-w-0 flex-1 break-words whitespace-pre-wrap text-sm leading-[160%]"
+                  style={{ color: 'var(--text)', fontSize: 'var(--fs-sm, 0.875rem)' }}
+                >
                   {step}
                 </div>
               </div>
@@ -506,40 +488,25 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
           </div>
 
           {/* Step reveal controls */}
-          <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             {!allStepsRevealed && (
               <>
                 <button
-                  className="btn-primary"
+                  className={cn(btnStyles.primary, 'w-full sm:min-w-[9rem] sm:flex-1')}
                   onClick={revealNextStep}
                   tabIndex={0}
                   onKeyDown={(e) => handleKeyDown(e, revealNextStep)}
                   aria-label="Reveal next step"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    flex: 1,
-                    justifyContent: 'center',
-                    minHeight: 44,
-                  }}
                 >
                   <ChevronRight size={16} />
                   Next Step
                 </button>
                 <button
-                  className="btn-secondary"
+                  className={cn(btnStyles.secondary, 'w-full sm:w-auto')}
                   onClick={revealAllSteps}
                   tabIndex={0}
                   onKeyDown={(e) => handleKeyDown(e, revealAllSteps)}
                   aria-label="Reveal all steps at once"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    justifyContent: 'center',
-                    minHeight: 44,
-                  }}
                 >
                   <Eye size={16} />
                   Show All
@@ -548,18 +515,11 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
             )}
             {allStepsRevealed && (
               <button
-                className="btn-ghost"
+                className={cn(btnStyles.ghost, 'w-full sm:w-auto')}
                 onClick={resetExercise}
                 tabIndex={0}
                 onKeyDown={(e) => handleKeyDown(e, resetExercise)}
                 aria-label="Reset worked example"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  justifyContent: 'center',
-                  minHeight: 44,
-                }}
               >
                 <EyeOff size={16} />
                 Reset
@@ -569,22 +529,14 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
 
           {/* Explanation toggle — only when all steps revealed */}
           {allStepsRevealed && explanation && (
-            <div style={{ marginTop: 12 }}>
+            <div className="mt-3">
               <button
-                className="btn-secondary"
+                className={cn(btnStyles.secondary, 'w-full')}
                 onClick={toggleExplanation}
                 tabIndex={0}
                 onKeyDown={(e) => handleKeyDown(e, toggleExplanation)}
                 aria-label={state.explanationOpen ? 'Hide explanation' : 'Show explanation'}
                 aria-expanded={state.explanationOpen}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  width: '100%',
-                  justifyContent: 'center',
-                  minHeight: 44,
-                }}
               >
                 <Lightbulb size={16} />
                 {state.explanationOpen ? 'Hide Explanation' : 'Why it works'}
@@ -600,12 +552,10 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
               {/* Explanation content */}
               {state.explanationOpen && (
                 <div
+                  className="mt-2 break-words rounded-[var(--radius-sm)] px-3 py-3 sm:px-3.5"
                   style={{
                     borderLeft: '3px solid var(--info)',
-                    padding: '12px 14px',
                     background: 'var(--info-bg)',
-                    marginTop: 8,
-                    borderRadius: 'var(--radius-sm)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -614,7 +564,7 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
                       Explanation
                     </span>
                   </div>
-                  <div className="text-sm" style={{ color: 'var(--text)', whiteSpace: 'pre-wrap', lineHeight: '160%' }}>
+                  <div className="break-words text-sm leading-[160%] whitespace-pre-wrap" style={{ color: 'var(--text)' }}>
                     {explanation}
                   </div>
                 </div>
