@@ -44,8 +44,10 @@ export function ReviewPage() {
 
   if (items.length === 0 && dailyCount === 0) {
     return (
-      <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-8">
-        <h1 className="text-3xl font-bold text-[var(--text-heading)]">Review</h1>
+      <div className="mx-auto w-full min-w-0 max-w-3xl space-y-4 overflow-x-hidden px-3 py-4 sm:p-4 md:p-8">
+        <h1 className="break-words text-[clamp(1.375rem,5.5vw,1.875rem)] font-bold text-[var(--text-heading)]">
+          Review
+        </h1>
         <Card className="text-center">
           <Brain className="mx-auto mb-3 text-[var(--accent)]" size={32} />
           <p className="text-sm text-[var(--text-muted)]">
@@ -57,13 +59,18 @@ export function ReviewPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-4 md:p-8" key={refreshKey}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
+    <div
+      className="mx-auto w-full min-w-0 max-w-3xl space-y-5 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:p-4 md:p-8"
+      key={refreshKey}
+    >
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <Badge>Batch 3 · SRS</Badge>
-          <h1 className="mt-2 text-3xl font-bold text-[var(--text-heading)]">Review queue</h1>
+          <h1 className="mt-2 break-words text-[clamp(1.375rem,5.5vw,1.875rem)] font-bold text-[var(--text-heading)]">
+            Review queue
+          </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {streak.current > 0 && (
             <Badge>
               <Flame size={12} className="mr-1 inline" />
@@ -81,18 +88,18 @@ export function ReviewPage() {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <Card className="text-center">
-          <div className="text-2xl font-bold">{stats.totalReviews}</div>
-          <div className="text-xs text-[var(--text-muted)]">Total reviews</div>
+      <div className="grid min-w-0 grid-cols-3 gap-2 sm:gap-3">
+        <Card className="min-w-0 p-3 text-center sm:p-5">
+          <div className="text-xl font-bold sm:text-2xl">{stats.totalReviews}</div>
+          <div className="text-[0.6875rem] leading-tight text-[var(--text-muted)] sm:text-xs">Total reviews</div>
         </Card>
-        <Card className="text-center">
-          <div className="text-2xl font-bold text-[var(--accent)]">{stats.passRate}%</div>
-          <div className="text-xs text-[var(--text-muted)]">Pass rate</div>
+        <Card className="min-w-0 p-3 text-center sm:p-5">
+          <div className="text-xl font-bold text-[var(--accent)] sm:text-2xl">{stats.passRate}%</div>
+          <div className="text-[0.6875rem] leading-tight text-[var(--text-muted)] sm:text-xs">Pass rate</div>
         </Card>
-        <Card className="text-center">
-          <div className="text-2xl font-bold">{streak.longest}</div>
-          <div className="text-xs text-[var(--text-muted)]">Best streak</div>
+        <Card className="min-w-0 p-3 text-center sm:p-5">
+          <div className="text-xl font-bold sm:text-2xl">{streak.longest}</div>
+          <div className="text-[0.6875rem] leading-tight text-[var(--text-muted)] sm:text-xs">Best streak</div>
         </Card>
       </div>
 
@@ -176,32 +183,38 @@ function ReviewCard({
   const nextGood = idx < SPACED_REPETITION_INTERVALS.length - 1 ? SPACED_REPETITION_INTERVALS[idx + 1] : item.reviewInterval;
   const nextEasy = idx < SPACED_REPETITION_INTERVALS.length - 2 ? SPACED_REPETITION_INTERVALS[idx + 2] : nextGood;
 
+  const confidenceOptions = [
+    ["forgot", "Forgot", 1],
+    ["hard", "Hard", item.reviewInterval],
+    ["normal", "Good", nextGood],
+    ["easy", "Easy", nextEasy],
+  ] as const;
+
   return (
-    <Card className={urgent ? "border-l-4 border-l-[var(--danger)]" : "border-l-4 border-l-[var(--warning)]"}>
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h3 className="font-semibold text-[var(--text-heading)]">{item.node.name}</h3>
-          <p className="text-sm text-[var(--text-muted)]">
+    <Card
+      className={`min-w-0 overflow-hidden p-3 sm:p-5 ${urgent ? "border-l-4 border-l-[var(--danger)]" : "border-l-4 border-l-[var(--warning)]"}`}
+    >
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h3 className="break-words font-semibold text-[var(--text-heading)]">{item.node.name}</h3>
+          <p className="break-words text-sm text-[var(--text-muted)]">
             {item.subject.name} · completed {item.daysAgo}d ago
           </p>
         </div>
-        <Link to={`/subjects/${item.subject.id}/${item.node.id}`}>
-          <Button variant="secondary">Open lesson</Button>
+        <Link to={`/subjects/${item.subject.id}/${item.node.id}`} className="w-full shrink-0 sm:w-auto">
+          <Button variant="secondary" className="min-h-11 w-full touch-manipulation sm:w-auto">
+            Open lesson
+          </Button>
         </Link>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {([
-          ["forgot", "Forgot", 1],
-          ["hard", "Hard", item.reviewInterval],
-          ["normal", "Good", nextGood],
-          ["easy", "Easy", nextEasy],
-        ] as const).map(([key, label, days]) => (
+      <div className="-mx-1 mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain pb-1 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:pb-0">
+        {confidenceOptions.map(([key, label, days]) => (
           <button
             key={key}
             type="button"
             onClick={() => onConfidence(item.node.id, key)}
-            className="rounded-[var(--radius)] border border-[var(--border)] px-2 py-2 text-xs font-semibold text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="flex min-h-11 min-w-[5.25rem] shrink-0 snap-start touch-manipulation flex-col items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-xs font-semibold text-[var(--text-muted)] transition active:scale-[0.98] hover:border-[var(--accent)] hover:text-[var(--accent)] sm:min-w-0"
           >
             {label}
             <div className="font-normal opacity-70">→{days}d</div>
