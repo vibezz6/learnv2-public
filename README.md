@@ -2,45 +2,47 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
+**Version:** 2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (:8090)
+
 ## Stack
 
 - React 19 + TypeScript + Vite 8
-- Tailwind CSS v4
+- Tailwind CSS v4 · Neural Utopia design tokens
 - React Router v7
-- Zustand (preferences + future stores)
+- Zustand + persist
 
 ## Dev
 
 ```bash
 npm install
-npm run dev
+npm run dev          # http://localhost:8090
+npm run test
+npm run build
+npm run curriculum:split   # re-sync JSON from Learn-v1
 ```
 
-Open http://localhost:8090 (v1 stays on :8080).
+v1 fallback: `~/liqui/projects/Learn-v1` (:8080) — tagged `v1-final`
 
-## Batches
+## Migrate from v1
 
-See `~/cursor/LEARN-V2-PLAN.md` for full roadmap.
+1. Open v2 in the **same browser** where v1 saved progress
+2. Settings → **Run full v1 migration**
+3. Or export JSON from v1 Settings, import in v2 Settings
+
+See `~/cursor/audits/localStorage-schema-v1.md` for key mapping.
+
+## Batches (complete)
 
 | Batch | Status |
 |-------|--------|
-| 1 Foundation | ✅ scaffold, shell, tokens, focus mode, math stub |
-| 2 Core loop | pending |
-| 3 Second brain | pending |
-| 4 Parity | pending |
-| 5 Cutover | pending |
+| 1 Foundation | ✅ |
+| 2 Core loop | ✅ |
+| 3 Second brain | ✅ |
+| 4 Parity | ✅ |
+| 5 Cutover | ✅ v2.0.0 |
 
-## Git remote
+Full roadmap: `~/cursor/LEARN-V2-PLAN.md`
 
-If this folder was created locally first:
+## Repo
 
-```bash
-git remote add origin https://github.com/dishwashersol/learnv2.git
-git add -A && git commit -m "Batch 1: Neural Utopia scaffold"
-git push -u origin main
-```
-
-## Hermes / Cursor split
-
-- **Cursor** owns this repo (UI + architecture)
-- **Hermes** does v1 support audits in `~/cursor/audits/` — does NOT edit learnv2
+https://github.com/dishwashersol/learnv2

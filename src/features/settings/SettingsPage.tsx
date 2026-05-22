@@ -10,6 +10,7 @@ const OPENROUTER_KEY = "learnapp_openrouter_key";
 export function SettingsPage() {
   const { theme, setTheme } = usePreferences();
   const importFromV1 = useProgress((s) => s.importFromV1);
+  const migrateAllFromV1 = useProgress((s) => s.migrateAllFromV1);
   const exportData = useProgress((s) => s.exportData);
   const importData = useProgress((s) => s.importData);
   const resetProgress = useProgress((s) => s.resetProgress);
@@ -135,18 +136,46 @@ export function SettingsPage() {
         </div>
       </Card>
 
+      <Card className="space-y-3 border-[var(--accent-border)] bg-[var(--accent-bg)]">
+        <h2 className="font-semibold text-[var(--text-heading)]">Migrate from Learn-v1 (full)</h2>
+        <p className="text-sm text-[var(--text-muted)]">
+          Imports progress + SRS, merges legacy v1 notes into Notes 2.0, and copies theme if needed.
+        </p>
+        <Button
+          onClick={() => {
+            const result = migrateAllFromV1();
+            if (result.details.themeMigrated) {
+              const raw = localStorage.getItem("learnv2_preferences");
+              if (raw) {
+                try {
+                  const prefs = JSON.parse(raw) as { state?: { theme?: "dark" | "light" } };
+                  if (prefs.state?.theme) setTheme(prefs.state.theme);
+                } catch {
+                  /* ignore */
+                }
+              }
+            }
+            const srsNote = result.details.srsDatesPreserved ? "" : " Warning: some SRS dates look invalid.";
+            setMessage(result.message + srsNote);
+          }}
+        >
+          Run full v1 migration
+        </Button>
+      </Card>
+
       <Card className="space-y-3">
-        <h2 className="font-semibold text-[var(--text-heading)]">Import Learn-v1 progress</h2>
+        <h2 className="font-semibold text-[var(--text-heading)]">Import progress only</h2>
         <p className="text-sm text-[var(--text-muted)]">
           Reads <code className="font-mono text-xs">learnapp_progress_v1</code> from this browser.
         </p>
         <Button
+          variant="secondary"
           onClick={() => {
             const result = importFromV1();
             setMessage(result.message);
           }}
         >
-          Import from Learn-v1
+          Import progress only
         </Button>
       </Card>
 

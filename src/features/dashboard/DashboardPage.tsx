@@ -30,7 +30,7 @@ export function DashboardPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 md:p-8 md:pb-8">
       <section className="stagger-item space-y-2">
-        <Badge>Batch 4 · IQ maxxing</Badge>
+        <Badge>v2.0.0</Badge>
         <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
           Neural Command Center
         </h1>
@@ -129,10 +129,10 @@ export function DashboardPage() {
       <Card className="stagger-item">
         <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
           <Sparkles size={16} />
-          <span className="text-sm font-medium">Batch 4 shipped</span>
+          <span className="text-sm font-medium">Learn v2.0 — daily driver</span>
         </div>
         <p className="text-sm text-[var(--text-muted)]">
-          Math widgets · daily challenge · tracks · stats · timer · achievements · PWA.
+          234 lessons · notes · SRS · stats · timer · PWA. Migrate v1 progress in Settings.
         </p>
         <p className="mt-2 text-sm text-[var(--text-muted)]">
           Press <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-xs">F</kbd>{" "}

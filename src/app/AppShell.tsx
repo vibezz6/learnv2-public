@@ -102,7 +102,7 @@ export function AppShell() {
           ))}
         </nav>
         <div className="border-t border-[var(--border)] p-3">
-          <Badge>Batch 4 · Parity</Badge>
+          <Badge>v2.0.0</Badge>
         </div>
       </aside>
 

@@ -2,6 +2,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
+import {
+  mergeLegacyNotes,
+  migrateThemeFromV1,
+  verifySrsDates,
+  type MigrationResult,
+} from "@/lib/migrate-v1";
 
 export const SPACED_REPETITION_INTERVALS = [1, 3, 7, 14, 30, 60, 120, 240] as const;
 export const DEFAULT_DAILY_GOAL = 60;
@@ -170,6 +176,7 @@ interface ProgressState {
   importData: (json: string) => { success: boolean; error?: string };
   resetProgress: () => void;
   clearLevelUpPending: () => void;
+  migrateAllFromV1: () => MigrationResult;
   importFromV1: () => { success: boolean; message: string };
 }
 
@@ -512,6 +519,34 @@ export const useProgress = create<ProgressState>()(
         } catch {
           return { success: false, message: "Failed to parse Learn-v1 progress data." };
         }
+      },
+
+      migrateAllFromV1: () => {
+        const progressResult = get().importFromV1();
+        const notesMerged = mergeLegacyNotes();
+        const themeMigrated = migrateThemeFromV1();
+        const srsDatesPreserved = verifySrsDates();
+
+        const parts: string[] = [];
+        if (progressResult.success) parts.push("progress");
+        if (notesMerged > 0) parts.push(`${notesMerged} legacy notes`);
+        if (themeMigrated) parts.push("theme");
+
+        const success = progressResult.success || notesMerged > 0 || themeMigrated;
+        const message = success
+          ? `Migration complete: ${parts.join(", ") || "shared keys already present"}.`
+          : "No Learn-v1 data found in this browser.";
+
+        return {
+          success,
+          message,
+          details: {
+            progress: progressResult.success,
+            notesMerged,
+            themeMigrated,
+            srsDatesPreserved,
+          },
+        };
       },
     }),
     { name: V2_STORAGE_KEY },
