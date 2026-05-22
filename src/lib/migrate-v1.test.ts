@@ -2,11 +2,13 @@ import { describe, expect, it, beforeEach } from "vitest";
 import {
   hasV1Data,
   inferSubjectId,
+  mergeBookmarksFromV1,
   mergeLegacyNotes,
   migrateThemeFromV1,
   normalizeV1Progress,
   verifySrsDates,
 } from "@/lib/migrate-v1";
+import { V2_BOOKMARKS_KEY } from "@/stores/bookmarks";
 
 function mockStorage(): Storage {
   const map = new Map<string, string>();
@@ -163,5 +165,84 @@ describe("migrate-v1", () => {
     expect(normalized.totalXp).toBe(10);
     expect((normalized.nodes as Record<string, { quizScores: unknown[] }>).m1.quizScores).toEqual([]);
     expect(normalized.studySessions).toBeUndefined();
+  });
+
+  it("mergeBookmarksFromV1 copies resource bookmarks into learnv2 store", () => {
+    storage.setItem(
+      "learnapp_bookmarks_v1",
+      JSON.stringify([
+        {
+          nodeId: "m1",
+          resourceIndex: 0,
+          addedAt: "2026-01-01T00:00:00.000Z",
+          note: "great article",
+        },
+      ]),
+    );
+
+    const result = mergeBookmarksFromV1(storage);
+    expect(result.resourceMerged).toBe(1);
+    expect(result.lessonMerged).toBe(0);
+
+    const saved = JSON.parse(storage.getItem(V2_BOOKMARKS_KEY)!);
+    expect(saved.state.resourceBookmarks).toHaveLength(1);
+    expect(saved.state.resourceBookmarks[0].note).toBe("great article");
+  });
+
+  it("mergeBookmarksFromV1 copies lesson bookmarks into learnv2 store", () => {
+    storage.setItem(
+      "learnapp_lesson_bookmarks_v1",
+      JSON.stringify([{ subjectId: "math", nodeId: "m2" }]),
+    );
+
+    const result = mergeBookmarksFromV1(storage);
+    expect(result.resourceMerged).toBe(0);
+    expect(result.lessonMerged).toBe(1);
+
+    const saved = JSON.parse(storage.getItem(V2_BOOKMARKS_KEY)!);
+    expect(saved.state.lessonBookmarks).toEqual([{ subjectId: "math", nodeId: "m2" }]);
+  });
+
+  it("mergeBookmarksFromV1 skips duplicates already in v2 store", () => {
+    storage.setItem(
+      "learnapp_bookmarks_v1",
+      JSON.stringify([
+        { nodeId: "m1", resourceIndex: 0, addedAt: "2026-01-01T00:00:00.000Z", note: "v1" },
+      ]),
+    );
+    storage.setItem(
+      "learnapp_lesson_bookmarks_v1",
+      JSON.stringify([{ subjectId: "math", nodeId: "m1" }]),
+    );
+    storage.setItem(
+      V2_BOOKMARKS_KEY,
+      JSON.stringify({
+        state: {
+          resourceBookmarks: [
+            { nodeId: "m1", resourceIndex: 0, addedAt: "2026-01-01T00:00:00.000Z", note: "existing" },
+          ],
+          lessonBookmarks: [{ subjectId: "math", nodeId: "m1" }],
+        },
+        version: 0,
+      }),
+    );
+
+    const result = mergeBookmarksFromV1(storage);
+    expect(result.resourceMerged).toBe(0);
+    expect(result.lessonMerged).toBe(0);
+
+    const saved = JSON.parse(storage.getItem(V2_BOOKMARKS_KEY)!);
+    expect(saved.state.resourceBookmarks).toHaveLength(1);
+    expect(saved.state.resourceBookmarks[0].note).toBe("existing");
+    expect(saved.state.lessonBookmarks).toHaveLength(1);
+  });
+
+  it("hasV1Data detects v1 bookmark keys", () => {
+    storage.setItem("learnapp_bookmarks_v1", "[]");
+    expect(hasV1Data(storage)).toBe(true);
+
+    storage.clear();
+    storage.setItem("learnapp_lesson_bookmarks_v1", "[]");
+    expect(hasV1Data(storage)).toBe(true);
   });
 });

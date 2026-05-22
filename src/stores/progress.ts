@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import {
+  mergeBookmarksFromV1,
   mergeLegacyNotes,
   migrateThemeFromV1,
   normalizeV1Progress,
@@ -523,15 +524,24 @@ export const useProgress = create<ProgressState>()(
       migrateAllFromV1: () => {
         const progressResult = get().importFromV1();
         const notesMerged = mergeLegacyNotes();
+        const { resourceMerged, lessonMerged } = mergeBookmarksFromV1();
         const themeMigrated = migrateThemeFromV1(localStorage, { force: true });
         const srsDatesPreserved = verifySrsDates();
 
         const parts: string[] = [];
         if (progressResult.success) parts.push("progress");
         if (notesMerged > 0) parts.push(`${notesMerged} legacy notes`);
+        if (resourceMerged > 0 || lessonMerged > 0) {
+          parts.push(`${resourceMerged + lessonMerged} bookmarks`);
+        }
         if (themeMigrated) parts.push("theme");
 
-        const success = progressResult.success || notesMerged > 0 || themeMigrated;
+        const success =
+          progressResult.success ||
+          notesMerged > 0 ||
+          resourceMerged > 0 ||
+          lessonMerged > 0 ||
+          themeMigrated;
         const message = success
           ? `Migration complete: ${parts.join(", ") || "shared keys already present"}.`
           : "No Learn-v1 data found in this browser.";
@@ -544,6 +554,8 @@ export const useProgress = create<ProgressState>()(
             notesMerged,
             themeMigrated,
             srsDatesPreserved,
+            resourceBookmarksMerged: resourceMerged,
+            lessonBookmarksMerged: lessonMerged,
           },
         };
       },

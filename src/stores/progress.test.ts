@@ -73,6 +73,8 @@ describe("progress migrateAllFromV1", () => {
     expect(result.details.progress).toBe(false);
     expect(result.details.notesMerged).toBe(0);
     expect(result.details.themeMigrated).toBe(false);
+    expect(result.details.resourceBookmarksMerged).toBe(0);
+    expect(result.details.lessonBookmarksMerged).toBe(0);
   });
 
   it("imports progress XP, streak, and SRS from v1", () => {

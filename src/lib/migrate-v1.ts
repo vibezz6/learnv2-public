@@ -1,9 +1,16 @@
 import type { NoteSession } from "@/curriculum/types";
+import {
+  V2_BOOKMARKS_KEY,
+  type LessonBookmark,
+  type ResourceBookmark,
+} from "@/stores/bookmarks";
 import type { ThemeMode } from "@/stores/preferences";
 
 const V1_PROGRESS = "learnapp_progress_v1";
 const V1_NOTES = "learnapp_notes_v1";
 const V1_THEME = "learnapp_theme_v1";
+const V1_RESOURCE_BOOKMARKS = "learnapp_bookmarks_v1";
+const V1_LESSON_BOOKMARKS = "learnapp_lesson_bookmarks_v1";
 const V2_NOTE_SESSIONS = "learnapp_note_sessions_v2";
 const V2_PREFERENCES = "learnv2_preferences";
 
@@ -12,11 +19,18 @@ interface LegacyNote {
   updatedAt: number;
 }
 
+export interface BookmarksMigrationResult {
+  resourceMerged: number;
+  lessonMerged: number;
+}
+
 export interface MigrationDetails {
   progress: boolean;
   notesMerged: number;
   themeMigrated: boolean;
   srsDatesPreserved: boolean;
+  resourceBookmarksMerged: number;
+  lessonBookmarksMerged: number;
 }
 
 export interface MigrationResult {
@@ -80,6 +94,65 @@ export function mergeLegacyNotes(storage: Storage = localStorage): number {
   return merged;
 }
 
+/** Merge v1 resource and lesson bookmarks into learnv2 bookmarks store. */
+export function mergeBookmarksFromV1(storage: Storage = localStorage): BookmarksMigrationResult {
+  const v1Resources = readJson<ResourceBookmark[]>(storage, V1_RESOURCE_BOOKMARKS) ?? [];
+  const v1Lessons = readJson<Array<{ subjectId: string; nodeId: string }>>(
+    storage,
+    V1_LESSON_BOOKMARKS,
+  ) ?? [];
+
+  if (v1Resources.length === 0 && v1Lessons.length === 0) {
+    return { resourceMerged: 0, lessonMerged: 0 };
+  }
+
+  const existing = readJson<{
+    state?: { resourceBookmarks?: ResourceBookmark[]; lessonBookmarks?: LessonBookmark[] };
+  }>(storage, V2_BOOKMARKS_KEY);
+
+  const resourceBookmarks = [...(existing?.state?.resourceBookmarks ?? [])];
+  const lessonBookmarks = [...(existing?.state?.lessonBookmarks ?? [])];
+
+  let resourceMerged = 0;
+  for (const bookmark of v1Resources) {
+    if (!bookmark.nodeId || typeof bookmark.resourceIndex !== "number") continue;
+    const exists = resourceBookmarks.some(
+      (b) => b.nodeId === bookmark.nodeId && b.resourceIndex === bookmark.resourceIndex,
+    );
+    if (exists) continue;
+    resourceBookmarks.push({
+      nodeId: bookmark.nodeId,
+      resourceIndex: bookmark.resourceIndex,
+      addedAt: bookmark.addedAt || new Date().toISOString(),
+      note: bookmark.note ?? "",
+    });
+    resourceMerged++;
+  }
+
+  let lessonMerged = 0;
+  for (const bookmark of v1Lessons) {
+    if (!bookmark.subjectId || !bookmark.nodeId) continue;
+    const exists = lessonBookmarks.some(
+      (b) => b.subjectId === bookmark.subjectId && b.nodeId === bookmark.nodeId,
+    );
+    if (exists) continue;
+    lessonBookmarks.push({ subjectId: bookmark.subjectId, nodeId: bookmark.nodeId });
+    lessonMerged++;
+  }
+
+  if (resourceMerged > 0 || lessonMerged > 0) {
+    storage.setItem(
+      V2_BOOKMARKS_KEY,
+      JSON.stringify({
+        state: { resourceBookmarks, lessonBookmarks },
+        version: 0,
+      }),
+    );
+  }
+
+  return { resourceMerged, lessonMerged };
+}
+
 /** Copy v1 theme into learnv2 preferences if v2 has no saved theme yet. */
 export function migrateThemeFromV1(
   storage: Storage = localStorage,
@@ -118,7 +191,9 @@ export function hasV1Data(storage: Storage = localStorage): boolean {
   return (
     storage.getItem(V1_PROGRESS) !== null ||
     storage.getItem(V1_NOTES) !== null ||
-    storage.getItem(V1_THEME) !== null
+    storage.getItem(V1_THEME) !== null ||
+    storage.getItem(V1_RESOURCE_BOOKMARKS) !== null ||
+    storage.getItem(V1_LESSON_BOOKMARKS) !== null
   );
 }
 
