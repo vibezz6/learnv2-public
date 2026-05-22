@@ -3,6 +3,9 @@ import { AppShell } from "./AppShell";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
+import { LessonPage } from "@/features/lesson/LessonPage";
+import { QuizRoutePage } from "@/features/quiz/QuizRoutePage";
+import { SettingsPage } from "@/features/settings/SettingsPage";
 import { PlaceholderPage } from "@/features/PlaceholderPage";
 
 export function App() {
@@ -13,32 +16,23 @@ export function App() {
           <Route index element={<DashboardPage />} />
           <Route path="subjects" element={<SubjectsPage />} />
           <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
+          <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
+          <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
           <Route
             path="review"
             element={
-              <PlaceholderPage
-                title="Review"
-                note="SRS + library port in Batch 3 from v1 ReviewNeeded."
-              />
+              <PlaceholderPage title="Review" note="SRS queue — Batch 3." />
             }
           />
           <Route
             path="stats"
-            element={<PlaceholderPage title="Stats" note="Port Stats.tsx aggregations in Batch 4." />}
+            element={<PlaceholderPage title="Stats" note="Analytics — Batch 4." />}
           />
           <Route
             path="timer"
-            element={<PlaceholderPage title="Timer" note="Port StudyTimer in Batch 4." />}
+            element={<PlaceholderPage title="Timer" note="Study timer — Batch 4." />}
           />
-          <Route
-            path="settings"
-            element={
-              <PlaceholderPage
-                title="Settings"
-                note="Theme, export/import, OpenRouter key — Batch 4."
-              />
-            }
-          />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

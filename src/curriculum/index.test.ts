@@ -1,15 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getSubject, mathSubject, subjects } from "@/curriculum";
+import { manifest } from "@/curriculum";
 
 describe("curriculum", () => {
-  it("loads math subject stub", () => {
-    expect(subjects).toHaveLength(1);
-    expect(mathSubject.id).toBe("math");
-    expect(mathSubject.nodes.length).toBeGreaterThan(0);
-  });
-
-  it("finds subject by id", () => {
-    expect(getSubject("math")?.name).toBe("Mathematics");
-    expect(getSubject("missing")).toBeUndefined();
+  it("loads manifest with all v1 subjects", () => {
+    expect(manifest.length).toBeGreaterThanOrEqual(8);
+    expect(manifest.find((m) => m.id === "math")?.nodeCount).toBeGreaterThan(0);
   });
 });

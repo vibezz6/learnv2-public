@@ -1,0 +1,74 @@
+[
+  {
+    "id": "math",
+    "name": "Mathematics",
+    "description": "From pre-algebra foundations through calculus and linear algebra. Rebuild your math intuition from the ground up.",
+    "color": "#8b5cf6",
+    "icon": "function",
+    "nodeCount": 51
+  },
+  {
+    "id": "science",
+    "name": "Science Literacy",
+    "description": "Understand how the world works. Physics, chemistry, and the scientific method.",
+    "color": "#10b981",
+    "icon": "atom",
+    "nodeCount": 33
+  },
+  {
+    "id": "cs",
+    "name": "Computer Science",
+    "description": "Learn to think like a programmer. From Python basics to algorithms and system design.",
+    "color": "#3b82f6",
+    "icon": "code",
+    "nodeCount": 40
+  },
+  {
+    "id": "programming",
+    "name": "Programming with Python",
+    "description": "Learn Python from scratch. Variables, functions, data structures, and libraries for data analysis and trading.",
+    "color": "#10b981",
+    "icon": "code",
+    "nodeCount": 16
+  },
+  {
+    "id": "probability",
+    "name": "Probability & Statistics",
+    "description": "The math of uncertainty. From basic probability to Monte Carlo simulations — the tools every trader and data thinker needs.",
+    "color": "#ec4899",
+    "icon": "bar-chart-2",
+    "nodeCount": 12
+  },
+  {
+    "id": "ai",
+    "name": "Artificial Intelligence",
+    "description": "From basic ML to LLMs, agents, and the future. Understand the tech reshaping everything.",
+    "color": "#10b981",
+    "icon": "brain",
+    "nodeCount": 27
+  },
+  {
+    "id": "finance",
+    "name": "Personal Finance",
+    "description": "Budgeting, saving, investing, credit, and taxes. Master your money before you risk it.",
+    "color": "#14b8a6",
+    "icon": "wallet",
+    "nodeCount": 11
+  },
+  {
+    "id": "trading",
+    "name": "Trading & Markets",
+    "description": "From market fundamentals to perpetual futures and prediction markets. Learn to read price action, manage risk, and think in probabilities.",
+    "color": "#f59e0b",
+    "icon": "trending-up",
+    "nodeCount": 37
+  },
+  {
+    "id": "engineering",
+    "name": "Engineering Fundamentals",
+    "description": "The art and science of designing systems that work. From feedback loops to signal processing, engineering thinking helps you model, optimize, and debug complex systems — including your trading strategies.",
+    "color": "#06b6d4",
+    "icon": "code",
+    "nodeCount": 4
+  }
+]
