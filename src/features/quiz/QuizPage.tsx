@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { CheckCircle2, ChevronRight, XCircle } from "lucide-react";
 import type { QuizQuestion } from "@/curriculum/types";
 import { Button, Card } from "@/components/ui";
+import { cn } from "@/lib/cn";
 import { useProgress } from "@/stores/progress";
 
 interface QuizProps {
@@ -69,7 +70,9 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
         <p className="font-mono text-3xl text-[var(--accent)]">
           {score}/{questions.length} · {pct}%
         </p>
-        <Button onClick={() => window.history.back()}>Back to lesson</Button>
+        <Button onClick={() => window.history.back()} className="min-h-11 w-full sm:w-auto">
+          Back to lesson
+        </Button>
       </Card>
     );
   }
@@ -77,12 +80,17 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
   const isCorrect = selected === q.correctIndex;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div
+      className={cn(
+        "mx-auto w-full min-w-0 max-w-2xl space-y-4 overflow-x-hidden",
+        answered && "pb-24 sm:pb-0",
+      )}
+    >
       <div className="font-mono text-xs text-[var(--text-muted)]">
         Q{current + 1} / {questions.length}
       </div>
-      <Card className="stagger-item">
-        <h2 className="text-lg font-semibold text-[var(--text-heading)]">{q.question}</h2>
+      <Card className="stagger-item min-w-0">
+        <h2 className="break-words text-lg font-semibold text-[var(--text-heading)]">{q.question}</h2>
       </Card>
       <div className="space-y-2">
         {q.options.map((opt, i) => {
@@ -97,31 +105,48 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
               type="button"
               disabled={answered}
               onClick={() => handleSelect(i)}
-              className="flex w-full items-center gap-3 rounded-[var(--radius)] border px-4 py-3 text-left text-sm transition hover:border-[var(--accent)] disabled:cursor-default"
+              className="flex min-h-11 w-full min-w-0 touch-manipulation items-center gap-3 rounded-[var(--radius)] border px-4 py-3 text-left text-sm transition hover:border-[var(--accent)] disabled:cursor-default"
               style={{ borderColor: border, background: "var(--bg-elevated)" }}
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border font-mono text-xs" style={{ borderColor: border }}>
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border font-mono text-xs"
+                style={{ borderColor: border }}
+              >
                 {i + 1}
               </span>
-              {opt}
+              <span className="min-w-0 flex-1 break-words">{opt}</span>
             </button>
           );
         })}
       </div>
       {answered && (
-        <Card className="stagger-item" style={{ borderColor: isCorrect ? "var(--success)" : "var(--danger)" }}>
-          <div className="mb-2 flex items-center gap-2 font-semibold" style={{ color: isCorrect ? "var(--success)" : "var(--danger)" }}>
+        <Card
+          className="stagger-item min-w-0"
+          style={{ borderColor: isCorrect ? "var(--success)" : "var(--danger)" }}
+        >
+          <div
+            className="mb-2 flex items-center gap-2 font-semibold"
+            style={{ color: isCorrect ? "var(--success)" : "var(--danger)" }}
+          >
             {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
             {isCorrect ? "Correct" : "Incorrect"}
           </div>
-          <p className="text-sm text-[var(--text-muted)]">{q.explanation}</p>
+          <p className="break-words text-sm text-[var(--text-muted)]">{q.explanation}</p>
         </Card>
       )}
       {answered && (
-        <Button onClick={handleNext} className="w-full sm:w-auto">
-          {current < questions.length - 1 ? "Next" : "View results"}
-          <ChevronRight size={16} />
-        </Button>
+        <>
+          <div className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-10 border-t border-[var(--border)] bg-[var(--bg-glass)] p-4 backdrop-blur-xl sm:hidden">
+            <Button onClick={handleNext} className="min-h-11 w-full">
+              {current < questions.length - 1 ? "Next" : "View results"}
+              <ChevronRight size={16} />
+            </Button>
+          </div>
+          <Button onClick={handleNext} className="hidden min-h-11 w-auto sm:inline-flex">
+            {current < questions.length - 1 ? "Next" : "View results"}
+            <ChevronRight size={16} />
+          </Button>
+        </>
       )}
     </div>
   );
