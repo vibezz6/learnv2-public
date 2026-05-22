@@ -5,6 +5,7 @@ import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import {
   mergeLegacyNotes,
   migrateThemeFromV1,
+  normalizeV1Progress,
   verifySrsDates,
   type MigrationResult,
 } from "@/lib/migrate-v1";
@@ -504,15 +505,13 @@ export const useProgress = create<ProgressState>()(
         try {
           const raw = localStorage.getItem(V1_STORAGE_KEY);
           if (!raw) return { success: false, message: "No Learn-v1 progress found in this browser." };
-          const parsed = JSON.parse(raw) as ProgressData;
+          const parsed = normalizeV1Progress(
+            JSON.parse(raw) as Record<string, unknown>,
+          ) as unknown as ProgressData;
           set({
             data: {
               ...defaultProgress(),
               ...parsed,
-              recentlyVisited: parsed.recentlyVisited ?? [],
-              dailyReviews: parsed.dailyReviews ?? {},
-              reviewStreak: parsed.reviewStreak ?? { current: 0, longest: 0, lastReviewDate: null },
-              dailyChallenges: parsed.dailyChallenges ?? {},
             },
           });
           return { success: true, message: "Imported Learn-v1 progress successfully." };
@@ -524,7 +523,7 @@ export const useProgress = create<ProgressState>()(
       migrateAllFromV1: () => {
         const progressResult = get().importFromV1();
         const notesMerged = mergeLegacyNotes();
-        const themeMigrated = migrateThemeFromV1();
+        const themeMigrated = migrateThemeFromV1(localStorage, { force: true });
         const srsDatesPreserved = verifySrsDates();
 
         const parts: string[] = [];

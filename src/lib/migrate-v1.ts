@@ -81,12 +81,15 @@ export function mergeLegacyNotes(storage: Storage = localStorage): number {
 }
 
 /** Copy v1 theme into learnv2 preferences if v2 has no saved theme yet. */
-export function migrateThemeFromV1(storage: Storage = localStorage): boolean {
+export function migrateThemeFromV1(
+  storage: Storage = localStorage,
+  options: { force?: boolean } = {},
+): boolean {
   const v1Theme = storage.getItem(V1_THEME);
   if (!v1Theme || (v1Theme !== "dark" && v1Theme !== "light")) return false;
 
   const existing = readJson<{ state?: { theme?: ThemeMode } }>(storage, V2_PREFERENCES);
-  if (existing?.state?.theme) return false;
+  if (!options.force && existing?.state?.theme) return false;
 
   storage.setItem(
     V2_PREFERENCES,
@@ -115,6 +118,27 @@ export function hasV1Data(storage: Storage = localStorage): boolean {
   return (
     storage.getItem(V1_PROGRESS) !== null ||
     storage.getItem(V1_NOTES) !== null ||
-    storage.getItem(V2_NOTE_SESSIONS) !== null
+    storage.getItem(V1_THEME) !== null
   );
+}
+
+/** Normalize raw v1 progress JSON before importing into v2. */
+export function normalizeV1Progress(raw: Record<string, unknown>): Record<string, unknown> {
+  const parsed = { ...raw };
+  parsed.recentlyVisited ??= [];
+  parsed.dailyChallenges ??= {};
+  parsed.streaks ??= { current: 0, longest: 0, lastStudyDate: null };
+  parsed.dailyMinutes ??= {};
+  parsed.spacedRepetition ??= {};
+  parsed.dailyReviews ??= {};
+  parsed.reviewStreak ??= { current: 0, longest: 0, lastReviewDate: null };
+  parsed.nodes ??= {};
+
+  for (const node of Object.values(parsed.nodes as Record<string, Record<string, unknown>>)) {
+    node.quizScores ??= [];
+    node.quizHistory ??= [];
+  }
+
+  delete parsed.studySessions;
+  return parsed;
 }

@@ -144,18 +144,12 @@ export function SettingsPage() {
         <Button
           onClick={() => {
             const result = migrateAllFromV1();
-            if (result.details.themeMigrated) {
-              const raw = localStorage.getItem("learnv2_preferences");
-              if (raw) {
-                try {
-                  const prefs = JSON.parse(raw) as { state?: { theme?: "dark" | "light" } };
-                  if (prefs.state?.theme) setTheme(prefs.state.theme);
-                } catch {
-                  /* ignore */
-                }
-              }
-            }
             const srsNote = result.details.srsDatesPreserved ? "" : " Warning: some SRS dates look invalid.";
+            if (result.success) {
+              setMessage(`${result.message}${srsNote} Reloading…`);
+              setTimeout(() => window.location.reload(), 500);
+              return;
+            }
             setMessage(result.message + srsNote);
           }}
         >
