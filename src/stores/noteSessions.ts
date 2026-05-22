@@ -37,6 +37,58 @@ export function updateResponses(nodeId: string, responses: Record<string, string
   saveAll(all);
 }
 
+export const MIN_TAKEAWAYS = 1;
+export const MAX_TAKEAWAYS = 5;
+
+export function parseTakeaways(text: string): string[] {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+export function formatTakeaways(bullets: string[]): string {
+  return bullets.join("\n");
+}
+
+export function getTakeaways(nodeId: string): string {
+  return getSession(nodeId)?.responses.takeaways ?? "";
+}
+
+export type SaveTakeawaysResult = { ok: true } | { ok: false; error: string };
+
+export function saveTakeaways(
+  nodeId: string,
+  subjectId: string,
+  text: string,
+): SaveTakeawaysResult {
+  const bullets = parseTakeaways(text);
+  if (bullets.length < MIN_TAKEAWAYS) {
+    return { ok: false, error: "Add at least one takeaway." };
+  }
+  if (bullets.length > MAX_TAKEAWAYS) {
+    return { ok: false, error: "Maximum 5 takeaways." };
+  }
+
+  const normalized = formatTakeaways(bullets);
+  const existing = getSession(nodeId);
+  if (existing) {
+    updateResponses(nodeId, { takeaways: normalized });
+  } else {
+    upsertSession({
+      nodeId,
+      subjectId,
+      responses: { takeaways: normalized },
+      review: null,
+      mentorSession: null,
+      tags: [],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+  }
+  return { ok: true };
+}
+
 export function saveReview(nodeId: string, review: NoteReview) {
   const all = loadAll();
   if (!all[nodeId]) return;

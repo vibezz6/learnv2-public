@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, BookOpen, CheckCircle2, FileText, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, FileText, Lightbulb, Lock, Sparkles } from "lucide-react";
 import { Badge, Button, Card, FocusShell } from "@/components/ui";
 import { loadSubject, getNode } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
 import { CollapsibleSection, WorkedExampleCard } from "@/features/lesson/LessonSections";
 import { usePreferences } from "@/stores/preferences";
+import {
+  getTakeaways,
+  MAX_TAKEAWAYS,
+  parseTakeaways,
+  saveTakeaways,
+} from "@/stores/noteSessions";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
 
@@ -164,6 +170,8 @@ export function LessonPage() {
           />
         ))}
 
+        <LessonTakeaways nodeId={node.id} subjectId={subject.id} disabled={isLocked} />
+
         <Card className="stagger-item flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="font-medium text-[var(--text-heading)]">Ready to test recall?</p>
@@ -199,5 +207,91 @@ export function LessonPage() {
         </Card>
       </div>
     </FocusShell>
+  );
+}
+
+function LessonTakeaways({
+  nodeId,
+  subjectId,
+  disabled,
+}: {
+  nodeId: string;
+  subjectId: string;
+  disabled?: boolean;
+}) {
+  const [draft, setDraft] = useState(() => getTakeaways(nodeId));
+  const [saved, setSaved] = useState(() => getTakeaways(nodeId));
+  const [error, setError] = useState<string | null>(null);
+  const [justSaved, setJustSaved] = useState(false);
+
+  useEffect(() => {
+    const text = getTakeaways(nodeId);
+    setDraft(text);
+    setSaved(text);
+    setError(null);
+    setJustSaved(false);
+  }, [nodeId]);
+
+  const bullets = parseTakeaways(draft);
+  const isDirty = draft !== saved;
+  const canSave =
+    !disabled && isDirty && bullets.length >= 1 && bullets.length <= MAX_TAKEAWAYS;
+
+  const handleSave = () => {
+    const result = saveTakeaways(nodeId, subjectId, draft);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    const normalized = getTakeaways(nodeId);
+    setDraft(normalized);
+    setSaved(normalized);
+    setError(null);
+    setJustSaved(true);
+    window.setTimeout(() => setJustSaved(false), 2000);
+  };
+
+  return (
+    <Card className="stagger-item space-y-3">
+      <div className="flex flex-wrap items-center gap-2 text-[var(--accent)]">
+        <Lightbulb size={16} />
+        <span className="text-sm font-medium">Key takeaways</span>
+        {bullets.length > 0 && (
+          <Badge>
+            {bullets.length}/{MAX_TAKEAWAYS}
+          </Badge>
+        )}
+      </div>
+      <p className="text-sm text-[var(--text-muted)]">
+        One insight per line — add 1 to 5 bullets you want to remember.
+      </p>
+      <textarea
+        value={draft}
+        onChange={(e) => {
+          setDraft(e.target.value);
+          setError(null);
+        }}
+        disabled={disabled}
+        rows={5}
+        className="w-full resize-y rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-sm leading-relaxed text-[var(--text)] outline-none focus:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+        placeholder={"First takeaway…\nSecond takeaway…"}
+      />
+      {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-xs text-[var(--text-muted)]">
+          {bullets.length === 0
+            ? "No takeaways yet"
+            : `${bullets.length} takeaway${bullets.length === 1 ? "" : "s"}`}
+          {bullets.length > MAX_TAKEAWAYS && ` · max ${MAX_TAKEAWAYS}`}
+        </span>
+        <Button
+          onClick={handleSave}
+          disabled={!canSave}
+          className="min-h-11 w-full sm:w-auto"
+        >
+          {justSaved ? "Saved" : "Save takeaways"}
+        </Button>
+      </div>
+    </Card>
   );
 }
