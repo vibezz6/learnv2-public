@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, BookOpen, CheckCircle2, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, FileText, Lock, Sparkles } from "lucide-react";
 import { Badge, Button, Card, FocusShell } from "@/components/ui";
 import { loadSubject, getNode } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
@@ -165,6 +165,12 @@ export function LessonPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Link to={`/subjects/${subject.id}/${node.id}/notes`}>
+              <Button variant="secondary">
+                <FileText size={16} />
+                Notes
+              </Button>
+            </Link>
             {(node.quiz?.length ?? 0) > 0 && !isLocked && (
               <Link to={`/subjects/${subject.id}/${node.id}/quiz`}>
                 <Button variant="secondary">Take quiz</Button>

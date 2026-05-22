@@ -4,15 +4,20 @@ import {
   BookOpen,
   Home,
   Moon,
+  Search,
   Settings,
   Sun,
   Timer,
   BarChart3,
 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
+import { CommandPalette } from "@/features/search/CommandPalette";
+import { loadAllSubjects } from "@/curriculum/loader";
+import type { Subject } from "@/curriculum/types";
 import { usePreferences } from "@/stores/preferences";
+import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const nav = [
   { to: "/", label: "Command", icon: Home, end: true },
@@ -25,9 +30,22 @@ const nav = [
 
 export function AppShell() {
   const { theme, setTheme, focusMode, toggleFocusMode } = usePreferences();
+  const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const reviewCount = subjects.length ? getNodesNeedingReview(subjects).length : 0;
+
+  useEffect(() => {
+    loadAllSubjects().then(setSubjects);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((open) => !open);
+        return;
+      }
       if (e.key.toLowerCase() === "f" && !e.metaKey && !e.ctrlKey && !e.altKey) {
         const tag = (e.target as HTMLElement)?.tagName;
         if (tag === "INPUT" || tag === "TEXTAREA") return;
@@ -75,11 +93,16 @@ export function AppShell() {
             >
               <Icon size={16} />
               {label}
+              {to === "/review" && reviewCount > 0 && (
+                <span className="ml-auto rounded-full bg-[var(--accent)]/20 px-2 py-0.5 text-[10px] font-bold text-[var(--accent)]">
+                  {reviewCount}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>
         <div className="border-t border-[var(--border)] p-3">
-          <Badge>Batch 1 scaffold</Badge>
+          <Badge>Batch 3 · Notes + SRS</Badge>
         </div>
       </aside>
 
@@ -94,6 +117,10 @@ export function AppShell() {
             IQ maxxing · deep focus ready
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={() => setPaletteOpen(true)}>
+              <Search size={16} />
+              ⌘K
+            </Button>
             <Button variant="ghost" onClick={toggleFocusMode}>
               Focus (F)
             </Button>
@@ -111,6 +138,8 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );
 }

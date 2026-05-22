@@ -3,10 +3,19 @@ import { Button, Card } from "@/components/ui";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
+const OPENROUTER_KEY = "learnapp_openrouter_key";
+
 export function SettingsPage() {
   const { theme, setTheme } = usePreferences();
   const importFromV1 = useProgress((s) => s.importFromV1);
   const [message, setMessage] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState(() => {
+    try {
+      return localStorage.getItem(OPENROUTER_KEY) ?? "";
+    } catch {
+      return "";
+    }
+  });
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-8">
@@ -25,6 +34,30 @@ export function SettingsPage() {
             </Button>
           ))}
         </div>
+      </Card>
+
+      <Card className="space-y-3">
+        <h2 className="font-semibold text-[var(--text-heading)]">OpenRouter API key (Notes AI)</h2>
+        <p className="text-sm text-[var(--text-muted)]">
+          Optional. Powers AI note review and mentor quiz. Stored locally as{" "}
+          <code className="font-mono text-xs">{OPENROUTER_KEY}</code>. Without a key, heuristic fallbacks still work.
+        </p>
+        <input
+          type="password"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="sk-or-…"
+          className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
+        />
+        <Button
+          onClick={() => {
+            if (apiKey.trim()) localStorage.setItem(OPENROUTER_KEY, apiKey.trim());
+            else localStorage.removeItem(OPENROUTER_KEY);
+            setMessage("OpenRouter key saved locally.");
+          }}
+        >
+          Save API key
+        </Button>
       </Card>
 
       <Card className="space-y-3">

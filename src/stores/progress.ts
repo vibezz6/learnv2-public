@@ -40,8 +40,29 @@ export interface ProgressData {
   dailyMinutes: Record<string, number>;
   levelUpPending: number | null;
   recentlyVisited: Array<{ nodeId: string; visitedAt: number }>;
+  dailyReviews: Record<string, number>;
+  reviewStreak: { current: number; longest: number; lastReviewDate: string | null };
 }
 
+export const MAX_DAILY_REVIEWS = 10;
+
+export type ReviewConfidence = "easy" | "normal" | "hard" | "forgot";
+
+export interface ReviewItem {
+  subject: Subject;
+  node: SkillNode;
+  completedAt: string;
+  daysAgo: number;
+  reviewInterval: number;
+  nextReviewDate: string;
+}
+
+export interface ReviewStats {
+  totalReviews: number;
+  passCount: number;
+  failCount: number;
+  passRate: number;
+}
 export interface Stats {
   totalXp: number;
   level: number;
@@ -79,7 +100,22 @@ function defaultProgress(): ProgressData {
     dailyMinutes: {},
     levelUpPending: null,
     recentlyVisited: [],
+    dailyReviews: {},
+    reviewStreak: { current: 0, longest: 0, lastReviewDate: null },
   };
+}
+
+function scheduleReviewAtIndex(data: ProgressData, nodeId: string, intervalIndex: number) {
+  const interval = SPACED_REPETITION_INTERVALS[intervalIndex];
+  if (!interval) return;
+  const scheduledDate = new Date();
+  scheduledDate.setUTCDate(scheduledDate.getUTCDate() + interval);
+  const dateStr = `${scheduledDate.getUTCFullYear()}-${String(scheduledDate.getUTCMonth() + 1).padStart(2, "0")}-${String(scheduledDate.getUTCDate()).padStart(2, "0")}`;
+  if (!data.spacedRepetition[nodeId]) {
+    data.spacedRepetition[nodeId] = { nodeId, scheduledReviews: [], currentIntervalIndex: 0 };
+  }
+  data.spacedRepetition[nodeId].scheduledReviews.push({ scheduledDate: dateStr, completedDate: null });
+  data.spacedRepetition[nodeId].currentIntervalIndex = intervalIndex;
 }
 
 function scheduleReview(data: ProgressData, nodeId: string, intervalIndex: number) {
@@ -114,6 +150,13 @@ interface ProgressState {
   getContinueTarget: (
     subjects: Subject[],
   ) => { subject: Subject; node: SkillNode } | null;
+  completeReviewWithConfidence: (nodeId: string, confidence: ReviewConfidence) => void;
+  getNodesNeedingReview: (subjects: Subject[]) => ReviewItem[];
+  getDailyReviewItems: (subjects: Subject[]) => ReviewItem[];
+  getDailyReviewCount: () => number;
+  getRemainingReviewCount: (subjects: Subject[]) => number;
+  getReviewStreak: () => ProgressData["reviewStreak"];
+  getReviewStats: () => ReviewStats;
   importFromV1: () => { success: boolean; message: string };
 }
 
@@ -211,12 +254,156 @@ export const useProgress = create<ProgressState>()(
         return null;
       },
 
+      completeReviewWithConfidence: (nodeId, confidence) =>
+        set((state) => {
+          const data = structuredClone(state.data);
+          const item = data.spacedRepetition[nodeId];
+          if (!item) return { data: state.data };
+
+          const pendingReview = item.scheduledReviews
+            .slice()
+            .reverse()
+            .find((r) => r.completedDate === null);
+          if (!pendingReview) return { data: state.data };
+
+          const todayStr = getToday();
+          pendingReview.completedDate = todayStr;
+          data.dailyReviews[todayStr] = (data.dailyReviews[todayStr] || 0) + 1;
+
+          if (data.reviewStreak.lastReviewDate !== todayStr) {
+            const yesterday = new Date();
+            yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+            const yStr = `${yesterday.getUTCFullYear()}-${String(yesterday.getUTCMonth() + 1).padStart(2, "0")}-${String(yesterday.getUTCDate()).padStart(2, "0")}`;
+            if (data.reviewStreak.lastReviewDate === yStr) data.reviewStreak.current += 1;
+            else data.reviewStreak.current = 1;
+            if (data.reviewStreak.current > data.reviewStreak.longest) {
+              data.reviewStreak.longest = data.reviewStreak.current;
+            }
+            data.reviewStreak.lastReviewDate = todayStr;
+          }
+
+          let nextIntervalIndex: number;
+          switch (confidence) {
+            case "easy":
+              nextIntervalIndex = Math.min(item.currentIntervalIndex + 2, SPACED_REPETITION_INTERVALS.length - 1);
+              break;
+            case "normal":
+              nextIntervalIndex = item.currentIntervalIndex + 1;
+              break;
+            case "hard":
+              nextIntervalIndex = item.currentIntervalIndex;
+              break;
+            case "forgot":
+              nextIntervalIndex = 0;
+              break;
+          }
+
+          if (nextIntervalIndex < SPACED_REPETITION_INTERVALS.length) {
+            scheduleReviewAtIndex(data, nodeId, nextIntervalIndex);
+          }
+          return { data };
+        }),
+
+      getNodesNeedingReview: (subjects) => {
+        const d = get().data;
+        const today = getToday();
+        const now = new Date();
+        const items: ReviewItem[] = [];
+
+        for (const [nodeId, srItem] of Object.entries(d.spacedRepetition)) {
+          const pendingReview = srItem.scheduledReviews
+            .slice()
+            .reverse()
+            .find((r) => r.completedDate === null);
+          if (!pendingReview || pendingReview.scheduledDate > today) continue;
+
+          let subject: Subject | undefined;
+          let node: SkillNode | undefined;
+          for (const sub of subjects) {
+            node = sub.nodes.find((n) => n.id === nodeId);
+            if (node) {
+              subject = sub;
+              break;
+            }
+          }
+          if (!subject || !node) continue;
+
+          const prog = get().getNodeProgress(nodeId);
+          if (!prog.completedAt) continue;
+
+          const completedDate = new Date(prog.completedAt);
+          const daysAgo = Math.floor((now.getTime() - completedDate.getTime()) / (1000 * 60 * 60 * 24));
+          const reviewInterval = SPACED_REPETITION_INTERVALS[srItem.currentIntervalIndex] || 0;
+
+          items.push({
+            subject,
+            node,
+            completedAt: prog.completedAt,
+            daysAgo,
+            reviewInterval,
+            nextReviewDate: pendingReview.scheduledDate,
+          });
+        }
+
+        items.sort((a, b) => a.nextReviewDate.localeCompare(b.nextReviewDate));
+        return items;
+      },
+
+      getDailyReviewItems: (subjects) => {
+        const allDue = get().getNodesNeedingReview(subjects);
+        const reviewedToday = get().getDailyReviewCount();
+        const dailyCap = Math.max(0, MAX_DAILY_REVIEWS - reviewedToday);
+        return allDue.slice(0, dailyCap);
+      },
+
+      getDailyReviewCount: () => get().data.dailyReviews[getToday()] || 0,
+
+      getRemainingReviewCount: (subjects) => {
+        const allDue = get().getNodesNeedingReview(subjects);
+        const reviewedToday = get().getDailyReviewCount();
+        const dailyCap = Math.max(0, MAX_DAILY_REVIEWS - reviewedToday);
+        return Math.max(0, allDue.length - dailyCap);
+      },
+
+      getReviewStreak: () => get().data.reviewStreak,
+
+      getReviewStats: () => {
+        const d = get().data;
+        let totalReviews = 0;
+        let passCount = 0;
+        let failCount = 0;
+
+        for (const srItem of Object.values(d.spacedRepetition)) {
+          for (const review of srItem.scheduledReviews) {
+            if (review.completedDate === null) continue;
+            totalReviews++;
+            if (review.completedDate <= review.scheduledDate) passCount++;
+            else failCount++;
+          }
+        }
+
+        return {
+          totalReviews,
+          passCount,
+          failCount,
+          passRate: totalReviews > 0 ? Math.round((passCount / totalReviews) * 100) : 0,
+        };
+      },
+
       importFromV1: () => {
         try {
           const raw = localStorage.getItem(V1_STORAGE_KEY);
           if (!raw) return { success: false, message: "No Learn-v1 progress found in this browser." };
           const parsed = JSON.parse(raw) as ProgressData;
-          set({ data: { ...defaultProgress(), ...parsed, recentlyVisited: parsed.recentlyVisited ?? [] } });
+          set({
+            data: {
+              ...defaultProgress(),
+              ...parsed,
+              recentlyVisited: parsed.recentlyVisited ?? [],
+              dailyReviews: parsed.dailyReviews ?? {},
+              reviewStreak: parsed.reviewStreak ?? { current: 0, longest: 0, lastReviewDate: null },
+            },
+          });
           return { success: true, message: "Imported Learn-v1 progress successfully." };
         } catch {
           return { success: false, message: "Failed to parse Learn-v1 progress data." };

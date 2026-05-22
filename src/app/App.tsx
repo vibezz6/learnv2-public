@@ -6,6 +6,8 @@ import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
 import { LessonPage } from "@/features/lesson/LessonPage";
 import { QuizRoutePage } from "@/features/quiz/QuizRoutePage";
 import { SettingsPage } from "@/features/settings/SettingsPage";
+import { NotesPage } from "@/features/notes/NotesPage";
+import { ReviewPage } from "@/features/review/ReviewPage";
 import { PlaceholderPage } from "@/features/PlaceholderPage";
 
 export function App() {
@@ -18,12 +20,8 @@ export function App() {
           <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
           <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
           <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
-          <Route
-            path="review"
-            element={
-              <PlaceholderPage title="Review" note="SRS queue — Batch 3." />
-            }
-          />
+          <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
+          <Route path="review" element={<ReviewPage />} />
           <Route
             path="stats"
             element={<PlaceholderPage title="Stats" note="Analytics — Batch 4." />}
