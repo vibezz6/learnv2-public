@@ -18,6 +18,7 @@ import { TracksPage } from "@/features/tracks/TracksPage";
 import { CompoundInterestToolPage } from "@/features/tools/CompoundInterestCalculator";
 import { ExpectedValueToolPage } from "@/features/tools/ExpectedValueCalculator";
 import { ToolsPage } from "@/features/tools/ToolsPage";
+import { TradingLabPage } from "@/features/lab/TradingLabPage";
 
 export function App() {
   return (
@@ -40,6 +41,7 @@ export function App() {
             <Route path="tools" element={<ToolsPage />} />
             <Route path="tools/ev" element={<ExpectedValueToolPage />} />
             <Route path="tools/compound" element={<CompoundInterestToolPage />} />
+            <Route path="lab/trading" element={<TradingLabPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
