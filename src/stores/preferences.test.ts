@@ -53,7 +53,7 @@ describe("preferences", () => {
       focusMode: false,
       onboardingCompleted: false,
     });
-    document.documentElement.dataset = {};
+    delete document.documentElement.dataset.theme;
   });
 
   afterEach(() => {

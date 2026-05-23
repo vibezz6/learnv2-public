@@ -1,10 +1,30 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, ExternalLink, FlaskConical, TrendingUp } from "lucide-react";
 import { Badge, Button, Card } from "@/components/ui";
 
 const TRADING_LAB_URL = "http://127.0.0.1:8081";
+const TRADING_API_HEALTH = "http://127.0.0.1:8000/api/health";
+
+type LabStatus = "checking" | "online" | "offline";
 
 export function TradingLabPage() {
+  const [status, setStatus] = useState<LabStatus>("checking");
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch(TRADING_API_HEALTH)
+      .then((r) => {
+        if (!cancelled) setStatus(r.ok ? "online" : "offline");
+      })
+      .catch(() => {
+        if (!cancelled) setStatus("offline");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="mx-auto max-w-lg space-y-6 p-4 md:p-8">
       <section className="stagger-item space-y-3">
@@ -18,6 +38,27 @@ export function TradingLabPage() {
           before you go live.
         </p>
       </section>
+
+      <Card className="stagger-item">
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <span className="text-[var(--text-muted)]">Journal backend</span>
+          {status === "checking" && <Badge className="text-[var(--text-muted)]">Checking…</Badge>}
+          {status === "online" && (
+            <Badge className="border-[var(--success)]/40 text-[var(--success)]">Online</Badge>
+          )}
+          {status === "offline" && (
+            <Badge className="border-[var(--error)]/40 text-[var(--error)]">Offline</Badge>
+          )}
+        </div>
+        {status === "offline" && (
+          <p className="mt-2 text-xs text-[var(--text-muted)]">
+            Start tradingv1:{" "}
+            <code className="rounded bg-[var(--bg-muted)] px-1 py-0.5">
+              ~/liqui/projects/tradingv1/scripts/dev.sh
+            </code>
+          </p>
+        )}
+      </Card>
 
       <div className="stagger-item space-y-3">
         <Link to="/subjects/trading" className="block">
@@ -42,9 +83,9 @@ export function TradingLabPage() {
             <FlaskConical size={20} className="text-[var(--accent)]" />
             <div className="min-w-0 flex-1 space-y-3">
               <div className="space-y-1">
-                <div className="font-semibold text-[var(--text-heading)]">Open Trading Lab</div>
+                <div className="font-semibold text-[var(--text-heading)]">Open Trading v1</div>
                 <p className="text-sm text-[var(--text-muted)]">
-                  Launch the local lab app for charts, orders, and scenario replay.
+                  Journal, equity curve, screenshots, CSV import — localhost:8081.
                 </p>
               </div>
               <a
@@ -53,7 +94,11 @@ export function TradingLabPage() {
                 rel="noopener noreferrer"
                 className="inline-flex"
               >
-                <Button variant="secondary" className="gap-2">
+                <Button
+                  variant="secondary"
+                  className="gap-2"
+                  disabled={status === "offline"}
+                >
                   Open lab
                   <ExternalLink size={14} />
                 </Button>
