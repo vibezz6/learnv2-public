@@ -101,7 +101,7 @@ export function NotesPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full min-w-0 max-w-3xl space-y-4 overflow-x-hidden px-3 py-4 sm:p-4 md:p-8">
+      <div className="mx-auto w-full min-w-0 max-w-3xl space-y-8 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-10 md:p-8">
         <div className="h-4 w-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
         <Card className="space-y-3">
           <div className="h-5 w-2/3 animate-pulse rounded bg-[var(--bg-elevated)]" />
@@ -132,8 +132,8 @@ export function NotesPage() {
   const stepIndex = STEPS.findIndex((s) => s.id === view);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-6 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:p-4 md:p-8">
-      <div className="space-y-4 border-b border-[var(--border)] pb-4 sm:pb-5">
+    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-8 overflow-x-hidden px-3 py-4 pb-24 sm:p-4 sm:pb-4 md:space-y-10 md:p-8">
+      <div className="space-y-4 border-b border-[var(--border)] pb-6">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
           <Link
             to={lessonPath}
@@ -146,8 +146,13 @@ export function NotesPage() {
           <span className="min-w-0 break-words text-sm text-[var(--text-muted)]">{node.name}</span>
         </div>
 
-        <div>
-          <h1 className="text-lg font-semibold tracking-tight text-[var(--text-heading)] sm:text-xl">Guided notes</h1>
+        <div className="space-y-2">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
+            Notes · {subject.name}
+          </p>
+          <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
+            Guided notes
+          </h1>
           <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
             Write → get AI feedback → test yourself with mentor questions.
           </p>
@@ -172,16 +177,16 @@ export function NotesPage() {
               <div key={step.id} className="flex shrink-0 items-center gap-1 sm:gap-2">
                 {idx > 0 && (
                   <div
-                    className={`h-px w-4 shrink-0 sm:w-6 ${done || active ? "bg-[var(--accent)]/40" : "bg-[var(--border)]"}`}
+                    className={`h-px w-4 shrink-0 sm:w-6 ${done || active ? "bg-[var(--border-strong)]" : "bg-[var(--border)]"}`}
                   />
                 )}
                 <button
                   type="button"
                   disabled={!unlocked}
                   onClick={() => goTo(step.id)}
-                  className={`flex min-h-11 shrink-0 touch-manipulation items-center gap-1.5 rounded-[var(--radius)] px-2.5 py-2 text-sm transition sm:gap-2 sm:px-3 ${
+                  className={`flex min-h-11 shrink-0 touch-manipulation items-center gap-1.5 rounded-[var(--radius)] border border-transparent px-2.5 py-2 text-sm transition sm:gap-2 sm:px-3 ${
                     active
-                      ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+                      ? "border-[var(--accent)] bg-transparent text-[var(--text-heading)]"
                       : unlocked
                         ? "text-[var(--text)] hover:bg-white/5"
                         : "cursor-not-allowed text-[var(--text-muted)] opacity-50"
@@ -197,9 +202,9 @@ export function NotesPage() {
                   <span
                     className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold ${
                       done
-                        ? "bg-[var(--accent)] text-[#041410]"
+                        ? "bg-[var(--text-heading)] text-[var(--bg)]"
                         : active
-                          ? "border border-[var(--accent)] text-[var(--accent)]"
+                          ? "border border-[var(--accent)] text-[var(--text-heading)]"
                           : "border border-[var(--border)] text-[var(--text-muted)]"
                     }`}
                   >
@@ -304,22 +309,24 @@ function NoteEditor({
   };
 
   return (
-    <div className="space-y-4 pb-24 sm:pb-0">
+    <div className="space-y-6 pb-24 sm:pb-0">
       <Card className="min-w-0">
-        <div className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-[var(--accent)]">
+        <div className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-[var(--text-muted)]">
           <BookOpen size={18} className="shrink-0" />
-          <span className="min-w-0 break-words font-medium">{node.name}</span>
+          <span className="min-w-0 break-words font-mono text-[11px] uppercase tracking-widest">
+            {node.name}
+          </span>
           <Badge className="shrink-0">{filledCount}/{prompts.length} answered</Badge>
         </div>
 
         <div className="mb-4">
-          <div className="mb-1 flex justify-between text-xs text-[var(--text-muted)]">
+          <div className="mb-1 flex justify-between font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
             <span>Progress</span>
-            <span>{progressPct}%</span>
+            <span className="tabular-nums">{progressPct}%</span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
             <div
-              className="h-full rounded-full bg-[var(--accent)] transition-all duration-300"
+              className="h-full rounded-full bg-[var(--border-strong)] transition-all duration-300"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -333,13 +340,13 @@ function NoteEditor({
                 key={prompt.key}
                 type="button"
                 onClick={() => setActiveIndex(idx)}
-                className={`inline-flex min-h-11 shrink-0 touch-manipulation items-center gap-1.5 rounded-[var(--radius)] px-3 py-2 text-xs font-medium transition sm:py-1.5 ${
+                className={`inline-flex min-h-11 shrink-0 touch-manipulation items-center gap-1.5 rounded-[var(--radius)] border border-transparent px-3 py-2 text-xs font-medium transition sm:py-1.5 ${
                   idx === activeIndex
-                    ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+                    ? "border-[var(--accent)] bg-transparent text-[var(--text-heading)]"
                     : "text-[var(--text-muted)] hover:bg-white/5"
                 }`}
               >
-                {filled && <Check size={12} className="text-[var(--accent)]" />}
+                {filled && <Check size={12} className="text-[var(--text-heading)]" />}
                 {prompt.label}
               </button>
             );
@@ -483,7 +490,7 @@ function NoteReviewPanel({
   if (!review) {
     return (
       <Card className="space-y-4 text-center">
-        <Sparkles className="mx-auto text-[var(--accent)]" size={32} />
+        <Sparkles className="mx-auto text-[var(--text-muted)]" size={32} />
         <h2 className="text-xl font-semibold text-[var(--text-heading)]">Ready for AI review</h2>
         <p className="text-sm text-[var(--text-muted)]">
           {hasOpenRouterKey()
@@ -511,9 +518,12 @@ function NoteReviewPanel({
   }
 
   return (
-    <div className="space-y-4">
-      <Card className="text-center">
-        <div className="text-4xl font-bold text-[var(--accent)]">{review.score}</div>
+    <div className="space-y-6">
+      <Card variant="quiet" className="text-center">
+        <div className="font-mono text-4xl font-semibold tabular-nums text-[var(--text-heading)]">
+          {review.score}
+          <span className="ml-1 text-sm font-medium text-[var(--text-muted)]">/100</span>
+        </div>
         <p className="mt-1 text-sm text-[var(--text-muted)]">{subject.name} · {node.name}</p>
         <p className="mt-2 text-xs text-[var(--text-muted)]">
           {hasOpenRouterKey() ? "AI-powered review" : "Offline heuristic review"}
@@ -562,8 +572,10 @@ function ReviewSection({
   numbered?: boolean;
 }) {
   return (
-    <Card>
-      <h3 className="mb-2 break-words font-semibold text-[var(--text-heading)]">{title}</h3>
+    <Card variant="quiet">
+      <h3 className="mb-3 break-words font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
+        {title}
+      </h3>
       {items.length === 0 ? (
         emptyHint && <p className="text-sm text-[var(--text-muted)]">{emptyHint}</p>
       ) : (
@@ -571,9 +583,9 @@ function ReviewSection({
           {items.map((item, i) => (
             <li key={`${title}-${i}`} className="flex gap-2">
               {numbered ? (
-                <span className="mt-0.5 shrink-0 font-mono text-xs text-[var(--accent)]">{i + 1}.</span>
+                <span className="mt-0.5 shrink-0 font-mono text-xs text-[var(--text-heading)]">{i + 1}.</span>
               ) : (
-                <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[var(--accent)]" />
+                <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
               )}
               <span className="min-w-0 break-words">{item}</span>
             </li>
@@ -679,7 +691,7 @@ function NoteMentorPanel({
   if (!mentorSession) {
     return (
       <Card className="space-y-4 text-center">
-        <GraduationCap className="mx-auto text-[var(--accent)]" size={32} />
+        <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
         <h2 className="text-xl font-semibold text-[var(--text-heading)]">Mentor quiz</h2>
         <p className="text-sm text-[var(--text-muted)]">
           {node.name} · {subject.name}
@@ -710,7 +722,7 @@ function NoteMentorPanel({
     return (
       <Card className="space-y-4">
         <div className="text-center">
-          <CheckCircle2 className="mx-auto text-[var(--accent)]" size={32} />
+          <CheckCircle2 className="mx-auto text-[var(--text-muted)]" size={32} />
           <h2 className="mt-2 text-xl font-semibold text-[var(--text-heading)]">Quiz complete</h2>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
             {solidCount} of {mentorSession.messages.length} answers rated solid or excellent.
@@ -725,7 +737,7 @@ function NoteMentorPanel({
               </div>
               <p className="text-[var(--text-muted)]">{msg.question}</p>
               <p className="mt-2 text-[var(--text)]">{msg.answer}</p>
-              <p className="mt-2 text-[var(--accent)]">{msg.feedback}</p>
+              <p className="mt-2 text-[var(--text-muted)]">{msg.feedback}</p>
             </div>
           ))}
         </div>
@@ -755,12 +767,12 @@ function NoteMentorPanel({
   }
 
   return (
-    <Card className="space-y-4">
+    <Card className="space-y-5">
       <div className="flex items-center justify-between text-sm text-[var(--text-muted)]">
         <span>Question {index + 1} of {mentorSession.questions.length}</span>
         <div className="h-1 w-24 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
           <div
-            className="h-full rounded-full bg-[var(--accent)] transition-all"
+            className="h-full rounded-full bg-[var(--border-strong)] transition-all"
             style={{ width: `${((index + 1) / mentorSession.questions.length) * 100}%` }}
           />
         </div>
@@ -771,13 +783,13 @@ function NoteMentorPanel({
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        rows={5}
+        rows={6}
         disabled={evaluating}
-        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-base leading-relaxed outline-none focus:border-[var(--accent)] disabled:opacity-60 sm:text-sm"
+        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/40 p-4 text-base leading-relaxed outline-none focus:border-[var(--border-strong)] disabled:opacity-60 sm:text-sm"
         placeholder="Type your answer in 2–4 sentences…"
       />
       {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
-      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating} className="min-h-11 w-full sm:w-auto">
+      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating} className="min-h-12 w-full">
         {evaluating ? (
           <>
             <Loader2 size={16} className="animate-spin" />

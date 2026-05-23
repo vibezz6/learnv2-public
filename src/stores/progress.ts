@@ -6,6 +6,7 @@ import {
   mergeBookmarksFromV1,
   mergeLegacyNotes,
   mergeTakeawaysFromV1,
+  migrateAchievementsFromV1,
   migrateThemeFromV1,
   normalizeV1Progress,
   verifySrsDates,
@@ -35,7 +36,7 @@ export interface NodeProgress {
 
 export interface SpacedRepetitionItem {
   nodeId: string;
-  scheduledReviews: Array<{ scheduledDate: string; completedDate: string | null }>;
+  scheduledReviews: Array<{ scheduledDate: string; completedDate: string | null; confidence?: ReviewConfidence }>;
   currentIntervalIndex: number;
 }
 
@@ -55,6 +56,7 @@ export interface ProgressData {
 }
 
 export const MAX_DAILY_REVIEWS = 10;
+const DAILY_RETENTION_DAYS = 90;
 
 export type ReviewConfidence = "easy" | "normal" | "hard" | "forgot";
 
@@ -117,6 +119,164 @@ function defaultProgress(): ProgressData {
     reviewStreak: { current: 0, longest: 0, lastReviewDate: null },
     dailyChallenges: {},
   };
+}
+
+function isEmptyProgress(data: ProgressData): boolean {
+  return Object.keys(data.nodes).length === 0 && data.totalXp === 0;
+}
+
+function latestDate(a: string | null, b: string | null): string | null {
+  if (!a) return b;
+  if (!b) return a;
+  return a > b ? a : b;
+}
+
+function uniqueBy<T>(items: T[], getKey: (item: T) => string): T[] {
+  const seen = new Set<string>();
+  const unique: T[] = [];
+  for (const item of items) {
+    const key = getKey(item);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(item);
+  }
+  return unique;
+}
+
+function mergeNumberRecords(
+  current: Record<string, number>,
+  incoming: Record<string, number>,
+): Record<string, number> {
+  const merged = { ...current };
+  for (const [key, value] of Object.entries(incoming)) {
+    merged[key] = Math.max(merged[key] ?? 0, value);
+  }
+  return merged;
+}
+
+function mergeProgressData(current: ProgressData, incoming: ProgressData): ProgressData {
+  if (isEmptyProgress(current)) {
+    const merged = { ...defaultProgress(), ...incoming };
+    pruneDailyMaps(merged);
+    return merged;
+  }
+
+  const nodes = { ...current.nodes };
+  for (const [nodeId, incomingNode] of Object.entries(incoming.nodes)) {
+    const currentNode = nodes[nodeId] ?? emptyNodeProgress();
+    nodes[nodeId] = {
+      completedAt: currentNode.completedAt ?? incomingNode.completedAt,
+      startedAt: currentNode.startedAt ?? incomingNode.startedAt,
+      timeSpentMinutes: Math.max(currentNode.timeSpentMinutes, incomingNode.timeSpentMinutes),
+      quizScores: uniqueBy([...currentNode.quizScores, ...incomingNode.quizScores], String),
+      quizHistory: uniqueBy(
+        [...currentNode.quizHistory, ...incomingNode.quizHistory],
+        (attempt) => JSON.stringify(attempt),
+      ),
+    };
+  }
+
+  const spacedRepetition = { ...current.spacedRepetition };
+  for (const [nodeId, incomingItem] of Object.entries(incoming.spacedRepetition)) {
+    const currentItem = spacedRepetition[nodeId];
+    spacedRepetition[nodeId] = currentItem
+      ? {
+          nodeId,
+          currentIntervalIndex: Math.max(currentItem.currentIntervalIndex, incomingItem.currentIntervalIndex),
+          scheduledReviews: uniqueBy(
+            [...currentItem.scheduledReviews, ...incomingItem.scheduledReviews],
+            (review) => `${review.scheduledDate}:${review.completedDate ?? ""}:${review.confidence ?? ""}`,
+          ),
+        }
+      : incomingItem;
+  }
+
+  const merged = {
+    ...current,
+    nodes,
+    spacedRepetition,
+    totalXp: Math.max(current.totalXp, incoming.totalXp),
+    totalStudyMinutes: Math.max(current.totalStudyMinutes, incoming.totalStudyMinutes),
+    streaks: {
+      current: Math.max(current.streaks.current, incoming.streaks.current),
+      longest: Math.max(current.streaks.longest, incoming.streaks.longest),
+      lastStudyDate: latestDate(current.streaks.lastStudyDate, incoming.streaks.lastStudyDate),
+    },
+    dailyGoal: current.dailyGoal || incoming.dailyGoal,
+    dailyMinutes: mergeNumberRecords(current.dailyMinutes, incoming.dailyMinutes),
+    levelUpPending: current.levelUpPending ?? incoming.levelUpPending,
+    recentlyVisited: uniqueBy(
+      [...current.recentlyVisited, ...incoming.recentlyVisited].sort((a, b) => b.visitedAt - a.visitedAt),
+      (visit) => visit.nodeId,
+    ).slice(0, 10),
+    dailyReviews: mergeNumberRecords(current.dailyReviews, incoming.dailyReviews),
+    reviewStreak: {
+      current: Math.max(current.reviewStreak.current, incoming.reviewStreak.current),
+      longest: Math.max(current.reviewStreak.longest, incoming.reviewStreak.longest),
+      lastReviewDate: latestDate(current.reviewStreak.lastReviewDate, incoming.reviewStreak.lastReviewDate),
+    },
+    dailyChallenges: { ...incoming.dailyChallenges, ...current.dailyChallenges },
+  };
+  pruneDailyMaps(merged);
+  return merged;
+}
+
+function isBackupKeyAllowed(key: string): boolean {
+  return (key.startsWith("learnv2_") || key.startsWith("learnapp_")) && !key.endsWith("_openrouter_key");
+}
+
+function isManagedStorageKey(key: string): boolean {
+  return key.startsWith("learnv2_") || key.startsWith("learnapp_");
+}
+
+function toDateString(date: Date): string {
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+}
+
+function addUtcDays(date: Date, days: number): Date {
+  const next = new Date(date);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next;
+}
+
+function yesterdayString(): string {
+  return toDateString(addUtcDays(new Date(), -1));
+}
+
+function resolveCurrentStudyStreak(streaks: ProgressData["streaks"]): number {
+  if (!streaks.lastStudyDate) return 0;
+  const today = getToday();
+  if (streaks.lastStudyDate === today || streaks.lastStudyDate === yesterdayString()) return streaks.current;
+  return 0;
+}
+
+function pruneDailyMaps(data: ProgressData) {
+  const cutoff = toDateString(addUtcDays(new Date(), -DAILY_RETENTION_DAYS));
+  data.dailyMinutes = Object.fromEntries(Object.entries(data.dailyMinutes).filter(([date]) => date >= cutoff));
+  data.dailyReviews = Object.fromEntries(Object.entries(data.dailyReviews).filter(([date]) => date >= cutoff));
+  data.dailyChallenges = Object.fromEntries(Object.entries(data.dailyChallenges).filter(([key]) => key.slice(0, 10) >= cutoff));
+}
+
+function getEarliestPendingReview(item: SpacedRepetitionItem) {
+  return item.scheduledReviews.filter((review) => review.completedDate === null).sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate))[0];
+}
+
+function reschedulePendingReview(data: ProgressData, nodeId: string, intervalIndex: number) {
+  const nodeProgress = data.nodes[nodeId];
+  let adjustedIndex = intervalIndex;
+  if (nodeProgress?.quizScores.length) {
+    const avg = nodeProgress.quizScores.reduce((a, b) => a + b, 0) / nodeProgress.quizScores.length;
+    if (avg >= 80) adjustedIndex = Math.min(intervalIndex + 1, SPACED_REPETITION_INTERVALS.length - 1);
+    else if (avg < 60) adjustedIndex = Math.max(intervalIndex - 1, 0);
+  }
+  const interval = SPACED_REPETITION_INTERVALS[adjustedIndex];
+  if (!interval) return;
+  const dateStr = toDateString(addUtcDays(new Date(), interval));
+  if (!data.spacedRepetition[nodeId]) data.spacedRepetition[nodeId] = { nodeId, scheduledReviews: [], currentIntervalIndex: 0 };
+  const pendingReview = getEarliestPendingReview(data.spacedRepetition[nodeId]);
+  if (pendingReview) pendingReview.scheduledDate = dateStr;
+  else data.spacedRepetition[nodeId].scheduledReviews.push({ scheduledDate: dateStr, completedDate: null });
+  data.spacedRepetition[nodeId].currentIntervalIndex = adjustedIndex;
 }
 
 function scheduleReviewAtIndex(data: ProgressData, nodeId: string, intervalIndex: number) {
@@ -239,6 +399,9 @@ export const useProgress = create<ProgressState>()(
           if (!data.nodes[nodeId]) data.nodes[nodeId] = emptyNodeProgress();
           data.nodes[nodeId].quizHistory.push(attempt);
           data.nodes[nodeId].quizScores.push(attempt.score);
+          if (data.nodes[nodeId].completedAt) {
+            reschedulePendingReview(data, nodeId, data.spacedRepetition[nodeId]?.currentIntervalIndex ?? 0);
+          }
           return { data };
         }),
 
@@ -258,7 +421,7 @@ export const useProgress = create<ProgressState>()(
           xpToNext: 500 - (d.totalXp % 500),
           completedNodes,
           totalNodes,
-          streakCurrent: d.streaks.current,
+          streakCurrent: resolveCurrentStudyStreak(d.streaks),
           streakLongest: d.streaks.longest,
           totalStudyMinutes: d.totalStudyMinutes,
           dailyGoal: d.dailyGoal,
@@ -271,7 +434,7 @@ export const useProgress = create<ProgressState>()(
         const recent = get().data.recentlyVisited[0];
         if (recent) {
           const found = findNodeAcrossSubjects(subjects, recent.nodeId);
-          if (found && get().getNodeStatus(found.node) !== "locked") return found;
+          if (found && get().getNodeStatus(found.node) === "available") return found;
         }
         for (const subject of subjects) {
           for (const node of subject.nodes) {
@@ -287,21 +450,16 @@ export const useProgress = create<ProgressState>()(
           const item = data.spacedRepetition[nodeId];
           if (!item) return { data: state.data };
 
-          const pendingReview = item.scheduledReviews
-            .slice()
-            .reverse()
-            .find((r) => r.completedDate === null);
+          const pendingReview = getEarliestPendingReview(item);
           if (!pendingReview) return { data: state.data };
 
           const todayStr = getToday();
           pendingReview.completedDate = todayStr;
+          pendingReview.confidence = confidence;
           data.dailyReviews[todayStr] = (data.dailyReviews[todayStr] || 0) + 1;
 
           if (data.reviewStreak.lastReviewDate !== todayStr) {
-            const yesterday = new Date();
-            yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-            const yStr = `${yesterday.getUTCFullYear()}-${String(yesterday.getUTCMonth() + 1).padStart(2, "0")}-${String(yesterday.getUTCDate()).padStart(2, "0")}`;
-            if (data.reviewStreak.lastReviewDate === yStr) data.reviewStreak.current += 1;
+            if (data.reviewStreak.lastReviewDate === yesterdayString()) data.reviewStreak.current += 1;
             else data.reviewStreak.current = 1;
             if (data.reviewStreak.current > data.reviewStreak.longest) {
               data.reviewStreak.longest = data.reviewStreak.current;
@@ -315,7 +473,7 @@ export const useProgress = create<ProgressState>()(
               nextIntervalIndex = Math.min(item.currentIntervalIndex + 2, SPACED_REPETITION_INTERVALS.length - 1);
               break;
             case "normal":
-              nextIntervalIndex = item.currentIntervalIndex + 1;
+              nextIntervalIndex = Math.min(item.currentIntervalIndex + 1, SPACED_REPETITION_INTERVALS.length - 1);
               break;
             case "hard":
               nextIntervalIndex = item.currentIntervalIndex;
@@ -325,9 +483,8 @@ export const useProgress = create<ProgressState>()(
               break;
           }
 
-          if (nextIntervalIndex < SPACED_REPETITION_INTERVALS.length) {
-            scheduleReviewAtIndex(data, nodeId, nextIntervalIndex);
-          }
+          scheduleReviewAtIndex(data, nodeId, nextIntervalIndex);
+          pruneDailyMaps(data);
           return { data };
         }),
 
@@ -338,10 +495,7 @@ export const useProgress = create<ProgressState>()(
         const items: ReviewItem[] = [];
 
         for (const [nodeId, srItem] of Object.entries(d.spacedRepetition)) {
-          const pendingReview = srItem.scheduledReviews
-            .slice()
-            .reverse()
-            .find((r) => r.completedDate === null);
+          const pendingReview = getEarliestPendingReview(srItem);
           if (!pendingReview || pendingReview.scheduledDate > today) continue;
 
           let subject: Subject | undefined;
@@ -420,10 +574,10 @@ export const useProgress = create<ProgressState>()(
 
         for (const srItem of Object.values(d.spacedRepetition)) {
           for (const review of srItem.scheduledReviews) {
-            if (review.completedDate === null) continue;
+            if (review.completedDate === null || !review.confidence) continue;
             totalReviews++;
-            if (review.completedDate <= review.scheduledDate) passCount++;
-            else failCount++;
+            if (review.confidence === "forgot") failCount++;
+            else passCount++;
           }
         }
 
@@ -453,16 +607,14 @@ export const useProgress = create<ProgressState>()(
             data.nodes[nodeId].timeSpentMinutes += minutes;
           }
           if (data.streaks.lastStudyDate !== today) {
-            const yesterday = new Date();
-            yesterday.setUTCDate(yesterday.getUTCDate() - 1);
-            const yStr = `${yesterday.getUTCFullYear()}-${String(yesterday.getUTCMonth() + 1).padStart(2, "0")}-${String(yesterday.getUTCDate()).padStart(2, "0")}`;
-            if (data.streaks.lastStudyDate === yStr) data.streaks.current += 1;
+            if (data.streaks.lastStudyDate === yesterdayString()) data.streaks.current += 1;
             else data.streaks.current = 1;
             if (data.streaks.current > data.streaks.longest) {
               data.streaks.longest = data.streaks.current;
             }
             data.streaks.lastStudyDate = today;
           }
+          pruneDailyMaps(data);
           return { data };
         }),
 
@@ -482,6 +634,7 @@ export const useProgress = create<ProgressState>()(
             const newLevel = Math.floor(data.totalXp / 500) + 1;
             if (newLevel > oldLevel) data.levelUpPending = newLevel;
           }
+          pruneDailyMaps(data);
           return { data };
         }),
 
@@ -489,7 +642,7 @@ export const useProgress = create<ProgressState>()(
         const keys: Record<string, string | null> = {};
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && (key.startsWith("learnv2_") || key.startsWith("learnapp_"))) {
+          if (key && isBackupKeyAllowed(key)) {
             keys[key] = localStorage.getItem(key);
           }
         }
@@ -498,16 +651,27 @@ export const useProgress = create<ProgressState>()(
 
       importData: (json) => {
         try {
-          const parsed = JSON.parse(json) as { version?: number; keys: Record<string, string | null> };
-          if (!parsed.keys) return { success: false, error: "Invalid export format." };
+          const parsed = JSON.parse(json) as { version?: number; keys?: Record<string, unknown> };
+          if (parsed.version !== 2) return { success: false, error: "Unsupported export version." };
+          if (!parsed.keys || typeof parsed.keys !== "object") return { success: false, error: "Invalid export format." };
           for (const [key, value] of Object.entries(parsed.keys)) {
+            if (!isManagedStorageKey(key)) return { success: false, error: `Unsupported storage key: ${key}` };
+            if (!isBackupKeyAllowed(key)) continue;
+            if (value !== null && typeof value !== "string") return { success: false, error: "Invalid export format." };
+          }
+          for (const [key, value] of Object.entries(parsed.keys)) {
+            if (!isBackupKeyAllowed(key)) continue;
             if (value === null) localStorage.removeItem(key);
-            else localStorage.setItem(key, value);
+            else if (typeof value === "string") localStorage.setItem(key, value);
           }
           const raw = localStorage.getItem(V2_STORAGE_KEY);
           if (raw) {
             const data = JSON.parse(raw) as { state?: { data?: ProgressData } };
-            if (data.state?.data) set({ data: { ...defaultProgress(), ...data.state.data } });
+            if (data.state?.data) {
+              const imported = { ...defaultProgress(), ...data.state.data };
+              pruneDailyMaps(imported);
+              set({ data: imported });
+            }
           }
           return { success: true };
         } catch {
@@ -515,7 +679,17 @@ export const useProgress = create<ProgressState>()(
         }
       },
 
-      resetProgress: () => set({ data: defaultProgress() }),
+      resetProgress: () => {
+        if (typeof localStorage !== "undefined") {
+          const keysToRemove: string[] = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && isManagedStorageKey(key)) keysToRemove.push(key);
+          }
+          for (const key of keysToRemove) localStorage.removeItem(key);
+        }
+        set({ data: defaultProgress() });
+      },
 
       clearLevelUpPending: () =>
         set((state) => ({
@@ -529,12 +703,7 @@ export const useProgress = create<ProgressState>()(
           const parsed = normalizeV1Progress(
             JSON.parse(raw) as Record<string, unknown>,
           ) as unknown as ProgressData;
-          set({
-            data: {
-              ...defaultProgress(),
-              ...parsed,
-            },
-          });
+          set((state) => ({ data: mergeProgressData(state.data, parsed) }));
           return { success: true, message: "Imported Learn-v1 progress successfully." };
         } catch {
           return { success: false, message: "Failed to parse Learn-v1 progress data." };
@@ -546,6 +715,7 @@ export const useProgress = create<ProgressState>()(
         const notesMerged = mergeLegacyNotes();
         const takeawaysMerged = mergeTakeawaysFromV1();
         const { resourceMerged, lessonMerged } = mergeBookmarksFromV1();
+        const achievementsMerged = migrateAchievementsFromV1();
         const themeMigrated = migrateThemeFromV1(localStorage, { force: true });
         const srsDatesPreserved = verifySrsDates();
 
@@ -557,6 +727,7 @@ export const useProgress = create<ProgressState>()(
           parts.push(`${resourceMerged + lessonMerged} bookmarks`);
         }
         if (themeMigrated) parts.push("theme");
+        if (achievementsMerged > 0) parts.push(`${achievementsMerged} achievements`);
 
         const success =
           progressResult.success ||
@@ -564,6 +735,7 @@ export const useProgress = create<ProgressState>()(
           takeawaysMerged > 0 ||
           resourceMerged > 0 ||
           lessonMerged > 0 ||
+          achievementsMerged > 0 ||
           themeMigrated;
         const message = success
           ? `Migration complete: ${parts.join(", ") || "shared keys already present"}.`
@@ -580,6 +752,7 @@ export const useProgress = create<ProgressState>()(
             srsDatesPreserved,
             resourceBookmarksMerged: resourceMerged,
             lessonBookmarksMerged: lessonMerged,
+            achievementsMerged,
           },
         };
       },

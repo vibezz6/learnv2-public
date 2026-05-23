@@ -1,6 +1,7 @@
 export interface SavedQuizProgress {
   current: number;
   answers: (number | null)[];
+  questionCount: number;
   timestamp: number;
   startTime?: number;
 }
@@ -15,13 +16,16 @@ function parseSavedProgress(raw: string, questionCount: number): SavedQuizProgre
   const parsed = JSON.parse(raw) as Partial<SavedQuizProgress> & { currentIndex?: number };
   const current = parsed.current ?? parsed.currentIndex;
   const answers = parsed.answers;
+  const savedQuestionCount = parsed.questionCount;
   const timestamp = parsed.timestamp;
 
   if (
     typeof current !== "number" ||
     !Array.isArray(answers) ||
+    typeof savedQuestionCount !== "number" ||
     typeof timestamp !== "number" ||
-    answers.length !== questionCount ||
+    savedQuestionCount !== questionCount ||
+    answers.length !== savedQuestionCount ||
     current < 0 ||
     current >= questionCount
   ) {
@@ -35,6 +39,7 @@ function parseSavedProgress(raw: string, questionCount: number): SavedQuizProgre
   return {
     current,
     answers,
+    questionCount: savedQuestionCount,
     timestamp,
     startTime: typeof parsed.startTime === "number" ? parsed.startTime : timestamp,
   };
@@ -56,10 +61,14 @@ export function saveQuizProgress(
   nodeId: string,
   progress: Pick<SavedQuizProgress, "current" | "answers" | "startTime">,
 ): void {
+  const questionCount = progress.answers.length;
+  if (!questionCount || progress.current < 0 || progress.current >= questionCount) return;
+
   try {
     const payload: SavedQuizProgress = {
       current: progress.current,
       answers: progress.answers,
+      questionCount,
       timestamp: Date.now(),
       startTime: progress.startTime,
     };
@@ -78,6 +87,16 @@ export function clearQuizProgress(nodeId: string): void {
 }
 
 export function restoreQuizSession(nodeId: string, questionCount: number) {
+  if (!questionCount) {
+    return {
+      current: -1,
+      selected: null as number | null,
+      answered: false,
+      answers: [] as (number | null)[],
+      startTime: Date.now(),
+    };
+  }
+
   const saved = loadQuizProgress(nodeId, questionCount);
   if (!saved) {
     return {

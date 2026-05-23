@@ -101,6 +101,34 @@ describe("noteSessions flow helpers", () => {
     expect(getInitialNotesView("n3")).toBe("mentor");
   });
 
+  it("getInitialNotesView resumes review when mentor quiz is completed", () => {
+    upsertSession({
+      nodeId: "n5",
+      subjectId: "math",
+      responses: { a: "notes" },
+      review: {
+        score: 80,
+        strengths: [],
+        gaps: [],
+        suggestions: [],
+        deeperQuestions: [],
+        generatedAt: 1,
+        completedAt: null,
+      },
+      mentorSession: {
+        questions: ["Q1"],
+        messages: [{ question: "Q1", answer: "A1", feedback: "Good", quality: "solid" }],
+        startedAt: 1,
+        completedAt: 2,
+      },
+      tags: [],
+      createdAt: 1,
+      updatedAt: 1,
+    });
+
+    expect(getInitialNotesView("n5")).toBe("review");
+  });
+
   it("clearMentorSession removes mentor data", () => {
     upsertSession({
       nodeId: "n4",

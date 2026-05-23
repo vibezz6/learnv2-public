@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, memo, type ReactNode } from 'react';
 import { ChevronDown, ChevronUp, ChevronRight, Eye, EyeOff, Lightbulb, BookOpen, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { Badge, Card } from '@/components/ui';
 
 const touchTarget =
   'inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius)] px-4 text-sm font-medium transition touch-manipulation';
@@ -8,7 +9,7 @@ const touchTarget =
 const btnStyles = {
   primary: cn(
     touchTarget,
-    'bg-[var(--accent)] text-[#041410] hover:brightness-110 shadow-[var(--accent-glow)]',
+    'bg-[var(--accent)] text-[var(--accent-fg)] hover:brightness-110',
   ),
   secondary: cn(
     touchTarget,
@@ -34,15 +35,25 @@ const CollapsibleSection = memo(function CollapsibleSection({
   icon,
   count,
   defaultOpen = true,
-  accentColor,
   children,
 }: CollapsibleSectionProps) {
-  const storageKey = `learnapp_section_collapsed_v1_${id}`;
+  const storageKey = `learnv2_section_collapsed_${id}`;
+  const legacyStorageKey = `learnapp_section_collapsed_v1_${id}`;
   const [isOpen, setIsOpen] = useState<boolean>(() => {
     try {
       const stored = localStorage.getItem(storageKey);
+      if (stored !== null) {
+        // stored='true' means collapsed, stored='false' means open
+        return stored !== 'true';
+      }
+      const legacyStored = localStorage.getItem(legacyStorageKey);
+      if (legacyStored !== null) {
+        localStorage.setItem(storageKey, legacyStored);
+        localStorage.removeItem(legacyStorageKey);
+        return legacyStored !== 'true';
+      }
       // stored='true' means collapsed, stored='false' or null means open
-      return stored !== null ? stored !== 'true' : defaultOpen;
+      return defaultOpen;
     } catch {
       return defaultOpen;
     }
@@ -92,27 +103,15 @@ const CollapsibleSection = memo(function CollapsibleSection({
 
   const toggle = useCallback(() => setIsOpen(prev => !prev), []);
 
-  const accent = accentColor || 'var(--accent)';
-
   return (
-    <div
-      className="mb-3 min-w-0 overflow-hidden"
-      style={{
-        borderLeft: `3px solid ${accent}`,
-        background: 'var(--bg-card)',
-        borderRadius: 'var(--radius)',
-        boxShadow: 'var(--shadow-sm)',
-      }}
-    >
+    <Card className="mb-3 min-w-0 overflow-hidden p-0">
       <div
         id={`section-header-${id}`}
         onClick={toggle}
-        className="flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-3 py-3 sm:px-4"
-        style={{
-          transition: 'background 0.15s ease, border-color 0.15s ease',
-          background: isOpen ? `color-mix(in srgb, ${accent} 5%, var(--bg-card))` : 'transparent',
-          borderBottom: isOpen ? '1px solid var(--border)' : '1px solid transparent',
-        }}
+        className={cn(
+          'flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-6 py-4 transition-colors hover:bg-[var(--bg-hover)]',
+          isOpen && 'border-b border-[var(--border)]',
+        )}
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
@@ -123,45 +122,20 @@ const CollapsibleSection = memo(function CollapsibleSection({
             toggle();
           }
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = isOpen
-            ? `color-mix(in srgb, ${accent} 8%, var(--bg-card))`
-            : 'var(--bg-hover)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = isOpen
-            ? `color-mix(in srgb, ${accent} 5%, var(--bg-card))`
-            : 'transparent';
-        }}
       >
-        <span
-          className="flex shrink-0 items-center transition-colors duration-150"
-          style={{ color: isOpen ? accent : 'var(--text-muted)' }}
-        >
+        <span className="flex shrink-0 items-center text-[var(--text-muted)]">
           {icon}
         </span>
-        <span
-          className="min-w-0 flex-1 break-words font-semibold transition-colors duration-150"
-          style={{ color: isOpen ? 'var(--text-h)' : 'var(--text-muted)' }}
-        >
+        <span className="min-w-0 flex-1 break-words font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
           {title}
         </span>
         {count !== undefined && count > 0 && (
-          <span
-            className="shrink-0 rounded px-2 py-0.5 text-[11px] font-semibold"
-            style={{
-              background: 'var(--accent-bg)',
-              color: 'var(--accent)',
-              border: '1px solid var(--accent-border)',
-            }}
-          >
-            {count}
-          </span>
+          <Badge className="shrink-0">{count}</Badge>
         )}
         {isOpen ? (
-          <ChevronUp size={18} className="shrink-0" style={{ color: accent }} />
+          <ChevronUp size={18} className="shrink-0 text-[var(--text-muted)]" />
         ) : (
-          <ChevronDown size={18} className="shrink-0" style={{ color: 'var(--text-muted)' }} />
+          <ChevronDown size={18} className="shrink-0 text-[var(--text-muted)]" />
         )}
       </div>
       <div
@@ -175,9 +149,9 @@ const CollapsibleSection = memo(function CollapsibleSection({
           transition: 'max-height 0.3s ease-in-out',
         }}
       >
-        <div className="min-w-0 break-words px-3 pb-3 sm:px-4 sm:pb-4">{children}</div>
+        <div className="min-w-0 break-words px-5 pb-5 sm:px-6 sm:pb-6">{children}</div>
       </div>
-    </div>
+    </Card>
   );
 });
 
@@ -420,7 +394,7 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
       {(state.phase === 'solving' || state.phase === 'complete') && (
         <div className="min-w-0 px-3 pb-4 sm:px-4">
           {/* SVG Progress ring + step counter */}
-          <div className="mb-3.5 flex min-w-0 items-center gap-3 sm:gap-3.5">
+          <div className="mb-5 flex min-w-0 items-center gap-3 py-2 sm:gap-3.5">
             <svg
               viewBox="0 0 44 44"
               style={{ width: 44, height: 44, flexShrink: 0 }}
@@ -428,7 +402,7 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
             >
               <circle
                 cx="22" cy="22" r={ringRadius}
-                fill="none" stroke="var(--border-light)" strokeWidth="3"
+                fill="none" stroke="var(--border)" strokeWidth="3"
               />
               <circle
                 cx="22" cy="22" r={ringRadius}
@@ -631,15 +605,13 @@ const WorkedExampleControls = memo(function WorkedExampleControls({
         {completed}/{total} complete
       </span>
       <button
-        className="btn-ghost"
+        className={cn(btnStyles.ghost, 'min-h-0 px-2.5 py-1 text-xs')}
         onClick={onExpandAll}
         aria-label="Expand all worked examples"
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          padding: '4px 10px',
-          fontSize: 'var(--fs-xs)',
           minHeight: 'auto',
         }}
       >
@@ -647,15 +619,13 @@ const WorkedExampleControls = memo(function WorkedExampleControls({
         Expand All
       </button>
       <button
-        className="btn-ghost"
+        className={cn(btnStyles.ghost, 'min-h-0 px-2.5 py-1 text-xs')}
         onClick={onCollapseAll}
         aria-label="Collapse all worked examples"
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          padding: '4px 10px',
-          fontSize: 'var(--fs-xs)',
           minHeight: 'auto',
         }}
       >
@@ -663,15 +633,13 @@ const WorkedExampleControls = memo(function WorkedExampleControls({
         Collapse All
       </button>
       <button
-        className="btn-ghost"
+        className={cn(btnStyles.ghost, 'min-h-0 px-2.5 py-1 text-xs')}
         onClick={onResetAll}
         aria-label="Reset all worked examples"
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          padding: '4px 10px',
-          fontSize: 'var(--fs-xs)',
           minHeight: 'auto',
         }}
       >

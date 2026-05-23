@@ -12,8 +12,11 @@ const V1_THEME = "learnapp_theme_v1";
 const V1_RESOURCE_BOOKMARKS = "learnapp_bookmarks_v1";
 const V1_LESSON_BOOKMARKS = "learnapp_lesson_bookmarks_v1";
 const V1_TAKEAWAYS = "learnapp_takeaways_v1";
+const V1_ACHIEVEMENTS = "learnapp_achievements_v1";
 const V2_NOTE_SESSIONS = "learnapp_note_sessions_v2";
 const V2_PREFERENCES = "learnv2_preferences";
+export const V2_ACHIEVEMENTS = "learnv2_achievements_v1";
+export const V1_MIGRATION_DONE_AT = "learnv2_migration_done_at";
 
 interface LegacyNote {
   text: string;
@@ -33,6 +36,7 @@ export interface MigrationDetails {
   srsDatesPreserved: boolean;
   resourceBookmarksMerged: number;
   lessonBookmarksMerged: number;
+  achievementsMerged: number;
 }
 
 export interface MigrationResult {
@@ -43,6 +47,7 @@ export interface MigrationResult {
 
 /** Infer subject from node id (matches learnv2 curriculum prefixes). */
 export function inferSubjectId(nodeId: string): string | null {
+  if (nodeId.startsWith("st")) return "sat-prep";
   if (nodeId.startsWith("pr")) return "probability";
   if (nodeId.startsWith("em")) return "engineering";
   if (nodeId.startsWith("ai")) return "ai";
@@ -222,6 +227,20 @@ export function migrateThemeFromV1(
   return true;
 }
 
+/** Copy v1 achievements to the v2 namespace when v2 has not written achievements yet. */
+export function migrateAchievementsFromV1(storage: Storage = localStorage): number {
+  if (storage.getItem(V2_ACHIEVEMENTS) !== null) return 0;
+
+  const achievements = readJson<unknown[]>(storage, V1_ACHIEVEMENTS);
+  if (!Array.isArray(achievements) || achievements.length === 0) return 0;
+
+  const uniqueAchievements = [...new Set(achievements.filter((item): item is string => typeof item === "string"))];
+  if (uniqueAchievements.length === 0) return 0;
+
+  storage.setItem(V2_ACHIEVEMENTS, JSON.stringify(uniqueAchievements));
+  return uniqueAchievements.length;
+}
+
 /** Verify SRS scheduled dates survived progress import (UTC YYYY-MM-DD strings). */
 export function verifySrsDates(storage: Storage = localStorage): boolean {
   const progress = readJson<{
@@ -239,12 +258,16 @@ export function verifySrsDates(storage: Storage = localStorage): boolean {
 }
 
 export function hasV1Data(storage: Storage = localStorage): boolean {
+  if (storage.getItem(V1_MIGRATION_DONE_AT) !== null) return false;
+
   return (
     storage.getItem(V1_PROGRESS) !== null ||
     storage.getItem(V1_NOTES) !== null ||
     storage.getItem(V1_THEME) !== null ||
     storage.getItem(V1_RESOURCE_BOOKMARKS) !== null ||
-    storage.getItem(V1_LESSON_BOOKMARKS) !== null
+    storage.getItem(V1_LESSON_BOOKMARKS) !== null ||
+    storage.getItem(V1_TAKEAWAYS) !== null ||
+    storage.getItem(V1_ACHIEVEMENTS) !== null
   );
 }
 

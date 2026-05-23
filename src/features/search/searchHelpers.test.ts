@@ -74,4 +74,15 @@ describe("searchHelpers", () => {
     expect(weak).not.toBeNull();
     expect(strong!.score).toBeGreaterThan(weak!.score);
   });
+
+  it("filters lesson commands through fuzzy matching", () => {
+    const lesson = {
+      id: "lesson-expected-value",
+      label: "Expected Value",
+      description: "Probability weighted outcomes",
+    };
+
+    expect(scoreCommandMatch("expected", lesson)).not.toBeNull();
+    expect(scoreCommandMatch("unrelated", lesson)).toBeNull();
+  });
 });

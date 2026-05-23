@@ -73,9 +73,9 @@ export function DailyChallengeWidget({ defaultCategory }: Props) {
   };
 
   return (
-    <Card variant="accent" className="min-w-0 p-6">
+    <Card variant="accent" className="min-w-0">
       <div className="mb-4 flex items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius)] bg-[var(--accent)] text-[var(--bg)]">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius)] bg-[var(--accent-bg)] text-[var(--accent)]">
           <Dumbbell size={18} />
         </div>
         <div className="min-w-0 flex-1">
@@ -100,8 +100,8 @@ export function DailyChallengeWidget({ defaultCategory }: Props) {
             className={cn(
               "rounded-full border px-2.5 py-0.5 text-[11px] transition-colors",
               category === cat
-                ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]"
-                : "border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text)]",
+                ? "border-[var(--border-strong)] bg-[var(--bg-hover)] text-[var(--text-heading)]"
+                : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]",
             )}
           >
             {cat}
@@ -128,7 +128,7 @@ export function DailyChallengeWidget({ defaultCategory }: Props) {
                 )}
                 onClick={() => setSelectedOption(idx)}
               >
-                <span className="mr-2 font-bold text-[var(--accent)]">
+                <span className="mr-2 font-mono text-[var(--text-muted)]">
                   {String.fromCharCode(65 + idx)}.
                 </span>
                 {opt}

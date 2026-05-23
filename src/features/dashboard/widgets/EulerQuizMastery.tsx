@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, ChevronDown, ChevronUp } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { BookOpen, ChevronDown, ChevronUp } from "lucide-react";
+import { Card, EmptyState } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
 
@@ -71,16 +70,14 @@ export function EulerQuizMastery({ subjects }: Props) {
       </button>
 
       {!hasData && !open && (
-        <div className="mt-3 flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3">
-          <p className="text-sm text-[var(--text-muted)]">
-            Complete lesson quizzes to track mastery by subject.
-          </p>
-          <Link to="/subjects" className="shrink-0">
-            <Button variant="secondary" className="h-9 text-sm">
-              Start a quiz
-              <ArrowRight size={14} />
-            </Button>
-          </Link>
+        <div className="mt-2 border-t border-[var(--border)] pt-2">
+          <EmptyState
+            className="py-10"
+            title="No quiz data yet"
+            description="Complete lesson quizzes to see mastery scores by subject."
+            actionLabel="Start a quiz"
+            actionTo="/subjects"
+          />
         </div>
       )}
 

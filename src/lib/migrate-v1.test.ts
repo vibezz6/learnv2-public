@@ -5,8 +5,11 @@ import {
   mergeBookmarksFromV1,
   mergeLegacyNotes,
   mergeTakeawaysFromV1,
+  migrateAchievementsFromV1,
   migrateThemeFromV1,
   normalizeV1Progress,
+  V1_MIGRATION_DONE_AT,
+  V2_ACHIEVEMENTS,
   verifySrsDates,
 } from "@/lib/migrate-v1";
 import { V2_BOOKMARKS_KEY } from "@/stores/bookmarks";
@@ -37,6 +40,7 @@ describe("migrate-v1", () => {
     expect(inferSubjectId("pr4")).toBe("probability");
     expect(inferSubjectId("em2")).toBe("engineering");
     expect(inferSubjectId("p3")).toBe("programming");
+    expect(inferSubjectId("st1")).toBe("sat-prep");
   });
 
   it("mergeLegacyNotes creates sessions for v1 notes without v2 session", () => {
@@ -224,6 +228,18 @@ describe("migrate-v1", () => {
     expect(hasV1Data(storage)).toBe(true);
   });
 
+  it("hasV1Data detects v1 takeaways and achievements until migration is marked done", () => {
+    storage.setItem("learnapp_takeaways_v1", "{}");
+    expect(hasV1Data(storage)).toBe(true);
+
+    storage.clear();
+    storage.setItem("learnapp_achievements_v1", JSON.stringify(["first_lesson"]));
+    expect(hasV1Data(storage)).toBe(true);
+
+    storage.setItem(V1_MIGRATION_DONE_AT, "2026-05-23T00:00:00.000Z");
+    expect(hasV1Data(storage)).toBe(false);
+  });
+
   it("normalizeV1Progress fills missing node fields and drops studySessions", () => {
     const normalized = normalizeV1Progress({
       totalXp: 10,
@@ -303,6 +319,21 @@ describe("migrate-v1", () => {
     expect(saved.state.resourceBookmarks).toHaveLength(1);
     expect(saved.state.resourceBookmarks[0].note).toBe("existing");
     expect(saved.state.lessonBookmarks).toHaveLength(1);
+  });
+
+  it("migrateAchievementsFromV1 copies unique achievements to the v2 key", () => {
+    storage.setItem("learnapp_achievements_v1", JSON.stringify(["first_lesson", "first_lesson", "level_5"]));
+
+    expect(migrateAchievementsFromV1(storage)).toBe(2);
+    expect(JSON.parse(storage.getItem(V2_ACHIEVEMENTS)!)).toEqual(["first_lesson", "level_5"]);
+  });
+
+  it("migrateAchievementsFromV1 does not overwrite an existing v2 achievements key", () => {
+    storage.setItem("learnapp_achievements_v1", JSON.stringify(["first_lesson"]));
+    storage.setItem(V2_ACHIEVEMENTS, JSON.stringify(["level_5"]));
+
+    expect(migrateAchievementsFromV1(storage)).toBe(0);
+    expect(JSON.parse(storage.getItem(V2_ACHIEVEMENTS)!)).toEqual(["level_5"]);
   });
 
   it("hasV1Data detects v1 bookmark keys", () => {
