@@ -4,13 +4,30 @@
 import type { NoteReview } from "@/curriculum/types";
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_KEY = "learnv2_openrouter_key";
+const LEGACY_OPENROUTER_KEY = "learnapp_openrouter_key";
+const OPENROUTER_MODEL_KEY = "learnv2_openrouter_model";
+const LEGACY_OPENROUTER_MODEL_KEY = "learnapp_openrouter_model";
+const DEFAULT_MODEL = "deepseek/deepseek-chat-v3.1:free";
 
 // Get API key from localStorage (set by user or from config)
 function getApiKey(): string | null {
   try {
-    return localStorage.getItem("learnapp_openrouter_key");
+    return localStorage.getItem(OPENROUTER_KEY) || localStorage.getItem(LEGACY_OPENROUTER_KEY);
   } catch {
     return null;
+  }
+}
+
+function getModel(): string {
+  try {
+    return (
+      localStorage.getItem(OPENROUTER_MODEL_KEY)
+      || localStorage.getItem(LEGACY_OPENROUTER_MODEL_KEY)
+      || DEFAULT_MODEL
+    );
+  } catch {
+    return DEFAULT_MODEL;
   }
 }
 
@@ -25,11 +42,47 @@ function getConfig(): LLMConfig | null {
   const apiKey = getApiKey();
   if (!apiKey) return null;
   return {
-    model: "deepseek/deepseek-v4-flash:free",
+    model: getModel(),
     apiKey,
     maxTokens: 2048,
     temperature: 0.3,
   };
+}
+
+function buildLLMRequestBody(
+  config: LLMConfig,
+  systemPrompt: string,
+  userPrompt: string,
+  includeJsonFormat: boolean,
+): string {
+  return JSON.stringify({
+    model: config.model,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    max_tokens: config.maxTokens,
+    temperature: config.temperature,
+    ...(includeJsonFormat ? { response_format: { type: "json_object" } } : {}),
+  });
+}
+
+async function sendLLMRequest(
+  config: LLMConfig,
+  systemPrompt: string,
+  userPrompt: string,
+  includeJsonFormat: boolean,
+): Promise<Response> {
+  return fetch(OPENROUTER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${config.apiKey}`,
+      "HTTP-Referer": "https://learnv2.app",
+      "X-Title": "Learn v2 Notes",
+    },
+    body: buildLLMRequestBody(config, systemPrompt, userPrompt, includeJsonFormat),
+  });
 }
 
 async function callLLM(systemPrompt: string, userPrompt: string): Promise<string | null> {
@@ -37,25 +90,11 @@ async function callLLM(systemPrompt: string, userPrompt: string): Promise<string
   if (!config) return null;
 
   try {
-    const res = await fetch(OPENROUTER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${config.apiKey}`,
-        "HTTP-Referer": "https://learnv2.app",
-        "X-Title": "Learn v2 Notes",
-      },
-      body: JSON.stringify({
-        model: config.model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        max_tokens: config.maxTokens,
-        temperature: config.temperature,
-        response_format: { type: "json_object" },
-      }),
-    });
+    let res = await sendLLMRequest(config, systemPrompt, userPrompt, true);
+
+    if (res.status === 400) {
+      res = await sendLLMRequest(config, systemPrompt, userPrompt, false);
+    }
 
     if (!res.ok) {
       console.warn(`LLM API error: ${res.status}`);

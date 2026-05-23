@@ -66,7 +66,7 @@ export function getInitialNotesView(nodeId: string): NotesFlowView {
   const session = getSession(nodeId);
   if (!canAccessReview(session)) return "editor";
   const mentor = session!.mentorSession;
-  if (mentor && (!mentor.completedAt || mentor.messages.length > 0)) return "mentor";
+  if (mentor && !mentor.completedAt && mentor.messages.length > 0) return "mentor";
   if (session!.review) return "review";
   return "review";
 }
