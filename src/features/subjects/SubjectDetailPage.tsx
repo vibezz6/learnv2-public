@@ -107,30 +107,36 @@ function statusMeta(status: NodeStatus) {
         label: "Completed",
         icon: CheckCircle2,
         nodeClass:
-          "border-[var(--success)] bg-[var(--success-bg)] shadow-[0_0_0_1px_rgba(var(--success-rgb),0.35)]",
-        dotClass: "bg-[var(--success)]",
+          "border-[var(--success)] bg-[var(--success-bg)] shadow-[0_0_0_1px_rgba(var(--success-rgb),0.4),0_0_16px_rgba(var(--success-rgb),0.12)]",
+        dotClass: "bg-[var(--success)] shadow-[0_0_6px_rgba(var(--success-rgb),0.55)]",
         iconClass: "text-[var(--success)]",
         textClass: "text-[var(--text-heading)]",
+        legendClass:
+          "border-[var(--success)] bg-[var(--success-bg)] shadow-[0_0_0_1px_rgba(var(--success-rgb),0.35)]",
       };
     case "available":
       return {
         label: "Available",
         icon: Circle,
         nodeClass:
-          "border-[var(--accent)] bg-[var(--accent-bg)] shadow-[var(--accent-glow)] hover:border-[var(--accent)]",
-        dotClass: "bg-[var(--accent)] shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]",
+          "border-[var(--accent-border)] bg-[var(--accent-bg)] shadow-[var(--accent-glow)] hover:border-[var(--accent)] hover:shadow-[0_0_24px_rgba(var(--accent-rgb),0.22)]",
+        dotClass: "bg-[var(--accent)] shadow-[0_0_8px_rgba(var(--accent-rgb),0.65)]",
         iconClass: "text-[var(--accent)]",
         textClass: "text-[var(--text-heading)]",
+        legendClass:
+          "border-[var(--accent-border)] bg-[var(--accent-bg)] shadow-[var(--accent-glow)]",
       };
     default:
       return {
         label: "Locked",
         icon: Lock,
         nodeClass:
-          "border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)] opacity-70",
-        dotClass: "bg-[var(--warning)]",
-        iconClass: "text-[var(--warning)]",
+          "border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/80 saturate-[0.65]",
+        dotClass: "border border-dashed border-[var(--border-strong)] bg-[var(--bg-elevated)]",
+        iconClass: "text-[var(--text-muted)]",
         textClass: "text-[var(--text-muted)]",
+        legendClass:
+          "border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/80",
       };
   }
 }
@@ -143,14 +149,20 @@ function SkillTreeLegend() {
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-4 text-xs text-[var(--text-muted)]">
+    <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)]">
       {items.map(({ status, label }) => {
         const meta = statusMeta(status);
         const Icon = meta.icon;
         return (
-          <span key={status} className="inline-flex items-center gap-1.5">
-            <span className={cn("h-2.5 w-2.5 rounded-full", meta.dotClass)} />
-            <Icon size={14} className={meta.iconClass} />
+          <span key={status} className="inline-flex items-center gap-2">
+            <span
+              className={cn(
+                "inline-flex h-6 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border",
+                meta.legendClass,
+              )}
+            >
+              <Icon size={12} className={meta.iconClass} />
+            </span>
             {label}
           </span>
         );
@@ -202,15 +214,22 @@ function SkillNodeCard({
       {!compact && (
         <p className="mt-1 line-clamp-2 text-xs text-[var(--text-muted)]">{node.description}</p>
       )}
-      <div className="mt-auto flex items-center justify-between pt-2">
-        <span className="font-mono text-[10px] text-[var(--accent)]">{node.xpValue} XP</span>
-        <span className={cn("text-[10px] font-medium", meta.iconClass)}>{meta.label}</span>
-      </div>
-      {locked && node.parentIds.length > 0 && !compact && (
-        <p className="mt-1 text-[10px] text-[var(--text-muted)]">
+      {locked && node.parentIds.length > 0 && (
+        <p className="mt-1 line-clamp-1 text-[10px] text-[var(--text-muted)]">
           Requires prior lessons
         </p>
       )}
+      <div className="mt-auto flex items-center justify-between pt-1.5">
+        <span
+          className={cn(
+            "font-mono text-[10px]",
+            locked ? "text-[var(--text-muted)]" : "text-[var(--accent)]",
+          )}
+        >
+          {node.xpValue} XP
+        </span>
+        <span className={cn("text-[10px] font-medium", meta.iconClass)}>{meta.label}</span>
+      </div>
     </div>
   );
 }
@@ -227,10 +246,15 @@ function SkillTreeGraph({
   const { edges, positions, width, height } = layout;
   const pad = 24;
 
+  const nodeById = useMemo(
+    () => new Map(subject.nodes.map((n) => [n.id, n])),
+    [subject.nodes],
+  );
+
   return (
     <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-secondary)]/40">
       <div
-        className="relative mx-auto p-6"
+        className="relative mx-auto bg-[linear-gradient(var(--grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--grid-line)_1px,transparent_1px)] bg-size-[24px_24px] p-6"
         style={{ width: width + pad * 2, minHeight: height + pad * 2 }}
       >
         <svg
@@ -241,10 +265,8 @@ function SkillTreeGraph({
             const fromPos = positions.get(from);
             const toPos = positions.get(to);
             if (!fromPos || !toPos) return null;
-            const parentStatus = getNodeStatus(
-              subject.nodes.find((n) => n.id === from)!,
-            );
-            const active = parentStatus === "completed";
+            const parent = nodeById.get(from);
+            const active = parent ? getNodeStatus(parent) === "completed" : false;
             return (
               <path
                 key={`${from}-${to}`}
@@ -255,8 +277,8 @@ function SkillTreeGraph({
                 fill="none"
                 stroke={active ? "var(--accent)" : "var(--border-strong)"}
                 strokeWidth={active ? 2 : 1.5}
-                strokeDasharray={active ? undefined : "5 4"}
-                opacity={active ? 0.75 : 0.45}
+                strokeDasharray={active ? undefined : "6 5"}
+                opacity={active ? 0.85 : 0.4}
               />
             );
           })}
@@ -273,8 +295,10 @@ function SkillTreeGraph({
               key={node.id}
               to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
               className={cn(
-                "absolute block transition-transform",
-                locked ? "pointer-events-none cursor-not-allowed" : "hover:scale-[1.02]",
+                "absolute block transition-transform duration-150",
+                locked
+                  ? "pointer-events-none cursor-not-allowed"
+                  : "hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-secondary)]",
               )}
               style={{
                 left: pos.x + pad,
@@ -388,6 +412,7 @@ function ProgressSummary({
 
 export function SubjectDetailPage() {
   const { subjectId = "" } = useParams();
+  const progressNodes = useProgress((s) => s.data.nodes);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const [subject, setSubject] = useState<Subject | null>(null);
 
@@ -403,7 +428,7 @@ export function SubjectDetailPage() {
   const completedCount = useMemo(() => {
     if (!subject) return 0;
     return subject.nodes.filter((n) => getNodeStatus(n) === "completed").length;
-  }, [subject, getNodeStatus]);
+  }, [subject, getNodeStatus, progressNodes]);
 
   if (!subject || !layout) {
     return <div className="p-8 text-[var(--text-muted)]">Loading subject…</div>;
@@ -435,8 +460,8 @@ export function SubjectDetailPage() {
         color={subject.color}
       />
 
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="space-y-3 md:-mx-4 md:max-w-none lg:-mx-8">
+        <div className="flex flex-wrap items-center justify-between gap-3 md:px-4 lg:px-8">
           <h2 className="text-lg font-semibold text-[var(--text-heading)]">Skill tree</h2>
           <SkillTreeLegend />
         </div>
@@ -449,7 +474,7 @@ export function SubjectDetailPage() {
           />
         </div>
 
-        <div className="hidden md:block">
+        <div className="hidden md:block md:px-4 lg:px-8">
           <SkillTreeGraph
             subject={subject}
             layout={layout}
