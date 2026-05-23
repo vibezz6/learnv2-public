@@ -37,7 +37,7 @@
     "description": "The math of uncertainty. From basic probability to Monte Carlo simulations — the tools every trader and data thinker needs.",
     "color": "#ec4899",
     "icon": "bar-chart-2",
-    "nodeCount": 12
+    "nodeCount": 13
   },
   {
     "id": "ai",
