@@ -222,8 +222,21 @@ function mergeProgressData(current: ProgressData, incoming: ProgressData): Progr
   return merged;
 }
 
+export const BACKUP_STORAGE_PREFIXES = ["learnv2_", "learnapp_"] as const;
+
+export const BACKUP_EXCLUDED_OPENROUTER_KEYS = [
+  "learnapp_openrouter_key",
+  "learnv2_openrouter_key",
+  "learnapp_openrouter_model",
+  "learnv2_openrouter_model",
+] as const;
+
+export function isOpenRouterStorageKey(key: string): boolean {
+  return key.endsWith("_openrouter_key") || key.endsWith("_openrouter_model");
+}
+
 function isBackupKeyAllowed(key: string): boolean {
-  return (key.startsWith("learnv2_") || key.startsWith("learnapp_")) && !key.endsWith("_openrouter_key");
+  return BACKUP_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix)) && !isOpenRouterStorageKey(key);
 }
 
 function isManagedStorageKey(key: string): boolean {
@@ -338,7 +351,7 @@ interface ProgressState {
   isDailyChallengeCompleted: (challengeId: string) => boolean;
   completeDailyChallenge: (challengeId: string, xpReward: number) => void;
   exportData: () => string;
-  importData: (json: string) => { success: boolean; error?: string };
+  importData: (json: string) => { success: boolean; error?: string; reloadRequired?: boolean };
   resetProgress: () => void;
   clearLevelUpPending: () => void;
   migrateAllFromV1: () => MigrationResult;
@@ -698,7 +711,7 @@ export const useProgress = create<ProgressState>()(
               set({ data: imported });
             }
           }
-          return { success: true };
+          return { success: true, reloadRequired: true };
         } catch {
           return { success: false, error: "Failed to parse import file." };
         }

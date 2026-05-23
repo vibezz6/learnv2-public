@@ -2,7 +2,11 @@ import { useRef, useState } from "react";
 import { Button, Card } from "@/components/ui";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { usePreferences } from "@/stores/preferences";
-import { useProgress } from "@/stores/progress";
+import {
+  BACKUP_EXCLUDED_OPENROUTER_KEYS,
+  BACKUP_STORAGE_PREFIXES,
+  useProgress,
+} from "@/stores/progress";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 
 const OPENROUTER_KEY = "learnapp_openrouter_key";
@@ -43,8 +47,12 @@ export function SettingsPage() {
     reader.onload = () => {
       const result = importData(reader.result as string);
       if (result.success) {
-        setMessage("Import successful — reloading…");
-        setTimeout(() => window.location.reload(), 500);
+        setMessage(
+          result.reloadRequired
+            ? "Import successful — reload the page so all stores pick up restored data."
+            : "Import successful.",
+        );
+        if (result.reloadRequired) setTimeout(() => window.location.reload(), 500);
       } else {
         setMessage(result.error ?? "Import failed.");
       }
@@ -115,8 +123,45 @@ export function SettingsPage() {
       <Card className="space-y-3">
         <h2 className="font-semibold text-[var(--text-heading)]">Export / import</h2>
         <p className="text-sm text-[var(--text-muted)]">
-          Backup all Learn v2 and compatible v1 localStorage keys to a JSON file.
+          Backup every localStorage key whose name starts with{" "}
+          {BACKUP_STORAGE_PREFIXES.map((prefix, index) => (
+            <span key={prefix}>
+              {index > 0 ? " or " : null}
+              <code className="font-mono text-xs">{prefix}</code>
+            </span>
+          ))}
+          . That covers progress, preferences, bookmarks, notes, achievements, quiz state, search
+          recents, and per-lesson UI state. OpenRouter credentials are never included.
         </p>
+        <details className="text-sm text-[var(--text-muted)]">
+          <summary className="cursor-pointer font-medium text-[var(--text-heading)]">
+            Included and excluded keys
+          </summary>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              Included: all keys matching{" "}
+              {BACKUP_STORAGE_PREFIXES.map((prefix) => (
+                <code key={prefix} className="font-mono text-xs">
+                  {prefix}*
+                </code>
+              ))}
+              , such as <code className="font-mono text-xs">learnv2_progress</code>,{" "}
+              <code className="font-mono text-xs">learnv2_preferences</code>,{" "}
+              <code className="font-mono text-xs">learnv2_bookmarks</code>,{" "}
+              <code className="font-mono text-xs">learnapp_note_sessions_v2</code>, and dynamic keys
+              like <code className="font-mono text-xs">learnapp_quiz_progress_v1_*</code>.
+            </li>
+            <li>
+              Excluded:{" "}
+              {BACKUP_EXCLUDED_OPENROUTER_KEYS.map((key) => (
+                <code key={key} className="mr-1 font-mono text-xs">
+                  {key}
+                </code>
+              ))}
+            </li>
+            <li>After import, the page reloads automatically so every store reads restored data.</li>
+          </ul>
+        </details>
         <div className="flex flex-wrap gap-2">
           <Button onClick={handleExport}>Export progress</Button>
           <Button variant="secondary" onClick={() => fileRef.current?.click()}>
