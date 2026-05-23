@@ -673,6 +673,556 @@
           "explanation": "Review drives the next week of study."
         }
       ]
+    },
+    {
+      "id": "st16",
+      "name": "Fractions & Rational Numbers",
+      "description": "Focused drill on fraction operations, equivalence, and SAT word problems with rational expressions. Build speed without skipping steps.",
+      "xpValue": 90,
+      "parentIds": ["st15"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Add/subtract fractions — common denominator first",
+        "Multiply and divide — flip and simplify",
+        "Convert between fractions, decimals, and percents",
+        "Rational expressions: factor before canceling"
+      ],
+      "whyItMatters": "Fraction mistakes are silent score killers — one arithmetic slip on an otherwise easy item. This drill locks in the habits that show up across algebra and data questions.",
+      "practiceProblems": [
+        "Simplify: (2/3) + (5/6) - (1/4).",
+        "A recipe uses 3/4 cup flour per batch. How much for 2.5 batches?",
+        "Khan: 15 fraction and rational-number SAT items — log any repeat miss."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Fractions & rational numbers",
+          "url": "https://www.khanacademy.org/math/arithmetic/fraction-arithmetic",
+          "type": "practice",
+          "whyHelpful": "Step-by-step fraction drills with SAT-style word problems."
+        },
+        {
+          "title": "Learn v2 — Mathematics subject",
+          "url": "/subjects/math",
+          "type": "course",
+          "whyHelpful": "Rebuild pre-algebra foundations (m1–m3) if fractions still feel shaky."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st16_1",
+          "question": "What is 3/4 ÷ 1/2?",
+          "options": ["3/8", "3/2", "2/3", "6/4"],
+          "correctIndex": 1,
+          "explanation": "Dividing by 1/2 is multiplying by 2: (3/4) × 2 = 3/2."
+        },
+        {
+          "id": "q_st16_2",
+          "question": "Which is equivalent to 0.375?",
+          "options": ["3/8", "3/7", "37.5/10", "1/3"],
+          "correctIndex": 0,
+          "explanation": "0.375 = 375/1000 = 3/8."
+        }
+      ]
+    },
+    {
+      "id": "st17",
+      "name": "Linear Equations — Focused Drill",
+      "description": "One- and two-step equations, translating words to algebra, and slope-intercept fluency under drill conditions.",
+      "xpValue": 90,
+      "parentIds": ["st16"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Isolate the variable — same operation both sides",
+        "Translate keywords: per, total, twice, difference",
+        "y = mx + b: slope as rate, b as starting value",
+        "Check solutions by substitution"
+      ],
+      "whyItMatters": "Linear equations are the highest-frequency SAT math topic. Drill speed here pays off on dozens of questions across modules.",
+      "practiceProblems": [
+        "Solve: 4(x - 2) = 3x + 5.",
+        "A gym charges $30 plus $5 per visit. Write y = mx + b and find cost for 8 visits.",
+        "Khan: 15 linear equation SAT items timed (3 min max each)."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Linear equations",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-basic-eq-ineq",
+          "type": "practice",
+          "whyHelpful": "Core equation-solving drill with explanations."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official items show how linear questions appear on test day."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st17_1",
+          "question": "Solve: 5x - 3 = 2x + 9",
+          "options": ["x = 2", "x = 4", "x = 6", "x = 12"],
+          "correctIndex": 1,
+          "explanation": "5x - 2x = 9 + 3 → 3x = 12 → x = 4."
+        },
+        {
+          "id": "q_st17_2",
+          "question": "In y = -2x + 7, the y-intercept is:",
+          "options": ["-2", "7", "2", "x = 7"],
+          "correctIndex": 1,
+          "explanation": "In y = mx + b, b = 7 is the y-intercept."
+        }
+      ]
+    },
+    {
+      "id": "st18",
+      "name": "Systems of Equations Drill",
+      "description": "Substitution, elimination, and recognizing when a system has no solution or infinitely many — at SAT pace.",
+      "xpValue": 90,
+      "parentIds": ["st17"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Substitution when one variable is already isolated",
+        "Elimination — align coefficients and add/subtract",
+        "Parallel lines → no solution; same line → infinite solutions",
+        "Graph intersection as visual check"
+      ],
+      "whyItMatters": "Systems combine two skills you already know — but under time pressure students pick the slow method. Drilling both paths saves minutes per module.",
+      "practiceProblems": [
+        "Solve: y = 2x + 1 and 3x + y = 16.",
+        "Solve: 2x + 3y = 12 and 4x + 6y = 24 — how many solutions?",
+        "Khan: 12 systems SAT items; try each with substitution and elimination."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Systems of equations",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-system-of-eq",
+          "type": "practice",
+          "whyHelpful": "Substitution and elimination drills with worked solutions."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph both lines to verify intersection points quickly."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st18_1",
+          "question": "Two parallel lines in a system of equations have:",
+          "options": [
+            "Exactly one solution",
+            "No solution",
+            "Infinitely many solutions",
+            "Two solutions"
+          ],
+          "correctIndex": 1,
+          "explanation": "Parallel lines never intersect — the system is inconsistent."
+        },
+        {
+          "id": "q_st18_2",
+          "question": "For x + y = 10 and x - y = 2, x equals:",
+          "options": ["4", "6", "8", "12"],
+          "correctIndex": 1,
+          "explanation": "Add equations: 2x = 12 → x = 6."
+        }
+      ]
+    },
+    {
+      "id": "st19",
+      "name": "Percentages & Proportions Drill",
+      "description": "Percent change, ratios, unit rates, and proportional reasoning — the word-problem style SAT loves.",
+      "xpValue": 90,
+      "parentIds": ["st18"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Percent change: (new - old) / old × 100",
+        "Part/whole = percent/100 setup",
+        "Unit rates and dimensional analysis",
+        "Ratio tables for multi-step problems"
+      ],
+      "whyItMatters": "These questions reward careful reading over advanced math. Nailing proportions is one of the fastest ways to pick up points after a full practice test.",
+      "practiceProblems": [
+        "A $120 jacket is marked down 30%, then an extra 10% off the sale price. Final price?",
+        "If 4 workers finish a job in 6 days, how long for 6 workers (same rate)?",
+        "Khan: 15 percent and ratio SAT items — tag each miss as setup vs arithmetic."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Percent & ratios",
+          "url": "https://www.khanacademy.org/math/pre-algebra/pre-algebra-ratios-rates",
+          "type": "practice",
+          "whyHelpful": "Word-problem drill for percent change and proportional reasoning."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Problem-solving and data analysis question bank."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st19_1",
+          "question": "Price drops from $50 to $40. Percent decrease?",
+          "options": ["10%", "20%", "25%", "80%"],
+          "correctIndex": 1,
+          "explanation": "Decrease 10/50 = 20%."
+        },
+        {
+          "id": "q_st19_2",
+          "question": "A map scale is 1 inch : 5 miles. 3.5 inches represents:",
+          "options": ["8.5 miles", "15 miles", "17.5 miles", "35 miles"],
+          "correctIndex": 2,
+          "explanation": "3.5 × 5 = 17.5 miles."
+        }
+      ]
+    },
+    {
+      "id": "st20",
+      "name": "Quadratics & Factoring Drill",
+      "description": "Factoring, completing the square basics, quadratic formula, and parabola features at SAT level.",
+      "xpValue": 100,
+      "parentIds": ["st19"],
+      "estimatedMinutes": 75,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Factor x² + bx + c when possible",
+        "Quadratic formula when factoring fails",
+        "Vertex and axis of symmetry from standard form",
+        "Discriminant hints: two, one, or zero real roots"
+      ],
+      "whyItMatters": "Quadratics separate good scores from great ones. You do not need full precalc — you need SAT-shaped fluency with factoring and the formula.",
+      "practiceProblems": [
+        "Factor: x² - 7x + 12.",
+        "Solve: x² + 4x - 5 = 0 by factoring and by quadratic formula.",
+        "Khan: 12 quadratic SAT items — note when factoring beats the formula."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Quadratic functions",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-quadratics",
+          "type": "practice",
+          "whyHelpful": "Factoring and formula drill without full precalc depth."
+        },
+        {
+          "title": "Learn v2 — Mathematics subject",
+          "url": "/subjects/math",
+          "type": "course",
+          "whyHelpful": "Deepen algebra foundations in parallel if quadratics feel new."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st20_1",
+          "question": "Factor: x² - 5x + 6",
+          "options": ["(x-2)(x-3)", "(x+2)(x+3)", "(x-1)(x-6)", "(x-2)(x+3)"],
+          "correctIndex": 0,
+          "explanation": "Numbers that multiply to 6 and add to -5 are -2 and -3."
+        },
+        {
+          "id": "q_st20_2",
+          "question": "For y = x² - 4x + 3, the x-coordinate of the vertex is:",
+          "options": ["-4", "2", "3", "4"],
+          "correctIndex": 1,
+          "explanation": "Vertex x = -b/(2a) = 4/2 = 2."
+        }
+      ]
+    },
+    {
+      "id": "st21",
+      "name": "Functions & Graphs Drill",
+      "description": "Function notation, table/graph matching, intercepts, and interpreting linear and nonlinear graphs on the Digital SAT.",
+      "xpValue": 100,
+      "parentIds": ["st20"],
+      "estimatedMinutes": 75,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "f(x) notation — input in, output out",
+        "Match tables, equations, and graphs",
+        "x- and y-intercepts from equation or graph",
+        "Compare rates of change on piecewise graphs"
+      ],
+      "whyItMatters": "Graph questions test whether you connect symbolic and visual math. Drilling the translation between forms prevents careless mismatches.",
+      "practiceProblems": [
+        "If f(x) = x² - 2x, find f(3) and f(-1).",
+        "From a graph, identify where f(x) = 0 and where f(x) is increasing.",
+        "Khan: 12 functions and graphs SAT items — sketch before checking choices."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Functions",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-functions",
+          "type": "practice",
+          "whyHelpful": "Function notation and graph interpretation drills."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Plot functions quickly to match tables and intercept questions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st21_1",
+          "question": "If f(x) = 3x - 1, what is f(5)?",
+          "options": ["14", "15", "16", "4"],
+          "correctIndex": 0,
+          "explanation": "f(5) = 3(5) - 1 = 14."
+        },
+        {
+          "id": "q_st21_2",
+          "question": "The y-intercept of a graph is where:",
+          "options": [
+            "x = 0",
+            "y = 0",
+            "slope = 0",
+            "x = 1"
+          ],
+          "correctIndex": 0,
+          "explanation": "The y-intercept is the point where the graph crosses the y-axis (x = 0)."
+        }
+      ]
+    },
+    {
+      "id": "st22",
+      "name": "Desmos on the Digital SAT",
+      "description": "Graphing equations, finding intersections, regression lines, and backsolving with the built-in calculator — strategy drill, not just button tutorial.",
+      "xpValue": 90,
+      "parentIds": ["st21"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Type equations to graph lines and parabolas instantly",
+        "Find intersection points for systems visually",
+        "Regression / line of best fit on scatter data",
+        "Backsolve by graphing answer choices"
+      ],
+      "whyItMatters": "Desmos is allowed on every Math question. Students who practice it here save time on systems, quadratics, and some data items that others grind by hand.",
+      "practiceProblems": [
+        "Graph y = 2x + 3 and y = -x + 9 — read the intersection coordinates.",
+        "Enter a scatter table from one Khan item and fit a regression line.",
+        "Retry 3 missed algebra questions from your log using Desmos only."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Desmos SAT tips",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "SAT math practice with the same Desmos tool as test day."
+        },
+        {
+          "title": "Desmos — SAT Test Mode",
+          "url": "https://www.desmos.com/testing/collegeboard/digital-sat/graphing",
+          "type": "practice",
+          "whyHelpful": "Practice in the exact College Board graphing calculator interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st22_1",
+          "question": "Desmos is most helpful on the SAT for:",
+          "options": [
+            "Memorizing vocabulary",
+            "Graphing systems and checking intersections",
+            "Writing the essay",
+            "Reading passages faster"
+          ],
+          "correctIndex": 1,
+          "explanation": "Desmos shines on graphing, systems, and visual checks — not R&W."
+        },
+        {
+          "id": "q_st22_2",
+          "question": "To backsolve a multiple-choice equation, you should:",
+          "options": [
+            "Guess without graphing",
+            "Graph each answer choice and see which fits",
+            "Skip all graphing questions",
+            "Use Desmos only on geometry"
+          ],
+          "correctIndex": 1,
+          "explanation": "Graphing answer choices (or the equation vs a constant) is a core Desmos tactic."
+        }
+      ]
+    },
+    {
+      "id": "st23",
+      "name": "Geometry & Right-Triangle Trig",
+      "description": "Angles, circles, area and volume, similar triangles, and SOHCAHTOA at SAT level — lighter weight than algebra but still drill-worthy.",
+      "xpValue": 90,
+      "parentIds": ["st22"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Triangle angle sum and special right triangles (45-45-90, 30-60-90)",
+        "Circle: arc length, sector area, central angles",
+        "Similar triangles — set up proportions",
+        "SOHCAHTOA for right-triangle trig items"
+      ],
+      "whyItMatters": "Geometry questions are fewer but often feel unfamiliar if you missed class days. A focused drill prevents easy points from slipping away.",
+      "practiceProblems": [
+        "A right triangle has legs 5 and 12. Find the hypotenuse and sin(θ) for the angle opposite the side of length 5.",
+        "Circle radius 6 — find circumference and area.",
+        "Khan: 10 geometry/trig SAT items — draw a diagram for every question."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT geometry & trig",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Geometry and right-triangle trig in official SAT style."
+        },
+        {
+          "title": "Learn v2 — Mathematics subject",
+          "url": "/subjects/math",
+          "type": "course",
+          "whyHelpful": "Geometry modules (m4+) for deeper angle and triangle review."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st23_1",
+          "question": "In a right triangle, sin(θ) equals:",
+          "options": ["adjacent/hypotenuse", "opposite/hypotenuse", "opposite/adjacent", "hypotenuse/opposite"],
+          "correctIndex": 1,
+          "explanation": "SOH — sine is opposite over hypotenuse."
+        },
+        {
+          "id": "q_st23_2",
+          "question": "Two similar triangles have side ratio 2:3. If the smaller has a side of 8, the matching side on the larger is:",
+          "options": ["10", "12", "16", "24"],
+          "correctIndex": 1,
+          "explanation": "8/2 = x/3 → x = 12."
+        }
+      ]
+    },
+    {
+      "id": "st24",
+      "name": "Math Mixed Topic Review",
+      "description": "Untimed mixed set tagged by topic. Redo misses from your mistake log before the timed checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st23"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Mix algebra, data, advanced math, and geometry in one sitting",
+        "Tag each miss: topic + error type (setup vs arithmetic vs time)",
+        "Redo similar Khan questions for every miss",
+        "No new topics — consolidate what st16–st23 covered"
+      ],
+      "whyItMatters": "Single-topic drills build skill; mixed review reveals what you forget when topics blend — exactly what a real module feels like.",
+      "practiceProblems": [
+        "Khan: 20-question untimed mixed Math set spanning all drill topics.",
+        "For each miss, write one sentence: what topic and what fix.",
+        "Redo the 3 worst misses with a fresh attempt before st25."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Mixed official-style sets with topic labels."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed module review in the real test interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st24_1",
+          "question": "Before a timed checkpoint, mixed review should be:",
+          "options": [
+            "Skipped to save time",
+            "Untimed with every miss tagged by topic",
+            "Only on your strongest topic",
+            "Done once and never revisited"
+          ],
+          "correctIndex": 1,
+          "explanation": "Tagged untimed review targets weak spots before the clock turns on."
+        },
+        {
+          "id": "q_st24_2",
+          "question": "The best use of a mistake log during mixed review is:",
+          "options": [
+            "Record only total score",
+            "Note topic and error pattern for each miss",
+            "Copy the answer key",
+            "Delete misses to stay confident"
+          ],
+          "correctIndex": 1,
+          "explanation": "Topic + error pattern drives what to drill next."
+        }
+      ]
+    },
+    {
+      "id": "st25",
+      "name": "Math — Timed Module Checkpoint",
+      "description": "Bluebook or Khan timed Math module. Log misses by topic within 24 hours — capstone of the st16–st25 drill chain.",
+      "xpValue": 150,
+      "parentIds": ["st24"],
+      "estimatedMinutes": 70,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed module under test-like conditions",
+        "Tag misses: fractions / linear / systems / percent / quadratics / graphs / geometry",
+        "Review within 24 hours — redo 3 similar items per miss type",
+        "Compare to st8 timed practice — note score trend"
+      ],
+      "whyItMatters": "This checkpoint proves the drill chain worked. Timed performance after focused review is the feedback loop that moves your Math score.",
+      "practiceProblems": [
+        "Bluebook Math Module or Khan timed set — phone away, timer on.",
+        "Categorize every miss in your mistake log within 24 hours.",
+        "Pick one weak topic from the log and schedule st16–st23 redo next week."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Timed SAT Math",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Timed sets with instant review and topic tags."
+        },
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing, Desmos, and adaptive module feel."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st25_1",
+          "question": "After a timed Math checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by topic and drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh."
+        },
+        {
+          "id": "q_st25_2",
+          "question": "During a timed Math module, if stuck after ~2 minutes you should:",
+          "options": [
+            "Spend 10 more minutes on one item",
+            "Eliminate, guess, mark for review, move on",
+            "Leave every hard question blank",
+            "Exit the module early"
+          ],
+          "correctIndex": 1,
+          "explanation": "No penalty for guessing — protect time for questions you can solve."
+        }
+      ]
     }
   ]
 }
