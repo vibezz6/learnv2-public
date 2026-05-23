@@ -94,52 +94,52 @@ export function StatsPage() {
     .sort((a, b) => b.xp - a.xp);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 md:space-y-8 md:p-8">
-      <section className="stagger-item space-y-1.5">
+    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:space-y-8 md:p-8 md:pb-8">
+      <section className="stagger-item min-w-0 space-y-1.5">
         <Badge>Progress</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
+        <h1 className="break-words text-[clamp(1.5rem,6vw,1.875rem)] font-bold tracking-tight text-[var(--text-heading)] min-[481px]:text-3xl">
           Your progress
         </h1>
-        <p className="text-sm text-[var(--text-muted)]">
+        <p className="break-words text-sm text-[var(--text-muted)]">
           Level up by studying consistently — XP, streaks, and reviews compound over time.
         </p>
       </section>
 
       {!stats || stats.completedNodes === 0 ? (
-        <Card className="stagger-item py-14 text-center">
+        <Card className="stagger-item min-w-0 py-14 text-center">
           <Trophy className="mx-auto mb-4 text-[var(--accent)]" size={40} />
-          <p className="font-medium text-[var(--text-heading)]">Start your journey</p>
-          <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--text-muted)]">
+          <p className="break-words font-medium text-[var(--text-heading)]">Start your journey</p>
+          <p className="mx-auto mt-2 max-w-sm break-words text-sm text-[var(--text-muted)]">
             Complete your first lesson and your level, streak, and achievements will show up here.
           </p>
-          <Link to="/subjects" className="mt-6 inline-block">
-            <Button>Pick a subject</Button>
+          <Link to="/subjects" className="mt-6 inline-block w-full min-[481px]:w-auto">
+            <Button className="min-h-11 w-full touch-manipulation min-[481px]:w-auto">Pick a subject</Button>
           </Link>
         </Card>
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
-            <Card glow className="stagger-item border-l-2 border-l-[var(--accent)]">
-              <div className="flex items-start justify-between gap-4">
+            <Card glow className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
+              <div className="flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between min-[481px]:gap-4">
                 <div className="min-w-0">
                   <div className="mb-3 flex items-center gap-2">
-                    <Zap size={14} className="text-[var(--accent)]" />
-                    <span className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
+                    <Zap size={14} className="shrink-0 text-[var(--accent)]" />
+                    <span className="break-words text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
                       Level
                     </span>
                   </div>
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                     <span className="text-5xl font-extrabold tabular-nums text-[var(--text-heading)]">
                       {stats.level}
                     </span>
-                    <span className="text-sm text-[var(--text-muted)]">
+                    <span className="break-words text-sm text-[var(--text-muted)]">
                       {stats.totalXp.toLocaleString()} XP total
                     </span>
                   </div>
                   <div className="mt-5">
-                    <div className="mb-1.5 flex justify-between text-xs text-[var(--text-muted)]">
-                      <span>Progress to level {stats.level + 1}</span>
-                      <span className="tabular-nums">{500 - stats.xpToNext} / 500 XP</span>
+                    <div className="mb-1.5 flex flex-wrap justify-between gap-x-2 gap-y-1 text-xs text-[var(--text-muted)]">
+                      <span className="min-w-0 break-words">Progress to level {stats.level + 1}</span>
+                      <span className="shrink-0 tabular-nums">{500 - stats.xpToNext} / 500 XP</span>
                     </div>
                     <div className="h-3 overflow-hidden rounded-full bg-[var(--border)]">
                       <div
@@ -164,7 +164,7 @@ export function StatsPage() {
 
             <Card
               glow={stats.streakCurrent >= 7}
-              className={`stagger-item ${
+              className={`stagger-item min-w-0 ${
                 stats.streakCurrent >= 7
                   ? "border-l-2 border-l-[var(--warning)]"
                   : "border-l-2 border-l-[var(--danger)]"
@@ -174,32 +174,32 @@ export function StatsPage() {
                 <div className="mb-2 flex items-center gap-2">
                   <Flame
                     size={14}
-                    className={stats.streakCurrent > 0 ? "text-[var(--warning)]" : "text-[var(--text-muted)]"}
+                    className={`shrink-0 ${stats.streakCurrent > 0 ? "text-[var(--warning)]" : "text-[var(--text-muted)]"}`}
                   />
-                  <span className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+                  <span className="break-words text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
                     Study streak
                   </span>
                 </div>
-                <div className="flex items-baseline gap-2">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <span className="text-5xl font-extrabold tabular-nums text-[var(--text-heading)]">
                     {stats.streakCurrent}
                   </span>
                   <span className="text-lg text-[var(--text-muted)]">days</span>
                 </div>
-                <p className="mt-2 text-sm text-[var(--text-muted)]">
+                <p className="mt-2 break-words text-sm text-[var(--text-muted)]">
                   Personal best: <span className="font-semibold text-[var(--text-heading)]">{stats.streakLongest} days</span>
                 </p>
                 {stats.streakCurrent === 0 && (
-                  <p className="mt-2 text-xs text-[var(--accent)]">Study today to start a streak.</p>
+                  <p className="mt-2 break-words text-xs text-[var(--accent)]">Study today to start a streak.</p>
                 )}
               </div>
             </Card>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="stagger-item">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Card className="stagger-item min-w-0">
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <Trophy size={16} className="text-[var(--warning)]" /> Lessons
+                <Trophy size={16} className="shrink-0 text-[var(--warning)]" /> Lessons
               </div>
               <div className="text-2xl font-bold tabular-nums">
                 {stats.completedNodes}
@@ -209,25 +209,25 @@ export function StatsPage() {
                 {Math.round((stats.completedNodes / stats.totalNodes) * 100)}% curriculum
               </div>
             </Card>
-            <Card className="stagger-item">
+            <Card className="stagger-item min-w-0">
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <Clock size={16} className="text-[var(--info)]" /> Study time
+                <Clock size={16} className="shrink-0 text-[var(--info)]" /> Study time
               </div>
               <div className="text-2xl font-bold tabular-nums">{Math.round(stats.totalStudyMinutes)}m</div>
               <div className="mt-1 text-xs text-[var(--text-muted)]">{Math.round(stats.todayMinutes)}m today</div>
             </Card>
-            <Card className="stagger-item">
+            <Card className="stagger-item min-w-0">
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <Sparkles size={16} className="text-[var(--success)]" /> Reviews
+                <Sparkles size={16} className="shrink-0 text-[var(--success)]" /> Reviews
               </div>
               <div className="text-2xl font-bold tabular-nums text-[var(--success)]">{reviewStats.passRate}%</div>
-              <div className="mt-1 text-xs text-[var(--text-muted)]">
+              <div className="break-words mt-1 text-xs text-[var(--text-muted)]">
                 {reviewStats.totalReviews} total · {reviewStats.passCount} on schedule
               </div>
             </Card>
-            <Card className="stagger-item">
+            <Card className="stagger-item min-w-0">
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <CheckCircle2 size={16} className="text-[var(--accent)]" /> Achievements
+                <CheckCircle2 size={16} className="shrink-0 text-[var(--accent)]" /> Achievements
               </div>
               <div className="text-2xl font-bold tabular-nums">
                 {unlockedCount}
@@ -237,12 +237,12 @@ export function StatsPage() {
             </Card>
           </div>
 
-          <Card className="stagger-item">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="font-semibold text-[var(--text-heading)]">Last 7 days</div>
-              <span className="text-xs text-[var(--text-muted)]">Study minutes per day</span>
+          <Card className="stagger-item min-w-0">
+            <div className="mb-4 flex flex-col gap-1 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
+              <div className="break-words font-semibold text-[var(--text-heading)]">Last 7 days</div>
+              <span className="break-words text-xs text-[var(--text-muted)]">Study minutes per day</span>
             </div>
-            <div className="flex items-end gap-2" style={{ height: 128 }}>
+            <div className="flex min-w-0 items-end gap-2" style={{ height: 128 }}>
               {last7Days.map((d) => (
                 <div key={d.label} className="flex flex-1 flex-col items-center gap-1.5">
                   <span className="text-[0.65rem] tabular-nums text-[var(--text-muted)]">
@@ -271,22 +271,22 @@ export function StatsPage() {
             </div>
           </Card>
 
-          <Card className="stagger-item">
+          <Card className="stagger-item min-w-0">
             <StreakCalendar dailyMinutes={stats.dailyMinutes} />
           </Card>
 
           {xpBySubject.length > 0 && (
-            <Card className="stagger-item">
-              <div className="mb-3 font-semibold text-[var(--text-heading)]">XP by subject</div>
+            <Card className="stagger-item min-w-0">
+              <div className="mb-3 break-words font-semibold text-[var(--text-heading)]">XP by subject</div>
               <div className="space-y-3">
                 {xpBySubject.map(({ subject, xp }) => (
-                  <div key={subject.id} className="flex items-center gap-3">
+                  <div key={subject.id} className="flex min-w-0 items-center gap-3">
                     <span
                       className="h-2 w-2 shrink-0 rounded-full"
                       style={{ background: subject.color }}
                     />
-                    <span className="w-28 truncate text-sm">{subject.name}</span>
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
+                    <span className="min-w-0 basis-24 break-words text-sm min-[481px]:basis-28">{subject.name}</span>
+                    <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
                       <div
                         className="h-full rounded-full transition-all"
                         style={{
@@ -295,27 +295,27 @@ export function StatsPage() {
                         }}
                       />
                     </div>
-                    <span className="w-12 text-right font-mono text-xs tabular-nums">{xp}</span>
+                    <span className="w-12 shrink-0 text-right font-mono text-xs tabular-nums">{xp}</span>
                   </div>
                 ))}
               </div>
             </Card>
           )}
 
-          <Card className="stagger-item">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="font-semibold text-[var(--text-heading)]">Achievements</div>
-              <span className="text-xs text-[var(--text-muted)]">
+          <Card className="stagger-item min-w-0">
+            <div className="mb-4 flex flex-col gap-1 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
+              <div className="break-words font-semibold text-[var(--text-heading)]">Achievements</div>
+              <span className="break-words text-xs text-[var(--text-muted)]">
                 {unlockedCount} of {ALL_ACHIEVEMENTS.length} unlocked
               </span>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {ALL_ACHIEVEMENTS.map((a) => {
                 const unlocked = hasSeen(a);
                 return (
                   <div
                     key={a}
-                    className={`flex items-center gap-3 rounded-[var(--radius)] border px-3 py-3 text-sm transition ${
+                    className={`flex min-w-0 items-center gap-3 rounded-[var(--radius)] border px-3 py-3 text-sm transition ${
                       unlocked
                         ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--text)] shadow-[var(--accent-glow)]"
                         : "border-[var(--border)] text-[var(--text-muted)] opacity-60"
@@ -326,7 +326,7 @@ export function StatsPage() {
                     ) : (
                       <div className="h-4 w-4 shrink-0 rounded-full border border-dashed border-[var(--border)]" />
                     )}
-                    <span className={unlocked ? "font-medium" : ""}>
+                    <span className={`min-w-0 break-words ${unlocked ? "font-medium" : ""}`}>
                       {achievementLabel(a).split(" — ")[0]}
                     </span>
                   </div>
@@ -335,9 +335,9 @@ export function StatsPage() {
             </div>
           </Card>
 
-          <Card className="stagger-item">
-            <div className="mb-4 font-semibold text-[var(--text-heading)]">Weekly trend</div>
-            <div className="flex items-end gap-2" style={{ height: 100 }}>
+          <Card className="stagger-item min-w-0">
+            <div className="mb-4 break-words font-semibold text-[var(--text-heading)]">Weekly trend</div>
+            <div className="flex min-w-0 items-end gap-2" style={{ height: 100 }}>
               {weeklyTrend.map((w) => (
                 <div key={w.weekLabel} className="flex flex-1 flex-col items-center gap-1">
                   <div
