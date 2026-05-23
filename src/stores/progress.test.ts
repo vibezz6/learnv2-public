@@ -56,6 +56,12 @@ function mockLocalStorage(): Storage {
   };
 }
 
+function dateFromToday(offsetDays: number): string {
+  const date = new Date(`${getToday()}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + offsetDays);
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+}
+
 describe("progress", () => {
   beforeEach(() => {
     useProgress.getState().resetProgress();
@@ -156,6 +162,53 @@ describe("progress", () => {
 
     expect(useProgress.getState().getNodesNeedingReview(mockSubjects())).toEqual([]);
   });
+
+
+
+  it("uses earliest pending review and records confidence stats", () => {
+    useProgress.getState().completeNode("m1", 50);
+    const data = useProgress.getState().data;
+    useProgress.setState({
+      data: {
+        ...data,
+        spacedRepetition: {
+          m1: {
+            nodeId: "m1",
+            currentIntervalIndex: 7,
+            scheduledReviews: [
+              { scheduledDate: dateFromToday(-2), completedDate: null },
+              { scheduledDate: dateFromToday(-1), completedDate: null },
+            ],
+          },
+        },
+      },
+    });
+
+    expect(useProgress.getState().getNodesNeedingReview(mockSubjects())[0].nextReviewDate).toBe(dateFromToday(-2));
+
+    useProgress.getState().completeReviewWithConfidence("m1", "normal");
+    const item = useProgress.getState().data.spacedRepetition.m1;
+    expect(item.currentIntervalIndex).toBe(7);
+    expect(item.scheduledReviews[0]).toMatchObject({ completedDate: getToday(), confidence: "normal" });
+    expect(item.scheduledReviews.at(-1)).toMatchObject({ scheduledDate: dateFromToday(240), completedDate: null });
+    expect(useProgress.getState().getReviewStats()).toEqual({ totalReviews: 1, passCount: 1, failCount: 0, passRate: 100 });
+  });
+
+  it("skips completed continue targets and decays stale streaks on read", () => {
+    const subjects = mockSubjects();
+    useProgress.getState().completeNode("m1", 50);
+    useProgress.getState().trackVisit("m1");
+    useProgress.setState({
+      data: {
+        ...useProgress.getState().data,
+        streaks: { current: 5, longest: 5, lastStudyDate: dateFromToday(-2) },
+      },
+    });
+
+    expect(useProgress.getState().getContinueTarget(subjects)?.node.id).toBe("m2");
+    expect(useProgress.getState().getStats(subjects).streakCurrent).toBe(0);
+  });
+
 });
 
 describe("progress exportData/importData", () => {
@@ -194,6 +247,50 @@ describe("progress exportData/importData", () => {
     expect(data.nodes.m1?.completedAt).toBeTruthy();
     expect(data.streaks.current).toBe(1);
   });
+
+  it("excludes OpenRouter API keys from export and import", () => {
+    localStorage.setItem("learnapp_openrouter_key", "secret");
+    localStorage.setItem("learnv2_openrouter_key", "future-secret");
+    localStorage.setItem("learnapp_notes_v1", "{}");
+
+    const exported = useProgress.getState().exportData();
+    const parsed = JSON.parse(exported) as { keys: Record<string, string | null> };
+    expect(parsed.keys.learnapp_openrouter_key).toBeUndefined();
+    expect(parsed.keys.learnv2_openrouter_key).toBeUndefined();
+    expect(parsed.keys.learnapp_notes_v1).toBe("{}");
+
+    localStorage.removeItem("learnapp_openrouter_key");
+    const result = useProgress.getState().importData(
+      JSON.stringify({
+        version: 2,
+        keys: {
+          learnapp_openrouter_key: "imported-secret",
+          learnapp_notes_v1: "{}",
+        },
+      }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(localStorage.getItem("learnapp_openrouter_key")).toBeNull();
+  });
+
+
+
+  it("rejects unsupported import keys and clears managed storage on reset", () => {
+    expect(useProgress.getState().importData(JSON.stringify({ version: 1, keys: {} })).success).toBe(false);
+    expect(useProgress.getState().importData(JSON.stringify({ version: 2, keys: { not_app_key: "value" } })).success).toBe(false);
+
+    localStorage.setItem("learnv2_bookmarks", "bookmarks");
+    localStorage.setItem("learnapp_notes_v1", "notes");
+    localStorage.setItem("unrelated", "keep");
+    useProgress.getState().resetProgress();
+
+    expect(localStorage.getItem("not_app_key")).toBeNull();
+    expect(localStorage.getItem("learnv2_bookmarks")).toBeNull();
+    expect(localStorage.getItem("learnapp_notes_v1")).toBeNull();
+    expect(localStorage.getItem("unrelated")).toBe("keep");
+  });
+
 });
 
 describe("progress migrateAllFromV1", () => {
@@ -274,4 +371,48 @@ describe("progress migrateAllFromV1", () => {
     const prefs = JSON.parse(localStorage.getItem("learnv2_preferences")!);
     expect(prefs.state.theme).toBe("light");
   });
+
+  it("merges v1 progress without wiping existing v2 progress", () => {
+    useProgress.getState().completeNode("m1", 50);
+    useProgress.getState().completeDailyChallenge("dc001", 25);
+
+    localStorage.setItem(
+      V1_STORAGE_KEY,
+      JSON.stringify({
+        totalXp: 420,
+        nodes: {
+          m2: {
+            completedAt: "2026-05-20T00:00:00.000Z",
+            startedAt: "2026-05-19T00:00:00.000Z",
+            timeSpentMinutes: 15,
+            quizScores: [80],
+            quizHistory: [
+              {
+                score: 80,
+                totalQuestions: 5,
+                correctAnswers: 4,
+                date: "2026-05-20",
+                timeTakenSeconds: 120,
+              },
+            ],
+          },
+        },
+        dailyChallenges: { "2026-05-20_dc999": true },
+      }),
+    );
+
+    const result = useProgress.getState().importFromV1();
+    const data = useProgress.getState().data;
+
+    expect(result.success).toBe(true);
+    expect(data.totalXp).toBe(420);
+    expect(data.nodes.m1.completedAt).toBeTruthy();
+    expect(data.nodes.m2.completedAt).toBe("2026-05-20T00:00:00.000Z");
+    expect(data.dailyChallenges[`${getToday()}_dc001`]).toBe(true);
+    expect(data.dailyChallenges["2026-05-20_dc999"]).toBe(true);
+  });
+
+
+
+
 });
