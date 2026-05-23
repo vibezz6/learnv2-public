@@ -29,15 +29,15 @@ export function DashboardPage() {
   const reviewedToday = getDailyReviewCount();
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 md:p-8 md:pb-8">
+    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:space-y-6 md:p-8 md:pb-8">
       {/* Page header — identity + stats bar */}
       <section className="stagger-item space-y-1.5">
         <Badge>{formatAppVersion()}</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
+        <h1 className="break-words text-[clamp(1.5rem,6vw,1.875rem)] font-bold tracking-tight text-[var(--text-heading)]">
           Neural Command Center
         </h1>
         {stats && (
-          <p className="text-sm text-[var(--text-muted)]">
+          <p className="break-words text-sm text-[var(--text-muted)]">
             Level {stats.level} · {stats.completedNodes}/{stats.totalNodes} lessons · {stats.totalXp} XP
             {stats.streakCurrent > 0 && ` · ${stats.streakCurrent} day streak`}
           </p>
@@ -48,7 +48,7 @@ export function DashboardPage() {
       <section className="stagger-item">
         <Card
           glow
-          className="border-l-2 border-l-[var(--accent)]"
+          className="border-l-2 border-l-[var(--accent)] max-[480px]:p-6"
         >
           <div className="mb-3 flex items-center gap-2">
             <Target size={14} className="text-[var(--accent)]" />
@@ -57,9 +57,9 @@ export function DashboardPage() {
             </span>
           </div>
           {target ? (
-            <div className="flex items-start justify-between gap-6">
+            <div className="flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between min-[481px]:gap-6">
               <div className="min-w-0 flex-1">
-                <h2 className="text-2xl font-bold tracking-tight text-[var(--text-heading)]">
+                <h2 className="break-words text-[clamp(1.375rem,5.5vw,1.5rem)] font-bold tracking-tight text-[var(--text-heading)] min-[481px]:text-2xl">
                   {target.node.name}
                 </h2>
                 <p className="mt-1.5 text-sm font-medium text-[var(--accent-2)]">
@@ -68,9 +68,9 @@ export function DashboardPage() {
               </div>
               <Link
                 to={`/subjects/${target.subject.id}/${target.node.id}`}
-                className="shrink-0"
+                className="w-full min-[481px]:w-auto min-[481px]:shrink-0"
               >
-                <Button className="px-6 py-2.5 text-base">
+                <Button className="min-h-11 w-full touch-manipulation px-6 py-2.5 text-base min-[481px]:w-auto">
                   Continue
                   <ArrowRight size={16} />
                 </Button>
@@ -85,7 +85,7 @@ export function DashboardPage() {
       </section>
 
       {/* Secondary row — review + daily challenge + track (equal weight, calm) */}
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* Review — visible but subdued */}
         <Card className="stagger-item">
           <div className="mb-3 flex items-center gap-2 text-[var(--accent-2)]">
@@ -103,8 +103,8 @@ export function DashboardPage() {
               {reviewedToday > 0 && (
                 <p className="mt-0.5 text-xs text-[var(--text-muted)]">{reviewedToday} reviewed today</p>
               )}
-              <Link to="/review" className="mt-3 inline-block">
-                <Button variant="secondary" className="text-sm">
+              <Link to="/review" className="mt-3 block min-[481px]:inline-block">
+                <Button variant="secondary" className="min-h-11 w-full touch-manipulation text-sm min-[481px]:w-auto">
                   Start review
                   <ArrowRight size={14} />
                 </Button>

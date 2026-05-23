@@ -20,7 +20,7 @@ export function MathInspiredSection({ completedNodes, totalNodes }: Props) {
     <Card className="stagger-item">
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-2 text-left"
+        className="flex min-h-11 w-full touch-manipulation items-center justify-between gap-2 text-left"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
@@ -35,7 +35,7 @@ export function MathInspiredSection({ completedNodes, totalNodes }: Props) {
       </button>
 
       {open && (
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-1 gap-4 min-[481px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
           <FibonacciProgress completedNodes={completedNodes} />
           <MathConstants />
           <PrimeProgress completedNodes={completedNodes} />

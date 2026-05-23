@@ -29,14 +29,14 @@ export function TrackRecommendation({ subjects }: { subjects: Subject[] }) {
   if (!best?.next) return null;
 
   return (
-    <Card>
-      <div className="mb-2 text-sm font-semibold text-[var(--text-heading)]">Track recommendation</div>
-      <p className="text-sm text-[var(--text-muted)]">{best.track.description}</p>
+    <Card className="min-w-0">
+      <div className="mb-2 break-words text-sm font-semibold text-[var(--text-heading)]">Track recommendation</div>
+      <p className="break-words text-sm text-[var(--text-muted)]">{best.track.description}</p>
       <div className="mt-2 text-xs text-[var(--text-muted)]">
         {best.track.name} · {best.completed}/{best.total} complete
       </div>
-      <Link to={`/subjects/${best.next.subjectId}/${best.next.nodeId}`} className="mt-3 inline-block">
-        <Button variant="secondary">
+      <Link to={`/subjects/${best.next.subjectId}/${best.next.nodeId}`} className="mt-3 block min-[481px]:inline-block">
+        <Button variant="secondary" className="min-h-11 w-full touch-manipulation min-[481px]:w-auto">
           Continue track
           <ArrowRight size={14} />
         </Button>

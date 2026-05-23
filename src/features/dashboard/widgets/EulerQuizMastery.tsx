@@ -51,7 +51,7 @@ export function EulerQuizMastery({ subjects }: Props) {
     <Card>
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-2 text-left"
+        className="flex min-h-11 w-full touch-manipulation items-center justify-between gap-2 text-left"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >

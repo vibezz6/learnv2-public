@@ -41,7 +41,7 @@ export function DailyChallengeWidget() {
   };
 
   return (
-    <Card className="border-[var(--accent-border)] bg-[var(--accent-bg)]">
+    <Card className="min-w-0 border-[var(--accent-border)] bg-[var(--accent-bg)]">
       <div className="mb-3 flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-[var(--radius)] bg-[var(--accent)] text-white">
           <Dumbbell size={18} />
@@ -59,7 +59,7 @@ export function DailyChallengeWidget() {
         )}
       </div>
 
-      <p className="mb-3 text-sm font-medium text-[var(--text-heading)]">{challenge.question}</p>
+      <p className="mb-3 break-words text-sm font-medium text-[var(--text-heading)]">{challenge.question}</p>
 
       {!showResult ? (
         <div className="space-y-2">
@@ -67,7 +67,7 @@ export function DailyChallengeWidget() {
             <button
               key={idx}
               type="button"
-              className={`w-full rounded-[var(--radius)] border px-3 py-2 text-left text-sm transition ${
+              className={`min-h-11 w-full touch-manipulation rounded-[var(--radius)] border px-3 py-2 text-left text-sm transition ${
                 selectedOption === idx
                   ? "border-[var(--accent)] bg-[var(--accent-bg)]"
                   : "border-[var(--border)] hover:border-[var(--border-strong)]"
@@ -84,11 +84,11 @@ export function DailyChallengeWidget() {
               value={numericAnswer}
               onChange={(e) => setNumericAnswer(e.target.value)}
               placeholder="Enter your answer…"
-              className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
+              className="min-h-11 w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent px-3 py-2 text-sm outline-none focus:border-[var(--accent)]"
             />
           )}
           <Button
-            className="mt-2"
+            className="mt-2 min-h-11 w-full touch-manipulation min-[481px]:w-auto"
             disabled={
               (challenge.type === "multiple_choice" && selectedOption === null) ||
               (challenge.type === "numeric" && !numericAnswer.trim())
