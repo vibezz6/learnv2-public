@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Lock, Sparkles } from "lucide-react";
 import { Badge, Button, Card, FocusShell } from "@/components/ui";
-import { loadSubject, getNode } from "@/curriculum/loader";
+import { getAdjacentLessonNodes, getNode, loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
 import { CollapsibleSection, WorkedExampleCard } from "@/features/lesson/LessonSections";
+import { useSwipeNavigation } from "@/hooks/useSwipeNavigation";
 import { usePreferences } from "@/stores/preferences";
 import {
   getTakeaways,
@@ -18,12 +19,30 @@ import { cn } from "@/lib/cn";
 
 export function LessonPage() {
   const { subjectId = "", nodeId = "" } = useParams();
+  const navigate = useNavigate();
   const { focusMode, toggleFocusMode } = usePreferences();
   const { getNodeStatus, startNode, trackVisit, completeNode } = useProgress();
 
   const [subject, setSubject] = useState<Subject | null>(null);
   const [node, setNode] = useState<SkillNode | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const neighbors = useMemo(
+    () => (subject && node ? getAdjacentLessonNodes(subject, node.id) : null),
+    [subject, node],
+  );
+
+  const goToLesson = useCallback(
+    (targetId: string) => {
+      navigate(`/subjects/${subjectId}/${targetId}`);
+    },
+    [navigate, subjectId],
+  );
+
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipeNavigation({
+    onSwipeLeft: neighbors ? () => goToLesson(neighbors.next.id) : undefined,
+    onSwipeRight: neighbors ? () => goToLesson(neighbors.prev.id) : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -77,6 +96,9 @@ export function LessonPage() {
           "mx-auto w-full min-w-0 max-w-3xl space-y-6 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-8 md:p-8",
           focusMode && "pt-2",
         )}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         {!focusMode && (
           <Link

@@ -26,6 +26,25 @@ export function getNode(subject: Subject, nodeId: string): SkillNode | undefined
   return subject.nodes.find((n) => n.id === nodeId);
 }
 
+export function getAdjacentLessonNodes(
+  subject: Subject,
+  nodeId: string,
+): { prev: SkillNode; next: SkillNode } | null {
+  const currentIdx = subject.nodes.findIndex((n) => n.id === nodeId);
+  if (currentIdx === -1 || subject.nodes.length === 0) return null;
+
+  const prev =
+    currentIdx > 0
+      ? subject.nodes[currentIdx - 1]
+      : subject.nodes[subject.nodes.length - 1];
+  const next =
+    currentIdx < subject.nodes.length - 1
+      ? subject.nodes[currentIdx + 1]
+      : subject.nodes[0];
+
+  return { prev, next };
+}
+
 export function findNodeAcrossSubjects(
   subjects: Subject[],
   nodeId: string,
