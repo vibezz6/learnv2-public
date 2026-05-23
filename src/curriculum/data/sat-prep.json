@@ -2413,6 +2413,606 @@
           "explanation": "The answer must follow from what the chart or table actually shows."
         }
       ]
+    },
+    {
+      "id": "st46",
+      "name": "Volume & Advanced Geometry Drill",
+      "description": "3D volume and surface area, composite figures, and arc/sector extensions — Additional Topics building on st23 and st40.",
+      "xpValue": 90,
+      "parentIds": ["st40"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Volume formulas: prism, cylinder, cone, sphere — know what each dimension means",
+        "Surface area: net thinking and labeled diagrams",
+        "Composite figures — split into familiar shapes, add or subtract",
+        "Arc length and sector area from central angle and radius"
+      ],
+      "whyItMatters": "Geometry items are fewer but often feel unfamiliar if you missed class days. Volume and composite-figure drills prevent easy points from slipping away on labeled diagrams.",
+      "practiceProblems": [
+        "Find volume of a cylinder with r = 3 and h = 10 — include units.",
+        "A composite figure: rectangle with semicircle on top — find total area.",
+        "Khan: 12 volume and advanced geometry SAT items — sketch each diagram before calculating."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Geometry SAT practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Additional Topics geometry and measurement at SAT depth."
+        },
+        {
+          "title": "Khan — Solid geometry",
+          "url": "https://www.khanacademy.org/math/geometry/hs-geo-solids",
+          "type": "practice",
+          "whyHelpful": "Volume and surface area with step-by-step solutions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st46_1",
+          "question": "Volume of a cylinder is V = πr²h. If radius doubles and height stays the same, volume:",
+          "options": ["Stays the same", "Doubles", "Quadruples", "Halves"],
+          "correctIndex": 2,
+          "explanation": "Volume depends on r² — doubling r multiplies volume by 4."
+        },
+        {
+          "id": "q_st46_2",
+          "question": "For a composite figure on the SAT, the best first step is:",
+          "options": [
+            "Pick one formula at random",
+            "Split into familiar shapes and label every dimension",
+            "Ignore the diagram",
+            "Convert everything to radians first"
+          ],
+          "correctIndex": 1,
+          "explanation": "Decompose the figure and verify units before calculating."
+        }
+      ]
+    },
+    {
+      "id": "st47",
+      "name": "Nonlinear Graphs & Systems Drill",
+      "description": "Parabola-line intersections, number of solutions, and graph-based systems — Passport to Advanced Math at drill pace.",
+      "xpValue": 90,
+      "parentIds": ["st46"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Line and parabola: 0, 1, or 2 intersection points",
+        "Set equations equal to find intersection x-values",
+        "Discriminant intuition: b² - 4ac tells you solution count for quadratics",
+        "Desmos: graph both curves and count intersection points"
+      ],
+      "whyItMatters": "\"How many solutions\" items reward graph thinking over long algebra. Desmos plus intersection count beats grinding the quadratic formula under time pressure.",
+      "practiceProblems": [
+        "How many solutions does y = x² and y = x + 2 have? Verify in Desmos.",
+        "Find intersection points of y = x² - 4 and y = 2x.",
+        "Khan: 12 nonlinear systems SAT items — graph before solving algebraically."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Nonlinear equations and systems",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-quadratics",
+          "type": "practice",
+          "whyHelpful": "Quadratic and system items with SAT-style intersection questions."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph parabolas and lines to count and verify intersections."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st47_1",
+          "question": "A line and a parabola can intersect at:",
+          "options": ["Exactly 1 point only", "0, 1, or 2 points", "Always 2 points", "Never"],
+          "correctIndex": 1,
+          "explanation": "A line can miss, touch once (tangent), or cross a parabola twice."
+        },
+        {
+          "id": "q_st47_2",
+          "question": "For \"how many solutions\" questions, Desmos helps by:",
+          "options": [
+            "Replacing the need to read the question",
+            "Letting you count intersection points visually",
+            "Eliminating all algebra forever",
+            "Guessing the answer randomly"
+          ],
+          "correctIndex": 1,
+          "explanation": "Graph both equations and count where they cross — fast sanity check."
+        }
+      ]
+    },
+    {
+      "id": "st48",
+      "name": "Hard Word Problems — Multi-Step Setup",
+      "description": "Multi-representation setup: table → equation → graph. Rate, work, and mixture problems at SAT pace.",
+      "xpValue": 90,
+      "parentIds": ["st47"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Define the variable in one sentence before writing an equation",
+        "Rate × time = distance; work-rate sums for combined jobs",
+        "Table to equation: identify what changes at a constant rate",
+        "Mark the setup step — most misses are wrong models, not arithmetic"
+      ],
+      "whyItMatters": "Long SAT stems test whether you can translate a story into math once. Drilling the setup step — not the calculation — is what separates fast scores from stuck ones.",
+      "practiceProblems": [
+        "Two pipes fill a tank at different rates — write combined-rate equation for time to fill.",
+        "From a table of distance vs time, write the linear model and interpret slope.",
+        "Khan: 12 multi-step word problem SAT items — write setup only before checking answers."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Math word problems",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Multi-step modeling across Heart of Algebra and PSDA."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph table data to verify linear models and intercepts."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st48_1",
+          "question": "On a long word problem, the highest-ROI first step is:",
+          "options": [
+            "Calculate immediately without defining x",
+            "Define what x represents in one clear sentence",
+            "Skip to the answer choices",
+            "Memorize a generic formula"
+          ],
+          "correctIndex": 1,
+          "explanation": "A clear variable definition prevents wrong-equation traps on complex stems."
+        },
+        {
+          "id": "q_st48_2",
+          "question": "If two workers complete a job together in 3 hours, their combined rate is:",
+          "options": [
+            "Sum of individual rates",
+            "Product of individual rates",
+            "Average of their times only",
+            "Always 1/3 of the slower rate"
+          ],
+          "correctIndex": 0,
+          "explanation": "Rates add when working together: 1/t₁ + 1/t₂ = 1/t_combined."
+        }
+      ]
+    },
+    {
+      "id": "st49",
+      "name": "Math Mistake-Log Retarget Drill",
+      "description": "Pull top 3 miss categories from your mistake log; untimed redo plus 3 similar items per category before the half-test checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st48"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Rank miss categories from st25 and st36–st48 logs",
+        "Untimed redo of original misses — no notes, fresh attempt",
+        "3 similar Khan items per weak category",
+        "No new topics — retarget what already cost you points"
+      ],
+      "whyItMatters": "The half-test checkpoint is only useful if you fixed your actual weak spots first. Retargeting from your log beats random mixed practice.",
+      "practiceProblems": [
+        "List your top 3 Math miss categories from st25 and recent drills.",
+        "Redo each original miss untimed, then 3 similar Khan questions per category.",
+        "Bluebook: untimed review of missed item types from st25 log."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Filter by weak domain: Algebra, PSDA, Advanced Math, or Geometry."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed review of missed item types in the real interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st49_1",
+          "question": "Before a half-test checkpoint, mistake-log retarget should focus on:",
+          "options": [
+            "Random new topics",
+            "Your top 3 actual miss categories from prior checkpoints",
+            "Only questions you already got right",
+            "Skipping review to stay fresh"
+          ],
+          "correctIndex": 1,
+          "explanation": "Retarget categories that already cost points — not random drills."
+        },
+        {
+          "id": "q_st49_2",
+          "question": "After redoing a miss untimed, the best follow-up is:",
+          "options": [
+            "Move on immediately",
+            "3 similar items in the same category without notes",
+            "Memorize the letter answer only",
+            "Delete the miss from your log"
+          ],
+          "correctIndex": 1,
+          "explanation": "Similar items in the same category lock in the fix while the pattern is fresh."
+        }
+      ]
+    },
+    {
+      "id": "st50",
+      "name": "Math — Bluebook Half-Test Checkpoint",
+      "description": "Timed Math modules (Module 1 + Module 2 or equivalent half-test block). Log misses by domain within 24 hours — capstone of the st36–st50 drill chain.",
+      "xpValue": 150,
+      "parentIds": ["st49"],
+      "estimatedMinutes": 70,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed both Math modules under test-like conditions",
+        "Tag misses: algebra / PSDA / advanced / geometry",
+        "Review within 24 hours — redo 3 similar items per miss type",
+        "Compare to st25 timed checkpoint — note score trend"
+      ],
+      "whyItMatters": "This half-test checkpoint simulates real section pressure after round-2 drills. Comparing to st25 shows whether your retargeting worked — the feedback loop that moves your Math score.",
+      "practiceProblems": [
+        "Bluebook timed Math Module 1 + Module 2 — phone away, timer on.",
+        "Categorize every miss in your mistake log within 24 hours.",
+        "Compare raw score and timing to st25 — note which domains improved."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Timed SAT Math",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Timed sets mirroring module length if Bluebook isn't available."
+        },
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing, Desmos, and adaptive module feel for both Math modules."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st50_1",
+          "question": "After a Math half-test checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by domain and drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh."
+        },
+        {
+          "id": "q_st50_2",
+          "question": "A Math half-test checkpoint should be compared to:",
+          "options": [
+            "Only st1 quiz scores",
+            "st25 timed checkpoint — note score and timing trend",
+            "Unrelated homework grades",
+            "Other students' scores online"
+          ],
+          "correctIndex": 1,
+          "explanation": "st25 is your baseline timed Math checkpoint — track improvement from there."
+        }
+      ]
+    },
+    {
+      "id": "st51",
+      "name": "Conciseness & Redundancy Drill",
+      "description": "Delete redundancy, choose the shortest grammatically correct option — Expression of Ideas under drill conditions.",
+      "xpValue": 90,
+      "parentIds": ["st45"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Shortest choice must still be grammatically complete and clear",
+        "Redundant pairs: \"past history,\" \"combine together,\" \"each individual\"",
+        "Do not sacrifice necessary meaning or clarity for brevity",
+        "Read the full sentence — concision traps often drop a required word"
+      ],
+      "whyItMatters": "Concision items are quick points when you know the pattern: if two choices say the same thing, pick the shorter one that still works. Drill the redundancy scan before timed modules.",
+      "practiceProblems": [
+        "Fix: \"The reason is because the team was tired.\"",
+        "Fix: \"They merged together the two departments.\"",
+        "Khan: 15 concision and redundancy SAT items — mark the redundant phrase each time."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Expression of ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Concision drills with \"most effectively\" revision stems."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official concise-revision items in the digital format."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st51_1",
+          "question": "Which phrase is redundant?",
+          "options": [
+            "The team won",
+            "Past history",
+            "She arrived early",
+            "The data show"
+          ],
+          "correctIndex": 1,
+          "explanation": "History is already in the past — \"past history\" repeats the idea."
+        },
+        {
+          "id": "q_st51_2",
+          "question": "On a concision question, the correct answer must be:",
+          "options": [
+            "The shortest option regardless of grammar",
+            "The shortest option that is grammatically correct and preserves meaning",
+            "Always the longest option",
+            "The option with the most adjectives"
+          ],
+          "correctIndex": 1,
+          "explanation": "Concision means efficient, not incomplete — grammar and clarity still matter."
+        }
+      ]
+    },
+    {
+      "id": "st52",
+      "name": "Author's Tone & Style Drill",
+      "description": "Tone words, attitude, and stylistic choices — reject extreme or off-tone options on Craft and Structure items.",
+      "xpValue": 90,
+      "parentIds": ["st51"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Tone = author's attitude toward the subject (neutral, skeptical, admiring, etc.)",
+        "Style clues: word choice, sentence length, formal vs informal register",
+        "Reject answers that are too extreme unless the passage supports them",
+        "Vocabulary in context — pick the word that matches register, not just definition"
+      ],
+      "whyItMatters": "Tone items test whether you read for attitude, not just facts. One pass for word choice and overall stance beats picking answers that sound sophisticated but misread the author.",
+      "practiceProblems": [
+        "One humanities passage: write one word for tone and one sentence of evidence.",
+        "One science passage: distinguish neutral reporting from persuasive language.",
+        "Khan: 12 tone and style SAT items — eliminate extreme choices first."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Words in context, tone, and register drills."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official tone and vocabulary-in-context items."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st52_1",
+          "question": "On a tone question, \"skeptical\" means the author:",
+          "options": [
+            "Fully agrees without question",
+            "Doubts or questions claims",
+            "Uses only humor",
+            "Ignores the topic"
+          ],
+          "correctIndex": 1,
+          "explanation": "Skeptical tone shows doubt or questioning — look for hedging or counterevidence."
+        },
+        {
+          "id": "q_st52_2",
+          "question": "A common tone trap is choosing an answer that is:",
+          "options": [
+            "Supported by specific word choices in the passage",
+            "More extreme than the passage language supports",
+            "Neutral when the passage is neutral",
+            "Matched to the subject matter"
+          ],
+          "correctIndex": 1,
+          "explanation": "SAT tone answers match the passage's degree — not stronger than the text allows."
+        }
+      ]
+    },
+    {
+      "id": "st53",
+      "name": "Form, Structure & Sense — Mixed Grammar",
+      "description": "Combined Standard English Conventions: boundaries plus form/structure in one timed-style set — grammar under module pacing.",
+      "xpValue": 90,
+      "parentIds": ["st52"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Mix punctuation (commas, semicolons, dashes) with form/structure (tense, agreement, parallelism)",
+        "Read the full sentence — boundaries and verb form often interact",
+        "Timed-style pacing: ~45–60 seconds per grammar item",
+        "No new rules — combine st26–st28 and st41–st42 patterns"
+      ],
+      "whyItMatters": "Real R&W modules switch grammar subtypes fast. Mixed SEC drills build the reflex to scan for boundaries and form in one pass — same rhythm as test day.",
+      "practiceProblems": [
+        "Khan: 20 mixed SEC items (punctuation + agreement + tense) under a 15-minute timer.",
+        "For each miss, name both the rule and the sentence part that triggered it.",
+        "Redo 5 boundary items and 5 form/structure items from your mistake log."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Standard English Conventions",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Full SEC mix: boundaries, form, structure, and sense."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Rapid grammar items under module pacing."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st53_1",
+          "question": "Mixed SEC practice should mimic test day by:",
+          "options": [
+            "Doing only one grammar subtype per session",
+            "Switching boundary and form/structure items under time pressure",
+            "Skipping punctuation entirely",
+            "Reading passages slowly without timing"
+          ],
+          "correctIndex": 1,
+          "explanation": "Modules mix SEC subtypes — practice with pacing and variety."
+        },
+        {
+          "id": "q_st53_2",
+          "question": "When a sentence has both a comma and a verb error, fix:",
+          "options": [
+            "Only the comma",
+            "Only the verb",
+            "The issue the question underlines or asks about",
+            "Neither — pick the longest answer"
+          ],
+          "correctIndex": 2,
+          "explanation": "Answer what the item tests — underline or prompt tells you the target."
+        }
+      ]
+    },
+    {
+      "id": "st54",
+      "name": "R&W Mistake-Log Retarget & Mixed Review",
+      "description": "Untimed 20-question mix from st41–st53 categories. Tag every miss before the R&W half-test checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st53"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Mix grammar, craft, info, and expression from round-2 drills",
+        "Tag each miss: concision / tone / SEC / cross-text / charts / etc.",
+        "Redo similar Khan questions for every miss",
+        "No new topics — consolidate st41–st53 before st55"
+      ],
+      "whyItMatters": "Single-skill drills build accuracy; mixed retarget review reveals what you forget when question types switch — exactly what a half-test module feels like.",
+      "practiceProblems": [
+        "Khan: 20-question untimed mixed R&W set spanning st41–st53 topics.",
+        "For each miss, write one sentence: category + what fix.",
+        "Bluebook: untimed R&W module review — categorize misses before st55."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mixed official-style sets with skill labels."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed module review in the real test interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st54_1",
+          "question": "Before a R&W half-test checkpoint, mixed review should be:",
+          "options": [
+            "Skipped to save time",
+            "Untimed with every miss tagged by skill category",
+            "Only concision, no reading",
+            "Done once and never revisited"
+          ],
+          "correctIndex": 1,
+          "explanation": "Tagged untimed review targets weak spots before the clock turns on."
+        },
+        {
+          "id": "q_st54_2",
+          "question": "R&W mistake-log retarget should pull misses from:",
+          "options": [
+            "Only st1",
+            "st35 and st41–st53 drill categories",
+            "Unrelated subjects",
+            "Questions you got right"
+          ],
+          "correctIndex": 1,
+          "explanation": "Round-2 categories plus st35 baseline show what still costs points."
+        }
+      ]
+    },
+    {
+      "id": "st55",
+      "name": "R&W — Bluebook Half-Test Checkpoint",
+      "description": "Timed R&W modules (Module 1 + Module 2 or equivalent half-test block). Log misses by category within 24 hours — capstone of the st41–st55 drill chain.",
+      "xpValue": 150,
+      "parentIds": ["st54"],
+      "estimatedMinutes": 70,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed both R&W modules under test-like conditions",
+        "Tag misses: grammar / craft / info / expression",
+        "Review within 24 hours — redo 3 similar items per miss type",
+        "Compare to st35 timed checkpoint — note score trend"
+      ],
+      "whyItMatters": "This half-test checkpoint simulates real section pressure after round-2 R&W drills. Comparing to st35 shows whether your retargeting worked — the feedback loop that moves your R&W score.",
+      "practiceProblems": [
+        "Bluebook timed R&W Module 1 + Module 2 — phone away, timer on.",
+        "Categorize every miss in your mistake log within 24 hours.",
+        "Compare raw score and timing to st35 — note which categories improved."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Timed SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Timed sets mirroring module length if Bluebook isn't available."
+        },
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing and adaptive module feel for both R&W modules."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st55_1",
+          "question": "After a R&W half-test checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by category and drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh."
+        },
+        {
+          "id": "q_st55_2",
+          "question": "A R&W half-test checkpoint should be compared to:",
+          "options": [
+            "Only st1 quiz scores",
+            "st35 timed checkpoint — note score and timing trend",
+            "Unrelated homework grades",
+            "Other students' scores online"
+          ],
+          "correctIndex": 1,
+          "explanation": "st35 is your baseline timed R&W checkpoint — track improvement from there."
+        }
+      ]
     }
   ]
 }
