@@ -1,5 +1,46 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getToday, useProgress, V1_STORAGE_KEY } from "@/stores/progress";
+import type { Subject } from "@/curriculum/types";
+import { getToday, useProgress, V1_STORAGE_KEY, V2_STORAGE_KEY } from "@/stores/progress";
+
+function mockSubjects(): Subject[] {
+  return [
+    {
+      id: "math",
+      name: "Math",
+      description: "Test subject",
+      color: "#000",
+      icon: "M",
+      nodes: [
+        {
+          id: "m1",
+          name: "Node 1",
+          description: "First node",
+          xpValue: 50,
+          parentIds: [],
+          estimatedMinutes: 30,
+          resources: [],
+          keyConcepts: [],
+          whyItMatters: "Testing",
+          practiceProblems: [],
+          difficulty: "beginner",
+        },
+        {
+          id: "m2",
+          name: "Node 2",
+          description: "Second node",
+          xpValue: 50,
+          parentIds: ["m1"],
+          estimatedMinutes: 30,
+          resources: [],
+          keyConcepts: [],
+          whyItMatters: "Testing",
+          practiceProblems: [],
+          difficulty: "beginner",
+        },
+      ],
+    },
+  ];
+}
 
 function mockLocalStorage(): Storage {
   const map = new Map<string, string>();
@@ -51,6 +92,107 @@ describe("progress", () => {
     useProgress.getState().completeNode("m1", 50);
     useProgress.getState().resetProgress();
     expect(useProgress.getState().data.totalXp).toBe(0);
+  });
+
+  it("completeNode awards XP once and marks node completed", () => {
+    useProgress.getState().completeNode("m1", 50);
+    expect(useProgress.getState().data.totalXp).toBe(50);
+    expect(useProgress.getState().data.nodes.m1.completedAt).toBeTruthy();
+
+    useProgress.getState().completeNode("m1", 50);
+    expect(useProgress.getState().data.totalXp).toBe(50);
+  });
+
+  it("completeNode sets levelUpPending when crossing a level threshold", () => {
+    useProgress.getState().completeNode("m1", 480);
+    expect(useProgress.getState().data.levelUpPending).toBeNull();
+
+    useProgress.getState().completeNode("m2", 50);
+    expect(useProgress.getState().data.totalXp).toBe(530);
+    expect(useProgress.getState().data.levelUpPending).toBe(2);
+  });
+
+  it("getNodesNeedingReview returns due items for completed nodes in subjects", () => {
+    const subjects = mockSubjects();
+    useProgress.getState().completeNode("m1", 50);
+    expect(useProgress.getState().getNodesNeedingReview(subjects)).toEqual([]);
+
+    const data = useProgress.getState().data;
+    useProgress.setState({
+      data: {
+        ...data,
+        spacedRepetition: {
+          m1: {
+            ...data.spacedRepetition.m1,
+            scheduledReviews: [{ scheduledDate: getToday(), completedDate: null }],
+          },
+        },
+      },
+    });
+
+    const due = useProgress.getState().getNodesNeedingReview(subjects);
+    expect(due).toHaveLength(1);
+    expect(due[0].node.id).toBe("m1");
+    expect(due[0].subject.id).toBe("math");
+    expect(due[0].nextReviewDate).toBe(getToday());
+    expect(due[0].reviewInterval).toBe(1);
+  });
+
+  it("getNodesNeedingReview skips nodes not present in subjects", () => {
+    useProgress.getState().completeNode("orphan", 50);
+    const data = useProgress.getState().data;
+    useProgress.setState({
+      data: {
+        ...data,
+        spacedRepetition: {
+          orphan: {
+            nodeId: "orphan",
+            scheduledReviews: [{ scheduledDate: getToday(), completedDate: null }],
+            currentIntervalIndex: 0,
+          },
+        },
+      },
+    });
+
+    expect(useProgress.getState().getNodesNeedingReview(mockSubjects())).toEqual([]);
+  });
+});
+
+describe("progress exportData/importData", () => {
+  const originalLocalStorage = globalThis.localStorage;
+
+  beforeEach(() => {
+    globalThis.localStorage = mockLocalStorage();
+    useProgress.getState().resetProgress();
+  });
+
+  afterEach(() => {
+    globalThis.localStorage = originalLocalStorage;
+  });
+
+  it("roundtrips progress through export and import", () => {
+    useProgress.getState().completeNode("m1", 75);
+    useProgress.getState().addStudyTime(300);
+
+    // Persist middleware is unavailable in node tests; mirror production storage.
+    localStorage.setItem(
+      V2_STORAGE_KEY,
+      JSON.stringify({ state: { data: useProgress.getState().data }, version: 0 }),
+    );
+
+    const exported = useProgress.getState().exportData();
+    useProgress.getState().resetProgress();
+    expect(useProgress.getState().data.totalXp).toBe(0);
+    expect(useProgress.getState().data.totalStudyMinutes).toBe(0);
+
+    const result = useProgress.getState().importData(exported);
+    expect(result.success).toBe(true);
+
+    const data = useProgress.getState().data;
+    expect(data.totalXp).toBe(75);
+    expect(data.totalStudyMinutes).toBe(5);
+    expect(data.nodes.m1?.completedAt).toBeTruthy();
+    expect(data.streaks.current).toBe(1);
   });
 });
 
