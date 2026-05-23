@@ -1223,6 +1223,616 @@
           "explanation": "No penalty for guessing — protect time for questions you can solve."
         }
       ]
+    },
+    {
+      "id": "st26",
+      "name": "Subject-Verb Agreement Drill",
+      "description": "Focused drill on singular/plural subjects, collective nouns, neither/nor constructions, and interrupting phrases that hide the real subject.",
+      "xpValue": 90,
+      "parentIds": ["st15"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Find the subject — ignore prepositional phrases between subject and verb",
+        "Collective nouns (team, group, family) usually take singular verbs",
+        "Neither/nor and either/or — verb agrees with the nearer subject",
+        "Indefinite pronouns: everyone, each, nobody → singular"
+      ],
+      "whyItMatters": "Agreement errors are fast points on the SAT — one rule applied correctly beats re-reading a whole passage. This drill builds the reflex that catches traps before you pick an answer.",
+      "practiceProblems": [
+        "Fix: \"The group of students were excited about the trip.\"",
+        "Fix: \"Neither the coach nor the players was ready for overtime.\"",
+        "Khan: 15 subject-verb agreement SAT items — underline the subject on every question."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Subject-verb agreement",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Rule-based agreement drills with SAT-style distractors."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Full R&W bank to mix agreement with other grammar items."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st26_1",
+          "question": "Choose the best fix: \"Each of the volunteers have signed up for a shift.\"",
+          "options": [
+            "have → has",
+            "Each → All",
+            "volunteers → volunteer",
+            "No change"
+          ],
+          "correctIndex": 0,
+          "explanation": "Each is singular — the verb must be has, not have."
+        },
+        {
+          "id": "q_st26_2",
+          "question": "In \"The box of tools are in the garage,\" the subject is:",
+          "options": [
+            "tools",
+            "box",
+            "garage",
+            "box of tools"
+          ],
+          "correctIndex": 1,
+          "explanation": "Ignore the prepositional phrase \"of tools\" — subject is box (singular → is, not are)."
+        }
+      ]
+    },
+    {
+      "id": "st27",
+      "name": "Punctuation & Sentence Boundaries",
+      "description": "Commas, semicolons, colons, dashes, run-ons, and comma splices — the punctuation rules the SAT tests repeatedly under time pressure.",
+      "xpValue": 90,
+      "parentIds": ["st26"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Comma splice: two independent clauses joined only by a comma — fix with period, semicolon, or comma + FANBOYS",
+        "Semicolon joins two related independent clauses",
+        "Colon introduces a list or explanation after a complete clause",
+        "Nonessential clauses get commas; essential clauses do not"
+      ],
+      "whyItMatters": "Punctuation questions reward pattern recognition, not taste. Learn the five or six rules the SAT repeats and you pick up points that reading-heavy items can't give you as quickly.",
+      "practiceProblems": [
+        "Fix the comma splice: \"The experiment failed, the team revised the method.\"",
+        "Add correct punctuation: \"She brought three items ___ a map a compass and water.\"",
+        "Khan: 15 punctuation and sentence-boundary SAT items timed (45 sec each)."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Punctuation",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Comma, semicolon, and colon drills in official SAT style."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "See punctuation items in the real digital interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st27_1",
+          "question": "Which correctly fixes a comma splice?",
+          "options": [
+            "Replace the comma with a semicolon between two independent clauses",
+            "Delete all commas",
+            "Add a comma before every and",
+            "Use a colon between any two sentences"
+          ],
+          "correctIndex": 0,
+          "explanation": "A semicolon (or period, or comma + coordinating conjunction) fixes a comma splice."
+        },
+        {
+          "id": "q_st27_2",
+          "question": "A colon is correct when it:",
+          "options": [
+            "Comes after any noun",
+            "Follows a complete independent clause and introduces a list or explanation",
+            "Replaces every comma",
+            "Joins a dependent clause to a fragment"
+          ],
+          "correctIndex": 1,
+          "explanation": "The clause before the colon must stand alone; what follows explains or lists."
+        }
+      ]
+    },
+    {
+      "id": "st28",
+      "name": "Pronouns & Modifier Placement",
+      "description": "Pronoun clarity, case, agreement, and dangling or misplaced modifiers — grammar items that look like reading but follow clear rules.",
+      "xpValue": 90,
+      "parentIds": ["st27"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Pronoun must refer clearly to one noun — no ambiguous they/it",
+        "Who vs whom: who = subject, whom = object",
+        "Dangling modifier: opening phrase must attach to the subject that follows",
+        "Misplaced modifier: put the word being modified next to what it describes"
+      ],
+      "whyItMatters": "Modifier and pronoun questions punish sloppy reading. One slow pass to match each pronoun to its antecedent saves you from trap answers that sound fine at a glance.",
+      "practiceProblems": [
+        "Fix: \"Running to catch the bus, the backpack fell off his shoulder.\"",
+        "Fix: \"The teacher gave books to the students that were outdated.\"",
+        "Khan: 15 pronoun and modifier SAT items — name the error type for each miss."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Pronouns and modifiers",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Pronoun clarity and modifier placement with explanations."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix modifier items with agreement and punctuation in one session."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st28_1",
+          "question": "\"Having finished the report, the meeting was cancelled\" is flawed because:",
+          "options": [
+            "The meeting cannot finish a report — dangling modifier",
+            "Reports cannot be finished",
+            "Meetings are always cancelled",
+            "No error"
+          ],
+          "correctIndex": 0,
+          "explanation": "The opening phrase must modify the subject that follows — the meeting didn't finish the report."
+        },
+        {
+          "id": "q_st28_2",
+          "question": "Choose the clearest sentence:",
+          "options": [
+            "When Maria opened the package, it was damaged.",
+            "When Maria opened it, the package was damaged.",
+            "When opening the package, it was damaged by Maria.",
+            "The package, when Maria opened it, was damaged by it."
+          ],
+          "correctIndex": 1,
+          "explanation": "It clearly refers to the package; the subject performing the action is Maria."
+        }
+      ]
+    },
+    {
+      "id": "st29",
+      "name": "Words in Context — Focused Drill",
+      "description": "Predict-then-match vocabulary using surrounding sentence and paragraph clues — no flashcard marathon required.",
+      "xpValue": 90,
+      "parentIds": ["st28"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Cover the answer choices — predict your own word first",
+        "Context clues: contrast (however), cause (therefore), definition in same sentence",
+        "Wrong answers often match one clue but contradict another part of the passage",
+        "Tone and register: formal passage rejects slang choices"
+      ],
+      "whyItMatters": "Words-in-context items feel like vocabulary tests but are logic puzzles. Prediction before looking at choices cuts trap answers — same discipline as checking a trade thesis against the chart.",
+      "practiceProblems": [
+        "One Khan passage: predict a word for each vocab question before revealing choices.",
+        "Write why each wrong answer fails — one phrase per option.",
+        "Khan: 15 words-in-context SAT items untimed, then redo misses timed."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Words-in-context and tone questions with passage context."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official short-passage format matches test day."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st29_1",
+          "question": "The best first step on a \"words in context\" question is:",
+          "options": [
+            "Pick the longest answer",
+            "Reread the sentence and predict your own word before reading choices",
+            "Skip to the next question",
+            "Choose the most academic-sounding word"
+          ],
+          "correctIndex": 1,
+          "explanation": "Prediction anchors you to the passage before distractors pull you off."
+        },
+        {
+          "id": "q_st29_2",
+          "question": "A contrast clue like \"however\" signals the blank should:",
+          "options": [
+            "Repeat the previous idea",
+            "Oppose or qualify what came before",
+            "Always be a negative word",
+            "Be ignored"
+          ],
+          "correctIndex": 1,
+          "explanation": "Contrast transitions flip direction — the blank often contrasts with the prior clause."
+        }
+      ]
+    },
+    {
+      "id": "st30",
+      "name": "Main Idea & Central Claims",
+      "description": "Distinguish main idea from supporting detail and identify the author's central claim in science and humanities passages.",
+      "xpValue": 90,
+      "parentIds": ["st29"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Main idea covers the whole passage — not one paragraph or one example",
+        "Central claim in argument passages = what the author wants you to believe",
+        "Too narrow = one detail; too broad = goes beyond the passage",
+        "First and last paragraphs often frame the main idea — verify with middle content"
+      ],
+      "whyItMatters": "Main idea questions reward the same skill as summarizing a news article in one sentence — scope and accuracy. Drill here prevents you from picking answers that are true but too small.",
+      "practiceProblems": [
+        "Read one science passage; write the main idea in 15 words or fewer.",
+        "Read one humanities passage; identify the author's central claim in one sentence.",
+        "Khan: 10 main-idea SAT items — eliminate too-narrow and too-broad choices first."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Information and ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Main idea and central claim questions across passage types."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix science and humanities passages for scope practice."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st30_1",
+          "question": "A main idea answer should be:",
+          "options": [
+            "One specific example from paragraph 2",
+            "Broad enough to cover the passage but not beyond it",
+            "The opposite of what the author argues",
+            "Whatever sounds most impressive"
+          ],
+          "correctIndex": 1,
+          "explanation": "Main idea = full scope of the passage — not too narrow, not too broad."
+        },
+        {
+          "id": "q_st30_2",
+          "question": "When two answer choices both seem partially true, prefer the one that:",
+          "options": [
+            "Mentions the most details",
+            "Captures what the entire passage is about",
+            "Is the shortest",
+            "Uses the hardest vocabulary"
+          ],
+          "correctIndex": 1,
+          "explanation": "Main idea must account for the whole passage, not just a supporting detail."
+        }
+      ]
+    },
+    {
+      "id": "st31",
+      "name": "Evidence & Paired Questions",
+      "description": "Select the quote or detail that best supports a prior answer — and avoid half-right evidence traps on paired items.",
+      "xpValue": 90,
+      "parentIds": ["st30"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Answer the first question before looking at evidence choices",
+        "Best evidence directly proves your answer — not just related topic",
+        "Half-right quotes mention the topic but don't support the specific claim",
+        "Line-reference questions: read the full sentence around the cited lines"
+      ],
+      "whyItMatters": "Evidence pairs are the SAT's proof-of-work questions. If you can cite the line that backs your answer, you're thinking like the test — and like someone who shows their reasoning.",
+      "practiceProblems": [
+        "One paired set: answer Q1, then find the line that would convince a skeptic.",
+        "For three wrong evidence options, write why each fails to prove the claim.",
+        "Khan: 10 evidence and paired-question SAT items."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Information and ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Paired evidence questions with line references."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official paired-question format and timing."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st31_1",
+          "question": "On a paired evidence question, you should:",
+          "options": [
+            "Read evidence choices before answering the first question",
+            "Answer the first question, then pick evidence that directly supports it",
+            "Always pick the longest quote",
+            "Skip the first question and guess"
+          ],
+          "correctIndex": 1,
+          "explanation": "Lock in your answer first — then evidence must prove that specific claim."
+        },
+        {
+          "id": "q_st31_2",
+          "question": "A common evidence trap is a quote that:",
+          "options": [
+            "Directly contradicts the passage",
+            "Mentions the topic but doesn't support your specific answer",
+            "Comes from the first paragraph only",
+            "Is shorter than other options"
+          ],
+          "correctIndex": 1,
+          "explanation": "Half-right evidence touches the subject but fails to prove the claim you selected."
+        }
+      ]
+    },
+    {
+      "id": "st32",
+      "name": "Inference & Logical Conclusions",
+      "description": "Text-bound inferences only — eliminate extreme or outside-knowledge choices and stay close to what the passage actually says.",
+      "xpValue": 90,
+      "parentIds": ["st31"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Inference = must be strongly suggested by the text, not merely possible",
+        "Extreme words (always, never, completely) are usually wrong",
+        "Outside knowledge doesn't help — if it's not in the passage, it's not the answer",
+        "Author attitude inference: look at word choice and tone markers"
+      ],
+      "whyItMatters": "Inference questions punish overthinking. The right answer feels modest — it extends the text one small step, not three. Drill builds the habit of asking \"where does the passage say this?\"",
+      "practiceProblems": [
+        "One passage: for each inference question, underline the exact words that support your pick.",
+        "List three trap patterns you fall for (extreme language, outside facts, opposite tone).",
+        "Khan: 10 inference SAT items — reject any answer with unsupported extremes."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Information and ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Inference and logical conclusion drills with explanations."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix inference with evidence items in one sitting."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st32_1",
+          "question": "A valid SAT inference must be:",
+          "options": [
+            "Anything that sounds reasonable",
+            "Strongly supported by the passage without going beyond it",
+            "Based on historical facts not in the text",
+            "The most dramatic interpretation"
+          ],
+          "correctIndex": 1,
+          "explanation": "Inferences stay conservative and text-bound — no outside assumptions."
+        },
+        {
+          "id": "q_st32_2",
+          "question": "Answer choices with \"always\" or \"never\" are often wrong because:",
+          "options": [
+            "SAT passages never use those words",
+            "They overgeneralize beyond what the text supports",
+            "They are too short",
+            "Grammar rules forbid them"
+          ],
+          "correctIndex": 1,
+          "explanation": "Extreme language rarely matches the cautious scope of SAT passages."
+        }
+      ]
+    },
+    {
+      "id": "st33",
+      "name": "Rhetorical Synthesis & Transitions",
+      "description": "Bullet notes, logical transitions, and concise revision for Digital SAT synthesis items — combine ideas without losing clarity.",
+      "xpValue": 90,
+      "parentIds": ["st32"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Synthesis: combine bullet notes into one sentence that meets a specific goal",
+        "Read the prompt goal first (emphasize contrast, introduce a finding, etc.)",
+        "Transitions: however = contrast, therefore = result, for example = illustration",
+        "Concise and correct beats long and vague when grammar is equal"
+      ],
+      "whyItMatters": "Synthesis questions test whether you can communicate clearly under constraints — the same skill as writing a tight update at work. They're trainable once you learn to match the prompt's goal.",
+      "practiceProblems": [
+        "Given three bullet notes, write two different sentences — one emphasizing cause, one emphasizing contrast.",
+        "Khan: 10 rhetorical synthesis and transition SAT items.",
+        "For each miss, identify whether you failed on goal, grammar, or logic."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Expression of ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Rhetorical synthesis and transition questions in official style."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Digital SAT synthesis format matches test day."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st33_1",
+          "question": "On a rhetorical synthesis item, the first step is:",
+          "options": [
+            "Combine every bullet into the longest sentence possible",
+            "Read what the prompt asks you to accomplish (contrast, emphasize, introduce)",
+            "Ignore the bullets and write from memory",
+            "Pick the answer with the most commas"
+          ],
+          "correctIndex": 1,
+          "explanation": "The goal in the prompt determines which notes to include and how to frame them."
+        },
+        {
+          "id": "q_st33_2",
+          "question": "\"However\" most appropriately signals:",
+          "options": [
+            "A cause-and-effect relationship",
+            "A contrast or exception",
+            "A list of examples",
+            "A conclusion with no prior setup"
+          ],
+          "correctIndex": 1,
+          "explanation": "However introduces contrast — the next idea qualifies or opposes what came before."
+        }
+      ]
+    },
+    {
+      "id": "st34",
+      "name": "R&W Mixed Topic Review",
+      "description": "Untimed mixed set across grammar and reading skills. Tag each miss by category before the timed checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st33"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Mix grammar (st26–st28) and reading (st29–st33) in one sitting",
+        "Tag each miss: agreement / punctuation / pronouns / vocab / main idea / evidence / inference / synthesis",
+        "Redo similar Khan questions for every miss",
+        "No new topics — consolidate what st26–st33 covered"
+      ],
+      "whyItMatters": "Single-skill drills build accuracy; mixed review reveals what you forget when question types switch — exactly what a real R&W module feels like.",
+      "practiceProblems": [
+        "Khan: 20-question untimed mixed R&W set spanning all drill topics.",
+        "For each miss, write one sentence: category + what fix.",
+        "Redo the 3 worst misses with a fresh attempt before st35."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mixed official-style sets with skill labels."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed module review in the real test interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st34_1",
+          "question": "Before a timed R&W checkpoint, mixed review should be:",
+          "options": [
+            "Skipped to save time",
+            "Untimed with every miss tagged by skill category",
+            "Only grammar, no reading",
+            "Done once and never revisited"
+          ],
+          "correctIndex": 1,
+          "explanation": "Tagged untimed review targets weak spots before the clock turns on."
+        },
+        {
+          "id": "q_st34_2",
+          "question": "The best use of a mistake log during R&W mixed review is:",
+          "options": [
+            "Record only total score",
+            "Note skill category and error pattern for each miss",
+            "Copy the answer key",
+            "Delete misses to stay confident"
+          ],
+          "correctIndex": 1,
+          "explanation": "Category + error pattern drives what to drill next."
+        }
+      ]
+    },
+    {
+      "id": "st35",
+      "name": "R&W — Timed Module Checkpoint",
+      "description": "Bluebook or Khan timed R&W module. Log misses by category within 24 hours — capstone of the st26–st35 drill chain.",
+      "xpValue": 150,
+      "parentIds": ["st34"],
+      "estimatedMinutes": 70,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed module under test-like conditions",
+        "Tag misses: grammar / vocab / main idea / evidence / inference / synthesis",
+        "Review within 24 hours — redo 3 similar items per miss type",
+        "Compare to st14 timed practice — note score trend"
+      ],
+      "whyItMatters": "This checkpoint proves the drill chain worked. Timed performance after focused review is the feedback loop that moves your R&W score.",
+      "practiceProblems": [
+        "Bluebook R&W Module or Khan timed set — phone away, timer on.",
+        "Categorize every miss in your mistake log within 24 hours.",
+        "Pick one weak category from the log and schedule st26–st33 redo next week."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Timed SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Timed sets with instant review and skill tags."
+        },
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing and short-passage format."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st35_1",
+          "question": "After a timed R&W checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by category and drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh."
+        },
+        {
+          "id": "q_st35_2",
+          "question": "During a timed R&W module, grammar items should generally be:",
+          "options": [
+            "Saved for last always",
+            "Answered quickly when you know the rule — save time for long passages",
+            "Skipped without guessing",
+            "Done without reading the full sentence"
+          ],
+          "correctIndex": 1,
+          "explanation": "Grammar items are often faster than inference items — bank time for harder reading questions."
+        }
+      ]
     }
   ]
 }
