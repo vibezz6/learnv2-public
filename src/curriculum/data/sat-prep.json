@@ -1833,6 +1833,586 @@
           "explanation": "Grammar items are often faster than inference items — bank time for harder reading questions."
         }
       ]
+    },
+    {
+      "id": "st36",
+      "name": "Inequalities & Absolute Value Drill",
+      "description": "One- and two-variable inequalities, compound inequalities, and absolute value equations/inequalities — Heart of Algebra at drill pace.",
+      "xpValue": 90,
+      "parentIds": ["st25"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Flip the inequality sign when multiplying or dividing by a negative",
+        "Compound inequalities: and vs or — graph on a number line",
+        "Absolute value |x| = a → x = a or x = -a",
+        "Desmos shading to backsolve inequality regions"
+      ],
+      "whyItMatters": "Inequality items look harder than they are — most are linear algebra with one extra rule. Drill the sign-flip reflex and absolute value splits so you don't burn time on setup.",
+      "practiceProblems": [
+        "Solve: 3x - 7 > 2x + 5.",
+        "Solve: |2x - 3| = 7.",
+        "Khan: 15 linear inequality and absolute value SAT items — shade each on Desmos."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Linear equations & inequalities",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-basic-eq-ineq",
+          "type": "practice",
+          "whyHelpful": "Heart of Algebra inequality drills with step-by-step solutions."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph inequalities and verify solution regions quickly."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st36_1",
+          "question": "When solving -2x > 6, you must:",
+          "options": [
+            "Divide by -2 and keep the inequality direction",
+            "Divide by -2 and flip the inequality sign",
+            "Add 2 to both sides only",
+            "Square both sides"
+          ],
+          "correctIndex": 1,
+          "explanation": "Multiplying or dividing both sides by a negative reverses the inequality."
+        },
+        {
+          "id": "q_st36_2",
+          "question": "The equation |x - 4| = 3 has solutions:",
+          "options": ["x = 7 only", "x = 1 only", "x = 7 or x = 1", "No solution"],
+          "correctIndex": 2,
+          "explanation": "x - 4 = 3 → x = 7; x - 4 = -3 → x = 1."
+        }
+      ]
+    },
+    {
+      "id": "st37",
+      "name": "Exponential Growth & Decay Drill",
+      "description": "Exponential models, percent growth/decay, and comparing linear vs exponential change — Passport to Advanced Math.",
+      "xpValue": 90,
+      "parentIds": ["st36"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Exponential form: y = a(b)^t or y = a(1 ± r)^t",
+        "Doubling and half-life patterns in tables",
+        "Linear adds a constant; exponential multiplies by a constant factor",
+        "Percent growth/decay from word problems"
+      ],
+      "whyItMatters": "SAT exponentials reward pattern recognition in tables and graphs — not memorizing formulas. Spotting when a quantity doubles each step saves minutes vs setting up the wrong linear equation.",
+      "practiceProblems": [
+        "A population starts at 500 and grows 8% per year. Write the model and find size after 3 years.",
+        "From a table, decide whether change is linear or exponential.",
+        "Khan: 12 exponential word problem SAT items — label base and rate on each."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Exponential growth and decay",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-exp-and-log",
+          "type": "practice",
+          "whyHelpful": "Passport to Advanced Math exponential models with SAT-style setups."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Table and graph items showing doubling and percent change."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st37_1",
+          "question": "Which table most likely shows exponential growth?",
+          "options": [
+            "Values increase by 5 each step",
+            "Values multiply by 2 each step",
+            "Values alternate up and down",
+            "Values stay constant"
+          ],
+          "correctIndex": 1,
+          "explanation": "Exponential change multiplies by a constant ratio, not a constant difference."
+        },
+        {
+          "id": "q_st37_2",
+          "question": "A quantity decreases by 20% each year. After 2 years it is what fraction of the start?",
+          "options": ["0.8", "0.64", "0.6", "0.4"],
+          "correctIndex": 1,
+          "explanation": "Two 20% decreases: 0.8 × 0.8 = 0.64 of the original."
+        }
+      ]
+    },
+    {
+      "id": "st38",
+      "name": "Polynomial & Rational Expressions Drill",
+      "description": "Polynomial add/multiply, factoring beyond quadratics, and simplifying rational expressions — equivalent-form traps on the SAT.",
+      "xpValue": 90,
+      "parentIds": ["st37"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Combine like terms; distribute carefully on polynomials",
+        "Factor common terms and recognize difference of squares",
+        "Simplify rational expressions — factor first, then cancel",
+        "Never cancel terms across + or - in a fraction"
+      ],
+      "whyItMatters": "Polynomial items often test whether you factor before simplifying. Canceling too early is the classic trap — drill factor-then-cancel until it's automatic.",
+      "practiceProblems": [
+        "Expand and simplify: (x + 3)(x² - 2x + 1).",
+        "Simplify: (x² - 9) / (x - 3) for x ≠ 3.",
+        "Khan: 12 polynomial and rational expression SAT items — show factoring on every simplify."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Polynomial operations",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-polynomials",
+          "type": "practice",
+          "whyHelpful": "Add, multiply, and factor polynomials at SAT depth."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Equivalent-form and simplify-expression items with trap distractors."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st38_1",
+          "question": "Simplify (x² - 4) / (x + 2) for x ≠ -2:",
+          "options": ["x - 2", "x + 2", "x² - 2", "Cannot simplify"],
+          "correctIndex": 0,
+          "explanation": "Factor x² - 4 = (x + 2)(x - 2), then cancel (x + 2)."
+        },
+        {
+          "id": "q_st38_2",
+          "question": "A common SAT trap when simplifying rational expressions is:",
+          "options": [
+            "Factoring the numerator first",
+            "Canceling terms across addition in a fraction",
+            "Checking excluded values",
+            "Multiplying top and bottom by the same factor"
+          ],
+          "correctIndex": 1,
+          "explanation": "You can cancel factors, not separate terms joined by + or -."
+        }
+      ]
+    },
+    {
+      "id": "st39",
+      "name": "Statistics & Scatterplots Drill",
+      "description": "Mean, median, range, outliers, line of best fit, and interpreting slope/intercept in context — Problem Solving & Data Analysis.",
+      "xpValue": 90,
+      "parentIds": ["st38"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Mean vs median — outliers pull the mean, not always the median",
+        "Scatterplot trend: positive, negative, or no clear association",
+        "Line of best fit slope = rate of change in context",
+        "Desmos regression for table-to-line items"
+      ],
+      "whyItMatters": "Data items are reading questions disguised as math. One careful pass on units and what the axes mean beats recalculating everything from scratch.",
+      "practiceProblems": [
+        "Dataset: 2, 3, 3, 8, 9. Find mean and median — which is larger and why?",
+        "From a scatterplot, describe the association and estimate slope meaning.",
+        "Khan: 12 statistics and scatterplot SAT items — write context for each slope."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Data and statistics",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "type": "practice",
+          "whyHelpful": "Mean, median, and scatterplot interpretation drills."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Enter tables and fit regression lines for trend questions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st39_1",
+          "question": "An outlier in a dataset most strongly affects:",
+          "options": ["The median", "The mean", "The mode always", "The range only"],
+          "correctIndex": 1,
+          "explanation": "The mean uses every value; a single extreme value pulls it more than the median."
+        },
+        {
+          "id": "q_st39_2",
+          "question": "On a scatterplot, a line of best fit with positive slope suggests:",
+          "options": [
+            "As x increases, y tends to increase",
+            "As x increases, y tends to decrease",
+            "No relationship",
+            "Perfect correlation only"
+          ],
+          "correctIndex": 0,
+          "explanation": "Positive slope means y increases on average as x increases."
+        }
+      ]
+    },
+    {
+      "id": "st40",
+      "name": "Coordinate Geometry Drill",
+      "description": "Distance and midpoint formulas, parallel/perpendicular slopes, and circle equations in the plane — Additional Topics in Math.",
+      "xpValue": 90,
+      "parentIds": ["st39"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Distance: √[(x₂-x₁)² + (y₂-y₁)²]",
+        "Midpoint: average of coordinates",
+        "Parallel lines → equal slopes; perpendicular → negative reciprocal slopes",
+        "Circle: (x - h)² + (y - k)² = r² — center (h, k), radius r"
+      ],
+      "whyItMatters": "Coordinate geometry connects algebra and visuals. Desmos plus the distance and circle formulas cover most SAT items without full geometry proofs.",
+      "practiceProblems": [
+        "Find distance and midpoint between (1, 2) and (7, 10).",
+        "Line through (0, 3) perpendicular to y = 2x + 1 — write its equation.",
+        "Khan: 10 coordinate geometry SAT items — graph circles and lines in Desmos."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Analytic geometry",
+          "url": "https://www.khanacademy.org/math/geometry/hs-geo-analytic-geometry",
+          "type": "practice",
+          "whyHelpful": "Distance, midpoint, and circle equation drills."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph circles and verify distance between points visually."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st40_1",
+          "question": "The midpoint of (2, 4) and (8, 10) is:",
+          "options": ["(5, 7)", "(6, 7)", "(10, 14)", "(3, 3)"],
+          "correctIndex": 0,
+          "explanation": "Midpoint = ((2+8)/2, (4+10)/2) = (5, 7)."
+        },
+        {
+          "id": "q_st40_2",
+          "question": "A line perpendicular to y = 3x + 1 has slope:",
+          "options": ["3", "-3", "-1/3", "1/3"],
+          "correctIndex": 2,
+          "explanation": "Perpendicular slope is the negative reciprocal of 3 → -1/3."
+        }
+      ]
+    },
+    {
+      "id": "st41",
+      "name": "Verb Tense & Parallel Structure Drill",
+      "description": "Consistent tense, parallel lists and constructions, and perfect vs simple tense — Standard English Conventions under drill conditions.",
+      "xpValue": 90,
+      "parentIds": ["st35"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Keep verb tense consistent unless the sentence signals a time shift",
+        "Parallel structure: items in a list match grammatically (all -ing, all nouns, etc.)",
+        "Present perfect (has walked) vs simple past (walked) — ongoing vs completed",
+        "Correlative pairs: both/and, either/or, not only/but also must parallel"
+      ],
+      "whyItMatters": "Tense and parallelism errors are fast points when you know what to scan for. One read for verb form consistency catches traps that sound fine in casual speech.",
+      "practiceProblems": [
+        "Fix: \"She enjoys hiking, to swim, and riding bikes.\"",
+        "Fix: \"By the time we arrived, the movie already started.\"",
+        "Khan: 15 verb tense and parallel structure SAT items — mark the non-parallel element."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Form, structure, and sense",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "SEC form and structure drills with SAT-style underlined phrases."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix tense and parallelism with other grammar items."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st41_1",
+          "question": "Which revision fixes parallel structure: \"He likes running, to jump, and swimming\"?",
+          "options": [
+            "He likes running, jumping, and swimming",
+            "He likes to run, to jump, and swimming",
+            "He likes running, jump, and swims",
+            "No change"
+          ],
+          "correctIndex": 0,
+          "explanation": "All three items should share the same form — gerunds: running, jumping, swimming."
+        },
+        {
+          "id": "q_st41_2",
+          "question": "Present perfect tense (has + past participle) often indicates:",
+          "options": [
+            "Action completed at a specific past time only",
+            "Action linked to the present or continuing relevance",
+            "Future action",
+            "Hypothetical action"
+          ],
+          "correctIndex": 1,
+          "explanation": "Present perfect connects past action to now — e.g., \"has lived here for years.\""
+        }
+      ]
+    },
+    {
+      "id": "st42",
+      "name": "Apostrophes & Possessives Drill",
+      "description": "Possessive vs plural, its/it's, who's/whose, and they're/their/there in context — apostrophe traps on the Digital SAT.",
+      "xpValue": 90,
+      "parentIds": ["st41"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Possessive singular: add 's (the student's book)",
+        "Its = possessive; it's = it is — no apostrophe on possessive its",
+        "Who's = who is; whose = possessive",
+        "They're/their/there — contraction, possessive, location"
+      ],
+      "whyItMatters": "Apostrophe questions are pure pattern matching. Learn the five homophone pairs the SAT repeats and you pick up points without re-reading the whole passage.",
+      "practiceProblems": [
+        "Choose correctly: \"The team celebrated ___ victory after ___ practice.\"",
+        "Fix: \"Its a common mistake to confuse its and it's.\"",
+        "Khan: 15 apostrophe and possessive SAT items — name the rule for each miss."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Punctuation and form",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Apostrophe and possessive drills in official SAT style."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Short grammar stems testing apostrophe traps in the real interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st42_1",
+          "question": "Which is correct?",
+          "options": [
+            "The dog wagged it's tail.",
+            "The dog wagged its tail.",
+            "The dog wagged its' tail.",
+            "The dogs tail wagged."
+          ],
+          "correctIndex": 1,
+          "explanation": "Possessive its has no apostrophe; it's always means it is."
+        },
+        {
+          "id": "q_st42_2",
+          "question": "\"Who's responsible for the project?\" uses who's as:",
+          "options": [
+            "Possessive of who",
+            "Contraction of who is",
+            "Plural of who",
+            "Past tense of who"
+          ],
+          "correctIndex": 1,
+          "explanation": "Who's = who is; whose shows possession (whose project)."
+        }
+      ]
+    },
+    {
+      "id": "st43",
+      "name": "Cross-Text Connections Drill",
+      "description": "Compare two short texts — agree/disagree, shared claim, and differences in evidence — Craft and Structure on the Digital SAT.",
+      "xpValue": 90,
+      "parentIds": ["st42"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Identify each author's main claim before comparing",
+        "Agree on topic ≠ agree on conclusion — check the claim, not just the subject",
+        "Evidence differences: what each author cites to support their view",
+        "Digital SAT paired-passage format — read Text 1, then Text 2, then compare"
+      ],
+      "whyItMatters": "Cross-text items test whether you can hold two arguments in mind at once — same skill as comparing two news takes on a trade. Drill the compare-after-summarize workflow.",
+      "practiceProblems": [
+        "Two texts on the same topic: write one sentence each author's claim, then one sentence on how they differ.",
+        "For one cross-text set, explain why a \"both agree\" trap answer is wrong.",
+        "Khan: 10 cross-text connection SAT items — summarize each text in 10 words first."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Cross-text connections and paired-passage comparison drills."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official paired-passage format matches test day."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st43_1",
+          "question": "On a cross-text question, the best first step is:",
+          "options": [
+            "Read only Text 2",
+            "Summarize each author's main claim before comparing",
+            "Pick the answer that mentions both texts equally",
+            "Skip to the comparison question"
+          ],
+          "correctIndex": 1,
+          "explanation": "You need each author's claim clear before evaluating agreement or disagreement."
+        },
+        {
+          "id": "q_st43_2",
+          "question": "Two texts on climate policy that reach opposite conclusions:",
+          "options": [
+            "Must disagree on every fact",
+            "May share a topic but differ in claims or evidence",
+            "Cannot appear on the SAT",
+            "Must be written by the same author"
+          ],
+          "correctIndex": 1,
+          "explanation": "Same topic, different claims or evidence — classic cross-text setup."
+        }
+      ]
+    },
+    {
+      "id": "st44",
+      "name": "Text Structure & Organization Drill",
+      "description": "Passage purpose, paragraph function, and logical sequence of sentences — Craft and Structure organization items.",
+      "xpValue": 90,
+      "parentIds": ["st43"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Passage purpose: inform, argue, narrate, compare — match answer to whole text",
+        "Paragraph function: introduction, evidence, counterargument, conclusion",
+        "Sentence placement: new sentence must connect to before and after",
+        "Logical sequence — chronological, cause-effect, or general-to-specific"
+      ],
+      "whyItMatters": "Structure questions reward outline thinking. If you can name what each paragraph does, placement and purpose items become quick instead of guesswork.",
+      "practiceProblems": [
+        "One passage: label each paragraph's function in one phrase.",
+        "One \"best placement\" item: explain why the chosen spot fits both neighbors.",
+        "Khan: 10 text structure and organization SAT items."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Text structure, purpose, and sentence placement drills."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official \"best placement\" and structure-of-argument questions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st44_1",
+          "question": "A \"best placement\" question asks where a new sentence should go. It must:",
+          "options": [
+            "Match only the first paragraph",
+            "Connect logically to the sentences before and after the gap",
+            "Be placed in the middle always",
+            "Repeat the thesis word for word"
+          ],
+          "correctIndex": 1,
+          "explanation": "The inserted sentence must flow with both neighboring sentences."
+        },
+        {
+          "id": "q_st44_2",
+          "question": "A paragraph that presents an opposing view and then refutes it is likely:",
+          "options": [
+            "Pure narration",
+            "Counterargument followed by rebuttal",
+            "Unrelated filler",
+            "A conclusion only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Acknowledging then refuting opposition is a common argumentative structure."
+        }
+      ]
+    },
+    {
+      "id": "st45",
+      "name": "Charts & Quantitative R&W Drill",
+      "description": "Read axes and units, match charts to claims, and find data-supported inferences — Information and Ideas with quantitative evidence.",
+      "xpValue": 90,
+      "parentIds": ["st44"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Read axis labels, units, and scale before the question",
+        "Claim must match what the data actually shows — not exaggeration",
+        "Table vs graph: same data, different presentation — check both",
+        "Reject answers that confuse correlation with causation"
+      ],
+      "whyItMatters": "Quantitative R&W items punish skimming. Verifying units and scale takes seconds and prevents picking answers that sound right but misread the chart.",
+      "practiceProblems": [
+        "One graph + passage set: write what the y-axis measures and its units before answering.",
+        "For three wrong choices, note whether each misreads scale, units, or trend.",
+        "Khan: 10 charts and quantitative evidence SAT items — check units first every time."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Information and ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Graph and table paired with short passage — command of quantitative evidence."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official graph/table R&W items in the digital format."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st45_1",
+          "question": "Before answering a chart question, you should first:",
+          "options": [
+            "Read the answer choices only",
+            "Check axis labels, units, and what each variable represents",
+            "Estimate without looking at the scale",
+            "Ignore the passage text"
+          ],
+          "correctIndex": 1,
+          "explanation": "Units and scale errors are the most common trap — verify before interpreting."
+        },
+        {
+          "id": "q_st45_2",
+          "question": "A valid inference from a chart must:",
+          "options": [
+            "Go beyond the data to explain why",
+            "Be directly supported by the displayed data",
+            "Assume causation from correlation",
+            "Use outside knowledge not in the graph"
+          ],
+          "correctIndex": 1,
+          "explanation": "The answer must follow from what the chart or table actually shows."
+        }
+      ]
     }
   ]
 }
