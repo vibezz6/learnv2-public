@@ -34,21 +34,28 @@ describe("searchHelpers", () => {
     expect(fuzzyMatch("xyz", "Expected Value").match).toBe(false);
   });
 
-  it("getRecentSearches merges cmd-palette-recent and learnapp_recent_searches", () => {
+  it("getRecentSearches merges v1, cmd-palette-recent, and learnapp_recent_searches", () => {
+    localStorage.setItem("learnapp_recent_searches_v1", JSON.stringify(["v1-only"]));
     localStorage.setItem("cmd-palette-recent", JSON.stringify(["bayes", "stats"]));
     localStorage.setItem("learnapp_recent_searches", JSON.stringify(["kelly", "bayes"]));
 
-    expect(getRecentSearches()).toEqual(["bayes", "stats", "kelly"]);
+    expect(getRecentSearches()).toEqual(["bayes", "stats", "kelly", "v1-only"]);
   });
 
-  it("addRecentSearch dedupes and writes to both stores", () => {
+  it("addRecentSearch dedupes, caps at 5, and writes to all stores", () => {
     addRecentSearch("bayes");
     addRecentSearch("kelly");
     addRecentSearch("bayes");
 
     expect(getRecentSearches()).toEqual(["bayes", "kelly"]);
+    expect(JSON.parse(localStorage.getItem("learnapp_recent_searches_v1")!)).toEqual(["bayes", "kelly"]);
     expect(JSON.parse(localStorage.getItem("cmd-palette-recent")!)).toEqual(["bayes", "kelly"]);
     expect(JSON.parse(localStorage.getItem("learnapp_recent_searches")!)).toEqual(["bayes", "kelly"]);
+  });
+
+  it("addRecentSearch keeps at most 5 entries", () => {
+    for (const term of ["a", "b", "c", "d", "e", "f"]) addRecentSearch(term);
+    expect(getRecentSearches()).toEqual(["f", "e", "d", "c", "b"]);
   });
 
   it("scoreCommandMatch ranks label hits over weak description hits", () => {

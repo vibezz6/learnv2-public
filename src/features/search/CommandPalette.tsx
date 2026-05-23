@@ -309,7 +309,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         )}
 
         <ul ref={listRef} className="max-h-96 overflow-y-auto py-2">
-          {!q && (
+          {!q && recentSearches.length === 0 && (
             <li className="border-b border-[var(--border)] px-6 py-4 text-center">
               <Search className="mx-auto mb-2 text-[var(--accent)]" size={22} />
               <p className="text-sm font-medium text-[var(--text-heading)]">

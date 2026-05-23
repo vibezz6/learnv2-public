@@ -4,7 +4,11 @@ export const RECENT_READ_KEYS = [
   "learnapp_recent_searches_v1",
 ] as const;
 
-export const RECENT_WRITE_KEYS = ["learnapp_recent_searches", "cmd-palette-recent"] as const;
+export const RECENT_WRITE_KEYS = [
+  "learnapp_recent_searches_v1",
+  "learnapp_recent_searches",
+  "cmd-palette-recent",
+] as const;
 
 export const MAX_RECENT_SEARCHES = 5;
 
