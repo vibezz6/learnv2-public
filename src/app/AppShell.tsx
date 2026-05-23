@@ -10,6 +10,7 @@ import {
   Sun,
   Timer,
   BarChart3,
+  Route,
 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { CommandPalette } from "@/features/search/CommandPalette";
@@ -23,6 +24,7 @@ import { useEffect, useState } from "react";
 const nav = [
   { to: "/", label: "Command", icon: Home, end: true },
   { to: "/subjects", label: "Subjects", icon: BookOpen },
+  { to: "/tracks", label: "Tracks", icon: Route },
   { to: "/bookmarks", label: "Saved", icon: Star },
   { to: "/review", label: "Review", icon: Brain },
   { to: "/stats", label: "Stats", icon: BarChart3 },

@@ -13,6 +13,7 @@ import { BookmarksPage } from "@/features/bookmarks/BookmarksPage";
 import { ReviewPage } from "@/features/review/ReviewPage";
 import { StatsPage } from "@/features/stats/StatsPage";
 import { TimerPage } from "@/features/timer/TimerPage";
+import { TracksPage } from "@/features/tracks/TracksPage";
 
 export function App() {
   return (
@@ -21,6 +22,8 @@ export function App() {
         <Routes>
           <Route element={<AppShell />}>
             <Route index element={<DashboardPage />} />
+            <Route path="tracks" element={<TracksPage />} />
+            <Route path="tracks/:trackId" element={<TracksPage />} />
             <Route path="subjects" element={<SubjectsPage />} />
             <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
             <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
