@@ -8,6 +8,17 @@ export interface PromptSet {
 
 export const SUBJECT_PROMPTS: PromptSet[] = [
   {
+    subjectId: "sat-prep",
+    prompts: [
+      { key: "plan", label: "This Week's Plan", placeholder: "What will you study Mon–Sun? Math vs R&W slots…" },
+      { key: "miss", label: "Mistake Log", placeholder: "Topic | what went wrong | how you'll fix it…" },
+      { key: "timed", label: "Timed Practice", placeholder: "What timed section did you take? Score/time notes…" },
+      { key: "weak", label: "Weakest Topic", placeholder: "What still confuses you? Be specific…" },
+      { key: "win", label: "Small Win", placeholder: "What improved since last week, even a little?" },
+      { key: "why", label: "Why This Matters", placeholder: "Why does this topic matter for your score and college goal?" },
+    ],
+  },
+  {
     subjectId: "math",
     prompts: [
       { key: "core-idea", label: "Core Idea", placeholder: "What is the main concept or theorem in this lesson? Explain it in your own words..." },

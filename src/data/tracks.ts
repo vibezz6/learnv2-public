@@ -18,6 +18,31 @@ function lesson(subjectId: string, nodeId: string): TrackLesson {
 
 export const tracks: LearningTrack[] = [
   {
+    id: "sat-august",
+    name: "August SAT Track",
+    description:
+      "Roadmap to the Digital SAT — daily rhythm, Math and Reading & Writing skill trees, timed Bluebook practice, and test week.",
+    color: "#d97757",
+    icon: "graduation-cap",
+    lessons: [
+      lesson("sat-prep", "st1"),
+      lesson("sat-prep", "st2"),
+      lesson("sat-prep", "st3"),
+      lesson("sat-prep", "st4"),
+      lesson("sat-prep", "st5"),
+      lesson("sat-prep", "st6"),
+      lesson("sat-prep", "st7"),
+      lesson("sat-prep", "st8"),
+      lesson("sat-prep", "st9"),
+      lesson("sat-prep", "st10"),
+      lesson("sat-prep", "st11"),
+      lesson("sat-prep", "st12"),
+      lesson("sat-prep", "st13"),
+      lesson("sat-prep", "st14"),
+      lesson("sat-prep", "st15"),
+    ],
+  },
+  {
     id: "trader",
     name: "The Trader Track",
     description:

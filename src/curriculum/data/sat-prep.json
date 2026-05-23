@@ -1,0 +1,678 @@
+{
+  "id": "sat-prep",
+  "name": "SAT Prep",
+  "description": "August 2026 Digital SAT — Math and Reading & Writing. Study rhythm, official practice, and strategy inside Learn v2. Pair with Khan Academy SAT and Bluebook.",
+  "color": "#d97757",
+  "icon": "graduation-cap",
+  "nodes": [
+    {
+      "id": "st1",
+      "name": "Your SAT Game Plan",
+      "description": "How the Digital SAT works, what a realistic August timeline looks like when you work a job, and how to use Learn v2 + Khan + Bluebook together without burning out.",
+      "xpValue": 80,
+      "parentIds": [],
+      "estimatedMinutes": 45,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Digital SAT structure: 2 modules Math, 2 modules Reading & Writing",
+        "Adaptive testing — second module difficulty depends on first",
+        "Score range 400–1600 (200–800 per section)",
+        "Consistency beats cramming: 5 days/week, 45–90 min",
+        "Official practice > random YouTube drills"
+      ],
+      "whyItMatters": "You are rebuilding years of school habits on your own. A clear plan turns anxiety into a schedule. Colleges care about your score, but they also care that you showed up — this module is your command center.",
+      "practiceProblems": [
+        "Write your test date and work schedule for the next 7 days. Block 3 study slots.",
+        "List what you will do on a \"bad day\" (minimum 20 min: 10 vocab, 10 math problems).",
+        "Register or confirm Khan Academy is linked to your College Board account."
+      ],
+      "resources": [
+        {
+          "title": "College Board — SAT Suite",
+          "url": "https://satsuite.collegeboard.org/sat",
+          "type": "article",
+          "whyHelpful": "Official structure, dates, and score info."
+        },
+        {
+          "title": "Bluebook App",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official digital practice tests — same interface as test day."
+        },
+        {
+          "title": "Khan Academy — SAT Prep",
+          "url": "https://www.khanacademy.org/test-prep/sat",
+          "type": "course",
+          "whyHelpful": "Free personalized plan synced to College Board."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st1_1",
+          "question": "The Digital SAT total score combines:",
+          "options": [
+            "Math only",
+            "Reading & Writing only",
+            "Math (200–800) + Reading & Writing (200–800)",
+            "Science and Math"
+          ],
+          "correctIndex": 2,
+          "explanation": "Total score is 400–1600 from two section scores, each 200–800."
+        },
+        {
+          "id": "q_st1_2",
+          "question": "The best source for full-length practice tests is:",
+          "options": [
+            "Random TikTok quizzes",
+            "College Board Bluebook",
+            "Only your school textbook",
+            "SAT questions from 1998 PDFs only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Bluebook uses the real digital format and official items."
+        }
+      ]
+    },
+    {
+      "id": "st2",
+      "name": "Daily Rhythm & Tools",
+      "description": "Set up your study stack: Learn v2 for lessons and notes, Khan for skill drills, Bluebook for timed sections. Learn when to study Math vs R&W.",
+      "xpValue": 60,
+      "parentIds": ["st1"],
+      "estimatedMinutes": 30,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Alternate Math and R&W days when possible",
+        "One timed section per week by month 2",
+        "Track misses in a mistake log (topic, not just \"wrong\")",
+        "Sleep and show-up matter as much as one more hour"
+      ],
+      "whyItMatters": "Discipline from your job already proves you can repeat hard tasks. SAT prep is the same skill — scheduled reps — applied to reading and math.",
+      "practiceProblems": [
+        "Create a mistake log template: date | section | topic | what went wrong | fix.",
+        "Pick Mon/Wed/Fri = Math, Tue/Thu = R&W (adjust to your work shifts)."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Link to College Board",
+          "url": "https://www.khanacademy.org/college-admissions",
+          "type": "article",
+          "whyHelpful": "Syncs diagnostic scores to a personalized plan."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st2_1",
+          "question": "A sustainable week while working often looks like:",
+          "options": [
+            "8 hours SAT every day",
+            "Skipping sleep to cram the night before",
+            "Most days 45–90 min, one rest day, one timed block weekly",
+            "Only studying what feels easy"
+          ],
+          "correctIndex": 2,
+          "explanation": "Consistency with recovery beats heroic cram sessions."
+        }
+      ]
+    },
+    {
+      "id": "st3",
+      "name": "SAT Math — What They Test",
+      "description": "Overview of Digital SAT Math: Algebra, Problem-Solving & Data Analysis, Advanced Math, and Geometry/Trig. Know the terrain before drilling.",
+      "xpValue": 100,
+      "parentIds": ["st2"],
+      "estimatedMinutes": 60,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Linear equations, systems, inequalities",
+        "Ratios, percentages, units, scatterplots",
+        "Quadratics, exponentials, functions",
+        "Geometry, angles, circles (lighter weight than algebra)"
+      ],
+      "whyItMatters": "You love complexity but feel behind in class math. SAT math is narrower than \"all of school math\" — targeted practice can move your score fast.",
+      "practiceProblems": [
+        "Rate yourself 1–5 on: linear equations, fractions, word problems, graphs.",
+        "Do 5 Khan questions in your weakest rated topic."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Math",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Topic-sorted official-style practice."
+        },
+        {
+          "title": "Learn v2 — Mathematics subject",
+          "url": "/subjects/math",
+          "type": "course",
+          "whyHelpful": "Rebuild foundations (m1–m5) in parallel for deep understanding."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st3_1",
+          "question": "Which topic appears most often on SAT Math?",
+          "options": ["Advanced calculus", "Algebra and linear relationships", "Chemistry stoichiometry", "Proof-based geometry"],
+          "correctIndex": 1,
+          "explanation": "Algebra and problem-solving dominate; calculus is not on the SAT."
+        }
+      ]
+    },
+    {
+      "id": "st4",
+      "name": "Algebra & Linear Equations",
+      "description": "Solve for x, translate word problems, work with slopes and systems. The highest-yield math bucket for most students.",
+      "xpValue": 120,
+      "parentIds": ["st3"],
+      "estimatedMinutes": 90,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Isolate the variable — same operation both sides",
+        "y = mx + b: slope and intercept meaning",
+        "Systems: substitution and elimination",
+        "Translate words → equation (what is x?)"
+      ],
+      "whyItMatters": "Many missed school days show up here. Fixing algebra unlocks dozens of SAT questions and builds confidence for harder topics.",
+      "practiceProblems": [
+        "Solve: 3x + 7 = 22. Then: 2x - 5 = 3x + 1.",
+        "A phone plan is $25 plus $0.10 per minute. Write the equation and cost for 40 minutes.",
+        "Khan: 15 algebra questions — log any topic you miss twice."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Linear equations",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-basic-eq-ineq",
+          "type": "practice",
+          "whyHelpful": "Step-by-step if you are catching up from scratch."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st4_1",
+          "question": "Solve: 2(x - 3) = 10",
+          "options": ["x = 4", "x = 8", "x = 5", "x = 11"],
+          "correctIndex": 1,
+          "explanation": "2x - 6 = 10 → 2x = 16 → x = 8."
+        },
+        {
+          "id": "q_st4_2",
+          "question": "In y = 3x + 2, the 3 represents:",
+          "options": ["y-intercept", "slope", "x-intercept", "starting cost only"],
+          "correctIndex": 1,
+          "explanation": "In y = mx + b, m is slope (rate of change)."
+        }
+      ]
+    },
+    {
+      "id": "st5",
+      "name": "Problem Solving & Data",
+      "description": "Percentages, ratios, proportional reasoning, mean/median, tables and scatterplots. SAT loves real-world word problems.",
+      "xpValue": 120,
+      "parentIds": ["st4"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Percent change: (new - old) / old",
+        "Unit conversion and dimensional analysis",
+        "Reading tables and graphs carefully",
+        "Mean vs median — which outlier affects which"
+      ],
+      "whyItMatters": "These questions reward careful reading — similar to trading risk/reward thinking. Good fit for how your brain likes real scenarios.",
+      "practiceProblems": [
+        "A $40 item is 25% off. What is the sale price?",
+        "From a table in Khan practice, identify the median of 5 values.",
+        "10 Khan problem-solving & data questions timed (2 min each max)."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Percent & ratios",
+          "url": "https://www.khanacademy.org/math/pre-algebra/pre-algebra-ratios-rates",
+          "type": "practice",
+          "whyHelpful": "Core drill for word-problem style items."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st5_1",
+          "question": "Price rises from $80 to $100. Percent increase?",
+          "options": ["20%", "25%", "80%", "125%"],
+          "correctIndex": 1,
+          "explanation": "Increase 20/80 = 25%."
+        }
+      ]
+    },
+    {
+      "id": "st6",
+      "name": "Advanced Math Essentials",
+      "description": "Quadratics, factoring basics, function notation, and exponentials at SAT level — not full precalculus.",
+      "xpValue": 130,
+      "parentIds": ["st5"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "f(x) notation — input and output",
+        "Factoring x² + bx + c",
+        "Quadratic formula when factoring fails",
+        "Exponential growth vs linear growth"
+      ],
+      "whyItMatters": "This is where score gains separate 1100 from 1300+ for many students. You do not need mastery of college math — you need SAT-shaped fluency.",
+      "practiceProblems": [
+        "If f(x) = 2x + 1, find f(3) and f(-2).",
+        "Factor: x² - 5x + 6.",
+        "Khan: 10 advanced math SAT items."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Quadratic functions",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-quadratics",
+          "type": "practice",
+          "whyHelpful": "SAT-level quadratics without full precalc course."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st6_1",
+          "question": "What is f(4) if f(x) = x² - 3?",
+          "options": ["1", "7", "13", "16"],
+          "correctIndex": 2,
+          "explanation": "4² - 3 = 16 - 3 = 13."
+        }
+      ]
+    },
+    {
+      "id": "st7",
+      "name": "Math Strategy & Timing",
+      "description": "When to skip, when to guess, how to use Desmos on the Digital SAT, and how to check answers without redoing everything.",
+      "xpValue": 100,
+      "parentIds": ["st6"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Answer easy questions first in each module",
+        "Desmos graphing for systems and intersections",
+        "Plug in answer choices (backsolving)",
+        "Mark and return — do not spiral on one hard item"
+      ],
+      "whyItMatters": "A strong student who runs out of time scores lower than a prepared student who manages pace. Strategy is part of the test.",
+      "practiceProblems": [
+        "Take one Bluebook Math module untimed — note where you stalled.",
+        "Retry missed questions using backsolving on multiple choice only."
+      ],
+      "resources": [
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Built-in Desmos matches test day."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st7_1",
+          "question": "You are stuck on a multiple-choice algebra question after 2 minutes. Best move:",
+          "options": [
+            "Leave blank always",
+            "Guess immediately without eliminating",
+            "Eliminate wrong choices, guess, mark for review if time",
+            "Quit the module"
+          ],
+          "correctIndex": 2,
+          "explanation": "No penalty for wrong answers on SAT — educated guesses are +EV."
+        }
+      ]
+    },
+    {
+      "id": "st8",
+      "name": "Math — Timed Module Practice",
+      "description": "Run a timed Math module (or half test) in Bluebook. Log errors by topic in your mistake log. Review in Learn v2 notes.",
+      "xpValue": 150,
+      "parentIds": ["st7"],
+      "estimatedMinutes": 70,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Simulate test conditions: timer on, phone away",
+        "Review every miss within 24 hours",
+        "Redo 3 similar Khan questions per miss type"
+      ],
+      "whyItMatters": "This is the rehearsal before showtime. Timed practice reveals gaps content study hides.",
+      "practiceProblems": [
+        "Complete Bluebook Math Module 1 (or Khan timed set).",
+        "Write 3 takeaways in lesson notes for your worst topic."
+      ],
+      "resources": [
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Closest thing to test day."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st8_1",
+          "question": "After a timed Math module, the highest-ROI review is:",
+          "options": [
+            "Only checking the score",
+            "Categorizing misses and drilling those topics",
+            "Memorizing the answer key",
+            "Skipping review to save time"
+          ],
+          "correctIndex": 1,
+          "explanation": "Topic-level review prevents repeating the same miss."
+        }
+      ]
+    },
+    {
+      "id": "st9",
+      "name": "Reading & Writing — Overview",
+      "description": "How SAT R&W works: short passages, one question each, grammar and reading skills combined. Build reading stamina without zoning out.",
+      "xpValue": 100,
+      "parentIds": ["st2"],
+      "estimatedMinutes": 60,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Passages are short — pace is ~1 min per question",
+        "Question types: grammar, vocabulary in context, main idea, evidence",
+        "Read the question stem first on hard items",
+        "Wrong answers often half-right — find the flaw"
+      ],
+      "whyItMatters": "You are extroverted and like people — R&W is about careful communication, not \"being a literature kid.\" Treat it like debugging text.",
+      "practiceProblems": [
+        "Read one SAT passage slowly; summarize the main idea in one sentence.",
+        "Khan: 10 R&W questions untimed — label each question type."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Official-style R&W drill."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st9_1",
+          "question": "On SAT R&W, most questions ask you to:",
+          "options": [
+            "Memorize poem authors",
+            "Fix grammar or interpret a short passage",
+            "Write a long essay",
+            "Translate Latin"
+          ],
+          "correctIndex": 1,
+          "explanation": "Digital SAT R&W is passage-based multiple choice, including Standard English conventions."
+        }
+      ]
+    },
+    {
+      "id": "st10",
+      "name": "Grammar & Standard English",
+      "description": "Subject-verb agreement, pronouns, commas, sentence boundaries, and concise phrasing. Fast points when you know the rules.",
+      "xpValue": 120,
+      "parentIds": ["st9"],
+      "estimatedMinutes": 75,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Subject-verb agreement (singular/plural)",
+        "Comma splices and run-ons",
+        "Who vs whom, they vs them (SAT tests common cases)",
+        "Shorter is often correct when grammar is equal"
+      ],
+      "whyItMatters": "Grammar questions are the most trainable part of R&W — less background knowledge than history passages.",
+      "practiceProblems": [
+        "Fix: \"The team are winning, however they played sloppy.\"",
+        "Khan: 15 Standard English convention questions."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Grammar",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Rule-based drill with explanations."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st10_1",
+          "question": "Choose the best fix: \"Neither the students nor the teacher were ready.\"",
+          "options": [
+            "were → was (teacher is closer singular)",
+            "were → are",
+            "Neither → Either",
+            "No change"
+          ],
+          "correctIndex": 0,
+          "explanation": "With neither/nor, verb agrees with nearer subject (teacher → was)."
+        }
+      ]
+    },
+    {
+      "id": "st11",
+      "name": "Words in Context & Craft",
+      "description": "Vocabulary in context, tone, purpose, and structure questions. Eliminate answers that change the passage's meaning.",
+      "xpValue": 120,
+      "parentIds": ["st10"],
+      "estimatedMinutes": 75,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Context clues beat memorizing 5000 word lists",
+        "Author's purpose: inform, argue, describe, etc.",
+        "Transition words signal logic between sentences",
+        "Dual passages: compare two authors' views"
+      ],
+      "whyItMatters": "These feel subjective but are logical — like reading market sentiment vs price. Practice builds pattern recognition.",
+      "practiceProblems": [
+        "For one Khan passage, write why each wrong answer fails in 5 words.",
+        "Learn 5 high-frequency words only from missed questions."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Craft and structure question bank."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st11_1",
+          "question": "For \"words in context\" questions, the best first step is:",
+          "options": [
+            "Pick the hardest-looking word",
+            "Reread the sentence and predict your own word",
+            "Skip always",
+            "Choose the longest option"
+          ],
+          "correctIndex": 1,
+          "explanation": "Prediction before looking at choices reduces trap answers."
+        }
+      ]
+    },
+    {
+      "id": "st12",
+      "name": "Information, Ideas & Evidence",
+      "description": "Main idea, detail, inference, and paired evidence questions. Learn to prove answers with lines from the text.",
+      "xpValue": 120,
+      "parentIds": ["st11"],
+      "estimatedMinutes": 75,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Main idea ≠ one detail",
+        "Evidence pairs: pick the quote that supports your answer",
+        "Inference must stay close to the text — no outside assumptions",
+        "Charts in R&W: read axes and units first"
+      ],
+      "whyItMatters": "Evidence questions reward discipline — same as citing reasons in an argument. Good match for someone who values honesty and clarity.",
+      "practiceProblems": [
+        "One passage: answer main idea, then find one sentence that proves it.",
+        "Khan: 10 Information and Ideas questions."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Information and ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Evidence and inference drill."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st12_1",
+          "question": "An inference answer should be:",
+          "options": [
+            "Anything that sounds smart",
+            "Strongly supported by the passage, not extreme",
+            "The opposite of the passage",
+            "Based on outside history knowledge only"
+          ],
+          "correctIndex": 1,
+          "explanation": "SAT rewards conservative, text-bound inferences."
+        }
+      ]
+    },
+    {
+      "id": "st13",
+      "name": "R&W Strategy & Pacing",
+      "description": "Module timing, when to skip, handling boring passages, and staying sharp after Math sections on test day.",
+      "xpValue": 100,
+      "parentIds": ["st12"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "~1 minute per question average — some faster, some slower",
+        "If zoning out, physically underline the question stem",
+        "Grammar items often faster than long inference items",
+        "Full test day: energy management (snack, sleep)"
+      ],
+      "whyItMatters": "R&W is where many students lose points to fatigue, not ability. Pacing practice is score practice.",
+      "practiceProblems": [
+        "Timed: 10 R&W questions in 12 minutes.",
+        "Plan test-day breakfast and arrival time (30 min early)."
+      ],
+      "resources": [
+        {
+          "title": "College Board — What to Bring",
+          "url": "https://satsuite.collegeboard.org/sat/what-to-bring-do/what-to-bring",
+          "type": "article",
+          "whyHelpful": "ID, device, admission ticket checklist."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st13_1",
+          "question": "During R&W, if a passage is boring, best tactic:",
+          "options": [
+            "Stop reading and guess",
+            "Underline key phrases and answer the specific question",
+            "Read three times slower always",
+            "Change answers randomly"
+          ],
+          "correctIndex": 1,
+          "explanation": "You only need enough of the passage to answer the asked question."
+        }
+      ]
+    },
+    {
+      "id": "st14",
+      "name": "R&W — Timed Module Practice",
+      "description": "Timed R&W module in Bluebook or Khan. Log misses. Tie weak areas back to grammar vs reading lessons in this tree.",
+      "xpValue": 150,
+      "parentIds": ["st13"],
+      "estimatedMinutes": 70,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Timed module under test-like conditions",
+        "Tag misses: grammar / vocab / main idea / evidence",
+        "Review within 24 hours"
+      ],
+      "whyItMatters": "Pairs with Math timed practice — together they predict how August will feel.",
+      "practiceProblems": [
+        "Bluebook R&W Module 1 or equivalent timed set.",
+        "Three bullet notes on what to drill next week."
+      ],
+      "resources": [
+        {
+          "title": "Bluebook",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing and interface."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st14_1",
+          "question": "After R&W timed practice, prioritize review of:",
+          "options": [
+            "Only questions you guessed on",
+            "Every miss, by category, with one drill each",
+            "Nothing — move on",
+            "Only the first question"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review is how R&W scores climb steadily."
+        }
+      ]
+    },
+    {
+      "id": "st15",
+      "name": "Full Practice Test & Test Week",
+      "description": "Take a full Digital SAT in Bluebook. Build a one-week test plan: sleep, materials, score send strategy, and what to do the morning of.",
+      "xpValue": 200,
+      "parentIds": ["st8", "st14"],
+      "estimatedMinutes": 180,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Full test = stamina + strategy + content",
+        "Score is a snapshot — one test is not your whole story",
+        "Send scores to colleges that fit your aid profile",
+        "Day before: light review, materials packed, early sleep"
+      ],
+      "whyItMatters": "This is the finish line of the module — and the start of applications. You registered and paid; now you execute.",
+      "practiceProblems": [
+        "Schedule your Bluebook full practice test date this week.",
+        "List 3 colleges to research for fit + financial aid (start broad).",
+        "Write a 3-sentence \"why I'm taking this test\" for yourself — motivation anchor."
+      ],
+      "resources": [
+        {
+          "title": "BigFuture — College Search",
+          "url": "https://bigfuture.collegeboard.org/",
+          "type": "article",
+          "whyHelpful": "Explore schools and majors alongside SAT prep."
+        },
+        {
+          "title": "FAFSA overview",
+          "url": "https://studentaid.gov/h/apply-for-aid/fafsa",
+          "type": "article",
+          "whyHelpful": "Financial aid starts here for low-income families."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st15_1",
+          "question": "The night before the SAT, you should:",
+          "options": [
+            "Cram new topics until 3am",
+            "Pack ID/ticket/device, light review, sleep",
+            "Skip breakfast to focus",
+            "Take the test without practicing once"
+          ],
+          "correctIndex": 1,
+          "explanation": "Rest and logistics beat last-minute cramming."
+        },
+        {
+          "id": "q_st15_2",
+          "question": "A full practice test is most useful when you:",
+          "options": [
+            "Never review it",
+            "Review every section and adjust your study plan",
+            "Only look at total score",
+            "Take it without timing"
+          ],
+          "correctIndex": 1,
+          "explanation": "Review drives the next week of study."
+        }
+      ]
+    }
+  ]
+}

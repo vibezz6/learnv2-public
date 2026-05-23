@@ -1,5 +1,13 @@
 [
   {
+    "id": "sat-prep",
+    "name": "SAT Prep",
+    "description": "August 2026 Digital SAT — Math and Reading & Writing paths, official practice links, and test-week plan.",
+    "color": "#d97757",
+    "icon": "graduation-cap",
+    "nodeCount": 15
+  },
+  {
     "id": "math",
     "name": "Mathematics",
     "description": "From pre-algebra foundations through calculus and linear algebra. Rebuild your math intuition from the ground up.",
