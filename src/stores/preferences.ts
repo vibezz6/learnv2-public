@@ -6,9 +6,11 @@ export type ThemeMode = "dark" | "light" | "system";
 interface PreferencesState {
   theme: ThemeMode;
   focusMode: boolean;
+  onboardingCompleted: boolean;
   setTheme: (theme: ThemeMode) => void;
   toggleFocusMode: () => void;
   setFocusMode: (value: boolean) => void;
+  completeOnboarding: () => void;
 }
 
 function applyTheme(theme: ThemeMode) {
@@ -26,6 +28,7 @@ export const usePreferences = create<PreferencesState>()(
     (set, get) => ({
       theme: "dark",
       focusMode: false,
+      onboardingCompleted: false,
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -39,10 +42,11 @@ export const usePreferences = create<PreferencesState>()(
         document.body.classList.toggle("focus-shell-active", value);
         set({ focusMode: value });
       },
+      completeOnboarding: () => set({ onboardingCompleted: true }),
     }),
     {
       name: "learnv2_preferences",
-      partialize: (s) => ({ theme: s.theme }),
+      partialize: (s) => ({ theme: s.theme, onboardingCompleted: s.onboardingCompleted }),
       onRehydrateStorage: () => (state) => {
         if (state) applyTheme(state.theme);
       },

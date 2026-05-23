@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./AppShell";
 import { AchievementToast } from "@/components/AchievementToast";
+import { OnboardingModal } from "@/components/OnboardingModal";
 import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
@@ -38,6 +39,7 @@ export function App() {
           </Route>
         </Routes>
         <AchievementToast />
+        <OnboardingModal />
       </ComponentErrorBoundary>
     </BrowserRouter>
   );
