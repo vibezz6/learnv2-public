@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Brain } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, EmptyState } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
@@ -60,16 +60,14 @@ export function DashboardPage() {
         {target ? (
           <ContinueHero subject={target.subject} node={target.node} />
         ) : (
-          <Card variant="primary" className="p-6 md:p-8">
-            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent)]">
-              Continue learning
-            </p>
-            <p className="mt-3 text-sm text-[var(--text-muted)]">
-              Import v1 progress in Settings, or pick a subject to start.
-            </p>
-            <Link to="/subjects" className="mt-5 inline-block">
-              <Button>Browse subjects</Button>
-            </Link>
+          <Card variant="primary">
+            <EmptyState
+              icon={<span aria-hidden>◎</span>}
+              title="Neural pathways idle"
+              description="Import v1 progress in Settings, or pick a subject to light up your first lesson."
+              actionLabel="Browse subjects"
+              actionTo="/subjects"
+            />
           </Card>
         )}
       </section>

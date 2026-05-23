@@ -755,7 +755,7 @@ function NoteMentorPanel({
   }
 
   return (
-    <Card className="space-y-4">
+    <Card className="space-y-5">
       <div className="flex items-center justify-between text-sm text-[var(--text-muted)]">
         <span>Question {index + 1} of {mentorSession.questions.length}</span>
         <div className="h-1 w-24 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
@@ -771,13 +771,13 @@ function NoteMentorPanel({
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        rows={5}
+        rows={6}
         disabled={evaluating}
-        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-base leading-relaxed outline-none focus:border-[var(--accent)] disabled:opacity-60 sm:text-sm"
+        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/40 p-4 text-base leading-relaxed outline-none focus:border-[var(--border-strong)] disabled:opacity-60 sm:text-sm"
         placeholder="Type your answer in 2–4 sentences…"
       />
       {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
-      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating} className="min-h-11 w-full sm:w-auto">
+      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating} className="min-h-12 w-full">
         {evaluating ? (
           <>
             <Loader2 size={16} className="animate-spin" />

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
+import { BookOpen, ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui";
+import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
@@ -9,10 +10,10 @@ import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
 
-const NODE_W = 168;
-const NODE_H = 88;
-const COL_GAP = 32;
-const ROW_GAP = 16;
+const NODE_W = 184;
+const NODE_H = 76;
+const COL_GAP = 36;
+const ROW_GAP = 24;
 
 interface TreeLayout {
   columns: SkillNode[][];
@@ -106,7 +107,7 @@ function statusMeta(status: NodeStatus) {
       return {
         label: "Done",
         icon: CheckCircle2,
-        nodeClass: "border-[var(--success)]/50 bg-[var(--bg-elevated)]",
+        nodeClass: "border-[var(--success)]/40 bg-[var(--success-bg)]/25",
         dotClass: "bg-[var(--success)]",
         iconClass: "text-[var(--success)]",
         textClass: "text-[var(--text-heading)]",
@@ -117,7 +118,7 @@ function statusMeta(status: NodeStatus) {
         label: "Open",
         icon: Circle,
         nodeClass:
-          "border-[var(--accent)]/60 bg-[var(--bg-elevated)] hover:border-[var(--accent)]",
+          "border-[var(--border-strong)] bg-[var(--bg-elevated)] ring-1 ring-[var(--accent)]/25 hover:border-[var(--accent)]/50",
         dotClass: "bg-[var(--accent)]",
         iconClass: "text-[var(--accent)]",
         textClass: "text-[var(--text-heading)]",
@@ -185,7 +186,7 @@ function SkillNodeTooltip({
 
   return (
     <div
-      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-52 -translate-x-1/2 rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-3 text-left opacity-0 shadow-[var(--shadow-md)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-4 text-left opacity-0 shadow-[var(--shadow-md)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
       role="tooltip"
     >
       <p className="text-xs font-medium text-[var(--text-heading)]">{node.name}</p>
@@ -222,9 +223,9 @@ function SkillNodeCard({
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-[var(--radius)] border p-2.5",
+        "flex h-full flex-col rounded-[var(--radius)] border p-3",
         meta.nodeClass,
-        compact ? "min-h-[88px]" : "",
+        compact ? "min-h-[76px]" : "",
       )}
     >
       <div className="flex items-center justify-between gap-2">
@@ -237,7 +238,7 @@ function SkillNodeCard({
       </div>
       <h3
         className={cn(
-          "mt-1 line-clamp-2 text-[13px] font-medium leading-snug",
+          "mt-1.5 line-clamp-3 text-[12px] font-medium leading-snug",
           meta.textClass,
         )}
       >
@@ -420,36 +421,6 @@ function SkillNodeList({
   );
 }
 
-function ProgressSummary({
-  completed,
-  total,
-  color,
-}: {
-  completed: number;
-  total: number;
-  color: string;
-  children?: ReactNode;
-}) {
-  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-  return (
-    <div className="space-y-2">
-      <div className="flex items-baseline justify-between gap-3 text-sm">
-        <span className="text-[var(--text-muted)]">
-          {completed}/{total} lessons
-        </span>
-        <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">{pct}%</span>
-      </div>
-      <div className="h-1 overflow-hidden rounded-full bg-[var(--border)]">
-        <div
-          className="h-full rounded-full"
-          style={{ width: `${pct}%`, background: color }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export function SubjectDetailPage() {
   const { subjectId = "" } = useParams();
   const progressNodes = useProgress((s) => s.data.nodes);
@@ -476,47 +447,27 @@ export function SubjectDetailPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
-      <header className="space-y-4 border-b border-[var(--border)] pb-6">
-        <Link
-          to="/subjects"
-          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-        >
-          <ChevronLeft size={16} />
-          Subjects
-        </Link>
+      <Link
+        to="/subjects"
+        className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+      >
+        <ChevronLeft size={16} />
+        Subjects
+      </Link>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 space-y-1">
-            <div className="flex items-center gap-2">
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ background: subject.color }}
-                aria-hidden
-              />
-              <span className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">
-                {subject.id}
-              </span>
-            </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)] md:text-3xl">
-              {subject.name}
-            </h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-muted)]">
-              {subject.description}
-            </p>
-          </div>
-          <div className="w-full shrink-0 sm:max-w-xs">
-            <ProgressSummary
-              completed={completedCount}
-              total={subject.nodes.length}
-              color={subject.color}
-            />
-          </div>
-        </div>
-      </header>
+      <TrackDetailHeader
+        name={subject.name}
+        description={subject.description}
+        color={subject.color}
+        icon={BookOpen}
+        completed={completedCount}
+        total={subject.nodes.length}
+        className="mt-4"
+      />
 
-      <section className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-[var(--text-muted)]">
+      <section className="space-y-5 pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-sm font-medium uppercase tracking-widest text-[var(--text-muted)]">
             Skill tree
           </h2>
           <SkillTreeLegend />

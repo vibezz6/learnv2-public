@@ -146,9 +146,10 @@ export function LessonPage() {
 
         {node.whyItMatters && (
           <div
-            className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-5 [border-left-color:var(--accent)] [border-left-width:3px]"
+            className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6"
+            style={{ borderLeftWidth: 3, borderLeftColor: subject.color }}
           >
-            <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
+            <div className="mb-3 flex items-center gap-2 text-[var(--text-muted)]">
               <Sparkles size={16} />
               <span className="text-sm font-medium uppercase tracking-wider">Why it matters</span>
             </div>
@@ -183,7 +184,7 @@ export function LessonPage() {
             accentColor={subject.color}
             defaultOpen
           >
-            <div className="grid min-w-0 gap-3">
+            <div className="grid min-w-0 gap-6">
               {node.resources.map((r, i) => (
                 <ResourceCard key={r.url} resource={r} nodeId={node.id} resourceIndex={i} />
               ))}
@@ -206,10 +207,10 @@ export function LessonPage() {
         <LessonTakeaways nodeId={node.id} subjectId={subject.id} disabled={isLocked} />
 
         {/* ── Next step bar ── */}
-        <div className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-5">
-          <div className="mb-4 flex items-center justify-between border-b border-[var(--border)] pb-3">
+        <div className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
+          <div className="mb-5 flex items-center justify-between border-b border-[var(--border)] pb-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
                 Next step
               </p>
               <p className="mt-0.5 text-sm text-[var(--text-muted)]">

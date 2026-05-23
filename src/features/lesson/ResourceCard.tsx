@@ -10,7 +10,7 @@ const typeConfig: Record<
   course: { label: "Course", icon: GraduationCap, color: "var(--info)" },
   practice: { label: "Practice", icon: Dumbbell, color: "var(--success)" },
   article: { label: "Article", icon: FileText, color: "var(--warning)" },
-  book: { label: "Book", icon: BookOpen, color: "var(--accent)" },
+  book: { label: "Book", icon: BookOpen, color: "var(--text-muted)" },
 };
 
 export function ResourceCard({
@@ -28,7 +28,7 @@ export function ResourceCard({
   const toggleResourceBookmark = useBookmarks((s) => s.toggleResourceBookmark);
 
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 transition hover:border-[var(--accent)]/30 hover:-translate-y-0.5">
+    <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition hover:border-[var(--border-strong)]">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span
           className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold"

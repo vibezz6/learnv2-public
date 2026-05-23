@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   CheckCircle2,
@@ -11,11 +11,12 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Card, EmptyState } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { LearningTrack } from "@/data/tracks";
 import { tracks } from "@/data/tracks";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
 
@@ -29,13 +30,13 @@ const trackIcons: Record<string, LucideIcon> = {
 function ProgressRing({
   pct,
   color,
-  size = 72,
+  size = 80,
   children,
 }: {
   pct: number;
   color: string;
   size?: number;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) {
   const stroke = 5;
   const radius = (size - stroke) / 2;
@@ -45,10 +46,6 @@ function ProgressRing({
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
-      <div
-        className="absolute inset-[-6px] rounded-full opacity-[0.12] blur-[10px]"
-        style={{ background: color }}
-      />
       <svg width={size} height={size} className="-rotate-90">
         <circle
           cx={center}
@@ -123,10 +120,12 @@ export function TracksPage() {
           All tracks
         </Link>
         <Card>
-          <p className="text-[var(--text-muted)]">Track not found.</p>
-          <Link to="/tracks" className="mt-4 inline-block">
-            <Button variant="secondary">Back to tracks</Button>
-          </Link>
+          <EmptyState
+            title="Track not found"
+            description="That path doesn't exist. Pick another track from the list."
+            actionLabel="Browse all tracks"
+            actionTo="/tracks"
+          />
         </Card>
       </div>
     );
@@ -135,7 +134,6 @@ export function TracksPage() {
   if (selected) {
     const { track, lessons, completed, total } = selected;
     const Icon = trackIcons[track.icon] ?? Circle;
-    const pct = total > 0 ? completed / total : 0;
 
     return (
       <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
@@ -147,81 +145,106 @@ export function TracksPage() {
           All tracks
         </Link>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-          <ProgressRing pct={pct} color={track.color} size={88}>
-            <Icon size={24} style={{ color: track.color }} />
-          </ProgressRing>
-          <div className="min-w-0 flex-1">
-            <Badge>{completed}/{total} complete</Badge>
-            <h1 className="mt-2 text-3xl font-bold text-[var(--text-heading)]">{track.name}</h1>
-            <p className="mt-1 text-[var(--text-muted)]">{track.description}</p>
-          </div>
-        </div>
+        <TrackDetailHeader
+          name={track.name}
+          description={track.description}
+          color={track.color}
+          icon={Icon}
+          completed={completed}
+          total={total}
+        />
 
-        <div className="space-y-2">
-          {lessons.map(({ index, subject, node }) => {
-            const status = getNodeStatus(node);
-            const locked = status === "locked";
-            return (
-              <Link
-                key={`${subject.id}-${node.id}`}
-                to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
-                className={locked ? "pointer-events-none" : ""}
-              >
-                <Card
-                  className={cn(
-                    "stagger-item flex items-start gap-4 transition hover:border-[var(--accent)]/30",
-                    locked && "opacity-50",
-                  )}
+        {lessons.length === 0 ? (
+          <Card>
+            <EmptyState
+              title="Path loading"
+              description="Lessons for this track will appear once curriculum data is available."
+              actionLabel="Browse subjects"
+              actionTo="/subjects"
+            />
+          </Card>
+        ) : (
+          <div className="space-y-3 pt-2">
+            {lessons.map(({ index, subject, node }) => {
+              const status = getNodeStatus(node);
+              const locked = status === "locked";
+              return (
+                <Link
+                  key={`${subject.id}-${node.id}`}
+                  to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
+                  className={locked ? "pointer-events-none" : ""}
                 >
-                  <div
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold"
-                    style={{
-                      background: `${track.color}18`,
-                      color: track.color,
-                    }}
+                  <Card
+                    className={cn(
+                      "flex items-start gap-5 transition hover:border-[var(--border-strong)]",
+                      locked && "opacity-50",
+                    )}
                   >
-                    {index}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="font-semibold text-[var(--text-heading)]">{node.name}</h2>
-                    <p className="mt-0.5 text-xs text-[var(--accent-2)]">{subject.name}</p>
-                    <p className="mt-1 line-clamp-2 text-sm text-[var(--text-muted)]">{node.description}</p>
-                  </div>
-                  <div className="flex shrink-0 flex-col items-end gap-1">
-                    <span className="font-mono text-xs text-[var(--accent)]">{node.xpValue} XP</span>
-                    {status === "completed" && (
-                      <CheckCircle2 size={16} className="text-[var(--success)]" />
-                    )}
-                    {status === "available" && (
-                      <Circle size={16} className="text-[var(--accent)]" />
-                    )}
-                    {status === "locked" && <Lock size={16} className="text-[var(--warning)]" />}
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-
-        <Link to="/tracks">
-          <Button variant="secondary">All tracks</Button>
-        </Link>
+                    <div
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold"
+                      style={{
+                        background: `${track.color}18`,
+                        color: track.color,
+                      }}
+                    >
+                      {index}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h2 className="font-medium text-[var(--text-heading)]">{node.name}</h2>
+                      <p className="mt-1 text-xs text-[var(--text-muted)]">{subject.name}</p>
+                      <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                        {node.description}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                      <span className="font-mono text-[11px] tabular-nums text-[var(--text-muted)]">
+                        {node.xpValue} XP
+                      </span>
+                      {status === "completed" && (
+                        <CheckCircle2 size={16} className="text-[var(--success)]" />
+                      )}
+                      {status === "available" && (
+                        <Circle size={16} className="text-[var(--text-muted)]" />
+                      )}
+                      {status === "locked" && <Lock size={16} className="text-[var(--text-muted)]" />}
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
 
+  const allEmpty = trackStats.every(({ completed }) => completed === 0);
+
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-8">
-      <div>
-        <Badge>{tracks.length} learning paths</Badge>
-        <h1 className="mt-2 text-3xl font-bold text-[var(--text-heading)]">Tracks</h1>
-        <p className="text-[var(--text-muted)]">
+    <div className="mx-auto max-w-5xl space-y-8 p-4 md:p-8">
+      <header className="space-y-1 border-b border-[var(--border)] pb-6">
+        <p className="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)]">
+          {tracks.length} learning paths
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)] md:text-3xl">
+          Tracks
+        </h1>
+        <p className="text-sm text-[var(--text-muted)]">
           Curated paths through the curriculum — pick a track and follow the sequence.
         </p>
-      </div>
+      </header>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      {allEmpty && subjects.length > 0 && (
+        <Card variant="quiet">
+          <EmptyState
+            icon={<span aria-hidden>◎</span>}
+            title="No tracks started yet"
+            description="Your neural pathways are waiting. Pick a track below to begin building your foundation."
+          />
+        </Card>
+      )}
+
+      <div className="grid gap-6 sm:grid-cols-2">
         {trackStats.map(({ track, completed, total }) => {
           const Icon = trackIcons[track.icon] ?? Circle;
           const pct = total > 0 ? completed / total : 0;
@@ -229,18 +252,29 @@ export function TracksPage() {
 
           return (
             <Link key={track.id} to={`/tracks/${track.id}`}>
-              <Card className="stagger-item flex h-full gap-4 transition hover:border-[var(--accent)]/40">
-                <ProgressRing pct={pct} color={track.color}>
-                  <Icon size={20} style={{ color: track.color }} />
+              <Card
+                hover
+                className="flex h-full gap-5 ring-offset-[var(--bg)] hover:ring-2 hover:ring-offset-2"
+                style={{ "--tw-ring-color": `${track.color}40` } as CSSProperties}
+              >
+                <ProgressRing pct={pct} color={track.color} size={80}>
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-[var(--radius)]"
+                    style={{ background: `${track.color}12` }}
+                  >
+                    <Icon size={22} style={{ color: track.color }} />
+                  </div>
                 </ProgressRing>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 py-1">
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="text-lg font-semibold text-[var(--text-heading)]">{track.name}</h2>
+                    <h2 className="text-lg font-medium text-[var(--text-heading)]">{track.name}</h2>
                     {done && <CheckCircle2 size={16} className="shrink-0 text-[var(--success)]" />}
                   </div>
-                  <p className="mt-1 line-clamp-2 text-sm text-[var(--text-muted)]">{track.description}</p>
-                  <p className="mt-3 font-mono text-xs" style={{ color: track.color }}>
-                    {completed}/{total} lessons
+                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                    {track.description}
+                  </p>
+                  <p className="mt-4 font-mono text-xs tabular-nums text-[var(--text-muted)]">
+                    <span style={{ color: track.color }}>{completed}/{total}</span> lessons
                   </p>
                 </div>
               </Card>

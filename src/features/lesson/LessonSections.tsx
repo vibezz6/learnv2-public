@@ -107,7 +107,7 @@ const CollapsibleSection = memo(function CollapsibleSection({
       <div
         id={`section-header-${id}`}
         onClick={toggle}
-        className="flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-3 py-3 sm:px-4"
+        className="flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-4 py-4 sm:px-5"
         style={{
           transition: 'background 0.15s ease, border-color 0.15s ease',
           background: isOpen ? `color-mix(in srgb, ${accent} 5%, var(--bg-card))` : 'transparent',
@@ -175,7 +175,7 @@ const CollapsibleSection = memo(function CollapsibleSection({
           transition: 'max-height 0.3s ease-in-out',
         }}
       >
-        <div className="min-w-0 break-words px-3 pb-3 sm:px-4 sm:pb-4">{children}</div>
+        <div className="min-w-0 break-words px-5 pb-5 sm:px-6 sm:pb-6">{children}</div>
       </div>
     </div>
   );
@@ -420,7 +420,7 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
       {(state.phase === 'solving' || state.phase === 'complete') && (
         <div className="min-w-0 px-3 pb-4 sm:px-4">
           {/* SVG Progress ring + step counter */}
-          <div className="mb-3.5 flex min-w-0 items-center gap-3 sm:gap-3.5">
+          <div className="mb-5 flex min-w-0 items-center gap-3 py-2 sm:gap-3.5">
             <svg
               viewBox="0 0 44 44"
               style={{ width: 44, height: 44, flexShrink: 0 }}

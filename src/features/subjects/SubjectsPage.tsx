@@ -4,7 +4,7 @@ import { ArrowRight, Search } from "lucide-react";
 import { manifest } from "@/curriculum";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, EmptyState } from "@/components/ui";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
@@ -129,9 +129,9 @@ export function SubjectsPage() {
                   </span>
                 </div>
                 <h2 className="text-base font-medium text-[var(--text-heading)]">{entry.name}</h2>
-                <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-[var(--text-muted)]">
-                  {entry.description}
-                </p>
+              <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                {entry.description}
+              </p>
                 <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--border)]">
                   <div
                     className="h-full rounded-full"
@@ -156,7 +156,17 @@ export function SubjectsPage() {
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-center text-sm text-[var(--text-muted)]">No subjects match your search.</p>
+        <Card variant="quiet">
+          <EmptyState
+            title="No matches"
+            description="Try a different search or clear filters to see the full curriculum."
+            actionLabel="Show all subjects"
+            onAction={() => {
+              setQuery("");
+              setFilterId("all");
+            }}
+          />
+        </Card>
       )}
     </div>
   );
@@ -178,7 +188,7 @@ function FilterPill({
       className={cn(
         "rounded-full border px-3 py-1 text-xs transition-colors",
         active
-          ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]"
+          ? "border-[var(--border-strong)] bg-[var(--bg-hover)] text-[var(--text-heading)]"
           : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)] hover:text-[var(--text)]",
       )}
     >
