@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Subject } from "@/curriculum/types";
-import { getToday, useProgress, V1_STORAGE_KEY, V2_STORAGE_KEY } from "@/stores/progress";
+import {
+  getToday,
+  MAX_DAILY_REVIEWS,
+  useProgress,
+  V1_STORAGE_KEY,
+  V2_STORAGE_KEY,
+} from "@/stores/progress";
 
 function mockSubjects(): Subject[] {
   return [
@@ -60,6 +66,56 @@ function dateFromToday(offsetDays: number): string {
   const date = new Date(`${getToday()}T00:00:00Z`);
   date.setUTCDate(date.getUTCDate() + offsetDays);
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+}
+
+function mockSubjectsWithNodeCount(count: number): Subject[] {
+  const nodes = Array.from({ length: count }, (_, index) => ({
+    id: `n${index}`,
+    name: `Node ${index}`,
+    description: "Review node",
+    xpValue: 10,
+    parentIds: index === 0 ? [] : [`n${index - 1}`],
+    estimatedMinutes: 10,
+    resources: [],
+    keyConcepts: [],
+    whyItMatters: "Testing",
+    practiceProblems: [],
+    difficulty: "beginner" as const,
+  }));
+  return [
+    {
+      id: "math",
+      name: "Math",
+      description: "Test subject",
+      color: "#000",
+      icon: "M",
+      nodes,
+    },
+  ];
+}
+
+function seedDueReviews(nodeIds: string[]) {
+  const data = useProgress.getState().data;
+  const nodes = { ...data.nodes };
+  const spacedRepetition = { ...data.spacedRepetition };
+  const now = new Date().toISOString();
+
+  for (const nodeId of nodeIds) {
+    nodes[nodeId] = {
+      completedAt: now,
+      startedAt: now,
+      timeSpentMinutes: 0,
+      quizScores: [],
+      quizHistory: [],
+    };
+    spacedRepetition[nodeId] = {
+      nodeId,
+      currentIntervalIndex: 0,
+      scheduledReviews: [{ scheduledDate: getToday(), completedDate: null }],
+    };
+  }
+
+  useProgress.setState({ data: { ...data, nodes, spacedRepetition } });
 }
 
 describe("progress", () => {
@@ -194,6 +250,108 @@ describe("progress", () => {
     expect(useProgress.getState().getReviewStats()).toEqual({ totalReviews: 1, passCount: 1, failCount: 0, passRate: 100 });
   });
 
+  it("getReviewStats returns zeros when no reviews are completed", () => {
+    expect(useProgress.getState().getReviewStats()).toEqual({
+      totalReviews: 0,
+      passCount: 0,
+      failCount: 0,
+      passRate: 0,
+    });
+  });
+
+  it("getReviewStats treats forgot as fail and rounds passRate", () => {
+    useProgress.getState().completeNode("m1", 50);
+    useProgress.getState().completeNode("m2", 50);
+    useProgress.getState().completeReviewWithConfidence("m1", "easy");
+    useProgress.getState().completeReviewWithConfidence("m2", "forgot");
+
+    expect(useProgress.getState().getReviewStats()).toEqual({
+      totalReviews: 2,
+      passCount: 1,
+      failCount: 1,
+      passRate: 50,
+    });
+  });
+
+  it("getReviewStats aggregates completed reviews across nodes", () => {
+    useProgress.getState().completeNode("m1", 50);
+    useProgress.getState().completeNode("m2", 50);
+    useProgress.getState().completeReviewWithConfidence("m1", "normal");
+    useProgress.getState().completeReviewWithConfidence("m2", "hard");
+
+    expect(useProgress.getState().getReviewStats()).toEqual({
+      totalReviews: 2,
+      passCount: 2,
+      failCount: 0,
+      passRate: 100,
+    });
+  });
+
+  it("getReviewStats ignores pending reviews without confidence", () => {
+    useProgress.getState().completeNode("m1", 50);
+    useProgress.getState().completeReviewWithConfidence("m1", "normal");
+
+    const data = useProgress.getState().data;
+    useProgress.setState({
+      data: {
+        ...data,
+        spacedRepetition: {
+          ...data.spacedRepetition,
+          m2: {
+            nodeId: "m2",
+            currentIntervalIndex: 0,
+            scheduledReviews: [
+              { scheduledDate: getToday(), completedDate: getToday() },
+              { scheduledDate: dateFromToday(1), completedDate: null },
+            ],
+          },
+        },
+      },
+    });
+
+    expect(useProgress.getState().getReviewStats()).toEqual({
+      totalReviews: 1,
+      passCount: 1,
+      failCount: 0,
+      passRate: 100,
+    });
+  });
+
+  it("getDailyReviewCount increments when completing reviews", () => {
+    useProgress.getState().completeNode("m1", 50);
+    expect(useProgress.getState().getDailyReviewCount()).toBe(0);
+
+    useProgress.getState().completeReviewWithConfidence("m1", "normal");
+    expect(useProgress.getState().getDailyReviewCount()).toBe(1);
+  });
+
+  it("getDailyReviewItems respects the daily review cap", () => {
+    const subjects = mockSubjectsWithNodeCount(12);
+    seedDueReviews(subjects[0].nodes.map((node) => node.id));
+
+    expect(useProgress.getState().getDailyReviewItems(subjects)).toHaveLength(MAX_DAILY_REVIEWS);
+  });
+
+  it("getDailyReviewItems returns no items once the daily cap is reached", () => {
+    const subjects = mockSubjectsWithNodeCount(3);
+    seedDueReviews(subjects[0].nodes.map((node) => node.id));
+    useProgress.setState({
+      data: {
+        ...useProgress.getState().data,
+        dailyReviews: { [getToday()]: MAX_DAILY_REVIEWS },
+      },
+    });
+
+    expect(useProgress.getState().getDailyReviewItems(subjects)).toEqual([]);
+  });
+
+  it("getRemainingReviewCount reports overflow beyond the daily cap", () => {
+    const subjects = mockSubjectsWithNodeCount(12);
+    seedDueReviews(subjects[0].nodes.map((node) => node.id));
+
+    expect(useProgress.getState().getRemainingReviewCount(subjects)).toBe(2);
+  });
+
   it("skips completed continue targets and decays stale streaks on read", () => {
     const subjects = mockSubjects();
     useProgress.getState().completeNode("m1", 50);
@@ -289,6 +447,36 @@ describe("progress exportData/importData", () => {
     expect(localStorage.getItem("learnv2_bookmarks")).toBeNull();
     expect(localStorage.getItem("learnapp_notes_v1")).toBeNull();
     expect(localStorage.getItem("unrelated")).toBe("keep");
+  });
+
+  it("importData rejects malformed JSON", () => {
+    const result = useProgress.getState().importData("{not-json");
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Failed to parse import file.");
+  });
+
+  it("importData rejects exports missing the keys object", () => {
+    const result = useProgress.getState().importData(JSON.stringify({ version: 2 }));
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Invalid export format.");
+  });
+
+  it("importData rejects non-string storage values", () => {
+    const result = useProgress.getState().importData(
+      JSON.stringify({ version: 2, keys: { learnapp_notes_v1: 123 } }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error).toBe("Invalid export format.");
+  });
+
+  it("importData removes keys when an imported value is null", () => {
+    localStorage.setItem("learnapp_notes_v1", "notes");
+    const result = useProgress.getState().importData(
+      JSON.stringify({ version: 2, keys: { learnapp_notes_v1: null } }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(localStorage.getItem("learnapp_notes_v1")).toBeNull();
   });
 
 });
