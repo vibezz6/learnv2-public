@@ -101,7 +101,7 @@ export function NotesPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl space-y-4 p-8">
+      <div className="mx-auto w-full min-w-0 max-w-3xl space-y-4 overflow-x-hidden px-3 py-4 sm:p-4 md:p-8">
         <div className="h-4 w-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
         <Card className="space-y-3">
           <div className="h-5 w-2/3 animate-pulse rounded bg-[var(--bg-elevated)]" />
@@ -113,7 +113,7 @@ export function NotesPage() {
 
   if (loadError || !subject || !node) {
     return (
-      <div className="mx-auto max-w-3xl p-8">
+      <div className="mx-auto w-full min-w-0 max-w-3xl overflow-x-hidden px-3 py-4 sm:p-4 md:p-8">
         <Card className="space-y-4 text-center">
           <AlertCircle className="mx-auto text-[var(--warning)]" size={32} />
           <h2 className="text-lg font-semibold text-[var(--text-heading)]">Lesson not found</h2>
@@ -132,28 +132,31 @@ export function NotesPage() {
   const stepIndex = STEPS.findIndex((s) => s.id === view);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-8">
-      <div className="space-y-4 border-b border-[var(--border)] pb-5">
-        <div className="flex items-center gap-3">
+    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-6 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:p-4 md:p-8">
+      <div className="space-y-4 border-b border-[var(--border)] pb-4 sm:pb-5">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
           <Link
             to={lessonPath}
-            className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+            className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
           >
             <ArrowLeft size={16} />
             Back to lesson
           </Link>
-          <span className="text-[var(--text-muted)]">·</span>
-          <span className="text-sm text-[var(--text-muted)]">{node.name}</span>
+          <span className="hidden text-[var(--text-muted)] sm:inline">·</span>
+          <span className="min-w-0 break-words text-sm text-[var(--text-muted)]">{node.name}</span>
         </div>
 
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">Guided notes</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
+          <h1 className="text-lg font-semibold tracking-tight text-[var(--text-heading)] sm:text-xl">Guided notes</h1>
+          <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
             Write → get AI feedback → test yourself with mentor questions.
           </p>
         </div>
 
-        <nav aria-label="Notes flow" className="flex items-center gap-2">
+        <nav
+          aria-label="Notes flow"
+          className="-mx-3 flex items-center gap-1 overflow-x-auto px-3 pb-1 sm:mx-0 sm:gap-2 sm:overflow-visible sm:px-0 sm:pb-0"
+        >
           {STEPS.map((step, idx) => {
             const unlocked =
               step.id === "editor" ||
@@ -166,17 +169,17 @@ export function NotesPage() {
             const active = view === step.id;
 
             return (
-              <div key={step.id} className="flex items-center gap-2">
+              <div key={step.id} className="flex shrink-0 items-center gap-1 sm:gap-2">
                 {idx > 0 && (
                   <div
-                    className={`h-px w-6 ${done || active ? "bg-[var(--accent)]/40" : "bg-[var(--border)]"}`}
+                    className={`h-px w-4 shrink-0 sm:w-6 ${done || active ? "bg-[var(--accent)]/40" : "bg-[var(--border)]"}`}
                   />
                 )}
                 <button
                   type="button"
                   disabled={!unlocked}
                   onClick={() => goTo(step.id)}
-                  className={`flex items-center gap-2 rounded-[var(--radius)] px-3 py-2 text-sm transition ${
+                  className={`flex min-h-11 shrink-0 touch-manipulation items-center gap-1.5 rounded-[var(--radius)] px-2.5 py-2 text-sm transition sm:gap-2 sm:px-3 ${
                     active
                       ? "bg-[var(--accent)]/15 text-[var(--accent)]"
                       : unlocked
@@ -292,13 +295,21 @@ function NoteEditor({
     });
   };
 
+  const goNext = () => {
+    if (activeIndex === prompts.length - 1) {
+      if (readyForReview) onComplete();
+    } else {
+      setActiveIndex((i) => i + 1);
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <Card>
-        <div className="mb-4 flex items-center gap-2 text-[var(--accent)]">
-          <BookOpen size={18} />
-          <span className="font-medium">{node.name}</span>
-          <Badge>{filledCount}/{prompts.length} answered</Badge>
+    <div className="space-y-4 pb-24 sm:pb-0">
+      <Card className="min-w-0">
+        <div className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-[var(--accent)]">
+          <BookOpen size={18} className="shrink-0" />
+          <span className="min-w-0 break-words font-medium">{node.name}</span>
+          <Badge className="shrink-0">{filledCount}/{prompts.length} answered</Badge>
         </div>
 
         <div className="mb-4">
@@ -314,7 +325,7 @@ function NoteEditor({
           </div>
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="-mx-1 mb-4 flex gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
           {prompts.map((prompt, idx) => {
             const filled = !!(responses[prompt.key] || "").trim();
             return (
@@ -322,7 +333,7 @@ function NoteEditor({
                 key={prompt.key}
                 type="button"
                 onClick={() => setActiveIndex(idx)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius)] px-3 py-1.5 text-xs font-medium transition ${
+                className={`inline-flex min-h-11 shrink-0 touch-manipulation items-center gap-1.5 rounded-[var(--radius)] px-3 py-2 text-xs font-medium transition sm:py-1.5 ${
                   idx === activeIndex
                     ? "bg-[var(--accent)]/15 text-[var(--accent)]"
                     : "text-[var(--text-muted)] hover:bg-white/5"
@@ -337,13 +348,17 @@ function NoteEditor({
 
         {activePrompt && (
           <>
-            <p className="mb-1 text-sm font-medium text-[var(--text-heading)]">{activePrompt.label}</p>
-            <p className="mb-3 text-sm text-[var(--text-muted)]">{activePrompt.placeholder}</p>
+            <p className="mb-1 text-base font-semibold leading-snug text-[var(--text-heading)] sm:text-sm">
+              {activePrompt.label}
+            </p>
+            <p className="mb-3 break-words text-base leading-relaxed text-[var(--text-muted)] sm:text-sm">
+              {activePrompt.placeholder}
+            </p>
             <textarea
               value={responses[activePrompt.key] || ""}
               onChange={(e) => handleChange(e.target.value)}
               rows={8}
-              className="w-full resize-y rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-sm leading-relaxed text-[var(--text)] outline-none focus:border-[var(--accent)]"
+              className="w-full resize-y rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-base leading-relaxed text-[var(--text)] outline-none focus:border-[var(--accent)] sm:text-sm"
               placeholder="Write in your own words…"
             />
           </>
@@ -351,12 +366,12 @@ function NoteEditor({
       </Card>
 
       {!readyForReview && (
-        <p className="text-center text-sm text-[var(--text-muted)]">
+        <p className="text-center text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
           Answer at least {MIN_PROMPTS_FOR_REVIEW} prompt to continue to review.
         </p>
       )}
 
-      <div className="flex justify-between">
+      <div className="hidden justify-between sm:flex">
         <Button
           variant="secondary"
           disabled={activeIndex === 0}
@@ -366,18 +381,34 @@ function NoteEditor({
           Previous
         </Button>
         <Button
-          onClick={() => {
-            if (activeIndex === prompts.length - 1) {
-              if (readyForReview) onComplete();
-            } else {
-              setActiveIndex((i) => i + 1);
-            }
-          }}
+          onClick={goNext}
           disabled={activeIndex === prompts.length - 1 && !readyForReview}
         >
           {activeIndex === prompts.length - 1 ? "Save & review" : "Next"}
           <ChevronRight size={16} />
         </Button>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-10 border-t border-[var(--border)] bg-[var(--bg-glass)] p-4 backdrop-blur-xl sm:hidden">
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            disabled={activeIndex === 0}
+            onClick={() => setActiveIndex((i) => i - 1)}
+            className="min-h-11 flex-1"
+          >
+            <ChevronLeft size={16} />
+            Previous
+          </Button>
+          <Button
+            onClick={goNext}
+            disabled={activeIndex === prompts.length - 1 && !readyForReview}
+            className="min-h-11 flex-1"
+          >
+            {activeIndex === prompts.length - 1 ? "Save & review" : "Next"}
+            <ChevronRight size={16} />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -496,12 +527,12 @@ function NoteReviewPanel({
         <ReviewSection title="Go deeper" items={review.deeperQuestions} numbered />
       )}
 
-      <div className="flex flex-wrap gap-2">
-        <Button onClick={onQuizMe}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <Button onClick={onQuizMe} className="min-h-11 w-full sm:w-auto">
           Continue to mentor quiz
           <ChevronRight size={16} />
         </Button>
-        <Button variant="secondary" onClick={() => void handleGenerate()} disabled={loading}>
+        <Button variant="secondary" onClick={() => void handleGenerate()} disabled={loading} className="min-h-11 w-full sm:w-auto">
           {loading ? (
             <>
               <Loader2 size={16} className="animate-spin" />
@@ -532,7 +563,7 @@ function ReviewSection({
 }) {
   return (
     <Card>
-      <h3 className="mb-2 font-semibold text-[var(--text-heading)]">{title}</h3>
+      <h3 className="mb-2 break-words font-semibold text-[var(--text-heading)]">{title}</h3>
       {items.length === 0 ? (
         emptyHint && <p className="text-sm text-[var(--text-muted)]">{emptyHint}</p>
       ) : (
@@ -544,7 +575,7 @@ function ReviewSection({
               ) : (
                 <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[var(--accent)]" />
               )}
-              <span>{item}</span>
+              <span className="min-w-0 break-words">{item}</span>
             </li>
           ))}
         </ul>
@@ -734,7 +765,7 @@ function NoteMentorPanel({
           />
         </div>
       </div>
-      <h3 className="text-lg font-semibold leading-snug text-[var(--text-heading)]">
+      <h3 className="break-words text-lg font-semibold leading-snug text-[var(--text-heading)] sm:text-base">
         {mentorSession.questions[index]}
       </h3>
       <textarea
@@ -742,11 +773,11 @@ function NoteMentorPanel({
         onChange={(e) => setAnswer(e.target.value)}
         rows={5}
         disabled={evaluating}
-        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-sm leading-relaxed outline-none focus:border-[var(--accent)] disabled:opacity-60"
+        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-base leading-relaxed outline-none focus:border-[var(--accent)] disabled:opacity-60 sm:text-sm"
         placeholder="Type your answer in 2–4 sentences…"
       />
       {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
-      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating}>
+      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating} className="min-h-11 w-full sm:w-auto">
         {evaluating ? (
           <>
             <Loader2 size={16} className="animate-spin" />
