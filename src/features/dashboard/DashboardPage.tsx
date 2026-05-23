@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Brain, Sparkles, Target } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { ArrowRight, Brain } from "lucide-react";
+import { Button, Card } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
 import { formatAppVersion } from "@/lib/version";
+import { subjectToChallengeCategory } from "@/lib/subjectProgress";
+import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeWidget } from "./widgets/DailyChallengeWidget";
+import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
 import { EulerQuizMastery } from "./widgets/EulerQuizMastery";
 import { MathInspiredSection } from "./widgets/MathInspiredSection";
 import { StreakCalendar } from "./widgets/StreakCalendar";
@@ -17,6 +20,7 @@ export function DashboardPage() {
   const getStats = useProgress((s) => s.getStats);
   const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
   const getDailyReviewCount = useProgress((s) => s.getDailyReviewCount);
+  const getNextScheduledReview = useProgress((s) => s.getNextScheduledReview);
   const [subjects, setSubjects] = useState<Subject[]>([]);
 
   useEffect(() => {
@@ -27,145 +31,121 @@ export function DashboardPage() {
   const stats = subjects.length ? getStats(subjects) : null;
   const reviewDue = subjects.length ? getNodesNeedingReview(subjects).length : 0;
   const reviewedToday = getDailyReviewCount();
+  const nextReview = getNextScheduledReview();
+  const challengeCategory = target
+    ? subjectToChallengeCategory(target.subject.id)
+    : null;
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:space-y-6 md:p-8 md:pb-8">
-      {/* Page header — identity + stats bar */}
-      <section className="stagger-item space-y-1.5">
-        <Badge>{formatAppVersion()}</Badge>
-        <h1 className="break-words text-[clamp(1.5rem,6vw,1.875rem)] font-bold tracking-tight text-[var(--text-heading)]">
-          Neural Command Center
-        </h1>
-        {stats && (
-          <p className="break-words text-sm text-[var(--text-muted)]">
-            Level {stats.level} · {stats.completedNodes}/{stats.totalNodes} lessons · {stats.totalXp} XP
-            {stats.streakCurrent > 0 && ` · ${stats.streakCurrent} day streak`}
+    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-10 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:p-8 md:pb-8">
+      <header className="space-y-4 border-b border-[var(--border)] pb-6">
+        <div className="space-y-2">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
+            {formatAppVersion()}
           </p>
+          <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
+            Dashboard
+          </h1>
+          {stats && (
+            <p className="text-sm text-[var(--text-muted)]">
+              {stats.completedNodes}/{stats.totalNodes} lessons · {stats.totalXp} XP
+            </p>
+          )}
+        </div>
+        {stats && <DailyGoalStrip stats={stats} />}
+      </header>
+
+      {/* Primary — continue hero */}
+      <section>
+        {target ? (
+          <ContinueHero subject={target.subject} node={target.node} />
+        ) : (
+          <Card variant="primary" className="p-6 md:p-8">
+            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent)]">
+              Continue learning
+            </p>
+            <p className="mt-3 text-sm text-[var(--text-muted)]">
+              Import v1 progress in Settings, or pick a subject to start.
+            </p>
+            <Link to="/subjects" className="mt-5 inline-block">
+              <Button>Browse subjects</Button>
+            </Link>
+          </Card>
         )}
       </section>
 
-      {/* Hero — Continue Learning (full-width, dominant) */}
-      <section className="stagger-item">
-        <Card
-          glow
-          className="border-l-2 border-l-[var(--accent)] max-[480px]:p-6"
-        >
-          <div className="mb-3 flex items-center gap-2">
-            <Target size={14} className="text-[var(--accent)]" />
-            <span className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
-              Continue Learning
-            </span>
-          </div>
-          {target ? (
-            <div className="flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between min-[481px]:gap-6">
-              <div className="min-w-0 flex-1">
-                <h2 className="break-words text-[clamp(1.375rem,5.5vw,1.5rem)] font-bold tracking-tight text-[var(--text-heading)] min-[481px]:text-2xl">
-                  {target.node.name}
-                </h2>
-                <p className="mt-1.5 text-sm font-medium text-[var(--accent-2)]">
-                  {target.subject.name}
-                </p>
-              </div>
-              <Link
-                to={`/subjects/${target.subject.id}/${target.node.id}`}
-                className="w-full min-[481px]:w-auto min-[481px]:shrink-0"
-              >
-                <Button className="min-h-11 w-full touch-manipulation px-6 py-2.5 text-base min-[481px]:w-auto">
-                  Continue
-                  <ArrowRight size={16} />
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <p className="text-sm text-[var(--text-muted)]">
-              Import v1 progress in Settings, or start from Subjects.
-            </p>
-          )}
-        </Card>
+      {/* Secondary — daily challenge + track */}
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <DailyChallengeWidget defaultCategory={challengeCategory} />
+        {subjects.length > 0 && <TrackRecommendation subjects={subjects} />}
       </section>
 
-      {/* Secondary row — review + daily challenge + track (equal weight, calm) */}
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {/* Review — visible but subdued */}
-        <Card className="stagger-item">
-          <div className="mb-3 flex items-center gap-2 text-[var(--accent-2)]">
-            <Brain size={16} />
-            <span className="text-sm font-medium">Review</span>
-          </div>
-          {reviewDue > 0 ? (
-            <>
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-mono text-2xl font-semibold text-[var(--text-heading)]">
-                  {reviewDue}
-                </span>
-                <span className="text-sm text-[var(--text-muted)]">due</span>
+      {(reviewDue > 0 || nextReview) && (
+        <section>
+          <Card variant="quiet" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <Brain size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
+              <div>
+                <p className="text-sm font-medium text-[var(--text-heading)]">Spaced review</p>
+                {reviewDue > 0 ? (
+                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                    <span className="font-mono tabular-nums text-[var(--text-heading)]">{reviewDue}</span> due
+                    {reviewedToday > 0 && ` · ${reviewedToday} done today`}
+                  </p>
+                ) : nextReview ? (
+                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                    Next review in{" "}
+                    <span className="font-mono tabular-nums text-[var(--text-heading)]">
+                      {nextReview.daysUntil}
+                    </span>{" "}
+                    {nextReview.daysUntil === 1 ? "day" : "days"}
+                  </p>
+                ) : null}
               </div>
-              {reviewedToday > 0 && (
-                <p className="mt-0.5 text-xs text-[var(--text-muted)]">{reviewedToday} reviewed today</p>
-              )}
-              <Link to="/review" className="mt-3 block min-[481px]:inline-block">
-                <Button variant="secondary" className="min-h-11 w-full touch-manipulation text-sm min-[481px]:w-auto">
-                  Start review
+            </div>
+            {reviewDue > 0 && (
+              <Link to="/review" className="shrink-0">
+                <Button variant="secondary" className="min-h-10 w-full sm:w-auto">
+                  Review
                   <ArrowRight size={14} />
                 </Button>
               </Link>
-            </>
-          ) : (
-            <p className="text-sm text-[var(--text-muted)]">
-              No reviews due.
-            </p>
-          )}
-        </Card>
+            )}
+          </Card>
+        </section>
+      )}
 
-        <div className="stagger-item">
-          <DailyChallengeWidget />
-        </div>
-
-        {subjects.length > 0 && (
-          <div className="stagger-item">
-            <TrackRecommendation subjects={subjects} />
-          </div>
-        )}
-      </section>
-
-      {/* Streak calendar — only once there's data to show */}
+      {/* Stats — only when there is activity */}
       {stats && stats.completedNodes > 0 && (
-        <section className="stagger-item">
-          <Card>
+        <section className="space-y-4">
+          <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
+            Activity
+          </p>
+          <Card variant="quiet">
             <StreakCalendar dailyMinutes={stats.dailyMinutes} />
           </Card>
         </section>
       )}
 
-      {/* Quiz mastery — collapsed by default */}
       {subjects.length > 0 && (
-        <section className="stagger-item">
+        <section className="space-y-4">
+          <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
+            Mastery
+          </p>
           <EulerQuizMastery subjects={subjects} />
         </section>
       )}
 
-      {/* Math widgets — collapsed by default */}
       {stats && (
-        <section className="stagger-item">
+        <section>
           <MathInspiredSection completedNodes={stats.completedNodes} totalNodes={stats.totalNodes} />
         </section>
       )}
 
-      {/* Footer hints */}
-      <Card className="stagger-item">
-        <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
-          <Sparkles size={16} />
-          <span className="text-sm font-medium">Learn v2.0 — daily driver</span>
-        </div>
-        <p className="text-sm text-[var(--text-muted)]">
-          234 lessons · notes · SRS · stats · timer · PWA. Migrate v1 progress in Settings.
-        </p>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">
-          Press <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-xs">F</kbd>{" "}
-          for focus mode · <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-xs">⌘K</kbd>{" "}
-          to search.
-        </p>
-      </Card>
+      <p className="text-[11px] text-[var(--text-muted)]">
+        <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">F</kbd> focus ·{" "}
+        <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">⌘K</kbd> search
+      </p>
     </div>
   );
 }

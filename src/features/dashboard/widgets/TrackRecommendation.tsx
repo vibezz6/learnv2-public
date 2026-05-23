@@ -29,14 +29,32 @@ export function TrackRecommendation({ subjects }: { subjects: Subject[] }) {
   if (!best?.next) return null;
 
   return (
-    <Card className="min-w-0">
-      <div className="mb-2 break-words text-sm font-semibold text-[var(--text-heading)]">Track recommendation</div>
-      <p className="break-words text-sm text-[var(--text-muted)]">{best.track.description}</p>
-      <div className="mt-2 text-xs text-[var(--text-muted)]">
-        {best.track.name} · {best.completed}/{best.total} complete
+    <Card variant="default" hover className="min-w-0 p-6">
+      <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
+        Track
+      </p>
+      <h3 className="mt-2 break-words text-base font-medium text-[var(--text-heading)]">
+        {best.track.name}
+      </h3>
+      <p className="mt-2 break-words text-sm leading-relaxed text-[var(--text-muted)]">
+        {best.track.description}
+      </p>
+      <div className="mt-4 space-y-1.5">
+        <div className="flex items-baseline justify-between text-[11px] text-[var(--text-muted)]">
+          <span>Progress</span>
+          <span className="font-mono tabular-nums">
+            {best.completed}/{best.total}
+          </span>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
+          <div
+            className="h-full rounded-full bg-[var(--accent-2)]"
+            style={{ width: `${best.total > 0 ? (best.completed / best.total) * 100 : 0}%` }}
+          />
+        </div>
       </div>
-      <Link to={`/subjects/${best.next.subjectId}/${best.next.nodeId}`} className="mt-3 block min-[481px]:inline-block">
-        <Button variant="secondary" className="min-h-11 w-full touch-manipulation min-[481px]:w-auto">
+      <Link to={`/subjects/${best.next.subjectId}/${best.next.nodeId}`} className="mt-5 block">
+        <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
           Continue track
           <ArrowRight size={14} />
         </Button>

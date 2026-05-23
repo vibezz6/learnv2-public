@@ -374,10 +374,16 @@ function getDaySeed(): number {
   return hash;
 }
 
-export function getDailyChallenge(): DailyChallenge {
+export function getChallengeCategories(): string[] {
+  return [...new Set(challenges.map((c) => c.subject))].sort();
+}
+
+export function getDailyChallenge(category: string = "All"): DailyChallenge {
+  const pool =
+    category === "All" ? challenges : challenges.filter((c) => c.subject === category);
+  const list = pool.length > 0 ? pool : challenges;
   const seed = getDaySeed();
-  const idx = seed % challenges.length;
-  return challenges[idx];
+  return list[seed % list.length];
 }
 
 export function getChallengeForDate(dateStr: string): DailyChallenge {

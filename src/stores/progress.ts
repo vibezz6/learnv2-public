@@ -169,6 +169,7 @@ interface ProgressState {
   getDailyReviewItems: (subjects: Subject[]) => ReviewItem[];
   getDailyReviewCount: () => number;
   getRemainingReviewCount: (subjects: Subject[]) => number;
+  getNextScheduledReview: () => { date: string; daysUntil: number } | null;
   getReviewStreak: () => ProgressData["reviewStreak"];
   getReviewStats: () => ReviewStats;
   getQuizScoreForNode: (nodeId: string) => number | null;
@@ -389,6 +390,24 @@ export const useProgress = create<ProgressState>()(
         const reviewedToday = get().getDailyReviewCount();
         const dailyCap = Math.max(0, MAX_DAILY_REVIEWS - reviewedToday);
         return Math.max(0, allDue.length - dailyCap);
+      },
+
+      getNextScheduledReview: () => {
+        const today = getToday();
+        let earliest: string | null = null;
+        for (const srItem of Object.values(get().data.spacedRepetition)) {
+          for (const review of srItem.scheduledReviews) {
+            if (review.completedDate !== null || review.scheduledDate <= today) continue;
+            if (!earliest || review.scheduledDate < earliest) {
+              earliest = review.scheduledDate;
+            }
+          }
+        }
+        if (!earliest) return null;
+        const start = new Date(`${today}T00:00:00Z`).getTime();
+        const end = new Date(`${earliest}T00:00:00Z`).getTime();
+        const daysUntil = Math.max(1, Math.round((end - start) / 86_400_000));
+        return { date: earliest, daysUntil };
       },
 
       getReviewStreak: () => get().data.reviewStreak,

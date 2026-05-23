@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ChevronLeft, Lock, CheckCircle2, Circle } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
+import { Button } from "@/components/ui";
 import { loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
@@ -9,10 +9,10 @@ import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
 
-const NODE_W = 152;
-const NODE_H = 92;
-const COL_GAP = 28;
-const ROW_GAP = 14;
+const NODE_W = 168;
+const NODE_H = 88;
+const COL_GAP = 32;
+const ROW_GAP = 16;
 
 interface TreeLayout {
   columns: SkillNode[][];
@@ -104,65 +104,53 @@ function statusMeta(status: NodeStatus) {
   switch (status) {
     case "completed":
       return {
-        label: "Completed",
+        label: "Done",
         icon: CheckCircle2,
-        nodeClass:
-          "border-[var(--success)] bg-[var(--success-bg)] shadow-[0_0_0_1px_rgba(var(--success-rgb),0.4),0_0_16px_rgba(var(--success-rgb),0.12)]",
-        dotClass: "bg-[var(--success)] shadow-[0_0_6px_rgba(var(--success-rgb),0.55)]",
+        nodeClass: "border-[var(--success)]/50 bg-[var(--bg-elevated)]",
+        dotClass: "bg-[var(--success)]",
         iconClass: "text-[var(--success)]",
         textClass: "text-[var(--text-heading)]",
-        legendClass:
-          "border-[var(--success)] bg-[var(--success-bg)] shadow-[0_0_0_1px_rgba(var(--success-rgb),0.35)]",
+        legendClass: "border-[var(--success)]/40 bg-[var(--bg-elevated)]",
       };
     case "available":
       return {
-        label: "Available",
+        label: "Open",
         icon: Circle,
         nodeClass:
-          "border-[var(--accent-border)] bg-[var(--accent-bg)] shadow-[var(--accent-glow)] hover:border-[var(--accent)] hover:shadow-[0_0_24px_rgba(var(--accent-rgb),0.22)]",
-        dotClass: "bg-[var(--accent)] shadow-[0_0_8px_rgba(var(--accent-rgb),0.65)]",
+          "border-[var(--accent)]/60 bg-[var(--bg-elevated)] hover:border-[var(--accent)]",
+        dotClass: "bg-[var(--accent)]",
         iconClass: "text-[var(--accent)]",
         textClass: "text-[var(--text-heading)]",
-        legendClass:
-          "border-[var(--accent-border)] bg-[var(--accent-bg)] shadow-[var(--accent-glow)]",
+        legendClass: "border-[var(--accent)]/40 bg-[var(--bg-elevated)]",
       };
     default:
       return {
         label: "Locked",
         icon: Lock,
-        nodeClass:
-          "border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/80 saturate-[0.65]",
-        dotClass: "border border-dashed border-[var(--border-strong)] bg-[var(--bg-elevated)]",
+        nodeClass: "border-[var(--border-strong)] bg-[var(--bg-secondary)]/60 opacity-70",
+        dotClass: "border border-[var(--border-strong)] bg-[var(--bg-elevated)]",
         iconClass: "text-[var(--text-muted)]",
         textClass: "text-[var(--text-muted)]",
-        legendClass:
-          "border border-dashed border-[var(--border-strong)] bg-[var(--bg-secondary)]/80",
+        legendClass: "border-[var(--border-strong)] bg-[var(--bg-secondary)]/60",
       };
   }
 }
 
 function SkillTreeLegend() {
   const items: { status: NodeStatus; label: string }[] = [
-    { status: "completed", label: "Completed" },
-    { status: "available", label: "Available" },
+    { status: "completed", label: "Done" },
+    { status: "available", label: "Open" },
     { status: "locked", label: "Locked" },
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--text-muted)]">
+    <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)]">
       {items.map(({ status, label }) => {
         const meta = statusMeta(status);
         const Icon = meta.icon;
         return (
-          <span key={status} className="inline-flex items-center gap-2">
-            <span
-              className={cn(
-                "inline-flex h-6 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border",
-                meta.legendClass,
-              )}
-            >
-              <Icon size={12} className={meta.iconClass} />
-            </span>
+          <span key={status} className="inline-flex items-center gap-1.5">
+            <Icon size={12} className={meta.iconClass} aria-hidden />
             {label}
           </span>
         );
@@ -171,15 +159,60 @@ function SkillTreeLegend() {
   );
 }
 
+function nodeMeta(subject: Subject, node: SkillNode) {
+  const byId = new Map(subject.nodes.map((n) => [n.id, n]));
+  const prereqs = node.parentIds
+    .map((id) => byId.get(id)?.name)
+    .filter(Boolean) as string[];
+  const unlocks = subject.nodes
+    .filter((n) => n.parentIds.includes(node.id))
+    .map((n) => n.name)
+    .slice(0, 4);
+  return { prereqs, unlocks };
+}
+
+function SkillNodeTooltip({
+  node,
+  status,
+  subject,
+}: {
+  node: SkillNode;
+  status: NodeStatus;
+  subject: Subject;
+}) {
+  const { prereqs, unlocks } = nodeMeta(subject, node);
+  const meta = statusMeta(status);
+
+  return (
+    <div
+      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-52 -translate-x-1/2 rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-3 text-left opacity-0 shadow-[var(--shadow-md)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+      role="tooltip"
+    >
+      <p className="text-xs font-medium text-[var(--text-heading)]">{node.name}</p>
+      <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+        {meta.label} · ~{node.estimatedMinutes} min · {node.xpValue} XP
+      </p>
+      {prereqs.length > 0 && (
+        <p className="mt-2 text-[10px] leading-relaxed text-[var(--text-muted)]">
+          <span className="text-[var(--text-heading)]">Requires:</span> {prereqs.join(", ")}
+        </p>
+      )}
+      {unlocks.length > 0 && (
+        <p className="mt-1 text-[10px] leading-relaxed text-[var(--text-muted)]">
+          <span className="text-[var(--text-heading)]">Unlocks:</span> {unlocks.join(", ")}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function SkillNodeCard({
   node,
   status,
-  subjectColor,
   compact = false,
 }: {
   node: SkillNode;
   status: NodeStatus;
-  subjectColor: string;
   compact?: boolean;
 }) {
   const meta = statusMeta(status);
@@ -189,23 +222,22 @@ function SkillNodeCard({
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-[var(--radius)] border p-3 transition",
+        "flex h-full flex-col rounded-[var(--radius)] border p-2.5",
         meta.nodeClass,
-        compact ? "min-h-[92px]" : "",
+        compact ? "min-h-[88px]" : "",
       )}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <span
-          className="inline-flex h-5 shrink-0 items-center rounded px-1.5 font-mono text-[10px] font-semibold uppercase tracking-wide"
-          style={{ background: `${subjectColor}18`, color: subjectColor }}
+          className="truncate font-mono text-[10px] font-medium tabular-nums text-[var(--text-muted)]"
         >
           {node.id}
         </span>
-        <Icon size={compact ? 14 : 16} className={cn("shrink-0", meta.iconClass)} />
+        <Icon size={compact ? 13 : 15} className={cn("shrink-0", meta.iconClass)} />
       </div>
       <h3
         className={cn(
-          "mt-1.5 line-clamp-2 text-sm font-semibold leading-snug",
+          "mt-1 line-clamp-2 text-[13px] font-medium leading-snug",
           meta.textClass,
         )}
       >
@@ -214,21 +246,15 @@ function SkillNodeCard({
       {!compact && (
         <p className="mt-1 line-clamp-2 text-xs text-[var(--text-muted)]">{node.description}</p>
       )}
-      {locked && node.parentIds.length > 0 && (
-        <p className="mt-1 line-clamp-1 text-[10px] text-[var(--text-muted)]">
-          Requires prior lessons
-        </p>
-      )}
-      <div className="mt-auto flex items-center justify-between pt-1.5">
+      <div className="mt-auto pt-2">
         <span
           className={cn(
-            "font-mono text-[10px]",
-            locked ? "text-[var(--text-muted)]" : "text-[var(--accent)]",
+            "font-mono text-[10px] tabular-nums",
+            locked ? "text-[var(--text-muted)]" : "text-[var(--text-muted)]",
           )}
         >
           {node.xpValue} XP
         </span>
-        <span className={cn("text-[10px] font-medium", meta.iconClass)}>{meta.label}</span>
       </div>
     </div>
   );
@@ -245,18 +271,46 @@ function SkillTreeGraph({
 }) {
   const { edges, positions, width, height } = layout;
   const pad = 24;
+  const [scale, setScale] = useState(1);
 
   const nodeById = useMemo(
     () => new Map(subject.nodes.map((n) => [n.id, n])),
     [subject.nodes],
   );
 
+  const zoomIn = () => setScale((s) => Math.min(1.5, Math.round((s + 0.1) * 10) / 10));
+  const zoomOut = () => setScale((s) => Math.max(0.6, Math.round((s - 0.1) * 10) / 10));
+  const zoomReset = () => setScale(1);
+
   return (
-    <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-secondary)]/40">
+    <div className="relative overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)]">
+      <div className="absolute right-3 top-3 z-10 flex gap-1">
+        <Button variant="secondary" className="h-8 w-8 p-0" onClick={zoomOut} aria-label="Zoom out">
+          <Minus size={14} />
+        </Button>
+        <Button variant="secondary" className="h-8 min-w-10 px-2 font-mono text-xs" onClick={zoomReset}>
+          {Math.round(scale * 100)}%
+        </Button>
+        <Button variant="secondary" className="h-8 w-8 p-0" onClick={zoomIn} aria-label="Zoom in">
+          <Plus size={14} />
+        </Button>
+      </div>
       <div
-        className="relative mx-auto bg-[linear-gradient(var(--grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--grid-line)_1px,transparent_1px)] bg-size-[24px_24px] p-6"
-        style={{ width: width + pad * 2, minHeight: height + pad * 2 }}
+        className="relative mx-auto origin-top-left p-8"
+        style={{
+          width: (width + pad * 2) * scale,
+          minHeight: (height + pad * 2) * scale,
+        }}
       >
+        <div
+          className="relative"
+          style={{
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            width: width + pad * 2,
+            minHeight: height + pad * 2,
+          }}
+        >
         <svg
           className="pointer-events-none absolute inset-0 h-full w-full"
           aria-hidden
@@ -276,9 +330,8 @@ function SkillTreeGraph({
                 )}
                 fill="none"
                 stroke={active ? "var(--accent)" : "var(--border-strong)"}
-                strokeWidth={active ? 2 : 1.5}
-                strokeDasharray={active ? undefined : "6 5"}
-                opacity={active ? 0.85 : 0.4}
+                strokeWidth={1}
+                opacity={active ? 0.55 : 0.35}
               />
             );
           })}
@@ -295,10 +348,10 @@ function SkillTreeGraph({
               key={node.id}
               to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
               className={cn(
-                "absolute block transition-transform duration-150",
+                "group absolute block",
                 locked
                   ? "pointer-events-none cursor-not-allowed"
-                  : "hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-secondary)]",
+                  : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-elevated)]",
               )}
               style={{
                 left: pos.x + pad,
@@ -308,15 +361,12 @@ function SkillTreeGraph({
               }}
               aria-disabled={locked}
             >
-              <SkillNodeCard
-                node={node}
-                status={status}
-                subjectColor={subject.color}
-                compact
-              />
+              {!locked && <SkillNodeTooltip node={node} status={status} subject={subject} />}
+              <SkillNodeCard node={node} status={status} compact />
             </Link>
           );
         })}
+        </div>
       </div>
     </div>
   );
@@ -360,15 +410,8 @@ function SkillNodeList({
               )}
               aria-hidden
             />
-            <div
-              className={cn(
-                "stagger-item transition",
-                !locked && "group-hover:scale-[1.01]",
-                locked && "opacity-80",
-              )}
-              style={{ animationDelay: `${index * 35}ms` }}
-            >
-              <SkillNodeCard node={node} status={status} subjectColor={subject.color} />
+            <div className={cn(locked && "opacity-80")}>
+              <SkillNodeCard node={node} status={status} />
             </div>
           </Link>
         );
@@ -390,23 +433,20 @@ function ProgressSummary({
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
-    <Card className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <p className="text-sm font-medium text-[var(--text-heading)]">Skill progress</p>
-          <p className="text-xs text-[var(--text-muted)]">
-            {completed} of {total} lessons completed
-          </p>
-        </div>
-        <Badge>{pct}%</Badge>
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between gap-3 text-sm">
+        <span className="text-[var(--text-muted)]">
+          {completed}/{total} lessons
+        </span>
+        <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">{pct}%</span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
+      <div className="h-1 overflow-hidden rounded-full bg-[var(--border)]">
         <div
-          className="h-full rounded-full transition-[width]"
+          className="h-full rounded-full"
           style={{ width: `${pct}%`, background: color }}
         />
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -435,34 +475,50 @@ export function SubjectDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
-      <Link
-        to="/subjects"
-        className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-      >
-        <ChevronLeft size={16} />
-        Subjects
-      </Link>
+    <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
+      <header className="space-y-4 border-b border-[var(--border)] pb-6">
+        <Link
+          to="/subjects"
+          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+        >
+          <ChevronLeft size={16} />
+          Subjects
+        </Link>
 
-      <div>
-        <div
-          className="mb-3 h-1 w-12 rounded-full"
-          style={{ background: subject.color }}
-        />
-        <Badge>{subject.id}</Badge>
-        <h1 className="mt-2 text-3xl font-bold text-[var(--text-heading)]">{subject.name}</h1>
-        <p className="text-[var(--text-muted)]">{subject.description}</p>
-      </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 space-y-1">
+            <div className="flex items-center gap-2">
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{ background: subject.color }}
+                aria-hidden
+              />
+              <span className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">
+                {subject.id}
+              </span>
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)] md:text-3xl">
+              {subject.name}
+            </h1>
+            <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-muted)]">
+              {subject.description}
+            </p>
+          </div>
+          <div className="w-full shrink-0 sm:max-w-xs">
+            <ProgressSummary
+              completed={completedCount}
+              total={subject.nodes.length}
+              color={subject.color}
+            />
+          </div>
+        </div>
+      </header>
 
-      <ProgressSummary
-        completed={completedCount}
-        total={subject.nodes.length}
-        color={subject.color}
-      />
-
-      <div className="space-y-3 md:-mx-4 md:max-w-none lg:-mx-8">
-        <div className="flex flex-wrap items-center justify-between gap-3 md:px-4 lg:px-8">
-          <h2 className="text-lg font-semibold text-[var(--text-heading)]">Skill tree</h2>
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-[var(--text-muted)]">
+            Skill tree
+          </h2>
           <SkillTreeLegend />
         </div>
 
@@ -474,18 +530,14 @@ export function SubjectDetailPage() {
           />
         </div>
 
-        <div className="hidden md:block md:px-4 lg:px-8">
+        <div className="hidden md:block">
           <SkillTreeGraph
             subject={subject}
             layout={layout}
             getNodeStatus={getNodeStatus}
           />
         </div>
-      </div>
-
-      <Link to="/subjects">
-        <Button variant="secondary">All subjects</Button>
-      </Link>
+      </section>
     </div>
   );
 }
