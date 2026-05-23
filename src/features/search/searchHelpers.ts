@@ -90,7 +90,6 @@ export function scoreCommandMatch<T extends { label: string; description?: strin
 ): ScoredCommand<T> | null {
   const q = query.trim();
   if (!q) return { item, score: 0 };
-  if (item.id.startsWith("lesson-")) return { item, score: 100 };
 
   const labelMatch = fuzzyMatch(q, item.label);
   const descMatch = item.description ? fuzzyMatch(q, item.description) : { match: false, score: 0 };

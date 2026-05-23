@@ -42,6 +42,7 @@ describe("quizProgress", () => {
     expect(loadQuizProgress("node-a", 3)).toMatchObject({
       current: 1,
       answers: [0, null, 2],
+      questionCount: 3,
       startTime: 1_700_000_000_000,
     });
 
@@ -68,5 +69,32 @@ describe("quizProgress", () => {
 
     clearQuizProgress("node-b");
     expect(loadQuizProgress("node-b", 2)).toBeNull();
+  });
+
+  it("rejects saved progress when question count drifts", () => {
+    saveQuizProgress("node-c", {
+      current: 1,
+      answers: [0, null, 2],
+      startTime: 1_700_000_000_000,
+    });
+
+    expect(loadQuizProgress("node-c", 2)).toBeNull();
+  });
+
+  it("does not persist invalid progress", () => {
+    saveQuizProgress("node-d", { current: 0, answers: [], startTime: Date.now() });
+    saveQuizProgress("node-e", { current: 3, answers: [null, null, null], startTime: Date.now() });
+
+    expect(localStorage.getItem(quizProgressKey("node-d"))).toBeNull();
+    expect(localStorage.getItem(quizProgressKey("node-e"))).toBeNull();
+  });
+
+  it("returns no active question for empty quizzes", () => {
+    const session = restoreQuizSession("node-f", 0);
+
+    expect(session.current).toBe(-1);
+    expect(session.answers).toEqual([]);
+    expect(session.answered).toBe(false);
+    expect(session.selected).toBeNull();
   });
 });
