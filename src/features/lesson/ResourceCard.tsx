@@ -1,6 +1,7 @@
 import type { Resource } from "@/curriculum/types";
 import { useBookmarks } from "@/stores/bookmarks";
 import { ExternalLink, BookOpen, Video, FileText, GraduationCap, Dumbbell, Star } from "lucide-react";
+import { Card } from "@/components/ui";
 
 const typeConfig: Record<
   Resource["type"],
@@ -28,11 +29,11 @@ export function ResourceCard({
   const toggleResourceBookmark = useBookmarks((s) => s.toggleResourceBookmark);
 
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-5 transition hover:border-[var(--border-strong)]">
+    <Card hover className="p-6">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span
           className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-semibold"
-          style={{ color: config.color, border: `1px solid ${config.color}33`, background: `${config.color}11` }}
+          style={{ color: config.color, border: `1px solid ${config.color}20`, background: `${config.color}14` }}
         >
           <Icon size={12} />
           {config.label}
@@ -55,7 +56,7 @@ export function ResourceCard({
         href={resource.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-start justify-between gap-2 text-sm font-medium text-[var(--text-heading)] no-underline hover:text-[var(--accent)]"
+        className="flex items-start justify-between gap-2 text-sm font-medium text-[var(--text-heading)] no-underline underline-offset-2 hover:text-[var(--text-heading)] hover:underline"
       >
         <span>{resource.title}</span>
         <ExternalLink size={14} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
@@ -63,6 +64,6 @@ export function ResourceCard({
       {resource.whyHelpful && (
         <p className="mt-2 text-sm italic text-[var(--text-muted)]">{resource.whyHelpful}</p>
       )}
-    </div>
+    </Card>
   );
 }

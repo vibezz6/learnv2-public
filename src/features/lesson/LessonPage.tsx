@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Lock } from "lucide-react";
 import { Badge, Button, Card, FocusShell } from "@/components/ui";
 import { getAdjacentLessonNodes, getNode, loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
@@ -65,12 +65,16 @@ export function LessonPage() {
   }, [node, getNodeStatus, startNode, trackVisit]);
 
   if (loading) {
-    return <div className="px-3 py-4 text-[var(--text-muted)] sm:p-8">Loading lesson…</div>;
+    return (
+      <div className="mx-auto w-full max-w-3xl px-3 py-6 text-[var(--text-muted)] sm:p-6 md:p-8">
+        Loading lesson…
+      </div>
+    );
   }
 
   if (!subject || !node) {
     return (
-      <div className="px-3 py-4 sm:p-8">
+      <div className="mx-auto w-full max-w-3xl px-3 py-6 sm:p-6 md:p-8">
         <p>Lesson not found.</p>
         <Link to="/subjects">
           <Button variant="secondary" className="mt-4">
@@ -93,7 +97,7 @@ export function LessonPage() {
     <FocusShell active={focusMode}>
       <div
         className={cn(
-          "mx-auto w-full min-w-0 max-w-3xl space-y-6 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-8 md:p-8",
+          "mx-auto w-full min-w-0 max-w-3xl space-y-8 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-10 md:p-8",
           focusMode && "pt-2",
         )}
         onTouchStart={onTouchStart}
@@ -145,16 +149,12 @@ export function LessonPage() {
         </header>
 
         {node.whyItMatters && (
-          <div
-            className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6"
-            style={{ borderLeftWidth: 3, borderLeftColor: subject.color }}
-          >
+          <Card variant="quiet" className="stagger-item">
             <div className="mb-3 flex items-center gap-2 text-[var(--text-muted)]">
-              <Sparkles size={16} />
-              <span className="text-sm font-medium uppercase tracking-wider">Why it matters</span>
+              <span className="font-mono text-[11px] uppercase tracking-widest">Why it matters</span>
             </div>
             <p className="break-words text-sm leading-relaxed text-[var(--text)]">{node.whyItMatters}</p>
-          </div>
+          </Card>
         )}
 
         {node.keyConcepts.length > 0 && (
@@ -207,10 +207,10 @@ export function LessonPage() {
         <LessonTakeaways nodeId={node.id} subjectId={subject.id} disabled={isLocked} />
 
         {/* ── Next step bar ── */}
-        <div className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6">
+        <Card variant="quiet" className="stagger-item">
           <div className="mb-5 flex items-center justify-between border-b border-[var(--border)] pb-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
+              <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
                 Next step
               </p>
               <p className="mt-0.5 text-sm text-[var(--text-muted)]">
@@ -254,7 +254,7 @@ export function LessonPage() {
               </Button>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </FocusShell>
   );
@@ -303,9 +303,9 @@ function LessonTakeaways({
 
   return (
     <Card className="stagger-item space-y-3">
-      <div className="flex flex-wrap items-center gap-2 text-[var(--accent)]">
+      <div className="flex flex-wrap items-center gap-2 text-[var(--text-muted)]">
         <Lightbulb size={16} />
-        <span className="text-sm font-medium">Key takeaways</span>
+        <span className="font-mono text-[11px] uppercase tracking-widest">Key takeaways</span>
         {bullets.length > 0 && (
           <Badge>
             {bullets.length}/{MAX_TAKEAWAYS}
