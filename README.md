@@ -2,9 +2,9 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Cutover release:** v2.0.0 (tagged) · **Daily driver:** `~/liqui/projects/learnv2` · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.3 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` · **Repo:** https://github.com/dishwashersol/learnv2
 
-Learn-v2 is the active app. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
+Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source. Post-cutover patches **v2.0.1–v2.0.3** shipped mobile polish, quiz resume, command-palette recents, and review/stats UX.
 
 ## Stack
 
@@ -19,23 +19,24 @@ Learn-v2 is the active app. Learn-v1 remains archived at `~/liqui/projects/Learn
 **Core loop**
 
 - **Neural Command Center** — continue learning, review queue, daily challenge, track recommendation
-- **9 subjects** — skill-tree navigation with prerequisites, XP, and completion tracking
-- **Lessons** — worked examples, curated resources, quizzes with resume/retry, KaTeX math
+- **9 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
+- **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
 - **SRS review** — spaced repetition queue with due-date scheduling
 - **Tracks** — guided learning paths across subjects
 - **Quizzes** — per-lesson recall with in-progress state persisted locally
 
 **Second brain**
 
-- **Notes 2.0** — guided prompts per subject, AI review (OpenRouter), mentor Q&A quiz
+- **Notes 2.0** — gated Write → Review → Mentor flow with guided prompts, AI review (OpenRouter), mentor Q&A quiz
 - **Bookmarks** — save lessons and individual resources
-- **Command palette** — `⌘K` / `Ctrl+K` fuzzy search across lessons and navigation
+- **Command palette** — `⌘K` / `Ctrl+K` fuzzy search with grouped results and persisted recents
 
 **Focus & polish**
 
+- **Mobile-first layout** — 480px polish on dashboard, lessons, quiz, review, and notes
 - **Deep focus mode** — `F` hides chrome for distraction-free study
 - **Study timer** — timed sessions with summary
-- **Stats** — progress charts, streaks, mastery metrics
+- **Review & stats** — SRS spotlight cards, level/streak hero, 7-day study chart, achievement unlocks
 - **Tools** — compound interest and expected value calculators
 - **Achievements & sounds** — level-ups, toasts, optional audio
 - **Themes** — dark, light, system
@@ -92,10 +93,11 @@ node ~/cursor/scripts/audit-curriculum.mjs
 
 Use the **same browser** where Learn-v1 stored your progress (localStorage is origin-scoped).
 
-1. **Recommended — full migration:** Open v2 → **Settings** → **Run full v1 migration**
-   - Imports progress + SRS schedules
-   - Merges legacy v1 notes into Notes 2.0
+1. **Recommended — full migration:** Open v2 at `http://127.0.0.1:8080` → **Settings** → **Run full v1 migration**
+   - Imports progress + SRS schedules (normalized on import)
+   - Merges legacy v1 notes and lesson takeaways into Notes 2.0
    - Copies resource/lesson bookmarks and theme when present
+   - Reloads UI after import so migrated state is visible immediately
 2. **Progress only:** Settings → **Import progress only** (reads `learnapp_progress_v1`)
 3. **Manual backup:** Export JSON from v1 Settings → Import from file in v2 Settings
 
@@ -111,6 +113,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 2 Core loop | ✅ |
 | 3 Second brain | ✅ |
 | 4 Parity | ✅ |
-| 5 Cutover | ✅ **v2.0.0** |
+| 5 Cutover | ✅ **v2.0.0** (tagged) |
+| 6 Post-cutover polish | ✅ **v2.0.3** (daily driver) |
 
 Full roadmap: `~/cursor/LEARN-V2-PLAN.md`
