@@ -110,7 +110,7 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
     <div
       className={cn(
         "mx-auto w-full min-w-0 max-w-2xl space-y-4 overflow-x-hidden",
-        answered && "pb-24 sm:pb-0",
+        answered && "pb-[calc(6rem+env(safe-area-inset-bottom,0px))] sm:pb-0",
       )}
     >
       <div className="font-mono text-xs text-[var(--text-muted)]">
@@ -163,11 +163,13 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
       )}
       {answered && (
         <>
-          <div className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-10 border-t border-[var(--border)] bg-[var(--bg-glass)] p-4 backdrop-blur-xl sm:hidden">
-            <Button onClick={handleNext} className="min-h-11 w-full">
-              {current < questions.length - 1 ? "Next" : "View results"}
-              <ChevronRight size={16} />
-            </Button>
+          <div className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-10 border-t border-[var(--border)] bg-[var(--bg-glass)] px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-xl sm:hidden">
+            <div className="flex gap-2">
+              <Button onClick={handleNext} className="min-h-11 flex-1">
+                {current < questions.length - 1 ? "Next" : "View results"}
+                <ChevronRight size={16} />
+              </Button>
+            </div>
           </div>
           <Button onClick={handleNext} className="hidden min-h-11 w-auto sm:inline-flex">
             {current < questions.length - 1 ? "Next" : "View results"}

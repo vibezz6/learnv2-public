@@ -17,13 +17,17 @@ export function QuizRoutePage() {
   }, [subjectId, nodeId]);
 
   if (!subject || !node) {
-    return <div className="p-8 text-[var(--text-muted)]">Loading quiz…</div>;
+    return (
+      <div className="mx-auto w-full min-w-0 max-w-3xl overflow-x-hidden px-3 py-4 pb-24 text-[var(--text-muted)] sm:p-4 sm:pb-4 md:p-8">
+        Loading quiz…
+      </div>
+    );
   }
 
   const questions = node.quiz ?? [];
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-4 overflow-x-hidden px-3 py-4 sm:p-4 md:p-8">
+    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-4 overflow-x-hidden px-3 py-4 pb-24 sm:p-4 sm:pb-4 md:p-8">
       <Link
         to={`/subjects/${subject.id}/${node.id}`}
         className="inline-flex min-h-11 items-center text-sm text-[var(--text-muted)]"
