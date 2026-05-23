@@ -7,14 +7,18 @@ export type Achievement =
   | "first_hour"
   | "ten_lessons";
 
-const STORAGE_KEY = "learnapp_achievements_v1";
+import { V2_ACHIEVEMENTS } from "@/lib/migrate-v1";
+
+const LEGACY_STORAGE_KEY = "learnapp_achievements_v1";
 
 let cache: Achievement[] | null = null;
 
 function loadSeen(): Achievement[] {
   if (cache) return cache;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw =
+      localStorage.getItem(V2_ACHIEVEMENTS) ??
+      localStorage.getItem(LEGACY_STORAGE_KEY);
     cache = raw ? JSON.parse(raw) : [];
   } catch {
     cache = [];
@@ -24,7 +28,7 @@ function loadSeen(): Achievement[] {
 
 function saveSeen(seen: Achievement[]) {
   cache = seen;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(seen));
+  localStorage.setItem(V2_ACHIEVEMENTS, JSON.stringify(seen));
 }
 
 export function hasSeen(achievement: Achievement): boolean {

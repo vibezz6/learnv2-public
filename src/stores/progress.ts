@@ -6,6 +6,7 @@ import {
   mergeBookmarksFromV1,
   mergeLegacyNotes,
   mergeTakeawaysFromV1,
+  migrateAchievementsFromV1,
   migrateThemeFromV1,
   normalizeV1Progress,
   verifySrsDates,
@@ -661,7 +662,7 @@ export const useProgress = create<ProgressState>()(
           for (const [key, value] of Object.entries(parsed.keys)) {
             if (!isBackupKeyAllowed(key)) continue;
             if (value === null) localStorage.removeItem(key);
-            else localStorage.setItem(key, value);
+            else if (typeof value === "string") localStorage.setItem(key, value);
           }
           const raw = localStorage.getItem(V2_STORAGE_KEY);
           if (raw) {
@@ -714,6 +715,7 @@ export const useProgress = create<ProgressState>()(
         const notesMerged = mergeLegacyNotes();
         const takeawaysMerged = mergeTakeawaysFromV1();
         const { resourceMerged, lessonMerged } = mergeBookmarksFromV1();
+        const achievementsMerged = migrateAchievementsFromV1();
         const themeMigrated = migrateThemeFromV1(localStorage, { force: true });
         const srsDatesPreserved = verifySrsDates();
 
@@ -725,6 +727,7 @@ export const useProgress = create<ProgressState>()(
           parts.push(`${resourceMerged + lessonMerged} bookmarks`);
         }
         if (themeMigrated) parts.push("theme");
+        if (achievementsMerged > 0) parts.push(`${achievementsMerged} achievements`);
 
         const success =
           progressResult.success ||
@@ -732,6 +735,7 @@ export const useProgress = create<ProgressState>()(
           takeawaysMerged > 0 ||
           resourceMerged > 0 ||
           lessonMerged > 0 ||
+          achievementsMerged > 0 ||
           themeMigrated;
         const message = success
           ? `Migration complete: ${parts.join(", ") || "shared keys already present"}.`
@@ -748,6 +752,7 @@ export const useProgress = create<ProgressState>()(
             srsDatesPreserved,
             resourceBookmarksMerged: resourceMerged,
             lessonBookmarksMerged: lessonMerged,
+            achievementsMerged,
           },
         };
       },
