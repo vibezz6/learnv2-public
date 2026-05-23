@@ -107,22 +107,23 @@ function statusMeta(status: NodeStatus) {
       return {
         label: "Done",
         icon: CheckCircle2,
-        nodeClass: "border-[var(--success)]/40 bg-[var(--success-bg)]/25",
+        nodeClass:
+          "border-[var(--success)]/50 bg-[var(--success-bg)]/30 transition-colors hover:border-[var(--success)]/70",
         dotClass: "bg-[var(--success)]",
         iconClass: "text-[var(--success)]",
         textClass: "text-[var(--text-heading)]",
-        legendClass: "border-[var(--success)]/40 bg-[var(--bg-elevated)]",
+        legendClass: "border-[var(--success)]/40 bg-[var(--success-bg)]/20",
       };
     case "available":
       return {
         label: "Open",
         icon: Circle,
         nodeClass:
-          "border-[var(--border-strong)] bg-[var(--bg-elevated)] ring-1 ring-[var(--accent)]/25 hover:border-[var(--accent)]/50",
+          "border-[var(--border-strong)] bg-[var(--bg-elevated)] ring-1 ring-[var(--accent)]/30 transition-colors hover:border-[var(--accent)]/50 hover:ring-[var(--accent)]/45",
         dotClass: "bg-[var(--accent)]",
         iconClass: "text-[var(--accent)]",
         textClass: "text-[var(--text-heading)]",
-        legendClass: "border-[var(--accent)]/40 bg-[var(--bg-elevated)]",
+        legendClass: "border-[var(--accent)]/40 bg-[var(--accent-bg)]/30",
       };
     default:
       return {
@@ -145,12 +146,18 @@ function SkillTreeLegend() {
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-4 text-[11px] text-[var(--text-muted)]">
+    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
       {items.map(({ status, label }) => {
         const meta = statusMeta(status);
         const Icon = meta.icon;
         return (
-          <span key={status} className="inline-flex items-center gap-1.5">
+          <span
+            key={status}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2 py-1 font-medium",
+              meta.legendClass,
+            )}
+          >
             <Icon size={12} className={meta.iconClass} aria-hidden />
             {label}
           </span>
@@ -331,8 +338,8 @@ function SkillTreeGraph({
                 )}
                 fill="none"
                 stroke={active ? "var(--accent)" : "var(--border-strong)"}
-                strokeWidth={1}
-                opacity={active ? 0.55 : 0.35}
+                strokeWidth={active ? 1.5 : 1}
+                opacity={active ? 0.65 : 0.35}
               />
             );
           })}
@@ -411,9 +418,7 @@ function SkillNodeList({
               )}
               aria-hidden
             />
-            <div className={cn(locked && "opacity-80")}>
-              <SkillNodeCard node={node} status={status} />
-            </div>
+            <SkillNodeCard node={node} status={status} />
           </Link>
         );
       })}
