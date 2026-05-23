@@ -354,7 +354,6 @@ describe("progress migrateAllFromV1", () => {
       JSON.stringify({ m3: { text: "legacy note", updatedAt: 5000 } }),
     );
     localStorage.setItem("learnapp_theme_v1", "light");
-    localStorage.setItem("learnv2_preferences", JSON.stringify({ state: { theme: "dark" }, version: 0 }));
 
     const result = useProgress.getState().migrateAllFromV1();
 
@@ -370,6 +369,23 @@ describe("progress migrateAllFromV1", () => {
 
     const prefs = JSON.parse(localStorage.getItem("learnv2_preferences")!);
     expect(prefs.state.theme).toBe("light");
+    expect(localStorage.getItem("learnv2_migration_done_at")).toBeTruthy();
+  });
+
+  it("preserves existing v2 theme during full migration", () => {
+    localStorage.setItem(
+      V1_STORAGE_KEY,
+      JSON.stringify({ totalXp: 100, streaks: { current: 1, longest: 1, lastStudyDate: null } }),
+    );
+    localStorage.setItem("learnapp_theme_v1", "light");
+    localStorage.setItem("learnv2_preferences", JSON.stringify({ state: { theme: "dark" }, version: 0 }));
+
+    const result = useProgress.getState().migrateAllFromV1();
+
+    expect(result.success).toBe(true);
+    expect(result.details.themeMigrated).toBe(false);
+    const prefs = JSON.parse(localStorage.getItem("learnv2_preferences")!);
+    expect(prefs.state.theme).toBe("dark");
   });
 
   it("merges v1 progress without wiping existing v2 progress", () => {

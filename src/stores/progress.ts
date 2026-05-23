@@ -9,6 +9,7 @@ import {
   migrateAchievementsFromV1,
   migrateThemeFromV1,
   normalizeV1Progress,
+  V1_MIGRATION_DONE_AT,
   verifySrsDates,
   type MigrationResult,
 } from "@/lib/migrate-v1";
@@ -716,7 +717,7 @@ export const useProgress = create<ProgressState>()(
         const takeawaysMerged = mergeTakeawaysFromV1();
         const { resourceMerged, lessonMerged } = mergeBookmarksFromV1();
         const achievementsMerged = migrateAchievementsFromV1();
-        const themeMigrated = migrateThemeFromV1(localStorage, { force: true });
+        const themeMigrated = migrateThemeFromV1(localStorage);
         const srsDatesPreserved = verifySrsDates();
 
         const parts: string[] = [];
@@ -740,6 +741,10 @@ export const useProgress = create<ProgressState>()(
         const message = success
           ? `Migration complete: ${parts.join(", ") || "shared keys already present"}.`
           : "No Learn-v1 data found in this browser.";
+
+        if (success) {
+          localStorage.setItem(V1_MIGRATION_DONE_AT, new Date().toISOString());
+        }
 
         return {
           success,

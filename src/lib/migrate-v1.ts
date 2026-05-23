@@ -69,7 +69,7 @@ function readJson<T>(storage: Storage, key: string): T | null {
   }
 }
 
-/** Merge legacy v1 freeform notes into note sessions where no session exists. */
+/** Merge legacy v1 freeform notes into note sessions when legacy text is missing. */
 export function mergeLegacyNotes(storage: Storage = localStorage): number {
   const legacy = readJson<Record<string, LegacyNote>>(storage, V1_NOTES);
   if (!legacy) return 0;
@@ -78,14 +78,30 @@ export function mergeLegacyNotes(storage: Storage = localStorage): number {
   let merged = 0;
 
   for (const [nodeId, note] of Object.entries(legacy)) {
-    if (!note.text?.trim() || sessions[nodeId]) continue;
+    const text = note.text?.trim();
+    if (!text) continue;
     const subjectId = inferSubjectId(nodeId);
     if (!subjectId) continue;
+
+    const existing = sessions[nodeId];
+    if (existing) {
+      if (existing.responses?.legacy?.trim()) continue;
+      sessions[nodeId] = {
+        ...existing,
+        responses: { ...existing.responses, legacy: text },
+        updatedAt: Math.max(existing.updatedAt, note.updatedAt),
+        tags: existing.tags?.includes("migrated-v1")
+          ? existing.tags
+          : [...(existing.tags ?? []), "migrated-v1"],
+      };
+      merged++;
+      continue;
+    }
 
     sessions[nodeId] = {
       nodeId,
       subjectId,
-      responses: { legacy: note.text.trim() },
+      responses: { legacy: text },
       review: null,
       mentorSession: null,
       tags: ["migrated-v1"],
@@ -127,9 +143,24 @@ export function mergeTakeawaysFromV1(storage: Storage = localStorage): number {
 
   for (const [nodeId, raw] of Object.entries(takeaways)) {
     const text = normalizeTakeawaysText(raw);
-    if (!text || sessions[nodeId]) continue;
+    if (!text) continue;
     const subjectId = inferSubjectId(nodeId);
     if (!subjectId) continue;
+
+    const existing = sessions[nodeId];
+    if (existing) {
+      if (existing.responses?.takeaways?.trim()) continue;
+      sessions[nodeId] = {
+        ...existing,
+        responses: { ...existing.responses, takeaways: text },
+        updatedAt: now,
+        tags: existing.tags?.includes("migrated-v1")
+          ? existing.tags
+          : [...(existing.tags ?? []), "migrated-v1"],
+      };
+      merged++;
+      continue;
+    }
 
     sessions[nodeId] = {
       nodeId,

@@ -55,8 +55,28 @@ describe("migrate-v1", () => {
     expect(sessions.m1.tags).toContain("migrated-v1");
   });
 
-  it("mergeLegacyNotes skips nodes that already have sessions", () => {
+  it("mergeLegacyNotes skips nodes that already have legacy responses", () => {
     storage.setItem("learnapp_notes_v1", JSON.stringify({ m1: { text: "old", updatedAt: 1 } }));
+    storage.setItem(
+      "learnapp_note_sessions_v2",
+      JSON.stringify({
+        m1: {
+          nodeId: "m1",
+          subjectId: "math",
+          responses: { legacy: "existing legacy" },
+          review: null,
+          mentorSession: null,
+          tags: [],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      }),
+    );
+    expect(mergeLegacyNotes(storage)).toBe(0);
+  });
+
+  it("mergeLegacyNotes merges into existing sessions missing legacy responses", () => {
+    storage.setItem("learnapp_notes_v1", JSON.stringify({ m1: { text: "v1 note", updatedAt: 2000 } }));
     storage.setItem(
       "learnapp_note_sessions_v2",
       JSON.stringify({
@@ -72,7 +92,12 @@ describe("migrate-v1", () => {
         },
       }),
     );
-    expect(mergeLegacyNotes(storage)).toBe(0);
+    expect(mergeLegacyNotes(storage)).toBe(1);
+    const sessions = JSON.parse(storage.getItem("learnapp_note_sessions_v2")!);
+    expect(sessions.m1.responses.q1).toBe("existing");
+    expect(sessions.m1.responses.legacy).toBe("v1 note");
+    expect(sessions.m1.updatedAt).toBe(2000);
+    expect(sessions.m1.tags).toContain("migrated-v1");
   });
 
   it("mergeTakeawaysFromV1 creates sessions with responses.takeaways", () => {
@@ -116,7 +141,32 @@ describe("migrate-v1", () => {
     expect(storage.getItem("learnapp_note_sessions_v2")).toBeNull();
   });
 
-  it("mergeTakeawaysFromV1 skips nodes that already have sessions", () => {
+  it("mergeTakeawaysFromV1 skips nodes that already have takeaways responses", () => {
+    storage.setItem(
+      "learnapp_takeaways_v1",
+      JSON.stringify({ m1: ["Key insight"] }),
+    );
+    storage.setItem(
+      "learnapp_note_sessions_v2",
+      JSON.stringify({
+        m1: {
+          nodeId: "m1",
+          subjectId: "math",
+          responses: { takeaways: "existing takeaway" },
+          review: null,
+          mentorSession: null,
+          tags: [],
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      }),
+    );
+    expect(mergeTakeawaysFromV1(storage)).toBe(0);
+    const sessions = JSON.parse(storage.getItem("learnapp_note_sessions_v2")!);
+    expect(sessions.m1.responses.takeaways).toBe("existing takeaway");
+  });
+
+  it("mergeTakeawaysFromV1 merges into existing sessions missing takeaways responses", () => {
     storage.setItem(
       "learnapp_takeaways_v1",
       JSON.stringify({ m1: ["Key insight"] }),
@@ -136,10 +186,11 @@ describe("migrate-v1", () => {
         },
       }),
     );
-    expect(mergeTakeawaysFromV1(storage)).toBe(0);
+    expect(mergeTakeawaysFromV1(storage)).toBe(1);
     const sessions = JSON.parse(storage.getItem("learnapp_note_sessions_v2")!);
     expect(sessions.m1.responses.q1).toBe("existing");
-    expect(sessions.m1.responses.takeaways).toBeUndefined();
+    expect(sessions.m1.responses.takeaways).toBe("Key insight");
+    expect(sessions.m1.tags).toContain("migrated-v1");
   });
 
   it("migrateThemeFromV1 copies theme when v2 preferences empty", () => {
