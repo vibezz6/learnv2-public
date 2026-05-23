@@ -4,6 +4,7 @@ import type { QuizQuestion } from "@/curriculum/types";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useProgress } from "@/stores/progress";
+import { clearQuizProgress, restoreQuizSession, saveQuizProgress } from "@/features/quiz/quizProgress";
 
 interface QuizProps {
   questions: QuizQuestion[];
@@ -13,15 +14,27 @@ interface QuizProps {
 
 export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
   const saveQuizAttempt = useProgress((s) => s.saveQuizAttempt);
-  const [current, setCurrent] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [answered, setAnswered] = useState(false);
-  const [answers, setAnswers] = useState<(number | null)[]>(() => Array(questions.length).fill(null));
+  const [initial] = useState(() => restoreQuizSession(nodeId, questions.length));
+  const [current, setCurrent] = useState(initial.current);
+  const [selected, setSelected] = useState<number | null>(initial.selected);
+  const [answered, setAnswered] = useState(initial.answered);
+  const [answers, setAnswers] = useState<(number | null)[]>(initial.answers);
   const [showResults, setShowResults] = useState(false);
-  const [startTime] = useState(Date.now());
+  const [startTime] = useState(initial.startTime);
 
   const q = questions[current];
   const score = answers.filter((a, i) => a === questions[i]?.correctIndex).length;
+
+  const persistProgress = useCallback(
+    (nextCurrent: number, nextAnswers: (number | null)[]) => {
+      saveQuizProgress(nodeId, {
+        current: nextCurrent,
+        answers: nextAnswers,
+        startTime,
+      });
+    },
+    [nodeId, startTime],
+  );
 
   const handleSelect = useCallback(
     (idx: number) => {
@@ -31,17 +44,21 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
       const next = [...answers];
       next[current] = idx;
       setAnswers(next);
+      persistProgress(current, next);
     },
-    [answered, answers, current, q],
+    [answered, answers, current, persistProgress, q],
   );
 
   const handleNext = useCallback(() => {
     if (current < questions.length - 1) {
-      setCurrent((c) => c + 1);
+      const nextCurrent = current + 1;
+      setCurrent(nextCurrent);
       setSelected(null);
       setAnswered(false);
+      persistProgress(nextCurrent, answers);
     } else {
       setShowResults(true);
+      clearQuizProgress(nodeId);
       const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
       saveQuizAttempt(nodeId, {
         score: pct,
@@ -52,7 +69,17 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
       });
       onComplete(score, questions.length);
     }
-  }, [current, nodeId, onComplete, questions.length, saveQuizAttempt, score, startTime]);
+  }, [
+    answers,
+    current,
+    nodeId,
+    onComplete,
+    persistProgress,
+    questions.length,
+    saveQuizAttempt,
+    score,
+    startTime,
+  ]);
 
   if (!questions.length) {
     return (

@@ -32,6 +32,7 @@ export function QuizRoutePage() {
       </Link>
       <h1 className="break-words text-2xl font-bold text-[var(--text-heading)]">Quiz · {node.name}</h1>
       <Quiz
+        key={node.id}
         questions={questions}
         nodeId={node.id}
         onComplete={() => {
