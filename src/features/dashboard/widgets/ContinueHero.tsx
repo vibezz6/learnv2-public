@@ -25,14 +25,14 @@ export function ContinueHero({ subject, node }: Props) {
   const status = getNodeStatus(node);
 
   return (
-    <Card variant="primary" className="p-6 md:p-8">
+    <Card variant="primary">
       <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-        <Target size={12} className="text-[var(--accent)]" aria-hidden />
+        <Target size={12} aria-hidden />
         <span>Today&apos;s focus</span>
       </div>
 
-      <div className="mt-5 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-        <div className="min-w-0 flex-1 space-y-5">
+      <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0 flex-1 space-y-4">
           <div>
             <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold leading-tight tracking-tight text-[var(--text-heading)]">
               {node.name}
@@ -76,9 +76,9 @@ export function ContinueHero({ subject, node }: Props) {
           to={`/subjects/${subject.id}/${node.id}`}
           className="w-full shrink-0 lg:w-auto"
         >
-          <Button className="min-h-12 w-full px-8 text-base lg:w-auto">
+          <Button variant="secondary" className="min-h-11 w-full touch-manipulation lg:w-auto">
             {started && status !== "completed" ? "Resume" : "Start lesson"}
-            <ArrowRight size={16} />
+            <ArrowRight size={14} />
           </Button>
         </Link>
       </div>

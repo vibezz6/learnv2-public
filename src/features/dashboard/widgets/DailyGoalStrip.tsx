@@ -4,7 +4,7 @@ export function DailyGoalStrip({ stats }: { stats: Stats }) {
   const goalPct = Math.min(100, Math.round((stats.todayMinutes / stats.dailyGoal) * 100));
 
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4 sm:flex-row sm:items-center sm:gap-6">
+    <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 sm:flex-row sm:items-center sm:gap-6">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
         {stats.streakCurrent > 0 && (
           <span className="font-medium text-[var(--text-heading)]">
@@ -24,7 +24,7 @@ export function DailyGoalStrip({ stats }: { stats: Stats }) {
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
           <div
-            className="h-full rounded-full bg-[var(--accent)]"
+            className="h-full rounded-full bg-[var(--accent-2)]"
             style={{ width: `${goalPct}%` }}
           />
         </div>
