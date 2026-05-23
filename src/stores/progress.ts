@@ -432,15 +432,39 @@ export const useProgress = create<ProgressState>()(
       },
 
       getContinueTarget: (subjects) => {
+        const findTargetInSubject = (subject: Subject) => {
+          for (const node of subject.nodes) {
+            const prog = get().getNodeProgress(node.id);
+            if (
+              prog.startedAt &&
+              !prog.completedAt &&
+              get().getNodeStatus(node) === "available"
+            ) {
+              return { subject, node };
+            }
+          }
+          for (const node of subject.nodes) {
+            if (get().getNodeStatus(node) === "available") return { subject, node };
+          }
+          return null;
+        };
+
+        const satSubject = subjects.find((s) => s.id === "sat-prep");
+        if (satSubject) {
+          const satTarget = findTargetInSubject(satSubject);
+          if (satTarget) return satTarget;
+        }
+
         const recent = get().data.recentlyVisited[0];
         if (recent) {
           const found = findNodeAcrossSubjects(subjects, recent.nodeId);
           if (found && get().getNodeStatus(found.node) === "available") return found;
         }
+
         for (const subject of subjects) {
-          for (const node of subject.nodes) {
-            if (get().getNodeStatus(node) === "available") return { subject, node };
-          }
+          if (subject.id === "sat-prep") continue;
+          const target = findTargetInSubject(subject);
+          if (target) return target;
         }
         return null;
       },
