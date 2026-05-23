@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  AlertCircle,
   ArrowLeft,
   BookOpen,
+  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   GraduationCap,
+  Loader2,
   RotateCcw,
   Send,
   Sparkles,
@@ -17,77 +20,227 @@ import { getNode, loadSubject } from "@/curriculum/loader";
 import type { MentorMessage, MentorSession, NoteReview, SkillNode, Subject } from "@/curriculum/types";
 import { getPromptsForSubject } from "@/data/notePrompts";
 import {
+  canAccessMentor,
+  canAccessReview,
+  clearMentorSession,
+  countFilledResponses,
   evaluateMentorAnswerAsync,
   generateMentorQuestionsAsync,
-  generateReviewAsync,
   generateReview,
+  generateReviewAsync,
+  getInitialNotesView,
   getSession,
+  hasMinNotesContent,
+  MIN_PROMPTS_FOR_REVIEW,
   saveMentorSession,
   saveReview,
   updateResponses,
   upsertSession,
+  type NotesFlowView,
 } from "@/stores/noteSessions";
 
-type NotesView = "editor" | "review" | "mentor";
+const STEPS: { id: NotesFlowView; label: string; description: string }[] = [
+  { id: "editor", label: "Write", description: "Guided prompts" },
+  { id: "review", label: "Review", description: "AI feedback" },
+  { id: "mentor", label: "Mentor", description: "Quiz Q&A" },
+];
+
+const QUALITY_LABELS: Record<MentorMessage["quality"], string> = {
+  "too-short": "Keep going",
+  "good-start": "Good start",
+  solid: "Solid",
+  excellent: "Excellent",
+};
+
+function hasOpenRouterKey(): boolean {
+  try {
+    return !!localStorage.getItem("learnapp_openrouter_key");
+  } catch {
+    return false;
+  }
+}
 
 export function NotesPage() {
   const { subjectId = "", nodeId = "" } = useParams();
-  const [view, setView] = useState<NotesView>("editor");
+  const [view, setView] = useState<NotesFlowView>("editor");
+  const [autoReview, setAutoReview] = useState(false);
   const [subject, setSubject] = useState<Subject | null>(null);
   const [node, setNode] = useState<SkillNode | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(false);
     loadSubject(subjectId).then((s) => {
+      if (cancelled) return;
+      const loadedNode = s ? getNode(s, nodeId) ?? null : null;
       setSubject(s ?? null);
-      setNode(s ? getNode(s, nodeId) ?? null : null);
+      setNode(loadedNode);
+      setLoadError(!s || !loadedNode);
+      if (loadedNode) {
+        setView(getInitialNotesView(loadedNode.id));
+      }
+      setLoading(false);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [subjectId, nodeId]);
 
-  if (!subject || !node) {
-    return <div className="p-8 text-[var(--text-muted)]">Loading notes…</div>;
+  const session = node ? getSession(node.id) : null;
+  const reviewUnlocked = canAccessReview(session);
+  const mentorUnlocked = canAccessMentor(session);
+
+  const goTo = useCallback((next: NotesFlowView) => {
+    if (next === "review" && !reviewUnlocked) return;
+    if (next === "mentor" && !mentorUnlocked) return;
+    setView(next);
+  }, [reviewUnlocked, mentorUnlocked]);
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-3xl space-y-4 p-8">
+        <div className="h-4 w-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
+        <Card className="space-y-3">
+          <div className="h-5 w-2/3 animate-pulse rounded bg-[var(--bg-elevated)]" />
+          <div className="h-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
+        </Card>
+      </div>
+    );
+  }
+
+  if (loadError || !subject || !node) {
+    return (
+      <div className="mx-auto max-w-3xl p-8">
+        <Card className="space-y-4 text-center">
+          <AlertCircle className="mx-auto text-[var(--warning)]" size={32} />
+          <h2 className="text-lg font-semibold text-[var(--text-heading)]">Lesson not found</h2>
+          <p className="text-sm text-[var(--text-muted)]">
+            This notes page doesn&apos;t match a lesson in your curriculum.
+          </p>
+          <Link to="/subjects">
+            <Button variant="secondary">Back to subjects</Button>
+          </Link>
+        </Card>
+      </div>
+    );
   }
 
   const lessonPath = `/subjects/${subjectId}/${nodeId}`;
+  const stepIndex = STEPS.findIndex((s) => s.id === view);
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-8">
-      <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border)] pb-4">
-        <Link
-          to={lessonPath}
-          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-        >
-          <ArrowLeft size={16} />
-          Lesson
-        </Link>
-        <span className="text-sm font-medium text-[var(--text-muted)]">Guided Notes</span>
-        <div className="ml-auto flex gap-2">
-          {(["editor", "review", "mentor"] as const).map((tab) => (
-            <Button
-              key={tab}
-              variant={view === tab ? "primary" : "secondary"}
-              onClick={() => setView(tab)}
-            >
-              {tab === "editor" ? "Write" : tab === "review" ? "Review" : "Mentor"}
-            </Button>
-          ))}
+    <div className="mx-auto max-w-3xl space-y-6 p-8">
+      <div className="space-y-4 border-b border-[var(--border)] pb-5">
+        <div className="flex items-center gap-3">
+          <Link
+            to={lessonPath}
+            className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+          >
+            <ArrowLeft size={16} />
+            Back to lesson
+          </Link>
+          <span className="text-[var(--text-muted)]">·</span>
+          <span className="text-sm text-[var(--text-muted)]">{node.name}</span>
         </div>
+
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">Guided notes</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
+            Write → get AI feedback → test yourself with mentor questions.
+          </p>
+        </div>
+
+        <nav aria-label="Notes flow" className="flex items-center gap-2">
+          {STEPS.map((step, idx) => {
+            const unlocked =
+              step.id === "editor" ||
+              (step.id === "review" && reviewUnlocked) ||
+              (step.id === "mentor" && mentorUnlocked);
+            const done =
+              (step.id === "editor" && reviewUnlocked) ||
+              (step.id === "review" && mentorUnlocked) ||
+              (step.id === "mentor" && !!session?.mentorSession?.completedAt);
+            const active = view === step.id;
+
+            return (
+              <div key={step.id} className="flex items-center gap-2">
+                {idx > 0 && (
+                  <div
+                    className={`h-px w-6 ${done || active ? "bg-[var(--accent)]/40" : "bg-[var(--border)]"}`}
+                  />
+                )}
+                <button
+                  type="button"
+                  disabled={!unlocked}
+                  onClick={() => goTo(step.id)}
+                  className={`flex items-center gap-2 rounded-[var(--radius)] px-3 py-2 text-sm transition ${
+                    active
+                      ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+                      : unlocked
+                        ? "text-[var(--text)] hover:bg-white/5"
+                        : "cursor-not-allowed text-[var(--text-muted)] opacity-50"
+                  }`}
+                  title={
+                    !unlocked
+                      ? step.id === "review"
+                        ? `Answer at least ${MIN_PROMPTS_FOR_REVIEW} prompt to unlock`
+                        : "Complete AI review first"
+                      : step.description
+                  }
+                >
+                  <span
+                    className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold ${
+                      done
+                        ? "bg-[var(--accent)] text-[#041410]"
+                        : active
+                          ? "border border-[var(--accent)] text-[var(--accent)]"
+                          : "border border-[var(--border)] text-[var(--text-muted)]"
+                    }`}
+                  >
+                    {done ? <Check size={12} /> : idx + 1}
+                  </span>
+                  <span className="font-medium">{step.label}</span>
+                </button>
+              </div>
+            );
+          })}
+        </nav>
       </div>
 
       {view === "editor" && (
         <NoteEditor
           node={node}
           subject={subject}
-          onComplete={() => setView("review")}
+          onComplete={() => {
+            setAutoReview(true);
+            setView("review");
+          }}
         />
       )}
       {view === "review" && (
         <NoteReviewPanel
           node={node}
           subject={subject}
+          autoGenerate={autoReview}
+          onAutoGenerateHandled={() => setAutoReview(false)}
+          onBackToWrite={() => setView("editor")}
           onQuizMe={() => setView("mentor")}
         />
       )}
-      {view === "mentor" && <NoteMentorPanel node={node} subject={subject} />}
+      {view === "mentor" && (
+        <NoteMentorPanel
+          node={node}
+          subject={subject}
+          onBackToReview={() => setView("review")}
+        />
+      )}
+
+      <p className="text-center text-xs text-[var(--text-muted)]">
+        Step {stepIndex + 1} of {STEPS.length} · {STEPS[stepIndex].description}
+      </p>
     </div>
   );
 }
@@ -106,7 +259,9 @@ function NoteEditor({
   const [activeIndex, setActiveIndex] = useState(0);
 
   const activePrompt = prompts[activeIndex];
-  const filledCount = prompts.filter((p) => (responses[p.key] || "").trim()).length;
+  const filledCount = countFilledResponses(responses);
+  const readyForReview = hasMinNotesContent(responses);
+  const progressPct = prompts.length > 0 ? Math.round((filledCount / prompts.length) * 100) : 0;
 
   const persist = useCallback(
     (next: Record<string, string>) => {
@@ -143,29 +298,47 @@ function NoteEditor({
         <div className="mb-4 flex items-center gap-2 text-[var(--accent)]">
           <BookOpen size={18} />
           <span className="font-medium">{node.name}</span>
-          <Badge>{filledCount}/{prompts.length}</Badge>
+          <Badge>{filledCount}/{prompts.length} answered</Badge>
         </div>
 
-        <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
-          {prompts.map((prompt, idx) => (
-            <button
-              key={prompt.key}
-              type="button"
-              onClick={() => setActiveIndex(idx)}
-              className={`shrink-0 rounded-[var(--radius)] px-3 py-1.5 text-xs font-medium transition ${
-                idx === activeIndex
-                  ? "bg-[var(--accent)]/15 text-[var(--accent)]"
-                  : "text-[var(--text-muted)] hover:bg-white/5"
-              }`}
-            >
-              {prompt.label}
-            </button>
-          ))}
+        <div className="mb-4">
+          <div className="mb-1 flex justify-between text-xs text-[var(--text-muted)]">
+            <span>Progress</span>
+            <span>{progressPct}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
+            <div
+              className="h-full rounded-full bg-[var(--accent)] transition-all duration-300"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="mb-4 flex flex-wrap gap-2">
+          {prompts.map((prompt, idx) => {
+            const filled = !!(responses[prompt.key] || "").trim();
+            return (
+              <button
+                key={prompt.key}
+                type="button"
+                onClick={() => setActiveIndex(idx)}
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius)] px-3 py-1.5 text-xs font-medium transition ${
+                  idx === activeIndex
+                    ? "bg-[var(--accent)]/15 text-[var(--accent)]"
+                    : "text-[var(--text-muted)] hover:bg-white/5"
+                }`}
+              >
+                {filled && <Check size={12} className="text-[var(--accent)]" />}
+                {prompt.label}
+              </button>
+            );
+          })}
         </div>
 
         {activePrompt && (
           <>
-            <p className="mb-2 text-sm text-[var(--text-muted)]">{activePrompt.placeholder}</p>
+            <p className="mb-1 text-sm font-medium text-[var(--text-heading)]">{activePrompt.label}</p>
+            <p className="mb-3 text-sm text-[var(--text-muted)]">{activePrompt.placeholder}</p>
             <textarea
               value={responses[activePrompt.key] || ""}
               onChange={(e) => handleChange(e.target.value)}
@@ -176,6 +349,12 @@ function NoteEditor({
           </>
         )}
       </Card>
+
+      {!readyForReview && (
+        <p className="text-center text-sm text-[var(--text-muted)]">
+          Answer at least {MIN_PROMPTS_FOR_REVIEW} prompt to continue to review.
+        </p>
+      )}
 
       <div className="flex justify-between">
         <Button
@@ -188,11 +367,15 @@ function NoteEditor({
         </Button>
         <Button
           onClick={() => {
-            if (activeIndex === prompts.length - 1) onComplete();
-            else setActiveIndex((i) => i + 1);
+            if (activeIndex === prompts.length - 1) {
+              if (readyForReview) onComplete();
+            } else {
+              setActiveIndex((i) => i + 1);
+            }
           }}
+          disabled={activeIndex === prompts.length - 1 && !readyForReview}
         >
-          {activeIndex === prompts.length - 1 ? "Review my notes" : "Next"}
+          {activeIndex === prompts.length - 1 ? "Save & review" : "Next"}
           <ChevronRight size={16} />
         </Button>
       </div>
@@ -203,44 +386,87 @@ function NoteEditor({
 function NoteReviewPanel({
   node,
   subject,
+  autoGenerate,
+  onAutoGenerateHandled,
+  onBackToWrite,
   onQuizMe,
 }: {
   node: SkillNode;
   subject: Subject;
+  autoGenerate: boolean;
+  onAutoGenerateHandled: () => void;
+  onBackToWrite: () => void;
   onQuizMe: () => void;
 }) {
-  const [review, setReview] = useState<NoteReview | null>(() => getSession(node.id)?.review ?? null);
+  const session = getSession(node.id);
+  const [review, setReview] = useState<NoteReview | null>(() => session?.review ?? null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = async () => {
-    const session = getSession(node.id);
-    if (!session) return;
+  const handleGenerate = useCallback(async () => {
+    const current = getSession(node.id);
+    if (!current || !hasMinNotesContent(current.responses)) {
+      setError("Write at least one prompt answer before requesting a review.");
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
-      const result = await generateReviewAsync(node.id, session.responses, node.keyConcepts, node.name);
+      const result = await generateReviewAsync(
+        node.id,
+        current.responses,
+        node.keyConcepts,
+        node.name,
+      );
       setReview(result);
       saveReview(node.id, result);
     } catch {
-      const fallback = generateReview(node.id, session.responses, node.keyConcepts);
+      const fallback = generateReview(node.id, current.responses, node.keyConcepts);
       setReview(fallback);
       saveReview(node.id, fallback);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, [node.id, node.keyConcepts, node.name]);
+
+  useEffect(() => {
+    if (autoGenerate && !review && !loading) {
+      void handleGenerate();
+      onAutoGenerateHandled();
+    }
+  }, [autoGenerate, review, loading, handleGenerate, onAutoGenerateHandled]);
+
+  if (!session || !hasMinNotesContent(session.responses)) {
+    return (
+      <Card className="space-y-4 text-center">
+        <BookOpen className="mx-auto text-[var(--text-muted)]" size={32} />
+        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Nothing to review yet</h2>
+        <p className="text-sm text-[var(--text-muted)]">
+          Fill in at least one guided prompt so the AI has something to analyze.
+        </p>
+        <Button onClick={onBackToWrite}>Go to Write</Button>
+      </Card>
+    );
+  }
 
   if (!review) {
     return (
       <Card className="space-y-4 text-center">
         <Sparkles className="mx-auto text-[var(--accent)]" size={32} />
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Ready for review</h2>
+        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Ready for AI review</h2>
         <p className="text-sm text-[var(--text-muted)]">
-          AI analyzes your guided notes for coverage and depth. Works offline with heuristics if no API key is set.
+          {hasOpenRouterKey()
+            ? "Your notes will be analyzed for coverage, depth, and gaps."
+            : "No API key set — review uses built-in heuristics. Add a key in Settings for richer feedback."}
         </p>
-        <Button onClick={handleGenerate} disabled={loading}>
+        {error && (
+          <p className="text-sm text-[var(--warning)]">{error}</p>
+        )}
+        <Button onClick={() => void handleGenerate()} disabled={loading}>
           {loading ? (
             <>
-              <RotateCcw size={16} className="animate-spin" />
-              Analyzing…
+              <Loader2 size={16} className="animate-spin" />
+              Analyzing your notes…
             </>
           ) : (
             <>
@@ -257,125 +483,242 @@ function NoteReviewPanel({
     <div className="space-y-4">
       <Card className="text-center">
         <div className="text-4xl font-bold text-[var(--accent)]">{review.score}</div>
-        <p className="text-sm text-[var(--text-muted)]">{subject.name} · {node.name}</p>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">{subject.name} · {node.name}</p>
+        <p className="mt-2 text-xs text-[var(--text-muted)]">
+          {hasOpenRouterKey() ? "AI-powered review" : "Offline heuristic review"}
+        </p>
       </Card>
 
       <ReviewSection title="Strengths" items={review.strengths} />
-      <ReviewSection title="Gaps" items={review.gaps} />
+      <ReviewSection title="Gaps" items={review.gaps} emptyHint="No major gaps flagged — nice work." />
       <ReviewSection title="Suggestions" items={review.suggestions} />
+      {review.deeperQuestions.length > 0 && (
+        <ReviewSection title="Go deeper" items={review.deeperQuestions} numbered />
+      )}
 
-      <div className="flex gap-2">
-        <Button onClick={onQuizMe}>Quiz me →</Button>
-        <Button variant="secondary" onClick={handleGenerate} disabled={loading}>
-          <RotateCcw size={16} />
-          Regenerate
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={onQuizMe}>
+          Continue to mentor quiz
+          <ChevronRight size={16} />
+        </Button>
+        <Button variant="secondary" onClick={() => void handleGenerate()} disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Regenerating…
+            </>
+          ) : (
+            <>
+              <RotateCcw size={16} />
+              Regenerate
+            </>
+          )}
         </Button>
       </div>
     </div>
   );
 }
 
-function ReviewSection({ title, items }: { title: string; items: string[] }) {
-  if (items.length === 0) return null;
+function ReviewSection({
+  title,
+  items,
+  emptyHint,
+  numbered,
+}: {
+  title: string;
+  items: string[];
+  emptyHint?: string;
+  numbered?: boolean;
+}) {
   return (
     <Card>
       <h3 className="mb-2 font-semibold text-[var(--text-heading)]">{title}</h3>
-      <ul className="space-y-1 text-sm text-[var(--text-muted)]">
-        {items.map((item) => (
-          <li key={item} className="flex gap-2">
-            <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[var(--accent)]" />
-            {item}
-          </li>
-        ))}
-      </ul>
+      {items.length === 0 ? (
+        emptyHint && <p className="text-sm text-[var(--text-muted)]">{emptyHint}</p>
+      ) : (
+        <ul className="space-y-1.5 text-sm text-[var(--text-muted)]">
+          {items.map((item, i) => (
+            <li key={`${title}-${i}`} className="flex gap-2">
+              {numbered ? (
+                <span className="mt-0.5 shrink-0 font-mono text-xs text-[var(--accent)]">{i + 1}.</span>
+              ) : (
+                <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-[var(--accent)]" />
+              )}
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </Card>
   );
 }
 
-function NoteMentorPanel({ node, subject }: { node: SkillNode; subject: Subject }) {
-  const [session, setSession] = useState<MentorSession | null>(() => getSession(node.id)?.mentorSession ?? null);
-  const [index, setIndex] = useState(() => getSession(node.id)?.mentorSession?.messages.length ?? 0);
+function NoteMentorPanel({
+  node,
+  subject,
+  onBackToReview,
+}: {
+  node: SkillNode;
+  subject: Subject;
+  onBackToReview: () => void;
+}) {
+  const session = getSession(node.id);
+  const [mentorSession, setMentorSession] = useState<MentorSession | null>(
+    () => session?.mentorSession ?? null,
+  );
+  const [index, setIndex] = useState(() => session?.mentorSession?.messages.length ?? 0);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
   const [lastMessage, setLastMessage] = useState<MentorMessage | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const start = async () => {
     setLoading(true);
+    setError(null);
     try {
       const questions = await generateMentorQuestionsAsync(node.keyConcepts, node.name);
+      if (questions.length === 0) {
+        setError("Could not generate questions. Try again in a moment.");
+        return;
+      }
       const next: MentorSession = { questions, messages: [], startedAt: Date.now(), completedAt: null };
-      setSession(next);
+      setMentorSession(next);
       setIndex(0);
       saveMentorSession(node.id, next);
+    } catch {
+      setError("Something went wrong starting the quiz. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const submit = async () => {
-    if (!session || !answer.trim()) return;
-    setEvaluating(true);
-    const question = session.questions[index];
-    const evaluation = await evaluateMentorAnswerAsync(question, answer);
-    const message: MentorMessage = {
-      question,
-      answer: answer.trim(),
-      feedback: evaluation.feedback,
-      quality: evaluation.quality,
-    };
-    const updated: MentorSession = {
-      ...session,
-      messages: [...session.messages, message],
-      completedAt: index + 1 >= session.questions.length ? Date.now() : null,
-    };
-    setSession(updated);
-    saveMentorSession(node.id, updated);
-    setLastMessage(message);
+  const retake = () => {
+    clearMentorSession(node.id);
+    setMentorSession(null);
+    setIndex(0);
+    setLastMessage(null);
     setAnswer("");
-    setIndex((i) => i + 1);
-    setEvaluating(false);
+    setError(null);
   };
 
-  if (!session) {
+  const submit = async () => {
+    if (!mentorSession || !answer.trim()) return;
+    setEvaluating(true);
+    setError(null);
+    const question = mentorSession.questions[index];
+    try {
+      const evaluation = await evaluateMentorAnswerAsync(question, answer);
+      const message: MentorMessage = {
+        question,
+        answer: answer.trim(),
+        feedback: evaluation.feedback,
+        quality: evaluation.quality,
+      };
+      const updated: MentorSession = {
+        ...mentorSession,
+        messages: [...mentorSession.messages, message],
+        completedAt: index + 1 >= mentorSession.questions.length ? Date.now() : null,
+      };
+      setMentorSession(updated);
+      saveMentorSession(node.id, updated);
+      setLastMessage(message);
+      setAnswer("");
+      setIndex((i) => i + 1);
+    } catch {
+      setError("Could not evaluate your answer. Try submitting again.");
+    } finally {
+      setEvaluating(false);
+    }
+  };
+
+  if (!canAccessMentor(session ?? null)) {
+    return (
+      <Card className="space-y-4 text-center">
+        <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
+        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Complete review first</h2>
+        <p className="text-sm text-[var(--text-muted)]">
+          Generate an AI review of your notes before starting the mentor quiz.
+        </p>
+        <Button onClick={onBackToReview}>Go to Review</Button>
+      </Card>
+    );
+  }
+
+  if (!mentorSession) {
     return (
       <Card className="space-y-4 text-center">
         <GraduationCap className="mx-auto text-[var(--accent)]" size={32} />
         <h2 className="text-xl font-semibold text-[var(--text-heading)]">Mentor quiz</h2>
-        <p className="text-sm text-[var(--text-muted)]">{node.name} · {subject.name}</p>
-        <Button onClick={start} disabled={loading}>
-          {loading ? "Generating…" : "Start quiz"}
+        <p className="text-sm text-[var(--text-muted)]">
+          {node.name} · {subject.name}
+        </p>
+        <p className="text-sm text-[var(--text-muted)]">
+          Five short questions to test what you retained. Answer in your own words.
+        </p>
+        {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
+        <Button onClick={() => void start()} disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              Preparing questions…
+            </>
+          ) : (
+            "Start quiz"
+          )}
         </Button>
       </Card>
     );
   }
 
-  if (index >= session.questions.length) {
+  if (index >= mentorSession.questions.length) {
+    const solidCount = mentorSession.messages.filter(
+      (m) => m.quality === "solid" || m.quality === "excellent",
+    ).length;
+
     return (
       <Card className="space-y-4">
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Quiz complete</h2>
+        <div className="text-center">
+          <CheckCircle2 className="mx-auto text-[var(--accent)]" size={32} />
+          <h2 className="mt-2 text-xl font-semibold text-[var(--text-heading)]">Quiz complete</h2>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
+            {solidCount} of {mentorSession.messages.length} answers rated solid or excellent.
+          </p>
+        </div>
         <div className="space-y-3">
-          {session.messages.map((msg, i) => (
+          {mentorSession.messages.map((msg, i) => (
             <div key={i} className="rounded-[var(--radius)] border border-[var(--border)] p-3 text-sm">
-              <p className="font-medium text-[var(--text-heading)]">Q{i + 1}: {msg.question}</p>
-              <p className="mt-1 text-[var(--text-muted)]">{msg.answer}</p>
-              <p className="mt-1 text-[var(--accent)]">{msg.feedback}</p>
+              <div className="mb-1 flex items-center gap-2">
+                <span className="font-medium text-[var(--text-heading)]">Q{i + 1}</span>
+                <Badge>{QUALITY_LABELS[msg.quality]}</Badge>
+              </div>
+              <p className="text-[var(--text-muted)]">{msg.question}</p>
+              <p className="mt-2 text-[var(--text)]">{msg.answer}</p>
+              <p className="mt-2 text-[var(--accent)]">{msg.feedback}</p>
             </div>
           ))}
         </div>
-        <Button variant="secondary" onClick={() => { setSession(null); setIndex(0); setLastMessage(null); }}>
-          Retake
+        <Button variant="secondary" onClick={retake}>
+          Retake quiz
         </Button>
       </Card>
     );
   }
 
-  if (lastMessage && lastMessage.question === session.questions[index - 1]) {
+  if (lastMessage && lastMessage.question === mentorSession.questions[index - 1]) {
     return (
-      <Card className="space-y-3">
-        <Badge>{lastMessage.quality}</Badge>
-        <p className="text-sm text-[var(--text-muted)]">{lastMessage.feedback}</p>
-        <Button onClick={() => setLastMessage(null)}>Next question</Button>
+      <Card className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Badge>{QUALITY_LABELS[lastMessage.quality]}</Badge>
+          <span className="text-xs text-[var(--text-muted)]">
+            Question {index} of {mentorSession.questions.length}
+          </span>
+        </div>
+        <p className="text-sm leading-relaxed text-[var(--text)]">{lastMessage.feedback}</p>
+        <Button onClick={() => setLastMessage(null)}>
+          Next question
+          <ChevronRight size={16} />
+        </Button>
       </Card>
     );
   }
@@ -383,20 +726,35 @@ function NoteMentorPanel({ node, subject }: { node: SkillNode; subject: Subject 
   return (
     <Card className="space-y-4">
       <div className="flex items-center justify-between text-sm text-[var(--text-muted)]">
-        <span>Question {index + 1} of {session.questions.length}</span>
+        <span>Question {index + 1} of {mentorSession.questions.length}</span>
+        <div className="h-1 w-24 overflow-hidden rounded-full bg-[var(--bg-elevated)]">
+          <div
+            className="h-full rounded-full bg-[var(--accent)] transition-all"
+            style={{ width: `${((index + 1) / mentorSession.questions.length) * 100}%` }}
+          />
+        </div>
       </div>
-      <h3 className="text-lg font-semibold text-[var(--text-heading)]">{session.questions[index]}</h3>
+      <h3 className="text-lg font-semibold leading-snug text-[var(--text-heading)]">
+        {mentorSession.questions[index]}
+      </h3>
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
         rows={5}
-        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-sm outline-none focus:border-[var(--accent)]"
-        placeholder="Type your answer…"
+        disabled={evaluating}
+        className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-sm leading-relaxed outline-none focus:border-[var(--accent)] disabled:opacity-60"
+        placeholder="Type your answer in 2–4 sentences…"
       />
-      <Button onClick={submit} disabled={!answer.trim() || evaluating}>
-        {evaluating ? "Evaluating…" : (
+      {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
+      <Button onClick={() => void submit()} disabled={!answer.trim() || evaluating}>
+        {evaluating ? (
           <>
-            Submit
+            <Loader2 size={16} className="animate-spin" />
+            Evaluating…
+          </>
+        ) : (
+          <>
+            Submit answer
             <Send size={16} />
           </>
         )}

@@ -39,6 +39,37 @@ export function updateResponses(nodeId: string, responses: Record<string, string
 
 export const MIN_TAKEAWAYS = 1;
 export const MAX_TAKEAWAYS = 5;
+export const MIN_PROMPTS_FOR_REVIEW = 1;
+
+export type NotesFlowView = "editor" | "review" | "mentor";
+
+export function countFilledResponses(responses: Record<string, string>): number {
+  return Object.values(responses).filter((v) => v.trim().length > 0).length;
+}
+
+export function hasMinNotesContent(
+  responses: Record<string, string>,
+  min = MIN_PROMPTS_FOR_REVIEW,
+): boolean {
+  return countFilledResponses(responses) >= min;
+}
+
+export function canAccessReview(session: NoteSession | null): boolean {
+  return !!session && hasMinNotesContent(session.responses);
+}
+
+export function canAccessMentor(session: NoteSession | null): boolean {
+  return !!session?.review;
+}
+
+export function getInitialNotesView(nodeId: string): NotesFlowView {
+  const session = getSession(nodeId);
+  if (!canAccessReview(session)) return "editor";
+  const mentor = session!.mentorSession;
+  if (mentor && (!mentor.completedAt || mentor.messages.length > 0)) return "mentor";
+  if (session!.review) return "review";
+  return "review";
+}
 
 export function parseTakeaways(text: string): string[] {
   return text
@@ -101,6 +132,14 @@ export function saveMentorSession(nodeId: string, mentor: MentorSession) {
   const all = loadAll();
   if (!all[nodeId]) return;
   all[nodeId].mentorSession = mentor;
+  all[nodeId].updatedAt = Date.now();
+  saveAll(all);
+}
+
+export function clearMentorSession(nodeId: string) {
+  const all = loadAll();
+  if (!all[nodeId]) return;
+  all[nodeId].mentorSession = null;
   all[nodeId].updatedAt = Date.now();
   saveAll(all);
 }
