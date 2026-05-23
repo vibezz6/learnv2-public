@@ -15,6 +15,7 @@ import { ReviewPage } from "@/features/review/ReviewPage";
 import { StatsPage } from "@/features/stats/StatsPage";
 import { TimerPage } from "@/features/timer/TimerPage";
 import { TracksPage } from "@/features/tracks/TracksPage";
+import { ExpectedValueToolPage } from "@/features/tools/ExpectedValueCalculator";
 
 export function App() {
   return (
@@ -34,6 +35,7 @@ export function App() {
             <Route path="review" element={<ReviewPage />} />
             <Route path="stats" element={<StatsPage />} />
             <Route path="timer" element={<TimerPage />} />
+            <Route path="tools/ev" element={<ExpectedValueToolPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
