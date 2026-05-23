@@ -13,14 +13,40 @@ interface PreferencesState {
   completeOnboarding: () => void;
 }
 
-function applyTheme(theme: ThemeMode) {
+const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
+
+let systemThemeListener: ((event: MediaQueryListEvent) => void) | null = null;
+
+function teardownSystemThemeListener() {
+  if (!systemThemeListener) return;
+  window.matchMedia(SYSTEM_THEME_QUERY).removeEventListener("change", systemThemeListener);
+  systemThemeListener = null;
+}
+
+function syncDocumentTheme(theme: ThemeMode) {
   const resolved =
     theme === "system"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? window.matchMedia(SYSTEM_THEME_QUERY).matches
         ? "dark"
         : "light"
       : theme;
   document.documentElement.dataset.theme = resolved === "light" ? "light" : "dark";
+}
+
+function applyTheme(theme: ThemeMode) {
+  syncDocumentTheme(theme);
+  if (theme === "system") {
+    if (!systemThemeListener) {
+      systemThemeListener = () => {
+        if (usePreferences.getState().theme === "system") {
+          syncDocumentTheme("system");
+        }
+      };
+      window.matchMedia(SYSTEM_THEME_QUERY).addEventListener("change", systemThemeListener);
+    }
+  } else {
+    teardownSystemThemeListener();
+  }
 }
 
 export const usePreferences = create<PreferencesState>()(

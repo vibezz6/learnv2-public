@@ -1,5 +1,30 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { usePreferences } from "@/stores/preferences";
+import { initTheme, usePreferences } from "@/stores/preferences";
+
+function mockMatchMedia(initialDark = false) {
+  const listeners = new Set<(event: MediaQueryListEvent) => void>();
+  let matches = initialDark;
+  const mediaQueryList = {
+    get matches() {
+      return matches;
+    },
+    media: "(prefers-color-scheme: dark)",
+    addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => {
+      listeners.add(listener);
+    },
+    removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => {
+      listeners.delete(listener);
+    },
+    dispatchChange(dark: boolean) {
+      matches = dark;
+      for (const listener of listeners) {
+        listener({ matches } as MediaQueryListEvent);
+      }
+    },
+  };
+  vi.stubGlobal("window", { matchMedia: () => mediaQueryList });
+  return mediaQueryList;
+}
 
 function mockLocalStorage(): Storage {
   const map = new Map<string, string>();
@@ -18,14 +43,21 @@ function mockLocalStorage(): Storage {
 describe("preferences", () => {
   beforeEach(() => {
     vi.stubGlobal("localStorage", mockLocalStorage());
+    vi.stubGlobal("document", {
+      documentElement: { dataset: {} as DOMStringMap },
+      body: { classList: { toggle: vi.fn() } },
+    });
+    mockMatchMedia(false);
     usePreferences.setState({
       theme: "dark",
       focusMode: false,
       onboardingCompleted: false,
     });
+    document.documentElement.dataset = {};
   });
 
   afterEach(() => {
+    usePreferences.getState().setTheme("dark");
     vi.unstubAllGlobals();
   });
 
@@ -44,5 +76,42 @@ describe("preferences", () => {
       state: { theme: string; onboardingCompleted: boolean };
     };
     expect(parsed.state.onboardingCompleted).toBe(true);
+  });
+
+  it("setTheme applies explicit light and dark themes", () => {
+    usePreferences.getState().setTheme("light");
+    expect(document.documentElement.dataset.theme).toBe("light");
+
+    usePreferences.getState().setTheme("dark");
+    expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  it("setTheme system resolves from prefers-color-scheme", () => {
+    const mediaQueryList = mockMatchMedia(true);
+    usePreferences.getState().setTheme("system");
+    expect(document.documentElement.dataset.theme).toBe("dark");
+
+    mediaQueryList.dispatchChange(false);
+    expect(document.documentElement.dataset.theme).toBe("light");
+  });
+
+  it("initTheme attaches the system theme listener when theme is system", () => {
+    usePreferences.setState({ theme: "system" });
+    const mediaQueryList = mockMatchMedia(false);
+
+    initTheme();
+    expect(document.documentElement.dataset.theme).toBe("light");
+
+    mediaQueryList.dispatchChange(true);
+    expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  it("leaving system theme stops OS theme changes from updating the document", () => {
+    const mediaQueryList = mockMatchMedia(false);
+    usePreferences.getState().setTheme("system");
+    usePreferences.getState().setTheme("dark");
+
+    mediaQueryList.dispatchChange(true);
+    expect(document.documentElement.dataset.theme).toBe("dark");
   });
 });

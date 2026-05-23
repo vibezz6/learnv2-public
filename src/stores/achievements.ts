@@ -16,10 +16,20 @@ let cache: Achievement[] | null = null;
 function loadSeen(): Achievement[] {
   if (cache) return cache;
   try {
-    const raw =
-      localStorage.getItem(V2_ACHIEVEMENTS) ??
-      localStorage.getItem(LEGACY_STORAGE_KEY);
-    cache = raw ? JSON.parse(raw) : [];
+    const v2Raw = localStorage.getItem(V2_ACHIEVEMENTS);
+    if (v2Raw !== null) {
+      cache = JSON.parse(v2Raw);
+      return cache!;
+    }
+
+    const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacyRaw !== null) {
+      cache = JSON.parse(legacyRaw);
+      localStorage.setItem(V2_ACHIEVEMENTS, legacyRaw);
+      return cache!;
+    }
+
+    cache = [];
   } catch {
     cache = [];
   }
