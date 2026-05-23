@@ -65,7 +65,10 @@ export function ReviewPage() {
     loadAllSubjects().then(setSubjects);
   }, []);
 
-  const items = subjects.length ? getDailyReviewItems(subjects) : [];
+  const items = useMemo(
+    () => (subjects.length ? getDailyReviewItems(subjects) : []),
+    [subjects, getDailyReviewItems],
+  );
   const dailyCount = getDailyReviewCount();
   const remaining = subjects.length ? getRemainingReviewCount(subjects) : 0;
   const streak = getReviewStreak();

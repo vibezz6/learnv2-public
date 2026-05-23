@@ -2,9 +2,9 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.3 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.5 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
-Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source. Post-cutover patches **v2.0.1–v2.0.3** shipped mobile polish, quiz resume, command-palette recents, and review/stats UX.
+Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source. Post-cutover patches **v2.0.1–v2.0.5** shipped UI polish, v1 parity, curriculum nodes, and DAG-driven backlog (skill tree, README, review/stats).
 
 ## Stack
 
