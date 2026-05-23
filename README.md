@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Version:** 2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (:8090)
+**Version:** 2.0.2 (patch bumps via `npm run version:bump`: 2.0.1→2.0.99→2.1.0) · **Daily driver:** `~/liqui/projects/learnv2` (:8080)
 
 ## Stack
 

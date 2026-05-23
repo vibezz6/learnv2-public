@@ -1,7 +1,7 @@
 {
   "name": "learnv2",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "curriculum:split": "node --experimental-strip-types scripts/split-curriculum.mts"
+    "curriculum:split": "node --experimental-strip-types scripts/split-curriculum.mts",
+    "version:bump": "node scripts/bump-version.mjs patch",
+    "version:bump:minor": "node scripts/bump-version.mjs minor"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -19,6 +19,7 @@ import type { Subject } from "@/curriculum/types";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
+import { formatAppVersion } from "@/lib/version";
 import { useEffect, useState } from "react";
 
 const nav = [
@@ -106,7 +107,7 @@ export function AppShell() {
           ))}
         </nav>
         <div className="border-t border-[var(--border)] p-3">
-          <Badge>v2.0.0</Badge>
+          <Badge>{formatAppVersion()}</Badge>
         </div>
       </aside>
 

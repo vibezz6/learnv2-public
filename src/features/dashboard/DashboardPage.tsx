@@ -5,6 +5,7 @@ import { Badge, Button, Card } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
+import { formatAppVersion } from "@/lib/version";
 import { DailyChallengeWidget } from "./widgets/DailyChallengeWidget";
 import { EulerQuizMastery } from "./widgets/EulerQuizMastery";
 import { MathInspiredSection } from "./widgets/MathInspiredSection";
@@ -31,7 +32,7 @@ export function DashboardPage() {
     <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 md:p-8 md:pb-8">
       {/* Page header — identity + stats bar */}
       <section className="stagger-item space-y-1.5">
-        <Badge>v2.0.0</Badge>
+        <Badge>{formatAppVersion()}</Badge>
         <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
           Neural Command Center
         </h1>
