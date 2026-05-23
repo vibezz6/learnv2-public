@@ -1,0 +1,70 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  addRecentSearch,
+  fuzzyMatch,
+  getRecentSearches,
+  scoreCommandMatch,
+} from "@/features/search/searchHelpers";
+
+function mockLocalStorage(): Storage {
+  const map = new Map<string, string>();
+  return {
+    get length() {
+      return map.size;
+    },
+    clear: () => map.clear(),
+    getItem: (k) => map.get(k) ?? null,
+    key: (i) => [...map.keys()][i] ?? null,
+    removeItem: (k) => map.delete(k),
+    setItem: (k, v) => map.set(k, v),
+  };
+}
+
+describe("searchHelpers", () => {
+  beforeEach(() => {
+    vi.stubGlobal("localStorage", mockLocalStorage());
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("fuzzyMatch accepts substring and subsequence", () => {
+    expect(fuzzyMatch("ev", "Expected Value").match).toBe(true);
+    expect(fuzzyMatch("xyz", "Expected Value").match).toBe(false);
+  });
+
+  it("getRecentSearches merges cmd-palette-recent and learnapp_recent_searches", () => {
+    localStorage.setItem("cmd-palette-recent", JSON.stringify(["bayes", "stats"]));
+    localStorage.setItem("learnapp_recent_searches", JSON.stringify(["kelly", "bayes"]));
+
+    expect(getRecentSearches()).toEqual(["bayes", "stats", "kelly"]);
+  });
+
+  it("addRecentSearch dedupes and writes to both stores", () => {
+    addRecentSearch("bayes");
+    addRecentSearch("kelly");
+    addRecentSearch("bayes");
+
+    expect(getRecentSearches()).toEqual(["bayes", "kelly"]);
+    expect(JSON.parse(localStorage.getItem("cmd-palette-recent")!)).toEqual(["bayes", "kelly"]);
+    expect(JSON.parse(localStorage.getItem("learnapp_recent_searches")!)).toEqual(["bayes", "kelly"]);
+  });
+
+  it("scoreCommandMatch ranks label hits over weak description hits", () => {
+    const strong = scoreCommandMatch("stats", {
+      id: "nav-stats",
+      label: "Stats",
+      description: "Charts and progress",
+    });
+    const weak = scoreCommandMatch("stats", {
+      id: "nav-review",
+      label: "Review queue",
+      description: "stats overview",
+    });
+
+    expect(strong).not.toBeNull();
+    expect(weak).not.toBeNull();
+    expect(strong!.score).toBeGreaterThan(weak!.score);
+  });
+});
