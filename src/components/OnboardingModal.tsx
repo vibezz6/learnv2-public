@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { hasV1Data } from "@/lib/migrate-v1";
 import { usePreferences } from "@/stores/preferences";
@@ -48,8 +48,15 @@ export function OnboardingModal() {
         </div>
 
         {fromV1 && (
-          <p className="mb-4 text-sm text-[var(--accent)]">
-            Learn v1 data found — go to Settings → Run full v1 migration to import your progress.
+          <p className="mb-4 text-sm text-[var(--text-muted)]">
+            Learn v1 data found.{" "}
+            <Link
+              to="/settings"
+              onClick={() => completeOnboarding()}
+              className="font-medium text-[var(--accent)] hover:underline"
+            >
+              Go to Settings to run full v1 migration
+            </Link>
           </p>
         )}
 
