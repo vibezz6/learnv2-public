@@ -11,18 +11,24 @@ interface FocusShellProps extends HTMLAttributes<HTMLDivElement> {
 export function FocusShell({ active, chrome, children, className, ...props }: FocusShellProps) {
   return (
     <div className={cn("relative min-h-full", className)} {...props}>
+      {/* Ambient glow behind the reading column in focus mode */}
+      {active && (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 55% 40% at 50% 0%, rgba(0,212,170,0.05) 0%, transparent 70%)",
+          }}
+        />
+      )}
       {chrome}
       <div
         className={cn(
-          "mx-auto w-full transition-all duration-200",
-          active ? "max-w-3xl px-4 py-8" : "max-w-6xl px-6 py-6",
+          "relative z-10 mx-auto w-full transition-all duration-300",
+          active ? "max-w-[74ch] px-8 py-10" : "max-w-6xl px-6 py-6",
         )}
       >
-        {active && (
-          <div className="mb-4 flex items-center justify-between rounded-[var(--radius)] border border-[var(--accent)]/30 bg-[var(--accent)]/5 px-3 py-2 text-sm text-[var(--accent)]">
-            <span>Focus mode — press F to exit</span>
-          </div>
-        )}
         {children}
       </div>
     </div>

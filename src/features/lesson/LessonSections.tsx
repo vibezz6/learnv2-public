@@ -108,7 +108,11 @@ const CollapsibleSection = memo(function CollapsibleSection({
         id={`section-header-${id}`}
         onClick={toggle}
         className="flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-3 py-3 sm:px-4"
-        style={{ transition: 'background 0.15s ease' }}
+        style={{
+          transition: 'background 0.15s ease, border-color 0.15s ease',
+          background: isOpen ? `color-mix(in srgb, ${accent} 5%, var(--bg-card))` : 'transparent',
+          borderBottom: isOpen ? '1px solid var(--border)' : '1px solid transparent',
+        }}
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
@@ -120,16 +124,26 @@ const CollapsibleSection = memo(function CollapsibleSection({
           }
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'var(--bg-hover)';
+          e.currentTarget.style.background = isOpen
+            ? `color-mix(in srgb, ${accent} 8%, var(--bg-card))`
+            : 'var(--bg-hover)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = 'transparent';
+          e.currentTarget.style.background = isOpen
+            ? `color-mix(in srgb, ${accent} 5%, var(--bg-card))`
+            : 'transparent';
         }}
       >
-        <span className="flex shrink-0 items-center" style={{ color: accent }}>
+        <span
+          className="flex shrink-0 items-center transition-colors duration-150"
+          style={{ color: isOpen ? accent : 'var(--text-muted)' }}
+        >
           {icon}
         </span>
-        <span className="min-w-0 flex-1 break-words font-semibold" style={{ color: 'var(--text-h)' }}>
+        <span
+          className="min-w-0 flex-1 break-words font-semibold transition-colors duration-150"
+          style={{ color: isOpen ? 'var(--text-h)' : 'var(--text-muted)' }}
+        >
           {title}
         </span>
         {count !== undefined && count > 0 && (
@@ -145,7 +159,7 @@ const CollapsibleSection = memo(function CollapsibleSection({
           </span>
         )}
         {isOpen ? (
-          <ChevronUp size={18} className="shrink-0" style={{ color: 'var(--text-muted)' }} />
+          <ChevronUp size={18} className="shrink-0" style={{ color: accent }} />
         ) : (
           <ChevronDown size={18} className="shrink-0" style={{ color: 'var(--text-muted)' }} />
         )}

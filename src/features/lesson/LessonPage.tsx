@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, BookOpen, CheckCircle2, FileText, Lightbulb, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Lock, Sparkles } from "lucide-react";
 import { Badge, Button, Card, FocusShell } from "@/components/ui";
 import { loadSubject, getNode } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
@@ -74,7 +74,7 @@ export function LessonPage() {
     <FocusShell active={focusMode}>
       <div
         className={cn(
-          "mx-auto w-full min-w-0 max-w-3xl space-y-5 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:p-4 md:p-8",
+          "mx-auto w-full min-w-0 max-w-3xl space-y-6 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-8 md:p-8",
           focusMode && "pt-2",
         )}
       >
@@ -88,7 +88,7 @@ export function LessonPage() {
           </Link>
         )}
 
-        <header className="stagger-item space-y-3">
+        <header className="stagger-item space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <Badge>{node.difficulty}</Badge>
             {isCompleted && (
@@ -105,22 +105,33 @@ export function LessonPage() {
           <h1
             className={cn(
               "break-words font-bold tracking-tight text-[var(--text-heading)]",
-              focusMode ? "text-[clamp(1.5rem,6vw,2rem)]" : "text-[clamp(1.375rem,5.5vw,1.75rem)]",
+              focusMode
+                ? "text-[clamp(2rem,4vw,2.75rem)] leading-[1.15]"
+                : "text-[clamp(1.75rem,3.5vw,2.25rem)] leading-[1.2]",
             )}
           >
             {node.name}
           </h1>
-          <p className="break-words text-[var(--text-muted)] leading-relaxed">{node.description}</p>
+          <p
+            className={cn(
+              "break-words max-w-[68ch] leading-relaxed text-[var(--text)]",
+              focusMode ? "text-lg text-[var(--text-muted)]" : "text-base text-[var(--text-muted)]",
+            )}
+          >
+            {node.description}
+          </p>
         </header>
 
         {node.whyItMatters && (
-          <Card className="stagger-item border-[var(--accent)]/20">
+          <div
+            className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-5 [border-left-color:var(--accent)] [border-left-width:3px]"
+          >
             <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
               <Sparkles size={16} />
-              <span className="text-sm font-medium">Why it matters</span>
+              <span className="text-sm font-medium uppercase tracking-wider">Why it matters</span>
             </div>
-            <p className="break-words text-sm leading-relaxed">{node.whyItMatters}</p>
-          </Card>
+            <p className="break-words text-sm leading-relaxed text-[var(--text)]">{node.whyItMatters}</p>
+          </div>
         )}
 
         {node.keyConcepts.length > 0 && (
@@ -172,39 +183,55 @@ export function LessonPage() {
 
         <LessonTakeaways nodeId={node.id} subjectId={subject.id} disabled={isLocked} />
 
-        <Card className="stagger-item flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <p className="font-medium text-[var(--text-heading)]">Ready to test recall?</p>
-            <p className="text-sm text-[var(--text-muted)]">
-              {node.quiz?.length ?? 0} questions · {node.xpValue} XP on complete
-            </p>
+        {/* ── Next step bar ── */}
+        <div className="stagger-item rounded-[var(--radius-lg)] border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-5">
+          <div className="mb-4 flex items-center justify-between border-b border-[var(--border)] pb-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
+                Next step
+              </p>
+              <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                {(node.quiz?.length ?? 0) > 0
+                  ? `${node.quiz!.length} questions · `
+                  : ""}
+                {node.xpValue} XP on complete
+              </p>
+            </div>
+            {isCompleted && (
+              <span className="flex items-center gap-1.5 text-sm font-medium text-[var(--success)]">
+                <CheckCircle2 size={15} />
+                Completed
+              </span>
+            )}
           </div>
-          <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
-            <Link to={`/subjects/${subject.id}/${node.id}/notes`} className="w-full sm:w-auto">
-              <Button variant="secondary" className="min-h-11 w-full sm:w-auto">
-                <FileText size={16} />
-                Notes
-              </Button>
-            </Link>
+          <div className="flex flex-wrap gap-2">
             {(node.quiz?.length ?? 0) > 0 && !isLocked && (
-              <Link to={`/subjects/${subject.id}/${node.id}/quiz`} className="w-full sm:w-auto">
-                <Button variant="secondary" className="min-h-11 w-full sm:w-auto">
+              <Link to={`/subjects/${subject.id}/${node.id}/quiz`}>
+                <Button className="gap-2">
                   Take quiz
+                  <ArrowRight size={15} />
                 </Button>
               </Link>
             )}
+            <Link to={`/subjects/${subject.id}/${node.id}/notes`}>
+              <Button variant="secondary">
+                <FileText size={15} />
+                Notes
+              </Button>
+            </Link>
             {!isLocked && !isCompleted && (
-              <Button onClick={handleComplete} className="min-h-11 w-full sm:w-auto">
+              <Button variant="secondary" onClick={handleComplete}>
+                <CheckCircle2 size={15} />
                 Mark complete
               </Button>
             )}
             {focusMode && (
-              <Button variant="ghost" onClick={toggleFocusMode} className="min-h-11 w-full sm:w-auto">
+              <Button variant="ghost" onClick={toggleFocusMode} className="ml-auto">
                 Exit focus
               </Button>
             )}
           </div>
-        </Card>
+        </div>
       </div>
     </FocusShell>
   );
