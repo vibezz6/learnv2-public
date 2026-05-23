@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { hasV1Data } from "@/lib/migrate-v1";
 import { usePreferences } from "@/stores/preferences";
 
-const STEP_COUNT = 3;
+const STEP_COUNT = 2;
 
 export function OnboardingModal() {
   const navigate = useNavigate();
@@ -47,6 +47,12 @@ export function OnboardingModal() {
           ))}
         </div>
 
+        {fromV1 && (
+          <p className="mb-4 text-sm text-[var(--accent)]">
+            Learn v1 data found — go to Settings → Run full v1 migration to import your progress.
+          </p>
+        )}
+
         {step === 0 && (
           <>
             <h2 id="onboarding-title" className="text-lg font-semibold text-[var(--text-heading)]">
@@ -60,28 +66,6 @@ export function OnboardingModal() {
         )}
 
         {step === 1 && (
-          <>
-            <h2 id="onboarding-title" className="text-lg font-semibold text-[var(--text-heading)]">
-              Coming from Learn v1?
-            </h2>
-            <p className="mt-2 text-sm text-[var(--text-muted)]">
-              {fromV1
-                ? "We found Learn v1 data in this browser. Open Settings and run the full v1 migration to import progress, notes, bookmarks, and theme."
-                : "If you used Learn v1 before, open Settings and run the full v1 migration to import your progress, notes, and bookmarks."}
-            </p>
-            {fromV1 && (
-              <Button
-                className="mt-4"
-                variant="secondary"
-                onClick={() => finish("/settings")}
-              >
-                Go to Settings
-              </Button>
-            )}
-          </>
-        )}
-
-        {step === 2 && (
           <>
             <h2 id="onboarding-title" className="text-lg font-semibold text-[var(--text-heading)]">
               Pick a track or subject
