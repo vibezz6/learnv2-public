@@ -9,7 +9,7 @@ const touchTarget =
 const btnStyles = {
   primary: cn(
     touchTarget,
-    'bg-[var(--accent)] text-[#041410] hover:brightness-110',
+    'bg-[var(--accent)] text-[var(--accent-fg)] hover:brightness-110',
   ),
   secondary: cn(
     touchTarget,

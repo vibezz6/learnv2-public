@@ -4,8 +4,8 @@
   "description": "Personal neural OS for self-education — math, CS, trading, and more.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0f",
-  "theme_color": "#0a0a0f",
+  "background_color": "#131110",
+  "theme_color": "#131110",
   "orientation": "portrait-primary",
   "icons": [
     {
