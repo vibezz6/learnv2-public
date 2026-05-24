@@ -7,10 +7,12 @@ interface PreferencesState {
   theme: ThemeMode;
   focusMode: boolean;
   onboardingCompleted: boolean;
+  enrolledTrackId: string | null;
   setTheme: (theme: ThemeMode) => void;
   toggleFocusMode: () => void;
   setFocusMode: (value: boolean) => void;
   completeOnboarding: () => void;
+  setEnrolledTrack: (id: string | null) => void;
 }
 
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
@@ -55,6 +57,7 @@ export const usePreferences = create<PreferencesState>()(
       theme: "dark",
       focusMode: false,
       onboardingCompleted: false,
+      enrolledTrackId: null,
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -69,10 +72,15 @@ export const usePreferences = create<PreferencesState>()(
         set({ focusMode: value });
       },
       completeOnboarding: () => set({ onboardingCompleted: true }),
+      setEnrolledTrack: (id) => set({ enrolledTrackId: id }),
     }),
     {
       name: "learnv2_preferences",
-      partialize: (s) => ({ theme: s.theme, onboardingCompleted: s.onboardingCompleted }),
+      partialize: (s) => ({
+        theme: s.theme,
+        onboardingCompleted: s.onboardingCompleted,
+        enrolledTrackId: s.enrolledTrackId,
+      }),
       onRehydrateStorage: () => (state) => {
         if (state) applyTheme(state.theme);
       },

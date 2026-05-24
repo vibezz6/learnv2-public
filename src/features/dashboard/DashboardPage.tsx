@@ -4,9 +4,11 @@ import { ArrowRight, Brain } from "lucide-react";
 import { Button, Card, EmptyState } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
+import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { formatAppVersion } from "@/lib/version";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
+import { CampusHome } from "./widgets/CampusHome";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeWidget } from "./widgets/DailyChallengeWidget";
 import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
@@ -21,6 +23,7 @@ export function DashboardPage() {
   const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
   const getDailyReviewCount = useProgress((s) => s.getDailyReviewCount);
   const getNextScheduledReview = useProgress((s) => s.getNextScheduledReview);
+  const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const [subjects, setSubjects] = useState<Subject[]>([]);
 
   useEffect(() => {
@@ -46,14 +49,18 @@ export function DashboardPage() {
           <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
             Dashboard
           </h1>
-          {stats && (
-            <p className="text-sm text-[var(--text-muted)]">
-              {stats.completedNodes}/{stats.totalNodes} lessons · {stats.totalXp} XP
-            </p>
-          )}
+          <p className="text-sm text-[var(--text-muted)]">
+            Today&apos;s campus — your track, this week, and what to do next.
+          </p>
         </div>
         {stats && <DailyGoalStrip stats={stats} />}
       </header>
+
+      {subjects.length > 0 && (
+        <section>
+          <CampusHome subjects={subjects} />
+        </section>
+      )}
 
       {/* Primary — continue hero */}
       <section>
@@ -75,7 +82,9 @@ export function DashboardPage() {
       {/* Secondary — daily challenge + track */}
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <DailyChallengeWidget defaultCategory={challengeCategory} />
-        {subjects.length > 0 && <TrackRecommendation subjects={subjects} />}
+        {subjects.length > 0 && enrolledTrackId === null && (
+          <TrackRecommendation subjects={subjects} />
+        )}
       </section>
 
       {(reviewDue > 0 || nextReview) && (
