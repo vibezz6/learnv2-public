@@ -1,4 +1,11 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
+import {
+  buildAdmissionsSummary,
+  formatAdmissionsTranscriptSection,
+  type AdmissionsSummary,
+} from "@/lib/admissionsSummary";
+import { loadCollegeChecklist } from "@/lib/collegeChecklist";
+import { loadEssayTracker } from "@/lib/essayTracker";
 import { listMistakes } from "@/lib/satMistakeLog";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
 import { formatAppVersion } from "@/lib/version";
@@ -22,6 +29,7 @@ export interface TranscriptSummary {
   satMistakesLogged: number;
   subjectBreakdown: SubjectBreakdown[];
   narrativeBullets: string[];
+  admissions: AdmissionsSummary;
 }
 
 export interface TranscriptProgressGetters {
@@ -103,6 +111,10 @@ export function buildTranscriptSummary(
     .sort((a, b) => b.pct - a.pct || b.completed - a.completed);
 
   const studyMinutes = Math.round(stats.totalStudyMinutes);
+  const admissions = buildAdmissionsSummary(
+    loadCollegeChecklist(storage),
+    loadEssayTracker(storage),
+  );
 
   return {
     generatedAt: new Date().toISOString(),
@@ -113,6 +125,7 @@ export function buildTranscriptSummary(
     reviewPassRate: reviewStats.passRate,
     satMistakesLogged,
     subjectBreakdown,
+    admissions,
     narrativeBullets: buildNarrativeBullets({
       studyMinutes,
       completedLessons: stats.completedNodes,
@@ -159,6 +172,11 @@ export function formatTranscriptMarkdown(summary: TranscriptSummary): string {
       lines.push(`- ${bullet}`);
     }
     lines.push("");
+  }
+
+  const admissionsLines = formatAdmissionsTranscriptSection(summary.admissions);
+  if (admissionsLines.length > 0) {
+    lines.push(...admissionsLines);
   }
 
   lines.push(`_Exported from Learn v2 on ${generatedDate}._`);

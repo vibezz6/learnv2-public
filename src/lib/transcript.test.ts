@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { toggleBuiltInItem, loadCollegeChecklist } from "@/lib/collegeChecklist";
 import { addMistake } from "@/lib/satMistakeLog";
 import {
   buildTranscriptSummary,
@@ -180,6 +181,23 @@ describe("transcript", () => {
       "Completed 0 of 1 lessons (0% of curriculum).",
       "Study today to start or extend your streak.",
     ]);
+  });
+
+  it("formatTranscriptMarkdown includes college applications when tracked", () => {
+    let checklist = loadCollegeChecklist(storage);
+    checklist = toggleBuiltInItem(checklist, "counselor-intro", true);
+    storage.setItem("learnv2_college_checklist_v1", JSON.stringify(checklist));
+
+    const markdown = formatTranscriptMarkdown(
+      buildTranscriptSummary(
+        [subject("math", "Math", ["m1"])],
+        makeGetters({ totalStudyMinutes: 10 }, { passRate: 0 }, { m1: "completed" }),
+        storage,
+      ),
+    );
+
+    expect(markdown).toContain("## College applications");
+    expect(markdown).toContain("Admissions checklist:");
   });
 
   it("formatTranscriptMarkdown includes summary, breakdown, and highlights", () => {
