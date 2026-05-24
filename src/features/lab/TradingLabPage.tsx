@@ -2,24 +2,41 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, ExternalLink, FlaskConical, TrendingUp } from "lucide-react";
 import { Badge, Button, Card } from "@/components/ui";
-
-const TRADING_LAB_URL = "http://127.0.0.1:8081";
-const TRADING_API_HEALTH = "http://127.0.0.1:8000/api/health";
+import {
+  type BacktestRunCard,
+  fetchHealth,
+  fetchLastBacktestRun,
+  formatBacktestSummary,
+  TRADING_JOURNAL_URL,
+} from "./tradingLabApi";
 
 type LabStatus = "checking" | "online" | "offline";
 
 export function TradingLabPage() {
   const [status, setStatus] = useState<LabStatus>("checking");
+  const [lastBacktest, setLastBacktest] = useState<BacktestRunCard | null>(null);
+  const [backtestLoaded, setBacktestLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    void fetch(TRADING_API_HEALTH)
-      .then((r) => {
-        if (!cancelled) setStatus(r.ok ? "online" : "offline");
-      })
-      .catch(() => {
-        if (!cancelled) setStatus("offline");
-      });
+
+    async function load() {
+      const online = await fetchHealth();
+      if (cancelled) return;
+
+      setStatus(online ? "online" : "offline");
+
+      if (online) {
+        const run = await fetchLastBacktestRun();
+        if (cancelled) return;
+        setLastBacktest(run);
+      }
+
+      if (!cancelled) setBacktestLoaded(true);
+    }
+
+    void load();
+
     return () => {
       cancelled = true;
     };
@@ -60,6 +77,33 @@ export function TradingLabPage() {
         )}
       </Card>
 
+      <Card className="stagger-item space-y-3">
+        <div className="font-semibold text-[var(--text-heading)]">Last backtest</div>
+        {status === "online" && backtestLoaded && lastBacktest && (
+          <div className="space-y-2 text-sm">
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="font-medium text-[var(--text-heading)]">{lastBacktest.strategy}</span>
+              <span className="text-[var(--text-muted)]">{lastBacktest.symbol}</span>
+            </div>
+            <p className="text-[var(--text-muted)]">{formatBacktestSummary(lastBacktest)}</p>
+            <p className="text-xs text-[var(--text-muted)]">
+              {new Date(lastBacktest.created_at).toLocaleString(undefined, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+            </p>
+          </div>
+        )}
+        {status === "online" && backtestLoaded && !lastBacktest && (
+          <p className="text-sm text-[var(--text-muted)]">
+            No backtest yet — run batch2_smoke in tradingv1
+          </p>
+        )}
+        {(status === "checking" || (status === "online" && !backtestLoaded)) && (
+          <p className="text-sm text-[var(--text-muted)]">Loading…</p>
+        )}
+      </Card>
+
       <div className="stagger-item space-y-3">
         <Link to="/subjects/trading" className="block">
           <Card className="transition hover:border-[var(--accent-border)]">
@@ -89,7 +133,7 @@ export function TradingLabPage() {
                 </p>
               </div>
               <a
-                href={TRADING_LAB_URL}
+                href={TRADING_JOURNAL_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex"
