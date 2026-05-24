@@ -1,13 +1,41 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, Clock, Flame, Sparkles, Target, Trophy, Zap } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  Download,
+  FileText,
+  Flame,
+  Sparkles,
+  Target,
+  Trophy,
+  Zap,
+} from "lucide-react";
 import { Badge, Button, Card } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
+import {
+  buildTranscriptSummary,
+  copyTranscriptToClipboard,
+  type TranscriptSummary,
+} from "@/lib/transcript";
 import { hasSeen, achievementLabel, type Achievement } from "@/stores/achievements";
 import { useProgress } from "@/stores/progress";
 import { StreakCalendar } from "@/features/dashboard/widgets/StreakCalendar";
 import { EulerQuizMastery } from "@/features/dashboard/widgets/EulerQuizMastery";
+
+function downloadTranscriptJson(summary: TranscriptSummary) {
+  const json = JSON.stringify(summary, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `learnv2-transcript-${summary.generatedAt.slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function getLast7Days(dailyMinutes: Record<string, number>) {
   const now = new Date();
@@ -66,8 +94,10 @@ const ALL_ACHIEVEMENTS: Achievement[] = [
 export function StatsPage() {
   const getStats = useProgress((s) => s.getStats);
   const getNodeProgress = useProgress((s) => s.getNodeProgress);
+  const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const getReviewStats = useProgress((s) => s.getReviewStats);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [copiedTranscript, setCopiedTranscript] = useState(false);
 
   useEffect(() => {
     loadAllSubjects().then(setSubjects);
@@ -75,6 +105,19 @@ export function StatsPage() {
 
   const stats = subjects.length ? getStats(subjects) : null;
   const reviewStats = getReviewStats();
+  const transcript =
+    stats && subjects.length
+      ? buildTranscriptSummary(subjects, { getStats, getNodeStatus, getReviewStats })
+      : null;
+
+  const handleCopyTranscript = async () => {
+    if (!transcript) return;
+    const ok = await copyTranscriptToClipboard(transcript);
+    if (ok) {
+      setCopiedTranscript(true);
+      setTimeout(() => setCopiedTranscript(false), 2000);
+    }
+  };
   const last7Days = stats ? getLast7Days(stats.dailyMinutes) : [];
   const maxDay = Math.max(...last7Days.map((d) => d.minutes), 1);
   const weeklyTrend = stats ? getWeeklyTrend(stats.dailyMinutes) : [];
@@ -101,7 +144,7 @@ export function StatsPage() {
           Your progress
         </h1>
         <p className="break-words text-sm text-[var(--text-muted)]">
-          Level up by studying consistently — XP, streaks, and reviews compound over time.
+          Your progress proof and study transcript — XP, streaks, and reviews compound over time.
         </p>
       </section>
 
@@ -118,6 +161,53 @@ export function StatsPage() {
         </Card>
       ) : (
         <>
+          {transcript && (
+            <Card className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
+              <div className="mb-4 flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between">
+                <div className="min-w-0">
+                  <div className="mb-1 flex items-center gap-2">
+                    <FileText size={16} className="shrink-0 text-[var(--accent)]" />
+                    <span className="break-words font-semibold text-[var(--text-heading)]">
+                      Study transcript
+                    </span>
+                  </div>
+                  <p className="break-words text-xs text-[var(--text-muted)]">
+                    Human-readable highlights you can copy or download as JSON proof of progress.
+                  </p>
+                </div>
+                <div className="flex w-full shrink-0 flex-col gap-2 min-[481px]:w-auto min-[481px]:flex-row">
+                  <Button
+                    variant="primary"
+                    className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
+                    onClick={handleCopyTranscript}
+                  >
+                    {copiedTranscript ? <Check size={16} /> : <Copy size={16} />}
+                    {copiedTranscript ? "Copied!" : "Copy transcript"}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
+                    onClick={() => downloadTranscriptJson(transcript)}
+                  >
+                    <Download size={16} />
+                    Download JSON
+                  </Button>
+                </div>
+              </div>
+              <ul className="space-y-2">
+                {transcript.narrativeBullets.map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="flex gap-2 break-words text-sm text-[var(--text-muted)]"
+                  >
+                    <span className="shrink-0 text-[var(--accent)]">•</span>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
+
           <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
             <Card glow className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
               <div className="flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between min-[481px]:gap-4">

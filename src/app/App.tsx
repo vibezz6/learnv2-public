@@ -17,6 +17,7 @@ import { TimerPage } from "@/features/timer/TimerPage";
 import { TracksPage } from "@/features/tracks/TracksPage";
 import { CompoundInterestToolPage } from "@/features/tools/CompoundInterestCalculator";
 import { ExpectedValueToolPage } from "@/features/tools/ExpectedValueCalculator";
+import { CampusServicesPage } from "@/features/campus/CampusServicesPage";
 import { ToolsPage } from "@/features/tools/ToolsPage";
 import { TradingLabPage } from "@/features/lab/TradingLabPage";
 
@@ -38,7 +39,9 @@ export function App() {
             <Route path="review" element={<ReviewPage />} />
             <Route path="stats" element={<StatsPage />} />
             <Route path="timer" element={<TimerPage />} />
-            <Route path="tools" element={<ToolsPage />} />
+            <Route path="campus" element={<CampusServicesPage />} />
+            <Route path="campus/calculators" element={<ToolsPage />} />
+            <Route path="tools" element={<Navigate to="/campus" replace />} />
             <Route path="tools/ev" element={<ExpectedValueToolPage />} />
             <Route path="tools/compound" element={<CompoundInterestToolPage />} />
             <Route path="lab/trading" element={<TradingLabPage />} />

@@ -12,6 +12,7 @@ import {
   BarChart3,
   Route,
   FlaskConical,
+  LayoutGrid,
 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { CommandPalette } from "@/features/search/CommandPalette";
@@ -37,6 +38,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/", label: "Command", icon: Home, end: true },
       { to: "/subjects", label: "Subjects", icon: BookOpen },
       { to: "/tracks", label: "Tracks", icon: Route },
+      { to: "/campus", label: "Campus", icon: LayoutGrid },
       { to: "/lab/trading", label: "Trading Lab", icon: FlaskConical },
       { to: "/bookmarks", label: "Saved", icon: Star },
     ],
