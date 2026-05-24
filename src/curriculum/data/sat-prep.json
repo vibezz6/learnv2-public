@@ -3778,6 +3778,766 @@
           "explanation": "No penalty for guessing — protect time for questions you can solve."
         }
       ]
+    },
+    {
+      "id": "st66",
+      "name": "Exponential Growth & Percent Change Drill",
+      "description": "Compound percent change, exponential models, and multi-step percent traps — Problem Solving & Data Analysis under drill pace after the st65 Math checkpoint.",
+      "xpValue": 90,
+      "parentIds": ["st65"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Percent increase then decrease is NOT symmetric — 20% up then 20% down ≠ original",
+        "Exponential model y = a(1 + r)^t — identify base, rate, and time units",
+        "Successive percent change: multiply factors (1.10)(0.85), do not add percents",
+        "Context: population, interest, decay — label whether r is per year, per month, etc."
+      ],
+      "whyItMatters": "Percent and exponential items look like arithmetic but punish additive thinking. After st65, round-4 Math drills should retarget PSDA traps that still burn time — this one shows up often on half-tests.",
+      "practiceProblems": [
+        "A price rises 15% then falls 15%. Is the final price equal to the start? Compute with $100.",
+        "A bacteria culture doubles every 3 hours from 500 cells. How many after 12 hours?",
+        "Khan: 15 exponential and percent-change SAT items — write the multiplier factor each time."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Exponential growth and decay",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-exp-and-log",
+          "type": "practice",
+          "whyHelpful": "Percent change, compound growth, and exponential models at SAT depth."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph y = a(1 + r)^t to verify doubling time and percent-change sequences."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "PSDA items mixing percents, tables, and exponential word problems."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st66_1",
+          "question": "A $80 item increases by 25%. The new price is:",
+          "options": ["$85", "$100", "$105", "$90"],
+          "correctIndex": 1,
+          "explanation": "25% of 80 = 20, so 80 + 20 = 100."
+        },
+        {
+          "id": "q_st66_2",
+          "question": "Successive changes of +10% then −10% leave the value:",
+          "options": [
+            "Exactly unchanged",
+            "Lower than the start",
+            "Higher than the start",
+            "Always doubled"
+          ],
+          "correctIndex": 1,
+          "explanation": "Multiply: 1.10 × 0.90 = 0.99 — a 1% net decrease, not zero change."
+        },
+        {
+          "id": "q_st66_3",
+          "question": "In y = 1200(1.04)^t, the 1.04 represents:",
+          "options": [
+            "A 4% decrease each period",
+            "A 4% increase each period",
+            "The starting value",
+            "The total after t periods only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Base 1 + r with r = 0.04 → 4% growth per time unit t."
+        }
+      ]
+    },
+    {
+      "id": "st67",
+      "name": "Inference & Logical Conclusions — Retarget Drill",
+      "description": "Round-4 retarget on inference: answer only what the passage supports, reject extreme or out-of-scope choices — Craft and Structure under drill conditions.",
+      "xpValue": 90,
+      "parentIds": ["st66"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Inference = smallest justified step beyond explicit text — not wild speculation",
+        "Reject answers that are true in life but unsupported by the passage",
+        "Extreme words (always, never, completely) rarely match SAT passage tone",
+        "Compare misses to st31 and st59 logs — inference vs evidence trap patterns"
+      ],
+      "whyItMatters": "Inference items cost R&W points when you import outside knowledge or pick answers that sound smart but overreach. After st65 Math work, round-4 R&W retarget keeps reading skills sharp before the st70 checkpoint.",
+      "practiceProblems": [
+        "Two passages: write the inference in one sentence, then underline the exact supporting phrase.",
+        "For each wrong option, label: too extreme, out of scope, or contradicts passage.",
+        "Khan: 15 inference and logical-conclusion SAT items — compare misses to st55 log."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Inference, implication, and logical conclusion drills with explanations."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official inference stems under module pacing after st65."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix inference with main idea and evidence in one sitting."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st67_1",
+          "question": "A valid SAT inference must be:",
+          "options": [
+            "Supported by the passage, even if not stated word-for-word",
+            "A general fact you already know about the topic",
+            "The most interesting possible conclusion",
+            "Stronger than anything the author wrote"
+          ],
+          "correctIndex": 0,
+          "explanation": "Inference stays tied to passage evidence — not outside knowledge or exaggeration."
+        },
+        {
+          "id": "q_st67_2",
+          "question": "A common inference trap is an answer that:",
+          "options": [
+            "Restates a detail from one sentence",
+            "Is plausible in real life but not supported by the text",
+            "Uses neutral language",
+            "Matches the passage topic"
+          ],
+          "correctIndex": 1,
+          "explanation": "Topic overlap without textual support is the classic inference distractor."
+        },
+        {
+          "id": "q_st67_3",
+          "question": "After st55, inference retarget should prioritize:",
+          "options": [
+            "Questions you already got right",
+            "Misses tagged as inference or logical conclusion in your log",
+            "Only grammar items",
+            "Passages you have memorized"
+          ],
+          "correctIndex": 1,
+          "explanation": "Pull inference misses from st55 and st31 — drill the trap pattern, not random passages."
+        }
+      ]
+    },
+    {
+      "id": "st68",
+      "name": "Coordinate Geometry & Distance Drill",
+      "description": "Slope, distance, midpoint, and graph interpretation on the coordinate plane — Geometry and Heart of Algebra under drill pace.",
+      "xpValue": 90,
+      "parentIds": ["st67"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Distance formula: √[(x₂ − x₁)² + (y₂ − y₁)²] — or sketch and use Pythagorean theorem",
+        "Midpoint: average the coordinates — ((x₁ + x₂)/2, (y₁ + y₂)/2)",
+        "Parallel lines → equal slopes; perpendicular → slopes multiply to −1 (when defined)",
+        "Desmos: plot points and verify distance or slope before computing by hand"
+      ],
+      "whyItMatters": "Coordinate geometry items blend algebra and spatial reasoning. Round-4 Math drills after st66–st67 should keep graph fluency sharp — one misread slope or distance formula can cost two minutes on a half-test module.",
+      "practiceProblems": [
+        "Find distance and midpoint between (2, −1) and (8, 5).",
+        "A line through (0, 4) with slope −3/2 — write the equation and find where it crosses the x-axis.",
+        "Khan: 12 coordinate geometry SAT items — Desmos-check each graph question."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Coordinate geometry",
+          "url": "https://www.khanacademy.org/math/geometry-home/geometry-coordinate-plane",
+          "type": "practice",
+          "whyHelpful": "Distance, midpoint, slope, and parallel/perpendicular line drills."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Plot points, measure distance, and read intercepts under time pressure."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Official-style coordinate plane items mixing graphs and equations."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st68_1",
+          "question": "The midpoint of (4, 6) and (10, 2) is:",
+          "options": ["(7, 4)", "(14, 8)", "(6, 4)", "(5, 5)"],
+          "correctIndex": 0,
+          "explanation": "Midpoint = ((4+10)/2, (6+2)/2) = (7, 4)."
+        },
+        {
+          "id": "q_st68_2",
+          "question": "Two non-vertical lines are perpendicular when their slopes:",
+          "options": [
+            "Are equal",
+            "Multiply to −1",
+            "Are both zero",
+            "Add to 1"
+          ],
+          "correctIndex": 1,
+          "explanation": "Perpendicular slopes are negative reciprocals — product −1 when neither is vertical."
+        },
+        {
+          "id": "q_st68_3",
+          "question": "Distance from (0, 0) to (3, 4) equals:",
+          "options": ["5", "7", "1", "25"],
+          "correctIndex": 0,
+          "explanation": "√(3² + 4²) = √25 = 5 — classic 3-4-5 triangle."
+        }
+      ]
+    },
+    {
+      "id": "st69",
+      "name": "R&W Mistake-Log Retarget — Round 4",
+      "description": "Pull top 3 miss categories from st55 and st67 logs; untimed redo plus 3 similar items per category before the R&W half-test checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st68"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Rank miss categories from st55, st35, and st67 drill logs",
+        "Untimed redo of original misses — no notes, fresh attempt",
+        "3 similar Khan items per weak category",
+        "No new topics — retarget what already cost you points on half-tests"
+      ],
+      "whyItMatters": "The st70 R&W half-test checkpoint is only useful if you fixed actual weak spots from round-4 drills. Retargeting from st55 and st67 beats random mixed practice the night before.",
+      "practiceProblems": [
+        "List your top 3 R&W miss categories from st55 and st67.",
+        "Redo each original miss untimed, then 3 similar Khan questions per category.",
+        "Bluebook: untimed review of missed item types from st55 log before st70."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Filter by weak domain: SEC, Craft, Information & Ideas, or Expression of Ideas."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed review of missed item types in the real interface."
+        },
+        {
+          "title": "Khan — Standard English Conventions",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Grammar retarget if SEC categories still appear in st55 and st67 logs."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st69_1",
+          "question": "Before the st70 R&W half-test checkpoint, retarget should focus on:",
+          "options": [
+            "Random new topics",
+            "Your top 3 actual miss categories from st55 and round-4 drills",
+            "Only questions you already got right",
+            "Skipping review to stay fresh"
+          ],
+          "correctIndex": 1,
+          "explanation": "Retarget categories that already cost points on half-tests — not random drills."
+        },
+        {
+          "id": "q_st69_2",
+          "question": "After redoing a miss untimed, the best follow-up is:",
+          "options": [
+            "Move on immediately",
+            "3 similar items in the same category without notes",
+            "Memorize the letter answer only",
+            "Delete the miss from your log"
+          ],
+          "correctIndex": 1,
+          "explanation": "Similar items in the same category lock in the fix while the pattern is fresh."
+        },
+        {
+          "id": "q_st69_3",
+          "question": "Round-4 R&W retarget should pull misses from:",
+          "options": [
+            "Only st1",
+            "st55 half-test and st67 inference drill categories",
+            "Unrelated subjects",
+            "Questions you got right on st65"
+          ],
+          "correctIndex": 1,
+          "explanation": "st55 baseline plus round-4 drill categories show what still costs R&W points."
+        }
+      ]
+    },
+    {
+      "id": "st70",
+      "name": "R&W — Bluebook Half-Test Checkpoint",
+      "description": "Timed R&W modules (Module 1 + Module 2 or equivalent half-test block). Log misses by category within 24 hours — capstone of the st66–st70 drill chain.",
+      "xpValue": 150,
+      "parentIds": ["st69"],
+      "estimatedMinutes": 70,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed both R&W modules under test-like conditions",
+        "Tag misses: grammar / craft / information / expression",
+        "Review within 24 hours — redo 3 similar items per miss type",
+        "Compare to st55 half-test checkpoint — note score and timing trend"
+      ],
+      "whyItMatters": "This fourth-round R&W half-test checkpoint simulates real section pressure after st66–st69 drills. Comparing to st55 shows whether your retargeting worked — the feedback loop that moves your R&W score into test week.",
+      "practiceProblems": [
+        "Bluebook timed R&W Module 1 + Module 2 — phone away, timer on.",
+        "Categorize every miss in your mistake log within 24 hours.",
+        "Compare raw score and timing to st55 — note which categories improved since round 3."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Timed SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Timed sets mirroring module length if Bluebook isn't available."
+        },
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing and adaptive module feel for both R&W modules."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Post-checkpoint retarget by miss category within 24 hours."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st70_1",
+          "question": "After the st70 R&W half-test checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by category and drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh."
+        },
+        {
+          "id": "q_st70_2",
+          "question": "The st70 R&W half-test checkpoint should be compared to:",
+          "options": [
+            "Only st1 quiz scores",
+            "st55 half-test checkpoint — note score and timing trend",
+            "st65 Math half-test only",
+            "Other students' scores online"
+          ],
+          "correctIndex": 1,
+          "explanation": "st55 is your round-3 R&W half-test baseline — track improvement from there."
+        },
+        {
+          "id": "q_st70_3",
+          "question": "During a timed R&W half-test, if stuck after ~90 seconds you should:",
+          "options": [
+            "Spend 5 more minutes on one item",
+            "Eliminate, guess, mark for review, move on",
+            "Leave every hard question blank",
+            "Exit the module early"
+          ],
+          "correctIndex": 1,
+          "explanation": "No penalty for guessing — protect time for questions you can solve."
+        }
+      ]
+    },
+    {
+      "id": "st71",
+      "name": "Volume & Surface Area Drill",
+      "description": "Cylinders, spheres, prisms, and composite solids — Advanced Math and Geometry under drill pace after the st70 R&W checkpoint.",
+      "xpValue": 90,
+      "parentIds": ["st70"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Volume formulas: cylinder V = πr²h, sphere V = (4/3)πr³, prism V = Bh",
+        "Surface area: identify every face — composite solids need a sketch first",
+        "Unit consistency: convert cm³ to liters or in³ to ft³ before comparing",
+        "Desmos: plug radius and height to verify before hand arithmetic"
+      ],
+      "whyItMatters": "Volume items look intimidating but follow a small formula set. Round-5 Math drills after st70 should retarget geometry traps that still burn time — composite solids and unit slips show up on full tests.",
+      "practiceProblems": [
+        "A cylinder has radius 3 cm and height 10 cm. Find volume and total surface area.",
+        "A sphere of radius 6 cm is half-filled with water. What volume of water is in the sphere?",
+        "Khan: 12 volume and surface-area SAT items — sketch each solid before computing."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Solid geometry",
+          "url": "https://www.khanacademy.org/math/geometry-home/geometry-solid-geo",
+          "type": "practice",
+          "whyHelpful": "Volume and surface-area drills with SAT-style word problems."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Verify cylinder and sphere formulas with plug-in checks under time pressure."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Geometry items mixing volume, area, and unit conversion."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st71_1",
+          "question": "The volume of a cylinder with radius r and height h is:",
+          "options": ["πrh", "πr²h", "2πrh", "πr² + h"],
+          "correctIndex": 1,
+          "explanation": "Cylinder volume = base area × height = πr²h."
+        },
+        {
+          "id": "q_st71_2",
+          "question": "Before solving a composite-solid volume problem, the best first step is:",
+          "options": [
+            "Memorize the answer choices",
+            "Sketch the solid and label every dimension",
+            "Convert all units at the end only",
+            "Guess from the diagram"
+          ],
+          "correctIndex": 1,
+          "explanation": "A quick sketch prevents mixing radii, heights, and face areas on composite items."
+        },
+        {
+          "id": "q_st71_3",
+          "question": "A sphere with radius 3 has volume (in terms of π):",
+          "options": ["12π", "27π", "36π", "9π"],
+          "correctIndex": 2,
+          "explanation": "V = (4/3)πr³ = (4/3)π(27) = 36π."
+        }
+      ]
+    },
+    {
+      "id": "st72",
+      "name": "Cross-Text Connections — Retarget Drill",
+      "description": "Round-5 retarget on how two passages agree, disagree, or respond to each other — Craft and Structure under drill conditions.",
+      "xpValue": 90,
+      "parentIds": ["st71"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Cross-text items ask about relationship between passages — not either passage alone",
+        "Agree / disagree / qualify: cite one line from each text before choosing",
+        "Reject answers true for Text 1 only if the question asks about both",
+        "Compare misses to st43 and st70 logs — cross-text vs single-passage inference"
+      ],
+      "whyItMatters": "Cross-text items punish reading one passage carefully and skimming the other. After st71 Math work, round-5 R&W retarget keeps dual-passage skills sharp before the st75 full-test checkpoint.",
+      "practiceProblems": [
+        "Two short texts: write one sentence on how Text 2 responds to Text 1.",
+        "For each wrong option, label: Text 1 only, Text 2 only, or unsupported by either.",
+        "Khan: 15 cross-text SAT items — compare misses to st70 R&W log."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Craft and structure",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Cross-text connection and comparison drills with explanations."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official dual-passage stems under module pacing after st70."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix cross-text with inference and evidence in one sitting."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st72_1",
+          "question": "A cross-text question typically asks you to:",
+          "options": [
+            "Summarize only the first passage",
+            "Describe how the passages relate to each other",
+            "Pick vocabulary from either passage at random",
+            "Ignore Text 2 if Text 1 is longer"
+          ],
+          "correctIndex": 1,
+          "explanation": "Cross-text items test the relationship between two passages — agreement, disagreement, or response."
+        },
+        {
+          "id": "q_st72_2",
+          "question": "A common cross-text trap is an answer that:",
+          "options": [
+            "Uses neutral language",
+            "Is true for one passage but not supported as a comparison",
+            "Restates a detail from Text 1",
+            "Matches the topic of both texts"
+          ],
+          "correctIndex": 1,
+          "explanation": "Topic overlap without a valid cross-text relationship is the classic distractor."
+        },
+        {
+          "id": "q_st72_3",
+          "question": "After st70, cross-text retarget should prioritize:",
+          "options": [
+            "Questions you already got right",
+            "Misses tagged as cross-text or dual-passage in your log",
+            "Only grammar items",
+            "Single-passage main-idea drills only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Pull cross-text misses from st70 and st43 — drill the dual-passage pattern, not random passages."
+        }
+      ]
+    },
+    {
+      "id": "st73",
+      "name": "Right-Triangle Trigonometry Drill",
+      "description": "sin, cos, tan, special right triangles, and angle-of-elevation word problems — Geometry under drill pace.",
+      "xpValue": 90,
+      "parentIds": ["st72"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "SOH-CAH-TOA — label opposite, adjacent, hypotenuse from the reference angle",
+        "Special triangles: 30-60-90 (1 : √3 : 2) and 45-45-90 (1 : 1 : √2)",
+        "Angle of elevation/depression: draw the right triangle before choosing a ratio",
+        "Desmos: verify trig ratios on a sketched triangle when time allows"
+      ],
+      "whyItMatters": "Trig items are formula-heavy but fast once the triangle is labeled. Round-5 Math drills after st72 should keep geometry fluency sharp — one mislabeled side can cost two minutes on a full-test module.",
+      "practiceProblems": [
+        "A 30-60-90 triangle has hypotenuse 10. Find both legs.",
+        "From 50 m away, the angle of elevation to a building top is 40°. Find the building height.",
+        "Khan: 12 right-triangle trigonometry SAT items — label sides before computing."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Right triangle trigonometry",
+          "url": "https://www.khanacademy.org/math/trigonometry/trig-ratios",
+          "type": "practice",
+          "whyHelpful": "SOH-CAH-TOA, special triangles, and elevation word problems at SAT depth."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Check trig ratios and triangle side lengths under time pressure."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Official-style trig and geometry items mixing diagrams and word problems."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st73_1",
+          "question": "In a right triangle, sin(θ) equals:",
+          "options": [
+            "adjacent / hypotenuse",
+            "opposite / hypotenuse",
+            "opposite / adjacent",
+            "hypotenuse / opposite"
+          ],
+          "correctIndex": 1,
+          "explanation": "SOH: sine = opposite / hypotenuse."
+        },
+        {
+          "id": "q_st73_2",
+          "question": "In a 45-45-90 triangle, if one leg is 5, the hypotenuse is:",
+          "options": ["5", "5√2", "10", "5√3"],
+          "correctIndex": 1,
+          "explanation": "45-45-90 ratio 1 : 1 : √2 — hypotenuse = leg × √2 = 5√2."
+        },
+        {
+          "id": "q_st73_3",
+          "question": "On an angle-of-elevation problem, the best first step is:",
+          "options": [
+            "Pick sin or cos at random",
+            "Draw the right triangle and label opposite, adjacent, hypotenuse",
+            "Convert to radians immediately",
+            "Use the Pythagorean theorem only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Label the triangle from the reference angle — then SOH-CAH-TOA picks the right ratio."
+        }
+      ]
+    },
+    {
+      "id": "st74",
+      "name": "Mixed Mistake-Log Retarget — Round 5",
+      "description": "Pull top 3 Math and top 3 R&W miss categories from st65, st70, and round-5 drills; untimed redo plus 3 similar items per category before the full Bluebook checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st73"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Rank miss categories from st65 Math, st70 R&W, and st71–st73 drill logs",
+        "Untimed redo of original misses — no notes, fresh attempt",
+        "3 similar Khan items per weak category in each section",
+        "No new topics — retarget what already cost you points on half-tests"
+      ],
+      "whyItMatters": "The st75 full Bluebook checkpoint is only useful if you fixed actual weak spots from round-5 drills and recent half-tests. Mixed retarget from st65 and st70 beats random practice the night before a full timed run.",
+      "practiceProblems": [
+        "List your top 3 Math and top 3 R&W miss categories from st65, st70, and st71–st73.",
+        "Redo each original miss untimed, then 3 similar Khan questions per category.",
+        "Bluebook: untimed review of missed item types from st65 and st70 logs before st75."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Filter Math by weak domain: Algebra, PSDA, Advanced Math, or Geometry."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Filter R&W by weak domain: SEC, Craft, Information & Ideas, or Expression of Ideas."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed review of missed item types in the real interface before the full checkpoint."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st74_1",
+          "question": "Before the st75 full Bluebook checkpoint, retarget should focus on:",
+          "options": [
+            "Random new topics in both sections",
+            "Your top miss categories from st65, st70, and round-5 drills",
+            "Only questions you already got right",
+            "Skipping review to stay fresh"
+          ],
+          "correctIndex": 1,
+          "explanation": "Retarget categories that already cost points on half-tests — not random mixed drills."
+        },
+        {
+          "id": "q_st74_2",
+          "question": "Round-5 mixed retarget should pull misses from:",
+          "options": [
+            "Only st1",
+            "st65 Math half-test, st70 R&W half-test, and st71–st73 drill categories",
+            "Unrelated subjects",
+            "Questions you got right on st15"
+          ],
+          "correctIndex": 1,
+          "explanation": "Recent half-test baselines plus round-5 drill categories show what still costs points."
+        },
+        {
+          "id": "q_st74_3",
+          "question": "After redoing a miss untimed, the best follow-up is:",
+          "options": [
+            "Move on immediately",
+            "3 similar items in the same category without notes",
+            "Memorize the letter answer only",
+            "Delete the miss from your log"
+          ],
+          "correctIndex": 1,
+          "explanation": "Similar items in the same category lock in the fix while the pattern is fresh."
+        }
+      ]
+    },
+    {
+      "id": "st75",
+      "name": "Full Bluebook Practice Checkpoint — R&W + Math",
+      "description": "Timed full Digital SAT in Bluebook (both R&W modules + both Math modules). Log misses by section and category within 24 hours — capstone of the st71–st75 drill chain.",
+      "xpValue": 200,
+      "parentIds": ["st74"],
+      "estimatedMinutes": 180,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed all four modules under test-day conditions — breaks optional but phone away",
+        "Tag Math misses: algebra / PSDA / advanced / geometry",
+        "Tag R&W misses: grammar / craft / information / expression",
+        "Compare to st50, st55, st65, and st70 half-test checkpoints — note stamina and score trend"
+      ],
+      "whyItMatters": "This round-5 full-test checkpoint simulates real test-day stamina after st71–st74 drills. Comparing section scores to your half-test baselines shows whether retargeting held up across both sections — the feedback loop that moves your total score into test week.",
+      "practiceProblems": [
+        "Bluebook timed full practice test — R&W Module 1 + Module 2, then Math Module 1 + Module 2.",
+        "Categorize every miss in your mistake log within 24 hours — separate Math and R&W columns.",
+        "Compare total and section scores to st50/st55/st65/st70 — note timing and stamina drops in later modules."
+      ],
+      "resources": [
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official full-test timing, Desmos, and adaptive module feel for all four modules."
+        },
+        {
+          "title": "Khan — Timed SAT Math",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Timed section sets if Bluebook full test isn't available this week."
+        },
+        {
+          "title": "Khan — Timed SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Post-checkpoint retarget by miss category within 24 hours in each section."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st75_1",
+          "question": "After the st75 full Bluebook checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by section and category, then drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh across both sections."
+        },
+        {
+          "id": "q_st75_2",
+          "question": "The st75 full checkpoint should be compared to:",
+          "options": [
+            "Only st1 quiz scores",
+            "st50, st55, st65, and st70 half-test checkpoints — note section and stamina trends",
+            "Unrelated homework grades",
+            "Other students' scores online"
+          ],
+          "correctIndex": 1,
+          "explanation": "Half-test baselines show per-section growth; the full test adds stamina and pacing feedback."
+        },
+        {
+          "id": "q_st75_3",
+          "question": "During a full timed Bluebook practice test, if energy drops in Math Module 2 you should:",
+          "options": [
+            "Quit early and score only the first modules",
+            "Keep test-like pacing: guess and move on rather than stall on one item",
+            "Pause the timer for a long break",
+            "Skip every hard question and leave blanks"
+          ],
+          "correctIndex": 1,
+          "explanation": "Full-test practice trains stamina and pacing — protect time with eliminate-and-guess habits."
+        }
+      ]
     }
   ]
 }
