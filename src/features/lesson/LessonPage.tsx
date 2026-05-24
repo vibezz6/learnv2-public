@@ -280,7 +280,7 @@ export function LessonPage() {
             <Link to={`/subjects/${subject.id}/${node.id}/notes`}>
               <Button variant="secondary">
                 <FileText size={15} />
-                Notes
+                Office hours
               </Button>
             </Link>
             {!isLocked && !isCompleted && (

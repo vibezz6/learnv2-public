@@ -80,7 +80,7 @@ export function WeekAssignments({ subjects }: Props) {
                     className="flex shrink-0 items-center gap-1 rounded-[var(--radius)] px-2 py-1 text-[11px] text-[var(--text-muted)] touch-manipulation hover:bg-[var(--bg-hover)] hover:text-[var(--text-heading)]"
                   >
                     <BookOpen size={12} aria-hidden />
-                    Notes
+                    Office hours
                   </Link>
                 )}
               </li>

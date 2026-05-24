@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.16 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.17 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -39,7 +39,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 **Second brain**
 
-- **Notes 2.0** — gated Write → Review → Mentor flow with guided prompts, AI review (OpenRouter), mentor Q&A quiz
+- **Office hours (notes)** — session notes → TA feedback → recall check-in; works offline without an API key, richer with OpenRouter in Settings
 - **Bookmarks** — save lessons and individual resources
 - **Command palette** — `⌘K` / `Ctrl+K` fuzzy search with grouped results and persisted recents
 
@@ -150,5 +150,6 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 8 Admissions ship (27) | ✅ **v2.0.14** — transcript + weekly deadline strip |
 | 9 Nudge snooze (28) | ✅ **v2.0.15** — dismiss reminders for 7 days |
 | 10 Stats admissions preview (29) | ✅ **v2.0.16** — preview college block before copy |
+| 11 Office hours copy (30) | ✅ **v2.0.17** — notes flow labels and offline clarity |
 
 Full roadmap: `~/cursor/LEARN-V2-PLAN.md`

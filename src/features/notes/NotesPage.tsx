@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  lockedStepHint,
+  MIN_PROMPTS_FOR_TA_HINT,
+  OFFICE_HOURS_EDITOR_INTRO,
+  OFFICE_HOURS_STEPS,
+  OFFICE_HOURS_TAGLINE,
+} from "@/lib/notesOfficeHours";
+import {
   AlertCircle,
   ArrowLeft,
   BookOpen,
@@ -39,11 +46,7 @@ import {
   type NotesFlowView,
 } from "@/stores/noteSessions";
 
-const STEPS: { id: NotesFlowView; label: string; description: string }[] = [
-  { id: "editor", label: "Write notes", description: "Guided prompts" },
-  { id: "review", label: "TA feedback", description: "Review your notes" },
-  { id: "mentor", label: "Mentor check-in", description: "Quick recall quiz" },
-];
+const STEPS = OFFICE_HOURS_STEPS;
 
 const QUALITY_LABELS: Record<MentorMessage["quality"], string> = {
   "too-short": "Keep going",
@@ -157,7 +160,7 @@ export function NotesPage() {
             Office hours
           </h1>
           <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
-            Write notes → TA feedback → Mentor check-in.
+            {OFFICE_HOURS_TAGLINE}
           </p>
         </div>
 
@@ -194,13 +197,7 @@ export function NotesPage() {
                         ? "text-[var(--text)] hover:bg-white/5"
                         : "cursor-not-allowed text-[var(--text-muted)] opacity-50"
                   }`}
-                  title={
-                    !unlocked
-                      ? step.id === "review"
-                        ? "Write notes for at least one prompt before TA feedback opens."
-                        : "Finish TA feedback before starting the mentor check-in."
-                      : step.description
-                  }
+                  title={!unlocked ? lockedStepHint(step.id) : step.description}
                 >
                   <span
                     className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold ${
@@ -313,6 +310,19 @@ function NoteEditor({
 
   return (
     <div className="space-y-6 pb-24 sm:pb-0">
+      <Card variant="quiet" className="text-sm leading-relaxed text-[var(--text-muted)]">
+        <p>{OFFICE_HOURS_EDITOR_INTRO}</p>
+        {!hasOpenRouterKey() && (
+          <p className="mt-2">
+            <Link to="/settings" className="font-medium text-[var(--accent)] hover:underline">
+              Settings
+            </Link>{" "}
+            — optional OpenRouter key for AI-powered TA and recall feedback. Offline rules work
+            without it.
+          </p>
+        )}
+      </Card>
+
       <Card className="min-w-0">
         <div className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-[var(--text-muted)]">
           <BookOpen size={18} className="shrink-0" />
@@ -377,7 +387,7 @@ function NoteEditor({
 
       {!readyForReview && (
         <p className="text-center text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
-          Answer at least one prompt to continue to TA feedback.
+          {MIN_PROMPTS_FOR_TA_HINT}
         </p>
       )}
 
@@ -424,7 +434,13 @@ function NoteEditor({
   );
 }
 
-function OfflineReviewBanner() {
+function OfflineOfficeHoursBanner({ mode }: { mode: "review" | "mentor" }) {
+  const title = mode === "review" ? "Offline TA feedback" : "Offline recall check-in";
+  const body =
+    mode === "review"
+      ? "No API key in Settings — using built-in rules for coverage, depth, and concept gaps. Add an OpenRouter key anytime for richer, personalized TA feedback."
+      : "No API key in Settings — using template questions and length-based answer feedback. Add a key in Settings for AI-generated questions and coaching.";
+
   return (
     <div
       role="status"
@@ -432,11 +448,12 @@ function OfflineReviewBanner() {
     >
       <Info size={18} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
       <div className="min-w-0 space-y-1 text-sm text-[var(--text-muted)]">
-        <p className="font-medium text-[var(--text-heading)]">Offline TA feedback</p>
+        <p className="font-medium text-[var(--text-heading)]">{title}</p>
         <p>
-          No OpenRouter key in Settings, so feedback uses built-in rules — keyword coverage,
-          note depth, and gaps against key concepts. It still works without AI. Add a key in
-          Settings anytime for richer, personalized feedback.
+          {body}{" "}
+          <Link to="/settings" className="font-medium text-[var(--accent)] hover:underline">
+            Open Settings
+          </Link>
         </p>
       </div>
     </div>
@@ -502,9 +519,9 @@ function NoteReviewPanel({
         <BookOpen className="mx-auto text-[var(--text-muted)]" size={32} />
         <h2 className="text-xl font-semibold text-[var(--text-heading)]">Nothing to review yet</h2>
         <p className="text-sm text-[var(--text-muted)]">
-          Fill in at least one guided prompt so the AI has something to analyze.
+          Fill in at least one guided prompt so TA feedback has something to analyze.
         </p>
-        <Button onClick={onBackToWrite}>Go to Write</Button>
+        <Button onClick={onBackToWrite}>Back to session notes</Button>
       </Card>
     );
   }
@@ -512,14 +529,14 @@ function NoteReviewPanel({
   if (!review) {
     return (
       <div className="space-y-4">
-        {!hasOpenRouterKey() && <OfflineReviewBanner />}
+        {!hasOpenRouterKey() && <OfflineOfficeHoursBanner mode="review" />}
         <Card className="space-y-4 text-center">
           <Sparkles className="mx-auto text-[var(--text-muted)]" size={32} />
           <h2 className="text-xl font-semibold text-[var(--text-heading)]">Ready for TA feedback</h2>
           <p className="text-sm text-[var(--text-muted)]">
             {hasOpenRouterKey()
-              ? "Your notes will be analyzed for coverage, depth, and gaps."
-              : "Tap below to run the offline review — same strengths, gaps, and suggestions format."}
+              ? "Your session notes will be analyzed for coverage, depth, and gaps against this lesson."
+              : "Run the offline TA pass now — same strengths, gaps, and suggestions format."}
           </p>
           {error && (
             <p className="text-sm text-[var(--warning)]">{error}</p>
@@ -544,7 +561,7 @@ function NoteReviewPanel({
 
   return (
     <div className="space-y-6">
-      {!hasOpenRouterKey() && <OfflineReviewBanner />}
+      {!hasOpenRouterKey() && <OfflineOfficeHoursBanner mode="review" />}
       <Card variant="quiet" className="text-center">
         <div className="font-mono text-4xl font-semibold tabular-nums text-[var(--text-heading)]">
           {review.score}
@@ -552,7 +569,9 @@ function NoteReviewPanel({
         </div>
         <p className="mt-1 text-sm text-[var(--text-muted)]">{subject.name} · {node.name}</p>
         <p className="mt-2 text-xs text-[var(--text-muted)]">
-          {hasOpenRouterKey() ? "AI-powered TA feedback" : "Rule-based TA feedback"}
+          {hasOpenRouterKey()
+            ? "AI-powered TA feedback · saved on this lesson"
+            : "Rule-based TA feedback · saved on this lesson"}
         </p>
       </Card>
 
@@ -565,7 +584,7 @@ function NoteReviewPanel({
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button onClick={onQuizMe} className="min-h-11 w-full sm:w-auto">
-          Continue to mentor check-in
+          Continue to recall check-in
           <ChevronRight size={16} />
         </Button>
         <Button variant="secondary" onClick={() => void handleGenerate()} disabled={loading} className="min-h-11 w-full sm:w-auto">
@@ -707,7 +726,7 @@ function NoteMentorPanel({
         <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
         <h2 className="text-xl font-semibold text-[var(--text-heading)]">Complete TA feedback first</h2>
         <p className="text-sm text-[var(--text-muted)]">
-          Get feedback on your notes before starting the mentor check-in.
+          Finish TA feedback on your session notes before the recall check-in.
         </p>
         <Button onClick={onBackToReview}>Go to TA feedback</Button>
       </Card>
@@ -716,27 +735,31 @@ function NoteMentorPanel({
 
   if (!mentorSession) {
     return (
-      <Card className="space-y-4 text-center">
-        <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Mentor check-in</h2>
-        <p className="text-sm text-[var(--text-muted)]">
-          {node.name} · {subject.name}
-        </p>
-        <p className="text-sm text-[var(--text-muted)]">
-          Five short questions to test what you retained. Answer in your own words.
-        </p>
-        {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
-        <Button onClick={() => void start()} disabled={loading}>
-          {loading ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Preparing questions…
-            </>
-          ) : (
-            "Start quiz"
-          )}
-        </Button>
-      </Card>
+      <div className="space-y-4">
+        {!hasOpenRouterKey() && <OfflineOfficeHoursBanner mode="mentor" />}
+        <Card className="space-y-4 text-center">
+          <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
+          <h2 className="text-xl font-semibold text-[var(--text-heading)]">Recall check-in</h2>
+          <p className="text-sm text-[var(--text-muted)]">
+            {node.name} · {subject.name}
+          </p>
+          <p className="text-sm leading-relaxed text-[var(--text-muted)]">
+            Five short questions on this lesson&apos;s key ideas. Answer in your own words — like
+            a TA checking whether the material stuck.
+          </p>
+          {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
+          <Button onClick={() => void start()} disabled={loading} className="min-h-11">
+            {loading ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Preparing questions…
+              </>
+            ) : (
+              "Start recall check-in"
+            )}
+          </Button>
+        </Card>
+      </div>
     );
   }
 
@@ -749,9 +772,10 @@ function NoteMentorPanel({
       <Card className="space-y-4">
         <div className="text-center">
           <CheckCircle2 className="mx-auto text-[var(--text-muted)]" size={32} />
-          <h2 className="mt-2 text-xl font-semibold text-[var(--text-heading)]">Quiz complete</h2>
+          <h2 className="mt-2 text-xl font-semibold text-[var(--text-heading)]">Recall check-in complete</h2>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
-            {solidCount} of {mentorSession.messages.length} answers rated solid or excellent.
+            {solidCount} of {mentorSession.messages.length} answers rated solid or excellent. Office
+            hours for this lesson are done — revisit the lesson or move on.
           </p>
         </div>
         <div className="space-y-3">
@@ -767,9 +791,19 @@ function NoteMentorPanel({
             </div>
           ))}
         </div>
-        <Button variant="secondary" onClick={retake}>
-          Retake quiz
-        </Button>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Link
+            to={`/subjects/${subject.id}/${node.id}`}
+            className="inline-flex min-h-11 flex-1 items-center justify-center"
+          >
+            <Button variant="primary" className="w-full">
+              Back to lesson
+            </Button>
+          </Link>
+          <Button variant="secondary" onClick={retake} className="min-h-11 flex-1">
+            Retake check-in
+          </Button>
+        </div>
       </Card>
     );
   }
