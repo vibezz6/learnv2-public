@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, FlaskConical, GraduationCap, Wrench } from "lucide-react";
+import { ChevronRight, ClipboardList, FlaskConical, GraduationCap, Wrench } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Badge, Card } from "@/components/ui";
 import { getManifestEntry } from "@/curriculum";
@@ -14,6 +14,14 @@ type ServiceCard = {
 
 function buildServiceCards(): ServiceCard[] {
   const cards: ServiceCard[] = [
+    {
+      to: "/campus/college-checklist",
+      title: "College checklist",
+      description:
+        "FAFSA, counselor, SAT score send, essays, and custom deadlines — admissions paperwork in one place.",
+      icon: ClipboardList,
+      tone: "text-[var(--accent-2)]",
+    },
     {
       to: "/lab/trading",
       title: "Trading Lab",

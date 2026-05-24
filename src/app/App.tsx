@@ -18,6 +18,7 @@ import { TracksPage } from "@/features/tracks/TracksPage";
 import { CompoundInterestToolPage } from "@/features/tools/CompoundInterestCalculator";
 import { ExpectedValueToolPage } from "@/features/tools/ExpectedValueCalculator";
 import { CampusServicesPage } from "@/features/campus/CampusServicesPage";
+import { CollegeChecklistPage } from "@/features/college/CollegeChecklistPage";
 import { ToolsPage } from "@/features/tools/ToolsPage";
 import { TradingLabPage } from "@/features/lab/TradingLabPage";
 
@@ -40,6 +41,7 @@ export function App() {
             <Route path="stats" element={<StatsPage />} />
             <Route path="timer" element={<TimerPage />} />
             <Route path="campus" element={<CampusServicesPage />} />
+            <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
             <Route path="campus/calculators" element={<ToolsPage />} />
             <Route path="tools" element={<Navigate to="/campus" replace />} />
             <Route path="tools/ev" element={<ExpectedValueToolPage />} />
