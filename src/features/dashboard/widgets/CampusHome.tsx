@@ -17,6 +17,7 @@ import {
   getTrackProgress,
 } from "@/lib/campusHome";
 import { cn } from "@/lib/cn";
+import { labelForPlacement } from "@/lib/placement";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
@@ -26,6 +27,7 @@ interface Props {
 
 export function CampusHome({ subjects }: Props) {
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
+  const placementGoal = usePreferences((s) => s.placementGoal);
   const setEnrolledTrack = usePreferences((s) => s.setEnrolledTrack);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
@@ -46,6 +48,14 @@ export function CampusHome({ subjects }: Props) {
       </p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
         Your enrolled track and what to do next.
+        {labelForPlacement(placementGoal) && (
+          <>
+            {" "}
+            <span className="text-[var(--text-heading)]">
+              Focus: {labelForPlacement(placementGoal)}.
+            </span>
+          </>
+        )}
       </p>
 
       <div className="mt-5">

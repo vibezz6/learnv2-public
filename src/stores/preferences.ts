@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { PlacementGoal } from "@/lib/placement";
+import { trackIdForPlacement } from "@/lib/placement";
 
 export type ThemeMode = "dark" | "light" | "system";
 
@@ -8,10 +10,12 @@ interface PreferencesState {
   focusMode: boolean;
   onboardingCompleted: boolean;
   enrolledTrackId: string | null;
+  placementGoal: PlacementGoal | null;
   setTheme: (theme: ThemeMode) => void;
   toggleFocusMode: () => void;
   setFocusMode: (value: boolean) => void;
   completeOnboarding: () => void;
+  completeOnboardingWithPlacement: (goal: PlacementGoal) => void;
   setEnrolledTrack: (id: string | null) => void;
 }
 
@@ -58,6 +62,7 @@ export const usePreferences = create<PreferencesState>()(
       focusMode: false,
       onboardingCompleted: false,
       enrolledTrackId: null,
+      placementGoal: null,
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -72,6 +77,12 @@ export const usePreferences = create<PreferencesState>()(
         set({ focusMode: value });
       },
       completeOnboarding: () => set({ onboardingCompleted: true }),
+      completeOnboardingWithPlacement: (goal) =>
+        set({
+          onboardingCompleted: true,
+          placementGoal: goal,
+          enrolledTrackId: trackIdForPlacement(goal),
+        }),
       setEnrolledTrack: (id) => set({ enrolledTrackId: id }),
     }),
     {
@@ -80,6 +91,7 @@ export const usePreferences = create<PreferencesState>()(
         theme: s.theme,
         onboardingCompleted: s.onboardingCompleted,
         enrolledTrackId: s.enrolledTrackId,
+        placementGoal: s.placementGoal,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) applyTheme(state.theme);

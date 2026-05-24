@@ -52,6 +52,8 @@ describe("preferences", () => {
       theme: "dark",
       focusMode: false,
       onboardingCompleted: false,
+      enrolledTrackId: null,
+      placementGoal: null,
     });
     delete document.documentElement.dataset.theme;
   });
@@ -65,6 +67,19 @@ describe("preferences", () => {
     expect(usePreferences.getState().onboardingCompleted).toBe(false);
     usePreferences.getState().completeOnboarding();
     expect(usePreferences.getState().onboardingCompleted).toBe(true);
+  });
+
+  it("completeOnboardingWithPlacement enrolls SAT track", () => {
+    usePreferences.getState().completeOnboardingWithPlacement("sat");
+    const s = usePreferences.getState();
+    expect(s.onboardingCompleted).toBe(true);
+    expect(s.placementGoal).toBe("sat");
+    expect(s.enrolledTrackId).toBe("sat-august");
+  });
+
+  it("completeOnboardingWithPlacement explore leaves track unset", () => {
+    usePreferences.getState().completeOnboardingWithPlacement("explore");
+    expect(usePreferences.getState().enrolledTrackId).toBeNull();
   });
 
   it("learnv2_preferences includes onboardingCompleted in persisted shape", () => {

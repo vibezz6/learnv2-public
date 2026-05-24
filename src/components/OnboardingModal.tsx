@@ -2,16 +2,25 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
 import { hasV1Data } from "@/lib/migrate-v1";
+import {
+  PLACEMENT_OPTIONS,
+  type PlacementGoal,
+} from "@/lib/placement";
+import { cn } from "@/lib/cn";
 import { usePreferences } from "@/stores/preferences";
 
-const STEP_COUNT = 2;
+const STEP_COUNT = 3;
 
 export function OnboardingModal() {
   const navigate = useNavigate();
   const onboardingCompleted = usePreferences((s) => s.onboardingCompleted);
   const completeOnboarding = usePreferences((s) => s.completeOnboarding);
+  const completeOnboardingWithPlacement = usePreferences(
+    (s) => s.completeOnboardingWithPlacement,
+  );
   const [hydrated, setHydrated] = useState(() => usePreferences.persist.hasHydrated());
   const [step, setStep] = useState(0);
+  const [selectedGoal, setSelectedGoal] = useState<PlacementGoal>("sat");
   const fromV1 = hasV1Data();
 
   useEffect(() => {
@@ -21,11 +30,17 @@ export function OnboardingModal() {
 
   if (!hydrated || onboardingCompleted) return null;
 
-  const finish = (path?: string) => {
+  const finishExplore = () => {
     completeOnboarding();
-    if (path) navigate(path);
+    navigate("/subjects");
   };
 
+  const finishWithPlacement = () => {
+    completeOnboardingWithPlacement(selectedGoal);
+    navigate("/");
+  };
+
+  const selectedOption = PLACEMENT_OPTIONS.find((o) => o.goal === selectedGoal);
   const isLast = step === STEP_COUNT - 1;
 
   return (
@@ -35,19 +50,20 @@ export function OnboardingModal() {
       aria-modal="true"
       aria-labelledby="onboarding-title"
     >
-      <div className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-md)]">
+      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-md)]">
         <div className="mb-6 flex justify-center gap-2" aria-hidden="true">
           {Array.from({ length: STEP_COUNT }, (_, i) => (
             <span
               key={i}
-              className={`h-2 w-2 rounded-full transition ${
-                i === step ? "bg-[var(--accent)]" : "bg-[var(--border)]"
-              }`}
+              className={cn(
+                "h-2 w-2 rounded-full transition",
+                i === step ? "bg-[var(--accent)]" : "bg-[var(--border)]",
+              )}
             />
           ))}
         </div>
 
-        {fromV1 && (
+        {fromV1 && step === 0 && (
           <p className="mb-4 text-sm text-[var(--text-muted)]">
             Learn v1 data found.{" "}
             <Link
@@ -65,9 +81,9 @@ export function OnboardingModal() {
             <h2 id="onboarding-title" className="text-lg font-semibold text-[var(--text-heading)]">
               Welcome to Learn v2
             </h2>
-            <p className="mt-2 text-sm text-[var(--text-muted)]">
-              Your curriculum, progress, and study tools in one place. This quick tour covers the
-              basics so you can jump in.
+            <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+              Your college-style study app: tracks, lessons, SAT prep, notes, and a transcript of
+              your work. A short placement picks your default degree plan.
             </p>
           </>
         )}
@@ -75,20 +91,82 @@ export function OnboardingModal() {
         {step === 1 && (
           <>
             <h2 id="onboarding-title" className="text-lg font-semibold text-[var(--text-heading)]">
-              Pick a track or subject
+              What&apos;s your main focus?
             </h2>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
-              Learning tracks guide you through a curated path. Subjects let you browse the full
-              curriculum on your own.
+              We&apos;ll enroll you in a track on the campus home dashboard. You can change it
+              anytime.
             </p>
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-              <Button className="flex-1" onClick={() => finish("/tracks")}>
-                Browse tracks
-              </Button>
-              <Button className="flex-1" variant="secondary" onClick={() => finish("/subjects")}>
-                Browse subjects
-              </Button>
-            </div>
+            <ul className="mt-4 space-y-2" role="listbox" aria-label="Placement goal">
+              {PLACEMENT_OPTIONS.map((option) => {
+                const selected = selectedGoal === option.goal;
+                return (
+                  <li key={option.goal}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={selected}
+                      onClick={() => setSelectedGoal(option.goal)}
+                      className={cn(
+                        "w-full rounded-[var(--radius)] border p-4 text-left transition touch-manipulation",
+                        selected
+                          ? "border-[var(--accent)] bg-[var(--accent-bg)]"
+                          : "border-[var(--border)] hover:border-[var(--border-strong)]",
+                      )}
+                    >
+                      <p className="text-sm font-medium text-[var(--text-heading)]">
+                        {option.title}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-[var(--text-muted)]">
+                        {option.description}
+                      </p>
+                      <p className="mt-2 text-[11px] text-[var(--text-muted)]">
+                        Track: {option.trackName}
+                      </p>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
+
+        {step === 2 && selectedOption && (
+          <>
+            <h2 id="onboarding-title" className="text-lg font-semibold text-[var(--text-heading)]">
+              You&apos;re set
+            </h2>
+            <p className="mt-2 text-sm text-[var(--text-muted)]">
+              Focus: <span className="font-medium text-[var(--text-heading)]">{selectedOption.title}</span>
+              {selectedOption.goal !== "explore" && (
+                <>
+                  {" "}
+                  · enrolled in <span className="font-medium">{selectedOption.trackName}</span>
+                </>
+              )}
+            </p>
+            <p className="mt-3 text-sm text-[var(--text-muted)]">
+              Your dashboard shows this week&apos;s plan, daily assignments, and SAT next steps when
+              relevant.
+            </p>
+            <Button className="mt-4 min-h-11 w-full touch-manipulation" onClick={finishWithPlacement}>
+              Go to campus home
+            </Button>
+            {selectedGoal === "sat" && (
+              <p className="mt-3 text-center text-xs text-[var(--text-muted)]">
+                Also open{" "}
+                <Link
+                  to="/campus/college-checklist"
+                  onClick={() => {
+                    completeOnboardingWithPlacement(selectedGoal);
+                  }}
+                  className="font-medium text-[var(--accent)] hover:underline"
+                >
+                  college checklist
+                </Link>{" "}
+                for FAFSA and applications.
+              </p>
+            )}
           </>
         )}
 
@@ -101,17 +179,18 @@ export function OnboardingModal() {
             )}
           </div>
           <div className="flex gap-2">
-            {isLast ? (
-              <Button variant="ghost" onClick={() => finish()}>
-                Skip for now
-              </Button>
-            ) : (
+            {!isLast && (
               <>
-                <Button variant="ghost" onClick={() => finish()}>
-                  Skip tour
+                <Button variant="ghost" onClick={finishExplore}>
+                  Skip
                 </Button>
                 <Button onClick={() => setStep((s) => s + 1)}>Next</Button>
               </>
+            )}
+            {isLast && (
+              <Button variant="ghost" onClick={finishExplore}>
+                Browse subjects instead
+              </Button>
             )}
           </div>
         </div>
