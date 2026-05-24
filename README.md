@@ -94,15 +94,25 @@ Re-sync from v1: `npm run curriculum:split` (reads `Learn-v1/src/data/curriculum
 
 ```bash
 npm install
-npm run dev              # http://127.0.0.1:8080 (vite.config.ts port 8080)
+npm run dev
+# → http://127.0.0.1:8080 (port is in vite.config.ts — do not pass :8080 on the command line)
+
 npm run build
 npm run preview
-npm run test             # vitest (see CI for current count)
+npm run test
 npm run test:watch
 npm run lint
-npm run curriculum:split # re-sync JSON from Learn-v1
-npm run version:bump     # patch: 2.0.x → 2.0.99 → 2.1.0
+npm run curriculum:split
+npm run version:bump
 node ~/cursor/scripts/audit-curriculum.mjs
+```
+
+**Journal stack** (separate terminal, from `~/liqui/projects/tradingv1`):
+
+```bash
+npm run dev
+# or: bash scripts/dev.sh
+# → API http://127.0.0.1:8000 , UI http://127.0.0.1:8081
 ```
 
 ## Migrate from v1
