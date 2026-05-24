@@ -125,3 +125,15 @@ export function formatAdmissionsTranscriptSection(summary: AdmissionsSummary): s
 
   return lines;
 }
+
+export function buildAdmissionsExportPayload(
+  checklist: CollegeChecklistState = loadCollegeChecklist(),
+  essays: EssayTrackerState = loadEssayTracker(),
+) {
+  return {
+    exportedAt: new Date().toISOString(),
+    summary: buildAdmissionsSummary(checklist, essays),
+    checklist,
+    essays,
+  };
+}

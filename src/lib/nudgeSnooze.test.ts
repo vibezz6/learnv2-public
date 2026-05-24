@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { CampusAdmissionsNudge } from "./campusAdmissionsNudges";
 import {
+  clearAllNudgeSnoozes,
   DEFAULT_SNOOZE_DAYS,
   filterSnoozedNudges,
+  getActiveSnoozes,
   isNudgeSnoozed,
   loadNudgeSnooze,
   snoozeNudge,
@@ -47,5 +49,12 @@ describe("nudgeSnooze", () => {
     snoozeNudge("essay-tracker-empty", 7, storage, now);
     const filtered = filterSnoozedNudges(sample, storage, now);
     expect(filtered.map((n) => n.id)).toEqual(["checklist-start"]);
+  });
+
+  it("clearAllNudgeSnoozes removes active snoozes", () => {
+    snoozeNudge("essay-tracker-empty", 7, storage, now);
+    expect(getActiveSnoozes(now, storage)).toHaveLength(1);
+    clearAllNudgeSnoozes(storage);
+    expect(getActiveSnoozes(now, storage)).toHaveLength(0);
   });
 });

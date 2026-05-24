@@ -95,3 +95,22 @@ export function filterSnoozedNudges(
   }
   return nudges.filter((n) => !isNudgeSnoozed(n.id, state, now));
 }
+
+export function getActiveSnoozes(
+  now = Date.now(),
+  storage: Storage = localStorage,
+): Array<{ id: string; expiresAt: number; daysLeft: number }> {
+  const state = pruneExpiredSnoozes(loadNudgeSnooze(storage), now);
+  const msPerDay = 86400000;
+  return Object.entries(state.snoozes)
+    .map(([id, expiresAt]) => ({
+      id,
+      expiresAt,
+      daysLeft: Math.max(0, Math.ceil((expiresAt - now) / msPerDay)),
+    }))
+    .sort((a, b) => a.expiresAt - b.expiresAt);
+}
+
+export function clearAllNudgeSnoozes(storage: Storage = localStorage): void {
+  saveNudgeSnooze(emptyState(), storage);
+}

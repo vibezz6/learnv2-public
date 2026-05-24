@@ -8,6 +8,7 @@ import {
   useProgress,
 } from "@/stores/progress";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
+import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
 
 const OPENROUTER_KEY = "learnapp_openrouter_key";
 
@@ -101,9 +102,9 @@ export function SettingsPage() {
       </Card>
 
       <Card className="min-w-0 space-y-3">
-        <h2 className="break-words font-semibold text-[var(--text-heading)]">OpenRouter API key (Notes AI)</h2>
+        <h2 className="break-words font-semibold text-[var(--text-heading)]">OpenRouter API key (office hours)</h2>
         <p className="break-words text-sm text-[var(--text-muted)]">
-          Optional. Powers AI note review and mentor quiz. Stored locally as{" "}
+          Optional. Powers AI TA feedback and recall check-in on lesson office hours. Stored locally as{" "}
           <code className="break-all font-mono text-xs">{OPENROUTER_KEY}</code>.
         </p>
         <input
@@ -124,6 +125,8 @@ export function SettingsPage() {
           Save API key
         </Button>
       </Card>
+
+      <AdmissionsSettingsCard onMessage={setMessage} />
 
       <Card className="min-w-0 space-y-3">
         <h2 className="break-words font-semibold text-[var(--text-heading)]">Export / import</h2>
