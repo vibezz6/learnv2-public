@@ -55,7 +55,12 @@ const navSections: { label: string; items: NavItem[] }[] = [
   },
 ];
 
-const mobileNav = navSections.flatMap((section) => section.items).slice(0, 5);
+const mobileNav: NavItem[] = [
+  { to: "/", label: "Today", icon: Home, end: true },
+  { to: "/review", label: "Review", icon: Brain },
+  { to: "/timer", label: "Timer", icon: Timer },
+  { to: "/stats", label: "Stats", icon: BarChart3 },
+];
 
 export function AppShell() {
   const { theme, setTheme, focusMode, toggleFocusMode } = usePreferences();
@@ -201,13 +206,26 @@ export function AppShell() {
               end={end}
               className={({ isActive }) =>
                 cn(
-                  "flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] transition",
-                  isActive ? "text-[var(--accent)]" : "text-[var(--text-muted)]",
+                  "flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-0.5 px-1 text-[10px] leading-tight transition",
+                  isActive
+                    ? "font-medium text-[var(--accent)]"
+                    : "text-[var(--text-muted)]",
                 )
               }
             >
-              <Icon size={18} />
-              {label}
+              {({ isActive }) => (
+                <>
+                  <span className="relative">
+                    <Icon size={18} strokeWidth={isActive ? 2.25 : 1.75} />
+                    {to === "/review" && reviewCount > 0 && (
+                      <span className="absolute -right-2 -top-1.5 rounded-full bg-[var(--accent)]/15 px-1 font-mono text-[9px] tabular-nums leading-none text-[var(--accent)]">
+                        {reviewCount}
+                      </span>
+                    )}
+                  </span>
+                  {label}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
