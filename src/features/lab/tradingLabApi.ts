@@ -1,6 +1,13 @@
-export const TRADING_API_BASE = "http://127.0.0.1:8000";
-export const TRADING_JOURNAL_URL = "http://127.0.0.1:8081";
+import {
+  LEARN_TRADING_LAB_URL,
+  TRADING_API_ORIGIN,
+  TRADING_JOURNAL_ORIGIN,
+} from "@/lib/devPorts";
+
+export const TRADING_API_BASE = TRADING_API_ORIGIN;
+export const TRADING_JOURNAL_URL = TRADING_JOURNAL_ORIGIN;
 export const TRADING_TRADES_URL = `${TRADING_JOURNAL_URL}/trades`;
+export { LEARN_TRADING_LAB_URL };
 
 export type BacktestRunCard = {
   strategy: string;

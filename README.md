@@ -2,9 +2,19 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.8 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.12 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
-Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source. Post-cutover patches **v2.0.1–v2.0.8** shipped UI polish, v1 migration hardening, **SAT Prep** (55-lesson subject + August SAT track), full localStorage backup export, and continue-learning SAT priority.
+Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
+
+### Local ports (with tradingv1 journal)
+
+| Service | URL | Config |
+|---------|-----|--------|
+| **Learn v2** (this app) | http://127.0.0.1:8080 | `vite.config.ts` |
+| **tradingv1 API** | http://127.0.0.1:8000 | `uvicorn … --port 8000` |
+| **tradingv1 journal UI** | http://127.0.0.1:8081 | `tradingv1/web/vite.config.ts` |
+
+Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **8081** and health-checks the API on **8000**.
 
 ## Stack
 
@@ -18,9 +28,10 @@ Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/proje
 
 **Core loop**
 
+- **Campus home** — enrolled track, weekly syllabus, SAT next step, review/timer/stats links
 - **Neural Command Center** — continue learning, review queue, daily challenge, track recommendation
-- **10 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
-- **SAT Prep** — 55-lesson Digital SAT path (Math + R&W drills, Bluebook checkpoints, test-week plan) with **August SAT Track**
+- **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
+- **SAT Prep** — 75-lesson Digital SAT path (st66+ round-4/5 drills, mistake log, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
 - **SRS review** — spaced repetition queue with due-date scheduling
 - **Tracks** — guided learning paths across subjects
@@ -38,7 +49,9 @@ Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/proje
 - **Deep focus mode** — `F` hides chrome for distraction-free study
 - **Study timer** — timed sessions with summary
 - **Review & stats** — SRS spotlight cards, level/streak hero, 7-day study chart, achievement unlocks
-- **Tools** — compound interest and expected value calculators
+- **Campus services** (`/campus`) — Trading Lab, calculators, SAT, algo lab hub
+- **Study transcript** (Stats) — copy/download proof of study hours and progress
+- **Tools** — compound interest and expected value calculators (`/campus/calculators`)
 - **Achievements & sounds** — level-ups, toasts, optional audio
 - **Themes** — dark, light, system
 - **Export / import** — JSON backup of all `learnv2_*` and `learnapp_*` localStorage keys (OpenRouter API keys excluded)
@@ -55,15 +68,16 @@ Audited 2026-05-23 via `node ~/cursor/scripts/audit-curriculum.mjs`:
 
 | Metric | Count |
 |--------|------:|
-| Subjects | 10 |
-| Lessons (nodes) | **293** |
+| Subjects | 11 |
+| Lessons (nodes) | **321** |
 | Quiz questions | **1,039** |
 | Worked examples | **724** |
 | Threshold flags | **110** (all SAT Prep — drill lessons, no worked examples by design) |
 
 | Subject | Nodes | Quiz Qs | Worked Examples |
 |---------|------:|--------:|----------------:|
-| sat-prep | 55 | 98 | 0 |
+| sat-prep | 75 | — | — |
+| algo-lab | 8 | — | — |
 | math | 55 | 234 | 169 |
 | cs | 40 | 136 | 122 |
 | trading | 38 | 168 | 115 |
@@ -83,7 +97,7 @@ npm install
 npm run dev              # http://127.0.0.1:8080 (vite.config.ts port 8080)
 npm run build
 npm run preview
-npm run test             # 75 unit tests (vitest)
+npm run test             # vitest (see CI for current count)
 npm run test:watch
 npm run lint
 npm run curriculum:split # re-sync JSON from Learn-v1
