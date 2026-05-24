@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Check,
@@ -25,6 +25,8 @@ import { hasSeen, achievementLabel, type Achievement } from "@/stores/achievemen
 import { useProgress } from "@/stores/progress";
 import { StreakCalendar } from "@/features/dashboard/widgets/StreakCalendar";
 import { EulerQuizMastery } from "@/features/dashboard/widgets/EulerQuizMastery";
+import { AdmissionsTranscriptPreview } from "@/features/stats/AdmissionsTranscriptPreview";
+import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
   const json = JSON.stringify(summary, null, 2);
@@ -98,17 +100,25 @@ export function StatsPage() {
   const getReviewStats = useProgress((s) => s.getReviewStats);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [copiedTranscript, setCopiedTranscript] = useState(false);
+  const [admissionsRevision, setAdmissionsRevision] = useState(0);
 
   useEffect(() => {
     loadAllSubjects().then(setSubjects);
   }, []);
 
+  useEffect(() => {
+    const bump = () => setAdmissionsRevision((r) => r + 1);
+    window.addEventListener(ADMISSIONS_UPDATED_EVENT, bump);
+    return () => window.removeEventListener(ADMISSIONS_UPDATED_EVENT, bump);
+  }, []);
+
   const stats = subjects.length ? getStats(subjects) : null;
   const reviewStats = getReviewStats();
-  const transcript =
-    stats && subjects.length
-      ? buildTranscriptSummary(subjects, { getStats, getNodeStatus, getReviewStats })
-      : null;
+  const transcript = useMemo(() => {
+    void admissionsRevision;
+    if (!stats || !subjects.length) return null;
+    return buildTranscriptSummary(subjects, { getStats, getNodeStatus, getReviewStats });
+  }, [stats, subjects, admissionsRevision, getStats, getNodeStatus, getReviewStats]);
 
   const handleCopyTranscript = async () => {
     if (!transcript) return;
@@ -205,6 +215,7 @@ export function StatsPage() {
                   </li>
                 ))}
               </ul>
+              <AdmissionsTranscriptPreview admissions={transcript.admissions} />
             </Card>
           )}
 
