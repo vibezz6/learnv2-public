@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   TRADING_API_BASE,
   type BacktestRunCard,
+  fetchEnrichmentQueueCount,
   fetchLastBacktestRun,
   formatBacktestSummary,
 } from "@/features/lab/tradingLabApi";
@@ -33,6 +34,49 @@ describe("formatBacktestSummary", () => {
     };
 
     expect(formatBacktestSummary(card)).toBe("ETH-USD · Momentum, 8.1% return");
+  });
+});
+
+describe("fetchEnrichmentQueueCount", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("returns array length when fetch succeeds", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ id: 1 }, { id: 2 }],
+      }),
+    );
+
+    await expect(fetchEnrichmentQueueCount()).resolves.toBe(2);
+    expect(fetch).toHaveBeenCalledWith(`${TRADING_API_BASE}/api/trades/enrichment-queue`);
+  });
+
+  it("returns null when response is not ok", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        json: async () => [],
+      }),
+    );
+
+    await expect(fetchEnrichmentQueueCount()).resolves.toBeNull();
+  });
+
+  it("returns null when body is not an array", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ trades: [] }),
+      }),
+    );
+
+    await expect(fetchEnrichmentQueueCount()).resolves.toBeNull();
   });
 });
 

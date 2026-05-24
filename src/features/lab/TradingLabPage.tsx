@@ -4,10 +4,12 @@ import { BookOpen, ExternalLink, FlaskConical, TrendingUp } from "lucide-react";
 import { Badge, Button, Card } from "@/components/ui";
 import {
   type BacktestRunCard,
+  fetchEnrichmentQueueCount,
   fetchHealth,
   fetchLastBacktestRun,
   formatBacktestSummary,
   TRADING_JOURNAL_URL,
+  TRADING_TRADES_URL,
 } from "./tradingLabApi";
 
 type LabStatus = "checking" | "online" | "offline";
@@ -16,6 +18,7 @@ export function TradingLabPage() {
   const [status, setStatus] = useState<LabStatus>("checking");
   const [lastBacktest, setLastBacktest] = useState<BacktestRunCard | null>(null);
   const [backtestLoaded, setBacktestLoaded] = useState(false);
+  const [enrichmentCount, setEnrichmentCount] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -27,9 +30,13 @@ export function TradingLabPage() {
       setStatus(online ? "online" : "offline");
 
       if (online) {
-        const run = await fetchLastBacktestRun();
+        const [run, queueCount] = await Promise.all([
+          fetchLastBacktestRun(),
+          fetchEnrichmentQueueCount(),
+        ]);
         if (cancelled) return;
         setLastBacktest(run);
+        setEnrichmentCount(queueCount);
       }
 
       if (!cancelled) setBacktestLoaded(true);
@@ -102,6 +109,44 @@ export function TradingLabPage() {
         {(status === "checking" || (status === "online" && !backtestLoaded)) && (
           <p className="text-sm text-[var(--text-muted)]">Loading…</p>
         )}
+      </Card>
+
+      <Card className="stagger-item space-y-3">
+        <div className="font-semibold text-[var(--text-heading)]">FX Replay → journal</div>
+        <ol className="list-decimal space-y-2 pl-5 text-sm text-[var(--text-muted)]">
+          <li>Backtest in FX Replay, then export CSV (or use the template in tradingv1).</li>
+          <li>
+            Import via journal <strong className="text-[var(--text-heading)]">History</strong> or{" "}
+            <code className="rounded bg-[var(--bg-muted)] px-1 py-0.5">import-csv</code> with{" "}
+            <code className="rounded bg-[var(--bg-muted)] px-1 py-0.5">--import-mode sim_study</code>
+            .
+          </li>
+          <li>
+            Open the trade database — add HTF/LTF tags, screenshots, and notes per row.
+          </li>
+          <li>Mark each trade complete when enrichment is done.</li>
+        </ol>
+        <p className="text-xs text-[var(--text-muted)]">
+          CSV tip: use column <code className="rounded bg-[var(--bg-muted)] px-1">entry_concepts</code>
+          , not <code className="rounded bg-[var(--bg-muted)] px-1">entry</code> (conflicts with entry
+          price).
+        </p>
+        {status === "online" && enrichmentCount !== null && enrichmentCount > 0 && (
+          <p className="text-sm text-[var(--warning)]">
+            {enrichmentCount} trade{enrichmentCount === 1 ? "" : "s"} need screenshots or tags.
+          </p>
+        )}
+        <a
+          href={TRADING_TRADES_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex"
+        >
+          <Button variant="secondary" className="gap-2" disabled={status === "offline"}>
+            Open trade database
+            <ExternalLink size={14} />
+          </Button>
+        </a>
       </Card>
 
       <div className="stagger-item space-y-3">

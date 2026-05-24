@@ -1,5 +1,6 @@
 export const TRADING_API_BASE = "http://127.0.0.1:8000";
 export const TRADING_JOURNAL_URL = "http://127.0.0.1:8081";
+export const TRADING_TRADES_URL = `${TRADING_JOURNAL_URL}/trades`;
 
 export type BacktestRunCard = {
   strategy: string;
@@ -37,6 +38,17 @@ export async function fetchHealth(): Promise<boolean> {
     return res.ok;
   } catch {
     return false;
+  }
+}
+
+export async function fetchEnrichmentQueueCount(): Promise<number | null> {
+  try {
+    const res = await fetch(`${TRADING_API_BASE}/api/trades/enrichment-queue`);
+    if (!res.ok) return null;
+    const data: unknown = await res.json();
+    return Array.isArray(data) ? data.length : null;
+  } catch {
+    return null;
   }
 }
 
