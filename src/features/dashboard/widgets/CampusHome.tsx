@@ -3,7 +3,6 @@ import {
   ArrowRight,
   BarChart3,
   Brain,
-  ChevronRight,
   GraduationCap,
   Lock,
   Timer,
@@ -16,7 +15,6 @@ import {
   getSatNextLesson,
   getTrackById,
   getTrackProgress,
-  getWeeklySyllabusNodes,
 } from "@/lib/campusHome";
 import { cn } from "@/lib/cn";
 import { usePreferences } from "@/stores/preferences";
@@ -39,7 +37,6 @@ export function CampusHome({ subjects }: Props) {
   if (!track) return null;
 
   const progress = getTrackProgress(track, subjects, getNodeStatus);
-  const syllabus = getWeeklySyllabusNodes(track, subjects, getNodeStatus);
   const satNext = getSatNextLesson(subjects, getNodeStatus);
 
   return (
@@ -48,7 +45,7 @@ export function CampusHome({ subjects }: Props) {
         Campus home
       </p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
-        Your enrolled track, this week&apos;s plan, and what to do next.
+        Your enrolled track and what to do next.
       </p>
 
       <div className="mt-5">
@@ -109,56 +106,6 @@ export function CampusHome({ subjects }: Props) {
             />
           </div>
         </div>
-      </div>
-
-      <div className="mt-6">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-          This week
-        </p>
-        {syllabus.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            No upcoming lessons — you&apos;re caught up on this track.
-          </p>
-        ) : (
-          <ul className="mt-2 divide-y divide-[var(--border)]">
-            {syllabus.map((item) => {
-              const locked = item.status === "locked";
-              const comingSoon = item.status === "coming_soon";
-              const content = (
-                <>
-                  <span className="min-w-0 flex-1 break-words text-sm">{item.title}</span>
-                  {comingSoon ? (
-                    <span className="shrink-0 text-[11px] text-[var(--text-muted)]">Coming soon</span>
-                  ) : locked ? (
-                    <Lock size={14} className="shrink-0 text-[var(--text-muted)]" aria-hidden />
-                  ) : (
-                    <ChevronRight size={14} className="shrink-0 text-[var(--text-muted)]" aria-hidden />
-                  )}
-                </>
-              );
-
-              return (
-                <li key={`${item.subjectId}-${item.nodeId}`}>
-                  {locked || comingSoon ? (
-                    <div
-                      className="flex min-h-11 items-center gap-2 py-2.5 text-[var(--text-muted)]"
-                      aria-disabled
-                    >
-                      {content}
-                    </div>
-                  ) : (
-                    <Link
-                      to={`/subjects/${item.subjectId}/${item.nodeId}`}
-                      className="flex min-h-11 items-center gap-2 py-2.5 text-[var(--text-heading)] touch-manipulation hover:text-[var(--accent-2)]"
-                    >
-                      {content}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
       </div>
 
       {satNext && (

@@ -112,3 +112,7 @@ export function getPromptsForSubject(subjectId: string): PromptSet["prompts"] {
   const set = SUBJECT_PROMPTS.find(p => p.subjectId === subjectId);
   return set?.prompts || SUBJECT_PROMPTS[0].prompts; // fallback to math
 }
+
+export function hasNotesForSubject(subjectId: string): boolean {
+  return SUBJECT_PROMPTS.some((set) => set.subjectId === subjectId);
+}

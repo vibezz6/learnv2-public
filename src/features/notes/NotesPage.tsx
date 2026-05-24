@@ -4,6 +4,7 @@ import {
   AlertCircle,
   ArrowLeft,
   BookOpen,
+  Info,
   Check,
   CheckCircle2,
   ChevronLeft,
@@ -31,7 +32,6 @@ import {
   getInitialNotesView,
   getSession,
   hasMinNotesContent,
-  MIN_PROMPTS_FOR_REVIEW,
   saveMentorSession,
   saveReview,
   updateResponses,
@@ -40,9 +40,9 @@ import {
 } from "@/stores/noteSessions";
 
 const STEPS: { id: NotesFlowView; label: string; description: string }[] = [
-  { id: "editor", label: "Write", description: "Guided prompts" },
-  { id: "review", label: "Review", description: "AI feedback" },
-  { id: "mentor", label: "Mentor", description: "Quiz Q&A" },
+  { id: "editor", label: "Write notes", description: "Guided prompts" },
+  { id: "review", label: "TA feedback", description: "Review your notes" },
+  { id: "mentor", label: "Mentor check-in", description: "Quick recall quiz" },
 ];
 
 const QUALITY_LABELS: Record<MentorMessage["quality"], string> = {
@@ -54,7 +54,10 @@ const QUALITY_LABELS: Record<MentorMessage["quality"], string> = {
 
 function hasOpenRouterKey(): boolean {
   try {
-    return !!localStorage.getItem("learnapp_openrouter_key");
+    return !!(
+      localStorage.getItem("learnv2_openrouter_key")
+      || localStorage.getItem("learnapp_openrouter_key")
+    );
   } catch {
     return false;
   }
@@ -148,13 +151,13 @@ export function NotesPage() {
 
         <div className="space-y-2">
           <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
-            Notes · {subject.name}
+            Office hours · {subject.name}
           </p>
           <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
-            Guided notes
+            Office hours
           </h1>
           <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
-            Write → get AI feedback → test yourself with mentor questions.
+            Write notes → TA feedback → Mentor check-in.
           </p>
         </div>
 
@@ -194,8 +197,8 @@ export function NotesPage() {
                   title={
                     !unlocked
                       ? step.id === "review"
-                        ? `Answer at least ${MIN_PROMPTS_FOR_REVIEW} prompt to unlock`
-                        : "Complete AI review first"
+                        ? "Write notes for at least one prompt before TA feedback opens."
+                        : "Finish TA feedback before starting the mentor check-in."
                       : step.description
                   }
                 >
@@ -374,7 +377,7 @@ function NoteEditor({
 
       {!readyForReview && (
         <p className="text-center text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
-          Answer at least {MIN_PROMPTS_FOR_REVIEW} prompt to continue to review.
+          Answer at least one prompt to continue to TA feedback.
         </p>
       )}
 
@@ -391,7 +394,7 @@ function NoteEditor({
           onClick={goNext}
           disabled={activeIndex === prompts.length - 1 && !readyForReview}
         >
-          {activeIndex === prompts.length - 1 ? "Save & review" : "Next"}
+          {activeIndex === prompts.length - 1 ? "Save & get feedback" : "Next"}
           <ChevronRight size={16} />
         </Button>
       </div>
@@ -412,10 +415,29 @@ function NoteEditor({
             disabled={activeIndex === prompts.length - 1 && !readyForReview}
             className="min-h-11 flex-1"
           >
-            {activeIndex === prompts.length - 1 ? "Save & review" : "Next"}
+            {activeIndex === prompts.length - 1 ? "Save & get feedback" : "Next"}
             <ChevronRight size={16} />
           </Button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function OfflineReviewBanner() {
+  return (
+    <div
+      role="status"
+      className="flex gap-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-left"
+    >
+      <Info size={18} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
+      <div className="min-w-0 space-y-1 text-sm text-[var(--text-muted)]">
+        <p className="font-medium text-[var(--text-heading)]">Offline TA feedback</p>
+        <p>
+          No OpenRouter key in Settings, so feedback uses built-in rules — keyword coverage,
+          note depth, and gaps against key concepts. It still works without AI. Add a key in
+          Settings anytime for richer, personalized feedback.
+        </p>
       </div>
     </div>
   );
@@ -489,36 +511,40 @@ function NoteReviewPanel({
 
   if (!review) {
     return (
-      <Card className="space-y-4 text-center">
-        <Sparkles className="mx-auto text-[var(--text-muted)]" size={32} />
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Ready for AI review</h2>
-        <p className="text-sm text-[var(--text-muted)]">
-          {hasOpenRouterKey()
-            ? "Your notes will be analyzed for coverage, depth, and gaps."
-            : "No API key set — review uses built-in heuristics. Add a key in Settings for richer feedback."}
-        </p>
-        {error && (
-          <p className="text-sm text-[var(--warning)]">{error}</p>
-        )}
-        <Button onClick={() => void handleGenerate()} disabled={loading}>
-          {loading ? (
-            <>
-              <Loader2 size={16} className="animate-spin" />
-              Analyzing your notes…
-            </>
-          ) : (
-            <>
-              <Zap size={16} />
-              Generate review
-            </>
+      <div className="space-y-4">
+        {!hasOpenRouterKey() && <OfflineReviewBanner />}
+        <Card className="space-y-4 text-center">
+          <Sparkles className="mx-auto text-[var(--text-muted)]" size={32} />
+          <h2 className="text-xl font-semibold text-[var(--text-heading)]">Ready for TA feedback</h2>
+          <p className="text-sm text-[var(--text-muted)]">
+            {hasOpenRouterKey()
+              ? "Your notes will be analyzed for coverage, depth, and gaps."
+              : "Tap below to run the offline review — same strengths, gaps, and suggestions format."}
+          </p>
+          {error && (
+            <p className="text-sm text-[var(--warning)]">{error}</p>
           )}
-        </Button>
-      </Card>
+          <Button onClick={() => void handleGenerate()} disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Analyzing your notes…
+              </>
+            ) : (
+              <>
+                <Zap size={16} />
+                Get TA feedback
+              </>
+            )}
+          </Button>
+        </Card>
+      </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      {!hasOpenRouterKey() && <OfflineReviewBanner />}
       <Card variant="quiet" className="text-center">
         <div className="font-mono text-4xl font-semibold tabular-nums text-[var(--text-heading)]">
           {review.score}
@@ -526,7 +552,7 @@ function NoteReviewPanel({
         </div>
         <p className="mt-1 text-sm text-[var(--text-muted)]">{subject.name} · {node.name}</p>
         <p className="mt-2 text-xs text-[var(--text-muted)]">
-          {hasOpenRouterKey() ? "AI-powered review" : "Offline heuristic review"}
+          {hasOpenRouterKey() ? "AI-powered TA feedback" : "Rule-based TA feedback"}
         </p>
       </Card>
 
@@ -539,7 +565,7 @@ function NoteReviewPanel({
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button onClick={onQuizMe} className="min-h-11 w-full sm:w-auto">
-          Continue to mentor quiz
+          Continue to mentor check-in
           <ChevronRight size={16} />
         </Button>
         <Button variant="secondary" onClick={() => void handleGenerate()} disabled={loading} className="min-h-11 w-full sm:w-auto">
@@ -679,11 +705,11 @@ function NoteMentorPanel({
     return (
       <Card className="space-y-4 text-center">
         <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Complete review first</h2>
+        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Complete TA feedback first</h2>
         <p className="text-sm text-[var(--text-muted)]">
-          Generate an AI review of your notes before starting the mentor quiz.
+          Get feedback on your notes before starting the mentor check-in.
         </p>
-        <Button onClick={onBackToReview}>Go to Review</Button>
+        <Button onClick={onBackToReview}>Go to TA feedback</Button>
       </Card>
     );
   }
@@ -692,7 +718,7 @@ function NoteMentorPanel({
     return (
       <Card className="space-y-4 text-center">
         <GraduationCap className="mx-auto text-[var(--text-muted)]" size={32} />
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Mentor quiz</h2>
+        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Mentor check-in</h2>
         <p className="text-sm text-[var(--text-muted)]">
           {node.name} · {subject.name}
         </p>

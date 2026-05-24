@@ -7,8 +7,11 @@ import type { Subject } from "@/curriculum/types";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { formatAppVersion } from "@/lib/version";
+import { DEFAULT_TRACK_ID } from "@/lib/campusHome";
+import { getTrackChallengeCategory } from "@/lib/coursework";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { CampusHome } from "./widgets/CampusHome";
+import { WeekAssignments } from "./widgets/WeekAssignments";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeWidget } from "./widgets/DailyChallengeWidget";
 import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
@@ -35,9 +38,10 @@ export function DashboardPage() {
   const reviewDue = subjects.length ? getNodesNeedingReview(subjects).length : 0;
   const reviewedToday = getDailyReviewCount();
   const nextReview = getNextScheduledReview();
-  const challengeCategory = target
-    ? subjectToChallengeCategory(target.subject.id)
-    : null;
+  const activeTrackId = enrolledTrackId ?? DEFAULT_TRACK_ID;
+  const challengeCategory =
+    getTrackChallengeCategory(activeTrackId) ??
+    (target ? subjectToChallengeCategory(target.subject.id) : null);
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-5xl space-y-10 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:p-8 md:pb-8">
@@ -59,6 +63,12 @@ export function DashboardPage() {
       {subjects.length > 0 && (
         <section>
           <CampusHome subjects={subjects} />
+        </section>
+      )}
+
+      {subjects.length > 0 && (
+        <section>
+          <WeekAssignments subjects={subjects} />
         </section>
       )}
 

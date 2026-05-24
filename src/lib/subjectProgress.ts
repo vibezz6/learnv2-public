@@ -31,6 +31,7 @@ export function subjectToChallengeCategory(subjectId: string): string | null {
     probability: "Probability",
     finance: "Finance",
     trading: "Trading",
+    "sat-prep": "SAT",
   };
   return map[subjectId] ?? null;
 }
