@@ -1,6 +1,7 @@
 import type { CollegeChecklistState } from "./collegeChecklist";
 import { DEFAULT_COLLEGE_CHECKLIST } from "./collegeChecklist";
 import type { EssayEntry, EssayTrackerState } from "./essayTracker";
+import { filterSnoozedNudges } from "./nudgeSnooze";
 import type { PlacementGoal } from "./placement";
 
 export interface CampusAdmissionsNudge {
@@ -194,6 +195,7 @@ export function getCampusAdmissionsNudges(
     placementGoal?: PlacementGoal | null;
     now?: Date;
     max?: number;
+    storage?: Storage;
   },
 ): CampusAdmissionsNudge[] {
   const now = options?.now ?? new Date();
@@ -221,5 +223,8 @@ export function getCampusAdmissionsNudges(
 
   const softCap = deadline.length > 0 ? 1 : 2;
   const merged = [...deadline, ...other, ...soft.slice(0, softCap)];
-  return merged.slice(0, max);
+  const storage = options?.storage ?? (typeof localStorage !== "undefined" ? localStorage : undefined);
+  const visible = merged.slice(0, max);
+  if (!storage) return visible;
+  return filterSnoozedNudges(visible, storage, now.getTime());
 }

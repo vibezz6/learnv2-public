@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.14 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.15 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -148,5 +148,6 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 6 Post-cutover polish | ✅ **v2.0.8** (daily driver) |
 | 7 College admissions (24–26) | ✅ **v2.0.13** — placement, checklist, essays, nudges |
 | 8 Admissions ship (27) | ✅ **v2.0.14** — transcript + weekly deadline strip |
+| 9 Nudge snooze (28) | ✅ **v2.0.15** — dismiss reminders for 7 days |
 
 Full roadmap: `~/cursor/LEARN-V2-PLAN.md`
