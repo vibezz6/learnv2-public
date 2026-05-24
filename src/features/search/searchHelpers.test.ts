@@ -75,6 +75,22 @@ describe("searchHelpers", () => {
     expect(strong!.score).toBeGreaterThan(weak!.score);
   });
 
+  it("scoreCommandMatch finds campus commands by keyword", () => {
+    const essay = scoreCommandMatch("essay", {
+      id: "essay-tracker",
+      label: "Essay tracker",
+      description: "Draft status and due dates",
+    });
+    const checklist = scoreCommandMatch("fafsa", {
+      id: "college-checklist",
+      label: "College checklist",
+      description: "FAFSA, essays, deadlines",
+    });
+
+    expect(essay).not.toBeNull();
+    expect(checklist).not.toBeNull();
+  });
+
   it("filters lesson commands through fuzzy matching", () => {
     const lesson = {
       id: "lesson-expected-value",

@@ -1,12 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  BarChart3,
   BookOpen,
   Brain,
+  ClipboardList,
   Clock,
   Command,
+  FileText,
+  FlaskConical,
   GraduationCap,
   Home,
+  LayoutGrid,
   Moon,
   Search,
   SearchX,
@@ -34,7 +39,7 @@ interface CommandItem {
   id: string;
   label: string;
   description?: string;
-  section: "Recent" | "Navigate" | "Subjects" | "Lessons" | "Actions" | "Theme";
+  section: "Recent" | "Navigate" | "Campus" | "Subjects" | "Lessons" | "Actions" | "Theme";
   groupKey?: string;
   subjectColor?: string;
   icon: React.ComponentType<{ size?: number }>;
@@ -140,8 +145,50 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       { id: "home", label: "Dashboard", section: "Navigate", icon: Home, action: () => go("/") },
       { id: "subjects", label: "Subjects", section: "Navigate", icon: BookOpen, action: () => go("/subjects") },
       { id: "review", label: "Review queue", section: "Navigate", icon: Brain, action: () => go("/review") },
+      { id: "stats", label: "Stats & transcript", section: "Navigate", icon: BarChart3, action: () => go("/stats") },
       { id: "timer", label: "Timer", section: "Navigate", icon: Timer, action: () => go("/timer") },
       { id: "settings", label: "Settings", section: "Navigate", icon: Settings, action: () => go("/settings") },
+    ];
+
+    const campusItems: CommandItem[] = [
+      {
+        id: "campus",
+        label: "Campus services",
+        section: "Campus",
+        icon: LayoutGrid,
+        action: () => go("/campus"),
+      },
+      {
+        id: "college-checklist",
+        label: "College checklist",
+        description: "FAFSA, essays, deadlines",
+        section: "Campus",
+        icon: ClipboardList,
+        action: () => go("/campus/college-checklist"),
+      },
+      {
+        id: "essay-tracker",
+        label: "Essay tracker",
+        description: "Draft status and due dates",
+        section: "Campus",
+        icon: FileText,
+        action: () => go("/campus/essay-tracker"),
+      },
+      {
+        id: "campus-focus",
+        label: "Change campus focus",
+        description: "SAT, foundations, or explore",
+        section: "Campus",
+        icon: GraduationCap,
+        action: () => go("/settings#campus-focus"),
+      },
+      {
+        id: "trading-lab",
+        label: "Trading Lab",
+        section: "Campus",
+        icon: FlaskConical,
+        action: () => go("/lab/trading"),
+      },
     ];
 
     const subjectItems: CommandItem[] = subjects.map((sub) => ({
@@ -164,7 +211,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       { id: "theme-light", label: "Theme: Light", section: "Theme", icon: Sun, action: () => { setTheme("light"); onClose(); } },
     ];
 
-    return [...recent, ...navigateItems, ...subjectItems, ...actionItems, ...themeItems];
+    return [...recent, ...navigateItems, ...campusItems, ...subjectItems, ...actionItems, ...themeItems];
   }, [subjects, go, setTheme, onClose, recentSearches, fillQuery]);
 
   const filtered = useMemo(() => {
@@ -189,7 +236,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       const recent = filtered.filter((c) => c.section === "Recent");
       if (recent.length > 0) blocks.push({ key: "recent", title: "Recent", items: recent });
 
-      for (const section of ["Navigate", "Actions", "Theme"] as const) {
+      for (const section of ["Navigate", "Campus", "Actions", "Theme"] as const) {
         const items = filtered.filter((c) => c.section === section);
         if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
       }
@@ -213,7 +260,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       });
     }
 
-    for (const section of ["Navigate", "Subjects", "Actions", "Theme"] as const) {
+    for (const section of ["Navigate", "Campus", "Subjects", "Actions", "Theme"] as const) {
       const items = filtered.filter((c) => c.section === section);
       if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
     }
@@ -292,8 +339,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search subjects and lessons…"
-            aria-label="Search subjects and lessons"
+            placeholder="Search lessons, campus, commands…"
+            aria-label="Search lessons, campus, and commands"
             className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)]"
           />
           <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
@@ -326,7 +373,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               <SearchX className="mx-auto mb-3 opacity-50" size={28} />
               <p className="text-sm font-medium text-[var(--text-heading)]">No results for &ldquo;{q}&rdquo;</p>
               <p className="mt-1 text-xs text-[var(--text-muted)]">
-                Try a lesson name, subject, or command like &ldquo;timer&rdquo; or &ldquo;review&rdquo;.
+                Try a lesson name, &ldquo;essay&rdquo;, &ldquo;checklist&rdquo;, or &ldquo;timer&rdquo;.
               </p>
             </li>
           )}
