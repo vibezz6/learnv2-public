@@ -3013,6 +3013,771 @@
           "explanation": "st35 is your baseline timed R&W checkpoint — track improvement from there."
         }
       ]
+    },
+    {
+      "id": "st56",
+      "name": "Linear Models & Rate of Change Drill",
+      "description": "Write and interpret y = mx + b from tables, graphs, and word problems — Heart of Algebra with context and units under drill pace.",
+      "xpValue": 90,
+      "parentIds": ["st55"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Slope = rate of change — include units (dollars per hour, miles per minute)",
+        "y-intercept = starting value when x = 0 makes sense in context",
+        "Table method: constant difference in y → linear; find slope from two rows",
+        "Check whether the model fits the story — negative slope can still be valid"
+      ],
+      "whyItMatters": "Linear model items test translation, not just solving. After two half-test checkpoints, algebra misses often trace back to misreading slope as total cost or skipping units — this drill locks in context-first thinking.",
+      "practiceProblems": [
+        "A tank holds 120 gallons and drains 3 gallons per minute. Write the model and find when it is empty.",
+        "From a table of hours worked vs pay, find slope and intercept and explain each in words.",
+        "Khan: 15 linear model and rate-of-change SAT items — write units on every slope."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Linear equations and graphs",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-basic-eq-ineq",
+          "type": "practice",
+          "whyHelpful": "Heart of Algebra drills for slope-intercept from context and tables."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Plot table data and verify slope and intercept visually."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Official-style word problems mixing setup and interpretation."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st56_1",
+          "question": "In a linear model for cost vs hours, slope represents:",
+          "options": [
+            "The fixed starting fee only",
+            "The rate of change of cost per hour",
+            "The total hours worked always",
+            "The y-intercept only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Slope is the rate — cost per hour in this context."
+        },
+        {
+          "id": "q_st56_2",
+          "question": "A line through (0, 50) and (4, 130) has slope:",
+          "options": ["20", "25", "32.5", "80"],
+          "correctIndex": 0,
+          "explanation": "Slope = (130 - 50) / (4 - 0) = 80/4 = 20."
+        },
+        {
+          "id": "q_st56_3",
+          "question": "When a table shows a constant increase in y for each step in x, the relationship is:",
+          "options": [
+            "Always exponential",
+            "Linear",
+            "Always quadratic",
+            "Random with no pattern"
+          ],
+          "correctIndex": 1,
+          "explanation": "Equal differences in y for equal steps in x indicate a linear pattern."
+        }
+      ]
+    },
+    {
+      "id": "st57",
+      "name": "Function Notation & Composition Drill",
+      "description": "Evaluate f(x), combine functions, and interpret input-output in context — Passport to Advanced Math at SAT pace.",
+      "xpValue": 90,
+      "parentIds": ["st56"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "f(a) means substitute x = a into the rule for f",
+        "f(g(x)) — work inside out: compute g(x) first, then apply f",
+        "Domain restrictions: division by zero and even roots of negatives",
+        "Context: input and output labels matter (time → height, price → demand)"
+      ],
+      "whyItMatters": "Function notation looks abstract but SAT items are mostly careful substitution. Composition and domain traps cost points when you rush — drill inside-out order until it is automatic.",
+      "practiceProblems": [
+        "If f(x) = 2x² - 3 and g(x) = x + 1, find f(g(2)).",
+        "A function C(n) gives cost for n tickets. What does C(4) = 48 mean in words?",
+        "Khan: 15 function notation and composition SAT items — show substitution steps."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Functions",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-functions",
+          "type": "practice",
+          "whyHelpful": "Function evaluation, composition, and domain at SAT depth."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph f and g to verify compositions and intersection inputs."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Advanced Math function items with context interpretation."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st57_1",
+          "question": "If f(x) = 3x - 5, then f(4) equals:",
+          "options": ["7", "12", "1", "17"],
+          "correctIndex": 0,
+          "explanation": "f(4) = 3(4) - 5 = 12 - 5 = 7."
+        },
+        {
+          "id": "q_st57_2",
+          "question": "To evaluate f(g(3)), you should:",
+          "options": [
+            "Compute f(3) first, then g",
+            "Compute g(3) first, then apply f to that result",
+            "Multiply f and g",
+            "Skip g and use 3 in f only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Composition works inside out: g(3) first, then f of that value."
+        },
+        {
+          "id": "q_st57_3",
+          "question": "For f(x) = 1/(x - 2), which x-value is NOT in the domain?",
+          "options": ["0", "2", "-2", "5"],
+          "correctIndex": 1,
+          "explanation": "x = 2 makes the denominator zero — undefined."
+        }
+      ]
+    },
+    {
+      "id": "st58",
+      "name": "Two-Way Tables & Data Reasoning Drill",
+      "description": "Relative frequency, conditional probability, and association from two-way tables — Problem Solving & Data Analysis under drill conditions.",
+      "xpValue": 90,
+      "parentIds": ["st57"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Read row/column totals before calculating percentages",
+        "Conditional probability: restrict to one row or column, then find the fraction",
+        "Association ≠ causation — tables show relationship, not proof of cause",
+        "Check whether the question wants part of a row or part of the whole table"
+      ],
+      "whyItMatters": "Two-way table items fail when students use the wrong denominator. After checkpoint review, PSDA misses often come from rushing the table setup — this drill trains row-vs-total discipline.",
+      "practiceProblems": [
+        "From a 2×2 table of survey results, find P(yes | group A) and P(yes | group B).",
+        "Does the table suggest association between the two categories? Justify in one sentence.",
+        "Khan: 12 two-way table and conditional probability SAT items — label each denominator."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Two-way tables",
+          "url": "https://www.khanacademy.org/math/statistics-probability/analyzing-categorical-data",
+          "type": "practice",
+          "whyHelpful": "Table reading, marginal totals, and conditional probability drills."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "PSDA items with surveys, studies, and frequency tables."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Enter table data to double-check counts and proportions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st58_1",
+          "question": "P(event | group) means:",
+          "options": [
+            "Probability over the entire table only",
+            "Probability of the event within that group (row or column)",
+            "Always 50%",
+            "The sum of all cell counts"
+          ],
+          "correctIndex": 1,
+          "explanation": "Conditional probability restricts to the given group first, then finds the fraction."
+        },
+        {
+          "id": "q_st58_2",
+          "question": "In a two-way table, marginal totals appear in:",
+          "options": [
+            "Only the top-left cell",
+            "The outer row and column sums",
+            "Every interior cell",
+            "The title only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Marginals sum rows and columns along the edges of the table."
+        },
+        {
+          "id": "q_st58_3",
+          "question": "A common two-way table trap is:",
+          "options": [
+            "Reading row and column labels carefully",
+            "Using the whole-table total when the question asks about one row only",
+            "Checking that fractions are between 0 and 1",
+            "Verifying counts add up"
+          ],
+          "correctIndex": 1,
+          "explanation": "Wrong denominator — row vs whole table — is the most frequent setup error."
+        }
+      ]
+    },
+    {
+      "id": "st59",
+      "name": "Evidence & Paired Questions — Retarget Drill",
+      "description": "Round-3 retarget on command of evidence: lock your answer first, then find the line that proves it — post-checkpoint focus on half-right quote traps.",
+      "xpValue": 90,
+      "parentIds": ["st58"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Answer the first question before reading evidence choices",
+        "Best evidence directly proves your answer — not merely the same topic",
+        "Half-right quotes mention the subject but fail the specific claim",
+        "Compare misses to st31 and st55 logs — same trap patterns often repeat"
+      ],
+      "whyItMatters": "Evidence pairs are high-frequency R&W items and easy to miss under time pressure. After st55, retargeting evidence from your mistake log is one of the fastest ways to recover reading points without new grammar rules.",
+      "practiceProblems": [
+        "Three paired sets: answer Q1, then underline the exact words that prove it.",
+        "For each wrong evidence option, write one sentence: topic vs proof failure.",
+        "Khan: 15 evidence and paired-question SAT items — compare misses to st55 log."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Information and ideas",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Paired evidence and line-reference drills with explanations."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official paired-question format after reviewing st55 misses."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix evidence with main idea and inference in one sitting."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st59_1",
+          "question": "On a paired evidence question, the correct order is:",
+          "options": [
+            "Pick the longest quote first",
+            "Answer the first question, then choose evidence that supports that answer",
+            "Read all evidence before reading the passage",
+            "Always choose the first line reference"
+          ],
+          "correctIndex": 1,
+          "explanation": "Lock in Q1 — evidence must prove that specific answer, not a related idea."
+        },
+        {
+          "id": "q_st59_2",
+          "question": "A half-right evidence trap is a quote that:",
+          "options": [
+            "Directly contradicts the passage author",
+            "Mentions the topic but does not support your specific answer",
+            "Is from the conclusion only",
+            "Uses the hardest vocabulary"
+          ],
+          "correctIndex": 1,
+          "explanation": "Topic overlap without proof is the classic evidence distractor."
+        },
+        {
+          "id": "q_st59_3",
+          "question": "After st55, evidence retarget should prioritize:",
+          "options": [
+            "Questions you already got right",
+            "Misses tagged as evidence or paired questions in your log",
+            "Only grammar items",
+            "Passages you have memorized"
+          ],
+          "correctIndex": 1,
+          "explanation": "Pull evidence misses from st55 and st31 — drill the trap pattern, not random passages."
+        }
+      ]
+    },
+    {
+      "id": "st60",
+      "name": "Run-Ons, Comma Splices & Boundaries Drill",
+      "description": "Fix fused sentences, comma splices, and boundary errors — Standard English Conventions with semicolons, periods, and coordinating conjunctions at module pace.",
+      "xpValue": 90,
+      "parentIds": ["st59"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Comma splice: two independent clauses joined by a comma alone — invalid",
+        "Fixes: period, semicolon, comma + FANBOYS (for, and, nor, but, or, yet, so)",
+        "Semicolon joins two closely related independent clauses without a conjunction",
+        "Read aloud: two complete sentences need more than a comma between them"
+      ],
+      "whyItMatters": "Boundary errors are quick grammar points when you know the scan pattern. st53 mixed SEC — this drill isolates run-ons and comma splices, a top category on many R&W mistake logs after timed modules.",
+      "practiceProblems": [
+        "Fix: \"The experiment succeeded, the team published immediately.\"",
+        "Fix: \"She finished the report however she missed the deadline.\"",
+        "Khan: 20 sentence boundary SAT items under a 15-minute timer — name the error type each time."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Boundaries",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice/x0d47bcec73eb6c4b:standard-english-conventions",
+          "type": "practice",
+          "whyHelpful": "Comma splice, run-on, and semicolon drills with SAT-style stems."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Official boundary items under module pacing."
+        },
+        {
+          "title": "Khan — SAT Reading & Writing",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Mix boundaries with form/structure after isolated boundary drill."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st60_1",
+          "question": "A comma splice occurs when:",
+          "options": [
+            "Two independent clauses are joined by a comma only",
+            "A dependent clause starts a sentence",
+            "A list uses Oxford commas",
+            "Two nouns share one verb"
+          ],
+          "correctIndex": 0,
+          "explanation": "Two complete sentences cannot be linked with just a comma — that is a comma splice."
+        },
+        {
+          "id": "q_st60_2",
+          "question": "Which correctly fixes \"It rained, we stayed inside\"?",
+          "options": [
+            "It rained, we stayed inside",
+            "It rained; we stayed inside",
+            "It rained we stayed inside",
+            "It rained, and we stayed inside,"
+          ],
+          "correctIndex": 1,
+          "explanation": "Semicolon (or period, or comma + and) joins two independent clauses — comma alone cannot."
+        },
+        {
+          "id": "q_st60_3",
+          "question": "FANBOYS conjunctions (for, and, nor, but, or, yet, so) can fix a boundary error when:",
+          "options": [
+            "They appear alone with no comma",
+            "They follow a comma between two independent clauses",
+            "They replace every period in an essay",
+            "They connect a phrase to a fragment only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Comma + coordinating conjunction correctly links two independent clauses."
+        }
+      ]
+    },
+    {
+      "id": "st61",
+      "name": "Quadratic Applications & Vertex Drill",
+      "description": "Max/min word problems, projectile-style models, and interpreting vertex form — Passport to Advanced Math under drill pace after round-3 algebra retarget.",
+      "xpValue": 90,
+      "parentIds": ["st60"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Vertex form y = a(x - h)² + k — vertex at (h, k)",
+        "Max/min in context: parabola opens down → maximum at vertex; up → minimum",
+        "Set up from word problem first — define x, write area/revenue/height model",
+        "Desmos: graph the model and read the vertex when algebra is slow"
+      ],
+      "whyItMatters": "Quadratic application items combine setup and graph thinking. After st56–st58 algebra and data drills, vertex and max/min traps often come from skipping the model — this drill trains context → equation → vertex in one flow.",
+      "practiceProblems": [
+        "A ball is thrown from 5 ft with height h(t) = -16t² + 32t + 5. Find max height and when it hits the ground.",
+        "Revenue R = p(100 - 2p) — find price p that maximizes revenue.",
+        "Khan: 15 quadratic application and vertex SAT items — sketch or Desmos each model."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Quadratic functions",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-quadratics",
+          "type": "practice",
+          "whyHelpful": "Vertex form, max/min, and application problems at SAT depth."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph parabolas and read vertex and intercepts under time pressure."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Official-style quadratic word problems mixing setup and interpretation."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st61_1",
+          "question": "For y = -2(x - 3)² + 18, the vertex is:",
+          "options": ["(3, 18)", "(-3, 18)", "(3, -18)", "(18, 3)"],
+          "correctIndex": 0,
+          "explanation": "Vertex form y = a(x - h)² + k has vertex (h, k) — here (3, 18)."
+        },
+        {
+          "id": "q_st61_2",
+          "question": "A parabola that opens downward has:",
+          "options": [
+            "A minimum at the vertex",
+            "A maximum at the vertex",
+            "No vertex",
+            "Always two x-intercepts"
+          ],
+          "correctIndex": 1,
+          "explanation": "Negative leading coefficient → opens down → highest point is the vertex (maximum)."
+        },
+        {
+          "id": "q_st61_3",
+          "question": "On a max/min word problem, the best first step is:",
+          "options": [
+            "Apply the quadratic formula immediately",
+            "Define the variable and write the model from the story",
+            "Guess the answer from the choices",
+            "Skip to Desmos without reading"
+          ],
+          "correctIndex": 1,
+          "explanation": "Setup defines x and the equation — without the model, vertex work has nothing to attach to."
+        }
+      ]
+    },
+    {
+      "id": "st62",
+      "name": "Radicals & Rational Exponents Drill",
+      "description": "Simplify radicals, convert between rational exponents and roots, and solve basic radical equations — Advanced Math at SAT pace.",
+      "xpValue": 90,
+      "parentIds": ["st61"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "a^(m/n) = ⁿ√(a^m) — same base, combine exponents when multiplying/dividing",
+        "√(ab) = √a · √b but √(a + b) ≠ √a + √b",
+        "Rationalize or simplify — pull perfect squares from under the radical",
+        "Radical equations: isolate, square both sides, check for extraneous solutions"
+      ],
+      "whyItMatters": "Radical items look intimidating but are mostly exponent rules in disguise. Round-3 math prep needs this fluency so one unfamiliar root doesn't burn two minutes on a half-test module.",
+      "practiceProblems": [
+        "Simplify: ³√(54) and write 16^(3/4) as a rational number.",
+        "Solve: √(2x + 5) = 9 — check for extraneous solutions.",
+        "Khan: 12 radical and rational exponent SAT items — rewrite each in alternate form."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Exponents and radicals",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-exponents",
+          "type": "practice",
+          "whyHelpful": "Rational exponents, radical simplification, and radical equations."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Graph both sides of a radical equation to verify solution count."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Advanced Math items mixing radicals with equivalent expressions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st62_1",
+          "question": "8^(2/3) equals:",
+          "options": ["4", "16", "2", "6"],
+          "correctIndex": 0,
+          "explanation": "8^(2/3) = (³√8)² = 2² = 4."
+        },
+        {
+          "id": "q_st62_2",
+          "question": "Which is NOT generally true for all positive a and b?",
+          "options": [
+            "√(ab) = √a · √b",
+            "√(a/b) = √a / √b",
+            "√(a + b) = √a + √b",
+            "(√a)² = a"
+          ],
+          "correctIndex": 2,
+          "explanation": "Square root of a sum does not equal the sum of square roots — classic SAT trap."
+        },
+        {
+          "id": "q_st62_3",
+          "question": "After squaring both sides to solve a radical equation, you must:",
+          "options": [
+            "Never check answers",
+            "Check solutions in the original equation for extraneous roots",
+            "Always discard negative answers",
+            "Square again for safety"
+          ],
+          "correctIndex": 1,
+          "explanation": "Squaring can introduce extraneous solutions — plug back into the original."
+        }
+      ]
+    },
+    {
+      "id": "st63",
+      "name": "Scatterplots & Line of Best Fit — Retarget Drill",
+      "description": "Round-3 retarget on association, line of best fit, and residual reasoning — PSDA under drill conditions after st58 two-way tables.",
+      "xpValue": 90,
+      "parentIds": ["st62"],
+      "estimatedMinutes": 60,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Association: positive, negative, or no clear linear trend",
+        "Line of best fit slope = predicted change in y per unit x — include units",
+        "Outliers and residuals — point far from the line may weaken association claim",
+        "Compare misses to st40 and st58 logs — slope vs correlation vs table traps"
+      ],
+      "whyItMatters": "Scatterplot items mix graph reading and vocabulary. After st58 table drills, PSDA misses often shift to misreading slope or overclaiming from one outlier — this retarget locks in trend-before-prediction discipline.",
+      "practiceProblems": [
+        "From a scatterplot, describe association and interpret the best-fit slope in context.",
+        "One outlier present — does it strengthen or weaken a linear model claim? Justify.",
+        "Khan: 15 scatterplot and line-of-best-fit SAT items — write units on every slope."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Scatterplots and correlation",
+          "url": "https://www.khanacademy.org/math/statistics-probability/describing-relationships-quantitative-data",
+          "type": "practice",
+          "whyHelpful": "Association, best-fit lines, and residual intuition drills."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Enter table data, plot points, and fit a line to verify slope."
+        },
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "PSDA items mixing scatterplots with two-way tables and statistics."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st63_1",
+          "question": "A line of best fit with negative slope suggests:",
+          "options": [
+            "As x increases, y tends to decrease",
+            "No relationship between variables",
+            "Perfect correlation of +1",
+            "The y-intercept must be negative"
+          ],
+          "correctIndex": 0,
+          "explanation": "Negative slope → predicted y decreases as x increases — negative association."
+        },
+        {
+          "id": "q_st63_2",
+          "question": "An outlier on a scatterplot is a point that:",
+          "options": [
+            "Always lies exactly on the best-fit line",
+            "Lies far from the overall trend of the other points",
+            "Has x = 0 only",
+            "Must be removed before any analysis"
+          ],
+          "correctIndex": 1,
+          "explanation": "Outliers depart from the pattern — they can affect slope and association claims."
+        },
+        {
+          "id": "q_st63_3",
+          "question": "After st58, scatterplot retarget should prioritize:",
+          "options": [
+            "Only two-way table items",
+            "Misses tagged as PSDA graphs or slope interpretation in your log",
+            "Geometry formulas only",
+            "Questions you already got right"
+          ],
+          "correctIndex": 1,
+          "explanation": "Pull graph and slope misses from st40, st50, and st58 — drill the trap pattern."
+        }
+      ]
+    },
+    {
+      "id": "st64",
+      "name": "Math Mistake-Log Retarget — Round 3",
+      "description": "Pull top 3 miss categories from st50 and st56–st63 logs; untimed redo plus 3 similar items per category before the Math half-test checkpoint.",
+      "xpValue": 100,
+      "parentIds": ["st63"],
+      "estimatedMinutes": 90,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Rank miss categories from st50, st25, and st56–st63 drill logs",
+        "Untimed redo of original misses — no notes, fresh attempt",
+        "3 similar Khan items per weak category",
+        "No new topics — retarget what already cost you points on half-tests"
+      ],
+      "whyItMatters": "The st65 half-test checkpoint is only useful if you fixed actual weak spots from round-3 drills. Retargeting from st50 and recent logs beats random mixed practice the night before.",
+      "practiceProblems": [
+        "List your top 3 Math miss categories from st50 and st56–st63.",
+        "Redo each original miss untimed, then 3 similar Khan questions per category.",
+        "Bluebook: untimed review of missed item types from st50 log before st65."
+      ],
+      "resources": [
+        {
+          "title": "Khan — SAT Math practice",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Filter by weak domain: Algebra, PSDA, Advanced Math, or Geometry."
+        },
+        {
+          "title": "Bluebook — Practice Tests",
+          "url": "https://bluebook.collegeboard.org/student/digital-practice",
+          "type": "practice",
+          "whyHelpful": "Untimed review of missed item types in the real interface."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Verify graph-based misses from st50 and st61–st63 before timed st65."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st64_1",
+          "question": "Before the st65 Math half-test checkpoint, retarget should focus on:",
+          "options": [
+            "Random new topics",
+            "Your top 3 actual miss categories from st50 and round-3 drills",
+            "Only questions you already got right",
+            "Skipping review to stay fresh"
+          ],
+          "correctIndex": 1,
+          "explanation": "Retarget categories that already cost points on half-tests — not random drills."
+        },
+        {
+          "id": "q_st64_2",
+          "question": "After redoing a miss untimed, the best follow-up is:",
+          "options": [
+            "Move on immediately",
+            "3 similar items in the same category without notes",
+            "Memorize the letter answer only",
+            "Delete the miss from your log"
+          ],
+          "correctIndex": 1,
+          "explanation": "Similar items in the same category lock in the fix while the pattern is fresh."
+        },
+        {
+          "id": "q_st64_3",
+          "question": "Round-3 Math retarget should pull misses from:",
+          "options": [
+            "Only st1",
+            "st50 half-test and st56–st63 drill categories",
+            "Unrelated subjects",
+            "Questions you got right on st55"
+          ],
+          "correctIndex": 1,
+          "explanation": "st50 baseline plus round-3 drill categories show what still costs Math points."
+        }
+      ]
+    },
+    {
+      "id": "st65",
+      "name": "Math — Bluebook Half-Test Checkpoint",
+      "description": "Timed Math modules (Module 1 + Module 2 or equivalent half-test block). Log misses by domain within 24 hours — capstone of the st56–st65 drill chain.",
+      "xpValue": 150,
+      "parentIds": ["st64"],
+      "estimatedMinutes": 70,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Timed both Math modules under test-like conditions",
+        "Tag misses: algebra / PSDA / advanced / geometry",
+        "Review within 24 hours — redo 3 similar items per miss type",
+        "Compare to st50 half-test checkpoint — note score and timing trend"
+      ],
+      "whyItMatters": "This third-round Math half-test checkpoint simulates real section pressure after st56–st64 drills. Comparing to st50 shows whether your retargeting worked — the feedback loop that moves your Math score into test week.",
+      "practiceProblems": [
+        "Bluebook timed Math Module 1 + Module 2 — phone away, timer on.",
+        "Categorize every miss in your mistake log within 24 hours.",
+        "Compare raw score and timing to st50 — note which domains improved since round 2."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Timed SAT Math",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-math-practice",
+          "type": "practice",
+          "whyHelpful": "Timed sets mirroring module length if Bluebook isn't available."
+        },
+        {
+          "title": "Bluebook timed practice",
+          "url": "https://bluebook.collegeboard.org/",
+          "type": "practice",
+          "whyHelpful": "Official timing, Desmos, and adaptive module feel for both Math modules."
+        },
+        {
+          "title": "Desmos Graphing Calculator",
+          "url": "https://www.desmos.com/calculator",
+          "type": "practice",
+          "whyHelpful": "Same built-in calculator as test day — use it deliberately under timed conditions."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st65_1",
+          "question": "After the st65 Math half-test checkpoint, highest-ROI next step is:",
+          "options": [
+            "Ignore misses and move on",
+            "Log misses by domain and drill each within 24 hours",
+            "Memorize the answer key only",
+            "Retake immediately without review"
+          ],
+          "correctIndex": 1,
+          "explanation": "Categorized review within 24 hours locks in fixes while mistakes are fresh."
+        },
+        {
+          "id": "q_st65_2",
+          "question": "The st65 Math half-test checkpoint should be compared to:",
+          "options": [
+            "Only st1 quiz scores",
+            "st50 half-test checkpoint — note score and timing trend",
+            "st55 R&W half-test only",
+            "Other students' scores online"
+          ],
+          "correctIndex": 1,
+          "explanation": "st50 is your round-2 Math half-test baseline — track improvement from there."
+        },
+        {
+          "id": "q_st65_3",
+          "question": "During a timed Math half-test, if stuck after ~2 minutes you should:",
+          "options": [
+            "Spend 10 more minutes on one item",
+            "Eliminate, guess, mark for review, move on",
+            "Leave every hard question blank",
+            "Exit the module early"
+          ],
+          "correctIndex": 1,
+          "explanation": "No penalty for guessing — protect time for questions you can solve."
+        }
+      ]
     }
   ]
 }
