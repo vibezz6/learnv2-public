@@ -1,7 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, ConfirmDialog } from "@/components/ui";
 import { buildAdmissionsExportPayload, buildAdmissionsSummary } from "@/lib/admissionsSummary";
+import {
+  applyAdmissionsImport,
+  clearAllAdmissionsData,
+  parseAdmissionsImportJson,
+} from "@/lib/admissionsImport";
 import {
   clearAllNudgeSnoozes,
   DEFAULT_SNOOZE_DAYS,
@@ -14,6 +19,8 @@ interface Props {
 
 export function AdmissionsSettingsCard({ onMessage }: Props) {
   const [revision, setRevision] = useState(0);
+  const [resetOpen, setResetOpen] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const summary = useMemo(() => {
     void revision;
@@ -41,6 +48,28 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
     clearAllNudgeSnoozes();
     setRevision((r) => r + 1);
     onMessage("Dismissed admissions reminders restored on campus home.");
+  };
+
+  const handleImportFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = parseAdmissionsImportJson(String(reader.result ?? ""));
+      if (!result.ok) {
+        onMessage(result.error);
+        return;
+      }
+      applyAdmissionsImport(result);
+      setRevision((r) => r + 1);
+      onMessage("Admissions data imported — checklist and essays replaced on this device.");
+    };
+    reader.readAsText(file);
+  };
+
+  const handleResetConfirm = () => {
+    clearAllAdmissionsData();
+    setResetOpen(false);
+    setRevision((r) => r + 1);
+    onMessage("College checklist, essays, and dismissed reminders cleared.");
   };
 
   return (
@@ -117,12 +146,56 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
         </p>
       </div>
 
-      <Button
-        className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-        onClick={handleExport}
-      >
-        Export admissions JSON
-      </Button>
+      <div className="space-y-2 border-t border-[var(--border)] pt-4">
+        <h3 className="text-sm font-medium text-[var(--text-heading)]">Backup on this device</h3>
+        <p className="text-xs text-[var(--text-muted)]">
+          Export saves checklist and essays. Import replaces both (same format as export). Full progress
+          backup in the section below also includes all <code className="font-mono">learnv2_</code> keys.
+        </p>
+        <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
+          <Button
+            className="min-h-11 w-full touch-manipulation min-[481px]:flex-1"
+            onClick={handleExport}
+          >
+            Export admissions JSON
+          </Button>
+          <Button
+            variant="secondary"
+            className="min-h-11 w-full touch-manipulation min-[481px]:flex-1"
+            onClick={() => importInputRef.current?.click()}
+          >
+            Import admissions JSON
+          </Button>
+          <input
+            ref={importInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleImportFile(file);
+              e.target.value = "";
+            }}
+          />
+        </div>
+        <Button
+          variant="secondary"
+          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
+          onClick={() => setResetOpen(true)}
+        >
+          Clear all admissions data
+        </Button>
+      </div>
+
+      <ConfirmDialog
+        open={resetOpen}
+        title="Clear admissions data?"
+        message="Removes checklist progress, custom checklist items, essay tracker entries, and dismissed dashboard reminders on this device. Placement and study progress are not affected."
+        confirmLabel="Clear"
+        danger
+        onConfirm={handleResetConfirm}
+        onCancel={() => setResetOpen(false)}
+      />
     </Card>
   );
 }
