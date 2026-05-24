@@ -225,14 +225,18 @@ export function CollegeChecklistPage() {
 
       <p className="text-xs text-[var(--text-muted)]">
         Pair with{" "}
+        <Link to="/campus/essay-tracker" className="font-medium text-[var(--accent)] hover:underline">
+          essay tracker
+        </Link>
+        ,{" "}
         <Link to="/stats" className="font-medium text-[var(--accent)] hover:underline">
           study transcript
-        </Link>{" "}
-        and{" "}
+        </Link>
+        , and{" "}
         <Link to="/subjects/sat-prep" className="font-medium text-[var(--accent)] hover:underline">
           SAT Prep
-        </Link>{" "}
-        for your comeback record.
+        </Link>
+        .
       </p>
     </div>
   );

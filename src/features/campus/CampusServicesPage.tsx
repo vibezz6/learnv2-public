@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
-import { ChevronRight, ClipboardList, FlaskConical, GraduationCap, Wrench } from "lucide-react";
+import {
+  ChevronRight,
+  ClipboardList,
+  FileText,
+  FlaskConical,
+  GraduationCap,
+  Wrench,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Badge, Card } from "@/components/ui";
 import { getManifestEntry } from "@/curriculum";
@@ -21,6 +28,14 @@ function buildServiceCards(): ServiceCard[] {
         "FAFSA, counselor, SAT score send, essays, and custom deadlines — admissions paperwork in one place.",
       icon: ClipboardList,
       tone: "text-[var(--accent-2)]",
+    },
+    {
+      to: "/campus/essay-tracker",
+      title: "Essay tracker",
+      description:
+        "Common App and supplement prompts, draft status (outline → final), and per-college deadlines.",
+      icon: FileText,
+      tone: "text-[var(--accent)]",
     },
     {
       to: "/lab/trading",
