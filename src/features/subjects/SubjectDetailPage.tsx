@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { BookOpen, ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
 import { Button, Card, EmptyState } from "@/components/ui";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
@@ -7,6 +7,8 @@ import { loadSubjectResult } from "@/curriculum/loader";
 import type { LoadSubjectResult } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
+import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
+import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
 import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -445,6 +447,7 @@ function unavailableDescription(reason: Exclude<LoadSubjectResult["status"], "ok
 
 export function SubjectDetailPage() {
   const { subjectId = "" } = useParams();
+  const location = useLocation();
   const progressNodes = useProgress((s) => s.data.nodes);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const [loadState, setLoadState] = useState<SubjectLoadState>({ phase: "loading" });
@@ -464,6 +467,17 @@ export function SubjectDetailPage() {
       cancelled = true;
     };
   }, [subjectId]);
+
+  useEffect(() => {
+    if (subjectId !== "sat-prep" || loadState.phase !== "ok") return;
+    const hash = location.hash.replace("#", "");
+    if (hash !== "mistakes" && hash !== "official") return;
+    const target = document.getElementById(hash);
+    if (!target) return;
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [subjectId, loadState.phase, location.hash]);
 
   const layout = useMemo(
     () => (loadState.phase === "ok" ? buildTreeLayout(loadState.subject.nodes) : null),
@@ -510,6 +524,7 @@ export function SubjectDetailPage() {
   }
 
   const { subject } = loadState;
+  const isSatPrep = subject.id === "sat-prep";
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
@@ -531,6 +546,12 @@ export function SubjectDetailPage() {
         className="mt-4"
       />
 
+      {isSatPrep ? (
+        <div id="mistakes" className="scroll-mt-6">
+          <SatMistakeLogPanel />
+        </div>
+      ) : null}
+
       <section className="space-y-5 pt-2">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-sm font-medium uppercase tracking-widest text-[var(--text-muted)]">
@@ -538,6 +559,8 @@ export function SubjectDetailPage() {
           </h2>
           <SkillTreeLegend />
         </div>
+
+        {isSatPrep ? <SatOfficialResourcesCard id="official" /> : null}
 
         <div className="md:hidden">
           <SkillNodeList

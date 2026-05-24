@@ -3793,7 +3793,7 @@
         "Successive percent change: multiply factors (1.10)(0.85), do not add percents",
         "Context: population, interest, decay — label whether r is per year, per month, etc."
       ],
-      "whyItMatters": "Percent and exponential items look like arithmetic but punish additive thinking. After st65, round-4 Math drills should retarget PSDA traps that still burn time — this one shows up often on half-tests.",
+      "whyItMatters": "Percent and exponential items look like arithmetic but punish additive thinking. After st65, round-4 Math drills should retarget PSDA traps that still burn time — this one shows up often on half-tests. Log every miss in Learn v2 Notes under Mistake Log within 24 hours — topic, what went wrong, fix — so later retarget drills hit your actual weak spots, not random mixed sets.",
       "practiceProblems": [
         "A price rises 15% then falls 15%. Is the final price equal to the start? Compute with $100.",
         "A bacteria culture doubles every 3 hours from 500 cells. How many after 12 hours?",
@@ -4474,7 +4474,7 @@
         "Tag R&W misses: grammar / craft / information / expression",
         "Compare to st50, st55, st65, and st70 half-test checkpoints — note stamina and score trend"
       ],
-      "whyItMatters": "This round-5 full-test checkpoint simulates real test-day stamina after st71–st74 drills. Comparing section scores to your half-test baselines shows whether retargeting held up across both sections — the feedback loop that moves your total score into test week.",
+      "whyItMatters": "This round-5 full-test checkpoint simulates real test-day stamina after st71–st74 drills. Comparing section scores to your half-test baselines shows whether retargeting held up across both sections — the feedback loop that moves your total score into test week. Log every miss in Learn v2 Notes under Mistake Log within 24 hours — topic, what went wrong, fix — so later retarget drills hit your actual weak spots, not random mixed sets.",
       "practiceProblems": [
         "Bluebook timed full practice test — R&W Module 1 + Module 2, then Math Module 1 + Module 2.",
         "Categorize every miss in your mistake log within 24 hours — separate Math and R&W columns.",

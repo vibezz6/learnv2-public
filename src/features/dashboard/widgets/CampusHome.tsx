@@ -118,6 +118,20 @@ export function CampusHome({ subjects }: Props) {
                 Next SAT lesson:{" "}
                 <span className="text-[var(--text-heading)]">{satNext.title}</span>
               </p>
+              <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                <Link
+                  to="/subjects/sat-prep#mistakes"
+                  className="text-[var(--accent-2)] hover:underline"
+                >
+                  Log a miss
+                </Link>
+                <Link
+                  to="/subjects/sat-prep#official"
+                  className="text-[var(--accent-2)] hover:underline"
+                >
+                  Official practice
+                </Link>
+              </p>
             </div>
           </div>
           {satNext.status === "locked" || satNext.status === "coming_soon" ? (
