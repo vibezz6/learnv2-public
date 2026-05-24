@@ -1,60 +1,73 @@
+import { Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./AppShell";
+import {
+  BookmarksPage,
+  CampusServicesPage,
+  CollegeChecklistPage,
+  CompoundInterestToolPage,
+  EssayTrackerPage,
+  ExpectedValueToolPage,
+  LessonPage,
+  NotesPage,
+  QuizRoutePage,
+  ReviewPage,
+  SettingsPage,
+  StatsPage,
+  TimerPage,
+  ToolsPage,
+  TracksPage,
+  TradingLabPage,
+} from "./lazyPages";
 import { AchievementToast } from "@/components/AchievementToast";
 import { OnboardingModal } from "@/components/OnboardingModal";
+import { ServiceWorkerUpdateBanner } from "@/components/ServiceWorkerUpdateBanner";
 import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
-import { LessonPage } from "@/features/lesson/LessonPage";
-import { QuizRoutePage } from "@/features/quiz/QuizRoutePage";
-import { SettingsPage } from "@/features/settings/SettingsPage";
-import { NotesPage } from "@/features/notes/NotesPage";
-import { BookmarksPage } from "@/features/bookmarks/BookmarksPage";
-import { ReviewPage } from "@/features/review/ReviewPage";
-import { StatsPage } from "@/features/stats/StatsPage";
-import { TimerPage } from "@/features/timer/TimerPage";
-import { TracksPage } from "@/features/tracks/TracksPage";
-import { CompoundInterestToolPage } from "@/features/tools/CompoundInterestCalculator";
-import { ExpectedValueToolPage } from "@/features/tools/ExpectedValueCalculator";
-import { CampusServicesPage } from "@/features/campus/CampusServicesPage";
-import { CollegeChecklistPage } from "@/features/college/CollegeChecklistPage";
-import { EssayTrackerPage } from "@/features/college/EssayTrackerPage";
-import { ToolsPage } from "@/features/tools/ToolsPage";
-import { TradingLabPage } from "@/features/lab/TradingLabPage";
+
+function RouteFallback() {
+  return (
+    <p className="px-4 py-12 text-center text-sm text-[var(--text-muted)] md:px-8">Loading…</p>
+  );
+}
 
 export function App() {
   return (
     <BrowserRouter>
       <ComponentErrorBoundary>
-        <Routes>
-          <Route element={<AppShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="tracks" element={<TracksPage />} />
-            <Route path="tracks/:trackId" element={<TracksPage />} />
-            <Route path="subjects" element={<SubjectsPage />} />
-            <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
-            <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
-            <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
-            <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
-            <Route path="bookmarks" element={<BookmarksPage />} />
-            <Route path="review" element={<ReviewPage />} />
-            <Route path="stats" element={<StatsPage />} />
-            <Route path="timer" element={<TimerPage />} />
-            <Route path="campus" element={<CampusServicesPage />} />
-            <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
-            <Route path="campus/essay-tracker" element={<EssayTrackerPage />} />
-            <Route path="campus/calculators" element={<ToolsPage />} />
-            <Route path="tools" element={<Navigate to="/campus" replace />} />
-            <Route path="tools/ev" element={<ExpectedValueToolPage />} />
-            <Route path="tools/compound" element={<CompoundInterestToolPage />} />
-            <Route path="lab/trading" element={<TradingLabPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route index element={<DashboardPage />} />
+              <Route path="tracks" element={<TracksPage />} />
+              <Route path="tracks/:trackId" element={<TracksPage />} />
+              <Route path="subjects" element={<SubjectsPage />} />
+              <Route path="subjects/:subjectId" element={<SubjectDetailPage />} />
+              <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
+              <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
+              <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
+              <Route path="bookmarks" element={<BookmarksPage />} />
+              <Route path="review" element={<ReviewPage />} />
+              <Route path="stats" element={<StatsPage />} />
+              <Route path="timer" element={<TimerPage />} />
+              <Route path="campus" element={<CampusServicesPage />} />
+              <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
+              <Route path="campus/essay-tracker" element={<EssayTrackerPage />} />
+              <Route path="campus/calculators" element={<ToolsPage />} />
+              <Route path="tools" element={<Navigate to="/campus" replace />} />
+              <Route path="tools/ev" element={<ExpectedValueToolPage />} />
+              <Route path="tools/compound" element={<CompoundInterestToolPage />} />
+              <Route path="lab/trading" element={<TradingLabPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
+          </Routes>
+        </Suspense>
         <AchievementToast />
         <OnboardingModal />
+        <ServiceWorkerUpdateBanner />
       </ComponentErrorBoundary>
     </BrowserRouter>
   );
