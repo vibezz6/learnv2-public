@@ -122,6 +122,21 @@ export function TradingLabPage() {
           </Card>
         </Link>
 
+        <Link to="/subjects/algo-lab" className="block">
+          <Card className="transition hover:border-[var(--accent-border)]">
+            <div className="flex items-start gap-3">
+              <FlaskConical size={20} className="text-[#6366f1]" />
+              <div className="min-w-0 space-y-1">
+                <div className="font-semibold text-[var(--text-heading)]">Algo Lab curriculum</div>
+                <p className="text-sm text-[var(--text-muted)]">
+                  Data pipelines, backtest hygiene, prop rules as code, and review discipline.
+                </p>
+              </div>
+              <BookOpen size={16} className="ml-auto shrink-0 text-[var(--text-muted)]" />
+            </div>
+          </Card>
+        </Link>
+
         <Card className="transition hover:border-[var(--accent-border)]">
           <div className="flex items-start gap-3">
             <FlaskConical size={20} className="text-[var(--accent)]" />

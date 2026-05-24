@@ -78,5 +78,13 @@
     "color": "#06b6d4",
     "icon": "code",
     "nodeCount": 5
+  },
+  {
+    "id": "algo-lab",
+    "name": "Algo Lab",
+    "description": "Hands-on algorithmic trading workflow — data pipelines, backtest hygiene, prop rules as code, journaling, strategy specs, and review discipline.",
+    "color": "#6366f1",
+    "icon": "flask-conical",
+    "nodeCount": 8
   }
 ]

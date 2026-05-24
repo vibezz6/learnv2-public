@@ -1,0 +1,825 @@
+{
+  "id": "algo-lab",
+  "name": "Algo Lab",
+  "description": "Hands-on algorithmic trading workflow — data pipelines, backtest hygiene, prop rules as code, journaling, strategy specs, and review discipline.",
+  "color": "#6366f1",
+  "icon": "flask-conical",
+  "nodes": [
+    {
+      "id": "lab1",
+      "name": "Data Pipeline: Tick → Bar → Parquet",
+      "description": "Build a reproducible market-data pipeline: ingest raw ticks, aggregate OHLCV bars, and persist to Parquet for backtests and research.",
+      "xpValue": 75,
+      "parentIds": [
+        "t3"
+      ],
+      "estimatedMinutes": 120,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Tick data vs bar (OHLCV) data",
+        "Time-based vs volume-based aggregation",
+        "Parquet columnar storage and partitioning",
+        "Idempotent ingestion and deduplication",
+        "Schema design for multi-symbol datasets",
+        "Data quality checks (gaps, outliers, timezone alignment)"
+      ],
+      "whyItMatters": "Garbage in, garbage out. Every backtest, journal stat, and coach review depends on clean, replayable data. A tick→bar→Parquet pipeline is the foundation of algo trading — without it you're curve-fitting on screenshots.",
+      "practiceProblems": [
+        "Design a schema for 1-minute ES bars stored in Parquet. What columns do you need and why?",
+        "You receive duplicate ticks with the same exchange timestamp. How do you dedupe without losing legitimate trades?",
+        "A bar file has a 45-minute gap during RTH. List 3 checks to decide if it's a data bug or a halted market.",
+        "Convert 10M ticks to 1-min bars. Estimate memory if you load all ticks vs stream aggregation."
+      ],
+      "resources": [
+        {
+          "title": "Apache Parquet Documentation",
+          "url": "https://parquet.apache.org/docs/",
+          "type": "article",
+          "whyHelpful": "Official Parquet format docs — understand columnar storage, compression, and why it's the standard for quant datasets."
+        },
+        {
+          "title": "Pandas: Working with Time Series",
+          "url": "https://pandas.pydata.org/docs/user_guide/timeseries.html",
+          "type": "article",
+          "whyHelpful": "Resampling ticks to bars, timezone handling, and gap detection — the Python primitives every pipeline uses."
+        },
+        {
+          "title": "Databento: Market Data Formats",
+          "url": "https://databento.com/docs/knowledge-base/new-users/market-data-formats",
+          "type": "article",
+          "whyHelpful": "Clear comparison of tick, MBP, and OHLCV formats from a modern data vendor. Helps you pick the right granularity."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab1_1",
+          "question": "Why store research datasets as Parquet instead of CSV?",
+          "options": [
+            "Parquet is human-readable in any text editor",
+            "Columnar compression, typed schema, and fast partial reads",
+            "CSV cannot store timestamps",
+            "Parquet automatically removes bad ticks"
+          ],
+          "correctIndex": 1,
+          "explanation": "Parquet stores columns separately with compression and embedded types. You can read only the columns you need (e.g., close + volume) without loading the whole file — critical for large tick archives."
+        },
+        {
+          "id": "q_lab1_2",
+          "question": "When aggregating ticks to 1-minute bars, which price represents the 'open' of the bar?",
+          "options": [
+            "The last tick before the minute boundary",
+            "The first tick at or after the minute boundary",
+            "The midpoint of bid and ask at minute start",
+            "The volume-weighted average of all ticks"
+          ],
+          "correctIndex": 1,
+          "explanation": "Standard OHLCV convention: open = first trade in the interval, close = last trade, high/low = extrema. Consistency matters more than the exact rule — document yours."
+        },
+        {
+          "id": "q_lab1_3",
+          "question": "You partition Parquet files by trading date. What is the main benefit?",
+          "options": [
+            "Smaller individual files and faster date-range queries",
+            "Automatic deduplication of ticks",
+            "Guaranteed fill prices in backtests",
+            "Eliminates timezone bugs"
+          ],
+          "correctIndex": 0,
+          "explanation": "Date partitioning lets backtests load only the days they need. It also keeps file sizes manageable and makes incremental daily updates trivial."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "You have CSV tick files: timestamp, price, size. Build a 5-minute bar for ES on 2024-01-15. Show open, high, low, close, volume.",
+          "solution": "Group ticks into 5-min buckets (floor timestamp to 5-min boundary). open = first price in bucket, high = max(price), low = min(price), close = last price, volume = sum(size). Write one row per bucket to Parquet with columns: symbol, bar_start, open, high, low, close, volume.",
+          "explanation": "This is the minimal viable bar builder. In production, handle session boundaries (RTH vs ETH), partial bars at session open, and timezone (America/Chicago for CME)."
+        },
+        {
+          "problem": "Your pipeline ingests 2 duplicate ticks (same ts, price, size). Bars look identical with or without dupes. Why still dedupe?",
+          "solution": "Volume would double-count if you sum size blindly. Dedupe key: (exchange_ts, price, size, trade_id) or vendor sequence number. Even if OHLC is unchanged, volume-based indicators (VWAP, volume profile) will lie.",
+          "explanation": "OHLC can hide volume errors. Always validate volume separately — it's the first place duplicate feeds corrupt your research."
+        }
+      ],
+      "commonMistakes": [
+        "Mixing timezones — store everything in UTC, convert only for display.",
+        "Building bars on calendar minutes instead of session-aware boundaries for futures.",
+        "Skipping deduplication because OHLC 'looks fine' — volume silently doubles.",
+        "Writing one giant Parquet file instead of partitioning by date — backtests become painfully slow."
+      ]
+    },
+    {
+      "id": "lab2",
+      "name": "Backtest Hygiene: Lookahead, Fees, Slippage",
+      "description": "Stress-test backtests for lookahead bias, realistic transaction costs, and slippage models. A pretty equity curve means nothing if the simulation cheats.",
+      "xpValue": 100,
+      "parentIds": [
+        "lab1"
+      ],
+      "estimatedMinutes": 150,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Lookahead bias and peeking at future data",
+        "Survivorship bias in symbol universes",
+        "Commission, exchange fees, and round-turn cost",
+        "Slippage models: fixed ticks, proportional, volume-based",
+        "Walk-forward vs in-sample optimization",
+        "Point-in-time data requirements"
+      ],
+      "whyItMatters": "Most 'profitable' backtests die on the first live trade. Lookahead, zero fees, and perfect fills are the three lies that kill accounts. Hygiene isn't optional — it's the difference between research and fantasy.",
+      "practiceProblems": [
+        "Your strategy uses today's close to generate today's entry signal. Name the bias and fix it.",
+        "ES round-turn costs $4.50 all-in. A scalper averages 8 trades/day. What's the monthly fee drag on 20 trading days?",
+        "Compare fixed 1-tick slippage vs 0.1% proportional slippage on a $2-wide spread instrument.",
+        "List 3 ways walk-forward testing catches overfitting that a single backtest hides."
+      ],
+      "resources": [
+        {
+          "title": "QuantStart: Backtesting Pitfalls",
+          "url": "https://www.quantstart.com/articles/Successful-Backtesting-of-Algorithmic-Trading-Strategies-Part-I/",
+          "type": "article",
+          "whyHelpful": "Classic walkthrough of lookahead, survivorship, and overfitting traps — still the best sanity checklist."
+        },
+        {
+          "title": "Investopedia: Look-Ahead Bias",
+          "url": "https://www.investopedia.com/terms/l/lookaheadbias.asp",
+          "type": "article",
+          "whyHelpful": "Short, precise definition with examples. Use when reviewing any signal that uses same-bar data."
+        },
+        {
+          "title": "Zipline / Backtrader Slippage Docs",
+          "url": "https://www.backtrader.com/docu/slippage/slippage/",
+          "type": "article",
+          "whyHelpful": "Shows how mainstream backtest engines model slippage — compare your assumptions to industry defaults."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab2_1",
+          "question": "You backtest with a 20-day SMA calculated using the current bar's close for the entry decision on that same bar. This is:",
+          "options": [
+            "Valid — SMAs are lagging by design",
+            "Lookahead bias — you used information not known at decision time",
+            "Survivorship bias",
+            "Monte Carlo variance"
+          ],
+          "correctIndex": 1,
+          "explanation": "If you decide at bar open but the signal uses bar close, you're peeking. Shift signals by one bar or decide at bar close explicitly — and model execution delay."
+        },
+        {
+          "id": "q_lab2_2",
+          "question": "A strategy shows 60% win rate and 1.5R average win with zero fees. After adding $5 round-turn and 1-tick slippage, expectancy turns negative. What happened?",
+          "options": [
+            "The strategy was never real — edge was smaller than friction",
+            "Slippage only affects losers",
+            "Fees don't matter on futures",
+            "Win rate should increase with fees"
+          ],
+          "correctIndex": 0,
+          "explanation": "Small edges get eaten by friction. Scalping and high-frequency strategies are especially fee-sensitive. Always net out costs before celebrating."
+        },
+        {
+          "id": "q_lab2_3",
+          "question": "Walk-forward testing primarily helps you detect:",
+          "options": [
+            "Network latency",
+            "Overfitting to a specific historical window",
+            "Parquet corruption",
+            "Broker margin requirements"
+          ],
+          "correctIndex": 1,
+          "explanation": "Walk-forward trains on window A, tests on B, rolls forward. If performance collapses out-of-sample, you curve-fit — not discovered edge."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Strategy: buy when close > 50 SMA, sell when close < 50 SMA. Backtest shows 40% CAGR. Audit for lookahead.",
+          "solution": "Bug: signal uses same-bar close but simulates fill at close — you knew the close before 'deciding.' Fix: compute SMA on prior bars only; enter next bar open with 1-tick slippage. Re-run — CAGR often drops 50%+.",
+          "explanation": "Same-bar signal+fill is the #1 backtest bug. Always ask: 'At the moment I decide, what do I actually know?'"
+        },
+        {
+          "problem": "NQ scalper: 12 round turns/day, $4.80 all-in per RT, avg gross winner $18, avg gross loser $12, 55% win rate. Is it viable before slippage?",
+          "solution": "Expectancy gross = 0.55×18 − 0.45×12 = 9.9 − 5.4 = $4.50/trade. Fees = 12 × $4.80 = $57.60/day. Gross P&L ≈ 12 × $4.50 = $54/day. Net ≈ −$3.60/day before slippage. Not viable — edge < friction.",
+          "explanation": "Always subtract round-turn costs per trade, not per day lump sum. High trade count amplifies fee drag exponentially."
+        }
+      ],
+      "commonMistakes": [
+        "Using adjusted prices without understanding corporate actions (less common in futures, deadly in equities).",
+        "Optimizing parameters on the full dataset then reporting in-sample results as 'live expected.'",
+        "Assuming limit orders always fill at your price — model partial fills and miss rates.",
+        "Ignoring slippage during volatile opens when your strategy actually trades."
+      ]
+    },
+    {
+      "id": "lab3",
+      "name": "Expectancy & Position Sizing",
+      "description": "Translate win rate and payoff ratio into expectancy, then size positions so one bad streak doesn't end the account. Math beats gut feel.",
+      "xpValue": 100,
+      "parentIds": [
+        "lab2"
+      ],
+      "estimatedMinutes": 120,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Expectancy: E = (Win% × Avg Win) − (Loss% × Avg Loss)",
+        "Risk per trade as % of account (1R framework)",
+        "Fixed fractional vs fixed dollar sizing",
+        "Kelly criterion (and why half-Kelly is safer)",
+        "Drawdown math and consecutive loss streaks",
+        "Correlation and portfolio heat"
+      ],
+      "whyItMatters": "Positive expectancy with wrong sizing still blows up. Prop firms and survival both come down to: how much do you risk when you're wrong? This lab turns t3 theory into executable sizing rules.",
+      "practiceProblems": [
+        "Win rate 45%, avg win $200, avg loss $100. Calculate expectancy per trade.",
+        "Account $25,000, risk 1% per trade, stop is 10 ticks on ES ($12.50/tick). How many contracts?",
+        "6 consecutive losses at 1% risk — what is account drawdown? At 3% risk?",
+        "Two uncorrelated strategies each risk 1%. Is total portfolio heat 2%? Explain."
+      ],
+      "resources": [
+        {
+          "title": "Van Tharp: Position Sizing",
+          "url": "https://www.vantharp.com/position-sizing/",
+          "type": "article",
+          "whyHelpful": "The classic R-multiple framework — expectancy and sizing as one system, not separate topics."
+        },
+        {
+          "title": "Investopedia: Kelly Criterion",
+          "url": "https://www.investopedia.com/articles/trading/04/091504.asp",
+          "type": "article",
+          "whyHelpful": "Mathematical optimal bet sizing — know when Kelly applies and when it over-bets."
+        },
+        {
+          "title": "Khan Academy: Expected Value",
+          "url": "https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library/random-variables-discrete/v/expected-value-of-a-discrete-random-variable",
+          "type": "video",
+          "whyHelpful": "Foundational EV math that expectancy builds on — quick refresher if probability rust is showing."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab3_1",
+          "question": "Strategy: 40% win rate, avg win $300, avg loss $150. Expectancy per trade?",
+          "options": [
+            "$30",
+            "$45",
+            "$60",
+            "$120"
+          ],
+          "correctIndex": 0,
+          "explanation": "E = 0.40×300 − 0.60×150 = 120 − 90 = $30 per trade."
+        },
+        {
+          "id": "q_lab3_2",
+          "question": "$50k account, 1% risk ($500), stop distance $250 per contract. Max contracts?",
+          "options": [
+            "1",
+            "2",
+            "5",
+            "10"
+          ],
+          "correctIndex": 1,
+          "explanation": "Contracts = risk dollars / stop dollars = 500 / 250 = 2. Never round up — fractional risk beats oversizing."
+        },
+        {
+          "id": "q_lab3_3",
+          "question": "Why do prop traders often use half-Kelly or less instead of full Kelly?",
+          "options": [
+            "Kelly is only for stocks",
+            "Full Kelly maximizes long-run growth but produces brutal drawdowns; estimates are noisy",
+            "Half-Kelly doubles returns",
+            "Prop firms ban Kelly"
+          ],
+          "correctIndex": 1,
+          "explanation": "Kelly assumes you know true win rate and payoff exactly. You don't. Full Kelly over-bets on estimation error; half-Kelly sacrifices peak growth for survivability."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "40% WR, +$300 / −$150. Expectancy? With $50k and 1% risk, stop $150/contract — size?",
+          "solution": "E = 0.4×300 − 0.6×150 = $30/trade. Risk budget = $500. Contracts = 500/150 = 3.33 → 3 contracts (floor).",
+          "explanation": "Positive expectancy doesn't mean every trade wins — it means the distribution pays you over many trades. Sizing ensures one loss ≠ one blown account."
+        },
+        {
+          "problem": "10-trade losing streak at 1% risk per trade. Approximate drawdown?",
+          "solution": "Compounded: (0.99)^10 ≈ 0.904 → ~9.6% drawdown. Linear approximation: 10%. At 2% risk: (0.98)^10 ≈ 18.3%. Streaks happen — size for them.",
+          "explanation": "Traders underestimate streak length. At 40% win rate, 10 losses in a row is rare but inevitable over hundreds of trades."
+        }
+      ],
+      "commonMistakes": [
+        "Sizing based on conviction instead of stop distance — bigger bets on 'sure things' is how accounts die.",
+        "Ignoring correlation when running multiple strategies — heat stacks.",
+        "Using full Kelly with backtested stats treated as gospel.",
+        "Moving stops wider after entry to avoid a loss — changes your R and invalidates sizing."
+      ]
+    },
+    {
+      "id": "lab4",
+      "name": "Prop Firm Rules as Code",
+      "description": "Encode prop-firm constraints — daily loss limits, trailing drawdown, consistency rules — as executable guards that block bad orders before they reach the market.",
+      "xpValue": 125,
+      "parentIds": [
+        "lab3"
+      ],
+      "estimatedMinutes": 150,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Daily loss limit (DLL) and max trailing drawdown",
+        "Consistency / payout rules (% of best day)",
+        "Minimum trading days and inactivity rules",
+        "Rule guards as pre-trade checks",
+        "Soft warnings vs hard blocks",
+        "Audit logs for rule violations"
+      ],
+      "whyItMatters": "Blowing a funded account over one revenge trade is a code problem, not a psychology lecture. When rules live in code — not sticky notes — the platform stops you before the firm does.",
+      "practiceProblems": [
+        "Account $50k, max trailing DD $2,500, high-water $52,100, current equity $50,000. How much room left?",
+        "Best day profit $1,200, consistency rule: no single day > 40% of total profit. Total profit $4,000. Is best day compliant?",
+        "Design a pre-trade guard: max 3 contracts ES if unrealized day P&L < −$800.",
+        "Write pseudocode for a DLL hard stop that flattens and locks trading until next session."
+      ],
+      "resources": [
+        {
+          "title": "Apex Trader Funding: Rule Overview",
+          "url": "https://apextraderfunding.com/rules/",
+          "type": "article",
+          "whyHelpful": "Real prop firm rule sheet — use as a template for which constraints to encode first."
+        },
+        {
+          "title": "Topstep: Trading Combine Rules",
+          "url": "https://www.topstep.com/trading-combine/",
+          "type": "article",
+          "whyHelpful": "Another major firm's rule structure — compare trailing drawdown vs static max loss implementations."
+        },
+        {
+          "title": "Martin Fowler: Guard Clause Pattern",
+          "url": "https://refactoring.com/catalog/replaceNestedConditionalWithGuardClauses.html",
+          "type": "article",
+          "whyHelpful": "Software pattern for early-exit validation — exactly how pre-trade rule checks should be structured."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab4_1",
+          "question": "Trailing drawdown $3,000, high-water mark $105,000. Minimum allowed equity?",
+          "options": [
+            "$102,000",
+            "$103,000",
+            "$97,000",
+            "$105,000"
+          ],
+          "correctIndex": 0,
+          "explanation": "Floor = HWM − trailing DD = 105,000 − 3,000 = $102,000. The limit ratchets up with new highs."
+        },
+        {
+          "id": "q_lab4_2",
+          "question": "Why implement prop rules in code instead of relying on discipline?",
+          "options": [
+            "Code is faster than charts",
+            "Emotion bypasses discipline in real time; guards enforce rules when cortisol is high",
+            "Brokers require it",
+            "Rules don't apply during news events"
+          ],
+          "correctIndex": 1,
+          "explanation": "The revenge-trade moment is exactly when humans override rules. Automated guards remove the option."
+        },
+        {
+          "id": "q_lab4_3",
+          "question": "A soft warning vs hard block: which is appropriate for hitting 80% of daily loss limit?",
+          "options": [
+            "Hard block — always stop all trading",
+            "Soft warning first, hard block at 100% of limit",
+            "Neither — let the trader decide",
+            "Soft warning only after account blown"
+          ],
+          "correctIndex": 1,
+          "explanation": "Progressive enforcement: warn at 80%, block new risk at 100%, optionally flatten. Gives awareness without surprise lockouts on minor breaches."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "HWM $52,100, trailing DD $2,500, current equity $50,000. Room before breach?",
+          "solution": "Floor = 52,100 − 2,500 = $49,600. Current $50,000 → $400 buffer. One bad ES trade (~$500–$1000) breaches. Guard should block new entries now.",
+          "explanation": "Prop traders focus on distance to breach, not P&L vanity. Encode 'buffer < X → no new trades' as a hard rule."
+        },
+        {
+          "problem": "Pseudocode: daily loss limit hard stop at −$1,000 day P&L.",
+          "solution": "on_order(order): if day_pnl <= -1000: reject(order, 'DLL breached'); flatten_all(); lock_until(next_session). on_fill: update day_pnl; if day_pnl <= -800: warn('80% DLL'); if day_pnl <= -1000: flatten_all(); lock.",
+          "explanation": "Check on every order and every fill. Flatten + lock prevents the 'one more trade to get it back' spiral."
+        }
+      ],
+      "commonMistakes": [
+        "Calculating drawdown on unrealized peaks incorrectly — use firm-defined HWM rules exactly.",
+        "Hard blocking without flatten logic — open positions can still breach after the block.",
+        "Ignoring consistency rules until payout day — track daily profit % from trade one.",
+        "Different rule implementations between sim and live — test guards in paper first."
+      ]
+    },
+    {
+      "id": "lab5",
+      "name": "Journal Protocol: Thesis Before Click",
+      "description": "Mandatory pre-trade thesis: setup, invalidation, target, and size — logged before order entry. No thesis, no click.",
+      "xpValue": 100,
+      "parentIds": [
+        "lab4"
+      ],
+      "estimatedMinutes": 90,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Pre-trade thesis vs post-trade story",
+        "Setup taxonomy (breakout, mean reversion, news fade)",
+        "Invalidation level and time stop",
+        "Target and reward:risk before entry",
+        "Emotional state tag (calm, FOMO, revenge)",
+        "Screenshot + context capture"
+      ],
+      "whyItMatters": "Post-hoc narratives lie. A thesis-before-click protocol creates auditable evidence of your edge — and exposes when you're gambling. Coaches and future-you can only review what you wrote down in advance.",
+      "practiceProblems": [
+        "Write a complete pre-trade thesis for a long ES breakout above overnight high.",
+        "You didn't write a thesis but took the trade. How should the journal flag it?",
+        "Tag 5 recent trades with setup type and emotional state. What pattern emerges?",
+        "Design 4 required fields that must be filled before order submission in your stack."
+      ],
+      "resources": [
+        {
+          "title": "Trading Journal Best Practices (Edgewonk)",
+          "url": "https://edgewonk.com/blog/trading-journal",
+          "type": "article",
+          "whyHelpful": "Structured journaling workflow — what to capture and how to review weekly."
+        },
+        {
+          "title": "Brett Steenbarger: Trading Psychology",
+          "url": "https://www.brettsteenbarger.com/",
+          "type": "article",
+          "whyHelpful": "Research-backed perspective on process vs outcome — supports thesis-first discipline."
+        },
+        {
+          "title": "Learn v2 Trading Lab Journal",
+          "url": "/lab/trading",
+          "type": "practice",
+          "whyHelpful": "Connect journal protocol to the local tradingv1 backend when running — same fields, live integration."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab5_1",
+          "question": "What is the main purpose of a pre-trade thesis?",
+          "options": [
+            "Predict exact price targets",
+            "Create an auditable plan before outcome bias kicks in",
+            "Satisfy broker compliance",
+            "Replace stop losses"
+          ],
+          "correctIndex": 1,
+          "explanation": "Once you know the result, your brain rewrites the story. Pre-trade logs capture intent — the only fair input for coach review."
+        },
+        {
+          "id": "q_lab5_2",
+          "question": "Minimum viable thesis fields before click:",
+          "options": [
+            "Symbol only",
+            "Setup, invalidation, target, size rationale",
+            "Post-trade P&L estimate",
+            "Twitter sentiment score"
+          ],
+          "correctIndex": 1,
+          "explanation": "Setup = why now. Invalidation = when you're wrong. Target = planned R. Size = risk alignment. Four fields, 30 seconds, saves accounts."
+        },
+        {
+          "id": "q_lab5_3",
+          "question": "A 'revenge' emotional tag on 40% of trades this week suggests:",
+          "options": [
+            "Strategy is working",
+            "Process breakdown — review rules and consider cooldown guards",
+            "Tags are optional decoration",
+            "Increase size to recover"
+          ],
+          "correctIndex": 1,
+          "explanation": "Emotional tagging makes invisible patterns visible. High revenge % → enforce DLL guards (lab4) and mandatory cooldown after losses."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Long ES: broke overnight high 5245, pullback held 5242, targeting 5255, stop 5238, 2 contracts (1% risk). Write thesis.",
+          "solution": "Setup: ORB continuation — cleared ONH with volume, retest held. Thesis: momentum into RTH balance. Invalidation: 5-min close < 5238 (below retest low). Target: 5255 (prior week VAH). Size: 2 ES = $500 risk vs $50k (1%). State: calm, planned A+ setup.",
+          "explanation": "Specific levels and labels let you grade the trade honestly later — did you follow plan or move stop?"
+        },
+        {
+          "problem": "Trader clicks buy with empty thesis field. System allows it. Fix?",
+          "solution": "Soft launch: warn + require 'override reason' for 2 weeks. Hard launch: block order API until thesis JSON validates (all required fields non-empty). Log overrides separately for coach review.",
+          "explanation": "Gradual enforcement reduces rebellion; hard blocks enforce culture. Never allow silent empty theses in steady state."
+        }
+      ],
+      "commonMistakes": [
+        "Writing thesis after the fill — outcome bias makes this worthless.",
+        "Vague invalidation ('if it feels wrong') — must be a level or time rule.",
+        "Skipping emotional tags on winners — overconfidence patterns hide there too.",
+        "Journal disconnected from order flow — if it's not in the execution path, it won't happen."
+      ]
+    },
+    {
+      "id": "lab6",
+      "name": "Strategy Spec Template (STRATEGY.md)",
+      "description": "Document strategies in a standard STRATEGY.md: thesis, universe, signals, risk, parameters, and failure modes — the contract between research and implementation.",
+      "xpValue": 125,
+      "parentIds": [
+        "lab5"
+      ],
+      "estimatedMinutes": 120,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "STRATEGY.md sections: thesis, universe, signals, execution, risk, params",
+        "Hypothesis vs implementation separation",
+        "Parameter ownership and change log",
+        "Regime filters and when NOT to trade",
+        "Failure modes and kill criteria",
+        "Link spec → backtest config → live config"
+      ],
+      "whyItMatters": "Undocumented strategies drift. STRATEGY.md is the single source of truth — what you think you're trading, what code actually does, and when to pull the plug. Lab2 hygiene and lab5 journal both reference this doc.",
+      "practiceProblems": [
+        "Outline STRATEGY.md for a 20/50 SMA cross on NQ with ADX filter > 25.",
+        "Your live bot diverged from backtest — which spec sections do you diff first?",
+        "Write kill criteria: 3 conditions that pause the strategy automatically.",
+        "Parameter 'lookback=14' changed to 12 mid-month. Where must that be logged?"
+      ],
+      "resources": [
+        {
+          "title": "GitHub: Strategy Spec Example (QuantConnect)",
+          "url": "https://www.quantconnect.com/docs/v2/writing-algorithms/algorithm-framework/overview",
+          "type": "article",
+          "whyHelpful": "Framework thinking — universe, alpha, portfolio, execution — maps cleanly to STRATEGY.md sections."
+        },
+        {
+          "title": "Write the Docs: README-driven Development",
+          "url": "https://www.writethedocs.org/guide/writing/readme/",
+          "type": "article",
+          "whyHelpful": "Document-first discipline — spec before code, same ethos as thesis before click."
+        },
+        {
+          "title": "tradingv1 STRATEGY.md (local repo)",
+          "url": "https://github.com/",
+          "type": "article",
+          "whyHelpful": "Your implementation repo should host one STRATEGY.md per strategy — link spec hashes to backtest run IDs for traceability."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab6_1",
+          "question": "Which STRATEGY.md section defines when the strategy must NOT trade?",
+          "options": [
+            "Universe",
+            "Regime filters / no-trade conditions",
+            "Commission schedule",
+            "Git history"
+          ],
+          "correctIndex": 1,
+          "explanation": "Regime filters (low vol, news blackout, trendless ADX) prevent trading when edge doesn't apply — as important as entry rules."
+        },
+        {
+          "id": "q_lab6_2",
+          "question": "Kill criteria belong in the spec because:",
+          "options": [
+            "Brokers require them",
+            "They pre-commit exit-from-strategy rules before drawdown pain",
+            "They improve win rate automatically",
+            "They replace backtesting"
+          ],
+          "correctIndex": 1,
+          "explanation": "Kill criteria (e.g., 20-trade rolling expectancy < 0) are decided calmly in the spec — not after a 15% drawdown when you're rationalizing."
+        },
+        {
+          "id": "q_lab6_3",
+          "question": "Spec says 'enter next bar open'; code enters same bar close. This is a:",
+          "options": [
+            "Documentation typo only",
+            "Spec-implementation mismatch — likely lookahead in backtest",
+            "Slippage issue",
+            "Kelly sizing error"
+          ],
+          "correctIndex": 1,
+          "explanation": "Spec and code must match bar-by-bar. Mismatch here recreates lab2 lookahead bugs — diff spec vs backtest config religiously."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Draft STRATEGY.md skeleton for SMA cross strategy.",
+          "solution": "# ES Trend Follow v1\n## Thesis\nMomentum persists in RTH when ADX>25.\n## Universe\nES continuous, RTH only.\n## Signals\nLong: 20 SMA > 50 SMA and ADX>25. Flat: cross down.\n## Execution\nNext bar open, 1-tick slippage.\n## Risk\n1% per trade, stop = 1.5× ATR(14).\n## Params\nSMA 20/50, ADX 25, ATR 14 — frozen 2024-06-01.\n## Kill\nRolling 30-trade expectancy < 0 → pause.",
+          "explanation": "Each section answers one question. A new developer (or future you) can implement or audit without oral tradition."
+        },
+        {
+          "problem": "Live P&L diverges from backtest. Audit checklist from STRATEGY.md.",
+          "solution": "1) Universe — same symbols/session? 2) Signals — same bar timing? 3) Execution — slippage/fees match? 4) Params — unchanged since freeze date? 5) Data — same Parquet pipeline (lab1)? Log diff for each.",
+          "explanation": "Spec-driven debugging beats random tweaking. Most divergences are spec-implementation or data pipeline gaps."
+        }
+      ],
+      "commonMistakes": [
+        "Spec in someone's head — code becomes the accidental spec.",
+        "No parameter freeze date — endless tweaking erases statistical validity.",
+        "Missing no-trade regimes — strategy trades 24/7 when edge is RTH-only.",
+        "No link from spec version to backtest run ID — can't reproduce results."
+      ]
+    },
+    {
+      "id": "lab7",
+      "name": "Recording & Rithmic (When Creds Exist)",
+      "description": "Wire live and sim execution to Rithmic when credentials are available: order events, fills, and session recording for replay and coach review.",
+      "xpValue": 150,
+      "parentIds": [
+        "lab6"
+      ],
+      "estimatedMinutes": 180,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Rithmic API / R | Trader protocol basics",
+        "Credential management and environment separation",
+        "Order lifecycle events (submit, ack, fill, cancel)",
+        "Session recording for replay",
+        "Sim vs live parity checks",
+        "Secrets never in git"
+      ],
+      "whyItMatters": "Paper trading without recording is practice without feedback. When Rithmic creds exist, every fill becomes data — replay mistakes, verify journal theses against tape, and close the loop between lab and market.",
+      "practiceProblems": [
+        "List environment variables for Rithmic creds — what must NEVER be committed?",
+        "Design event schema: order_id, ts, side, qty, price, state.",
+        "Sim fill differs from live by 2 ticks — what parity checks run before go-live?",
+        "Session recording crashed mid-day. How do you reconcile journal vs exchange fills?"
+      ],
+      "resources": [
+        {
+          "title": "Rithmic: API Documentation",
+          "url": "https://www.rithmic.com/apis",
+          "type": "article",
+          "whyHelpful": "Official entry point for Rithmic connectivity — protocols, SDK options, and vendor requirements."
+        },
+        {
+          "title": "12 Factor App: Config",
+          "url": "https://12factor.net/config",
+          "type": "article",
+          "whyHelpful": "Store creds in environment, not repo — mandatory for any trading stack."
+        },
+        {
+          "title": "Learn v2 Trading Lab",
+          "url": "/lab/trading",
+          "type": "practice",
+          "whyHelpful": "Health check and last backtest card — extend with Rithmic session status when tradingv1 exposes it."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab7_1",
+          "question": "Where should Rithmic username/password live?",
+          "options": [
+            "Committed in config.json",
+            "Environment variables or secret manager — never git",
+            "Hardcoded in strategy file",
+            "Slack DM to yourself"
+          ],
+          "correctIndex": 1,
+          "explanation": "Credentials in git = eventual leak. Use .env locally (gitignored), secret manager in prod. Rotate if ever exposed."
+        },
+        {
+          "id": "q_lab7_2",
+          "question": "Why record order lifecycle events, not just fills?",
+          "options": [
+            "Fills are enough for P&L",
+            "Partial fills, cancels, and rejects explain slippage and bugs",
+            "Brokers charge for events",
+            "Events replace the journal"
+          ],
+          "correctIndex": 1,
+          "explanation": "A missing fill might be a rejected order, partial, or network drop. Full lifecycle debugs execution issues fills alone hide."
+        },
+        {
+          "id": "q_lab7_3",
+          "question": "Before enabling live Rithmic with real capital, minimum gate:",
+          "options": [
+            "Profitable backtest only",
+            "Sim session with recorded events matching journal + prop guards passing",
+            "Twitter approval",
+            "Higher leverage"
+          ],
+          "correctIndex": 1,
+          "explanation": "Sim with recording proves integration: thesis journal, rule guards, and event pipeline all work — backtest alone doesn't test execution path."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Event log: SUBMIT buy 2 ES @ MKT → ACK → PARTIAL 1 @ 5245.25 → FILL 1 @ 5245.50. Reconstruct position.",
+          "solution": "Long 2 ES intended; 1 filled 5245.25, 1 at 5245.50; avg entry 5245.375 if no prior position. Check: partial fill handling in sizing — still within 1% risk?",
+          "explanation": "Partial fills break naive 'all or nothing' assumptions. Recording lets you verify bot handled remainders correctly."
+        },
+        {
+          "problem": "Creds in .env.example committed with placeholder values — safe?",
+          "solution": "Placeholder names OK (RITHMIC_USER=changeme); never real values. .env gitignored; CI uses secret store. Add pre-commit hook scanning for rithmic password patterns.",
+          "explanation": "Example files teach shape; real secrets stay local. One accidental commit = rotate creds immediately."
+        }
+      ],
+      "commonMistakes": [
+        "Skipping sim recording — live becomes the first integration test.",
+        "Same creds for dev and prod — one bug flattens real account.",
+        "Recording only P&L snapshots — lose bar-by-bar context for coach replay.",
+        "No health check when creds missing — fail loudly, don't silently paper-trade wrong account."
+      ]
+    },
+    {
+      "id": "lab8",
+      "name": "Review Discipline & Coach Bundle",
+      "description": "Weekly review ritual plus exportable coach bundle: thesis logs, rule breaches, equity curve, and tagged mistakes — one package for accountability.",
+      "xpValue": 150,
+      "parentIds": [
+        "lab7"
+      ],
+      "estimatedMinutes": 120,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Weekly review agenda (stats, process, one fix)",
+        "Coach bundle contents: trades, theses, breaches, notes",
+        "Process grade vs outcome grade",
+        "One actionable fix per week (not ten)",
+        "Spaced repetition of recurring mistakes",
+        "Export format (JSON/Markdown) for mentor review"
+      ],
+      "whyItMatters": "Learning without review is repetition without improvement. The coach bundle turns eight labs into a feedback loop — data pipeline through execution, summarized for the person who holds you accountable.",
+      "practiceProblems": [
+        "List 5 sections in a weekly coach bundle export.",
+        "Grade a trade: +$400 P&L but no pre-trade thesis. Process grade?",
+        "You found 3 problems in review. Which one do you fix first?",
+        "Design a 30-minute weekly review agenda with time boxes."
+      ],
+      "resources": [
+        {
+          "title": "Deliberate Practice (Ericsson summary)",
+          "url": "https://en.wikipedia.org/wiki/Peak:_Secrets_from_the_New_Science_of_Expertise",
+          "type": "book",
+          "whyHelpful": "Expertise comes from feedback loops, not hours — weekly review is deliberate practice for trading."
+        },
+        {
+          "title": "Atomic Habits: Reflection & Review",
+          "url": "https://jamesclear.com/review",
+          "type": "article",
+          "whyHelpful": "Annual/monthly/weekly review cadence — steal the structure for trading process."
+        },
+        {
+          "title": "Learn v2 Stats & Review pages",
+          "url": "/stats",
+          "type": "practice",
+          "whyHelpful": "Use in-app stats and review queue as the starting point for coach bundle assembly."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_lab8_1",
+          "question": "Process grade vs outcome grade: +$500 trade with moved stop and no thesis.",
+          "options": [
+            "A — profit is what matters",
+            "F process — violated journal and risk protocol regardless of P&L",
+            "Incomplete — need more trades",
+            "B — partial credit for profit"
+          ],
+          "correctIndex": 1,
+          "explanation": "Positive P&L with broken process teaches bad habits. Coach review grades process; outcomes average out over sample size."
+        },
+        {
+          "id": "q_lab8_2",
+          "question": "Coach bundle should include:",
+          "options": [
+            "Only winning trades",
+            "Theses, rule events, equity curve, tagged mistakes, weekly note",
+            "Screenshots only",
+            "Backtest equity without live trades"
+          ],
+          "correctIndex": 1,
+          "explanation": "Bundle = full honest snapshot. Breaches and losing theses are the highest-signal content for improvement."
+        },
+        {
+          "id": "q_lab8_3",
+          "question": "One fix per week principle exists because:",
+          "options": [
+            "Humans can reliably change 10 habits at once",
+            "Focus beats scatter — one process change gets measured",
+            "Coaches only allow one note",
+            "Bugs can only be fixed on weekends"
+          ],
+          "correctIndex": 1,
+          "explanation": "Ten fixes = zero fixes. Pick the highest-leverage process gap (e.g., empty theses), measure next week, iterate."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Build coach bundle outline for week of 2024-06-10.",
+          "solution": "1) Summary: 18 trades, 11 theses, 3 breaches, +$420 net. 2) Equity curve PNG. 3) CSV: trades + thesis fields. 4) Rule log: DLL warn Tue 2:15pm. 5) Tags: 4× FOMO. 6) Coach note: 'Focus — no trade without thesis; set hard block.' 7) One fix: enable thesis gate (lab5).",
+          "explanation": "Structured bundle saves coach time and forces you to see patterns — FOMO tag clustering is the actionable insight, not the $420."
+        },
+        {
+          "problem": "30-min weekly review agenda.",
+          "solution": "0–5: Pull bundle stats. 5–12: Grade 3 random trades (process). 12–18: Rule breaches + emotional tags. 18–25: One fix commitment. 25–30: Schedule next week + SR review queue.",
+          "explanation": "Time boxes prevent review becoming rumination. Process grading on random sample beats cherry-picking winners."
+        }
+      ],
+      "commonMistakes": [
+        "Reviewing only P&L — ignores process drift until blowup.",
+        "Sending coach 200 trades unfiltered — bundle must curate and summarize.",
+        "Ten improvement goals — pick one.",
+        "Skipping review when profitable — overconfidence season is when discipline erodes."
+      ]
+    }
+  ]
+}

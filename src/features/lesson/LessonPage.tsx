@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, FileText, Lightbulb, Lock } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  CheckCircle2,
+  FileText,
+  FlaskConical,
+  Lightbulb,
+  Lock,
+} from "lucide-react";
 import { Badge, Button, Card, FocusShell } from "@/components/ui";
 import { getAdjacentLessonNodes, getNode, loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
@@ -16,6 +25,12 @@ import {
 } from "@/stores/noteSessions";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
+
+function getTradingLessonIndex(nodeId: string): number | null {
+  const match = /^t(\d+)$/.exec(nodeId);
+  if (!match) return null;
+  return Number.parseInt(match[1], 10);
+}
 
 export function LessonPage() {
   const { subjectId = "", nodeId = "" } = useParams();
@@ -88,6 +103,8 @@ export function LessonPage() {
   const status = getNodeStatus(node);
   const isCompleted = status === "completed";
   const isLocked = status === "locked";
+  const tradingLessonIndex = subject.id === "trading" ? getTradingLessonIndex(node.id) : null;
+  const showTradingLabCard = tradingLessonIndex !== null && tradingLessonIndex >= 11;
 
   const handleComplete = () => {
     completeNode(node.id, node.xpValue);
@@ -147,6 +164,30 @@ export function LessonPage() {
             {node.description}
           </p>
         </header>
+
+        {showTradingLabCard && (
+          <Card variant="quiet" className="stagger-item">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 items-start gap-3">
+                <FlaskConical size={18} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
+                <div className="min-w-0 space-y-1">
+                  <p className="text-sm font-medium text-[var(--text-heading)]">Open Trading Lab</p>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    Practice in the sandbox or continue with hands-on Algo Lab modules.
+                  </p>
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Link to="/lab/trading">
+                  <Button variant="secondary">Trading Lab</Button>
+                </Link>
+                <Link to="/subjects/algo-lab">
+                  <Button variant="secondary">Algo Lab</Button>
+                </Link>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {node.whyItMatters && (
           <Card variant="quiet" className="stagger-item">

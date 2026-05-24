@@ -107,6 +107,24 @@ export const tracks: LearningTrack[] = [
     ],
   },
   {
+    id: "algo-lab",
+    name: "Algo Lab Track",
+    description:
+      "From tick data to coach review — build the full algo trading stack after core trading foundations.",
+    color: "#6366f1",
+    icon: "code",
+    lessons: [
+      lesson("algo-lab", "lab1"),
+      lesson("algo-lab", "lab2"),
+      lesson("algo-lab", "lab3"),
+      lesson("algo-lab", "lab4"),
+      lesson("algo-lab", "lab5"),
+      lesson("algo-lab", "lab6"),
+      lesson("algo-lab", "lab7"),
+      lesson("algo-lab", "lab8"),
+    ],
+  },
+  {
     id: "developer",
     name: "The Developer Track",
     description: "From zero to building real software — Python, data structures, web dev, system design.",

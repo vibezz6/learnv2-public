@@ -41,6 +41,7 @@ describe("migrate-v1", () => {
     expect(inferSubjectId("em2")).toBe("engineering");
     expect(inferSubjectId("p3")).toBe("programming");
     expect(inferSubjectId("st1")).toBe("sat-prep");
+    expect(inferSubjectId("lab3")).toBe("algo-lab");
   });
 
   it("mergeLegacyNotes creates sessions for v1 notes without v2 session", () => {
