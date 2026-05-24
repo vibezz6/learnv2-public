@@ -94,8 +94,11 @@ export function OnboardingModal() {
               What&apos;s your main focus?
             </h2>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
-              We&apos;ll enroll you in a track on the campus home dashboard. You can change it
-              anytime.
+              We&apos;ll enroll you in a track on the campus home dashboard. Change focus later in{" "}
+              <Link to="/settings#campus-focus" className="font-medium text-[var(--accent)] hover:underline">
+                Settings
+              </Link>
+              .
             </p>
             <ul className="mt-4 space-y-2" role="listbox" aria-label="Placement goal">
               {PLACEMENT_OPTIONS.map((option) => {

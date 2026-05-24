@@ -54,7 +54,13 @@ export function CampusHome({ subjects }: Props) {
             {" "}
             <span className="text-[var(--text-heading)]">
               Focus: {labelForPlacement(placementGoal)}.
-            </span>
+            </span>{" "}
+            <Link
+              to="/settings#campus-focus"
+              className="font-medium text-[var(--accent)] hover:underline"
+            >
+              Change
+            </Link>
           </>
         )}
       </p>

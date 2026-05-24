@@ -73,7 +73,7 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
   };
 
   return (
-    <Card className="min-w-0 space-y-4">
+    <Card id="admissions-backup" className="min-w-0 scroll-mt-24 space-y-4">
       <div>
         <h2 className="break-words font-semibold text-[var(--text-heading)]">College applications</h2>
         <p className="mt-1 break-words text-sm text-[var(--text-muted)]">

@@ -23,7 +23,7 @@ export function PlacementSettingsCard({ onMessage }: Props) {
   };
 
   return (
-    <Card className="min-w-0 space-y-4">
+    <Card id="campus-focus" className="min-w-0 scroll-mt-24 space-y-4">
       <div>
         <h2 className="break-words font-semibold text-[var(--text-heading)]">Campus focus</h2>
         <p className="mt-1 break-words text-sm text-[var(--text-muted)]">

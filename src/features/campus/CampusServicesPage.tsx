@@ -10,6 +10,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Badge, Card } from "@/components/ui";
 import { getManifestEntry } from "@/curriculum";
+import { CampusAdmissionsHub } from "@/features/campus/CampusAdmissionsHub";
 
 type ServiceCard = {
   to: string;
@@ -94,6 +95,10 @@ export function CampusServicesPage() {
           Calculators, labs, and practice tools — everything outside the main lesson flow.
         </p>
       </section>
+
+      <div className="stagger-item">
+        <CampusAdmissionsHub />
+      </div>
 
       <div className="stagger-item space-y-3">
         {services.map(({ to, title, description, icon: Icon, tone }) => (
