@@ -123,10 +123,13 @@ export function CampusHome({ subjects }: Props) {
           <ul className="mt-2 divide-y divide-[var(--border)]">
             {syllabus.map((item) => {
               const locked = item.status === "locked";
+              const comingSoon = item.status === "coming_soon";
               const content = (
                 <>
                   <span className="min-w-0 flex-1 break-words text-sm">{item.title}</span>
-                  {locked ? (
+                  {comingSoon ? (
+                    <span className="shrink-0 text-[11px] text-[var(--text-muted)]">Coming soon</span>
+                  ) : locked ? (
                     <Lock size={14} className="shrink-0 text-[var(--text-muted)]" aria-hidden />
                   ) : (
                     <ChevronRight size={14} className="shrink-0 text-[var(--text-muted)]" aria-hidden />
@@ -136,7 +139,7 @@ export function CampusHome({ subjects }: Props) {
 
               return (
                 <li key={`${item.subjectId}-${item.nodeId}`}>
-                  {locked ? (
+                  {locked || comingSoon ? (
                     <div
                       className="flex min-h-11 items-center gap-2 py-2.5 text-[var(--text-muted)]"
                       aria-disabled
@@ -170,10 +173,10 @@ export function CampusHome({ subjects }: Props) {
               </p>
             </div>
           </div>
-          {satNext.status === "locked" ? (
+          {satNext.status === "locked" || satNext.status === "coming_soon" ? (
             <Button variant="secondary" className="mt-4 min-h-11 w-full" disabled>
-              Locked
-              <Lock size={14} />
+              {satNext.status === "coming_soon" ? "Coming soon" : "Locked"}
+              {satNext.status === "locked" ? <Lock size={14} /> : null}
             </Button>
           ) : (
             <Link

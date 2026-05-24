@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { tracks } from "@/data/tracks";
 import type { Subject } from "@/curriculum/types";
+import { countAvailableTrackLessons, resolveTrackLesson } from "@/lib/trackIntegrity";
 import { useProgress } from "@/stores/progress";
 
 export function TrackRecommendation({ subjects }: { subjects: Subject[] }) {
@@ -10,16 +11,16 @@ export function TrackRecommendation({ subjects }: { subjects: Subject[] }) {
 
   const trackProgress = tracks.map((track) => {
     const completed = track.lessons.filter(({ subjectId, nodeId }) => {
-      const sub = subjects.find((s) => s.id === subjectId);
-      const node = sub?.nodes.find((n) => n.id === nodeId);
-      return node && getNodeStatus(node) === "completed";
+      const resolved = resolveTrackLesson(subjectId, nodeId, subjects);
+      return resolved && getNodeStatus(resolved.node) === "completed";
     }).length;
     const next = track.lessons.find(({ subjectId, nodeId }) => {
-      const sub = subjects.find((s) => s.id === subjectId);
-      const node = sub?.nodes.find((n) => n.id === nodeId);
-      return node && getNodeStatus(node) !== "completed" && getNodeStatus(node) !== "locked";
+      const resolved = resolveTrackLesson(subjectId, nodeId, subjects);
+      if (!resolved) return false;
+      const status = getNodeStatus(resolved.node);
+      return status !== "completed" && status !== "locked";
     });
-    return { track, completed, total: track.lessons.length, next };
+    return { track, completed, total: countAvailableTrackLessons(track, subjects), next };
   });
 
   const best = trackProgress

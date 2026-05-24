@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Search } from "lucide-react";
 import { manifest } from "@/curriculum";
-import { loadAllSubjects } from "@/curriculum/loader";
+import { loadSubjectResult } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
-import { Button, Card, EmptyState } from "@/components/ui";
+import { Badge, Button, Card, EmptyState } from "@/components/ui";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
@@ -15,12 +15,32 @@ export function SubjectsPage() {
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const progressNodes = useProgress((s) => s.data.nodes);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [unavailableIds, setUnavailableIds] = useState<Set<string>>(() => new Set());
   const [query, setQuery] = useState("");
   const [filterId, setFilterId] = useState("all");
   const [sort, setSort] = useState<SortMode>("progress");
 
   useEffect(() => {
-    loadAllSubjects().then(setSubjects);
+    Promise.all(
+      manifest.map(async (entry) => ({
+        id: entry.id,
+        result: await loadSubjectResult(entry.id),
+      })),
+    ).then((results) => {
+      const loaded: Subject[] = [];
+      const unavailable = new Set<string>();
+
+      for (const { id, result } of results) {
+        if (result.status === "ok") {
+          loaded.push(result.subject);
+        } else if (result.status === "missing_file" || result.status === "invalid_data") {
+          unavailable.add(id);
+        }
+      }
+
+      setSubjects(loaded);
+      setUnavailableIds(unavailable);
+    });
   }, []);
 
   const summaries = useMemo(() => {
@@ -109,12 +129,13 @@ export function SubjectsPage() {
           const summary = summaries.get(entry.id);
           const next = summary?.nextNode;
           const pct = summary?.pct ?? 0;
+          const unavailable = unavailableIds.has(entry.id);
 
           return (
             <Card key={entry.id} hover className="flex h-full flex-col">
               <Link to={`/subjects/${entry.id}`} className="min-w-0 flex-1">
                 <div className="mb-3 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex min-w-0 items-center gap-2">
                     <span
                       className="h-2 w-2 shrink-0 rounded-full"
                       style={{ background: entry.color }}
@@ -123,26 +144,35 @@ export function SubjectsPage() {
                     <span className="font-mono text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
                       {entry.id}
                     </span>
+                    {unavailable && (
+                      <Badge className="text-[var(--text-muted)]">Unavailable</Badge>
+                    )}
                   </div>
-                  <span className="font-mono text-[11px] tabular-nums text-[var(--text-muted)]">
-                    {pct}%
-                  </span>
+                  {!unavailable && (
+                    <span className="font-mono text-[11px] tabular-nums text-[var(--text-muted)]">
+                      {pct}%
+                    </span>
+                  )}
                 </div>
                 <h2 className="text-base font-medium text-[var(--text-heading)]">{entry.name}</h2>
               <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">
                 {entry.description}
               </p>
-                <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--border)]">
-                  <div
-                    className="h-full rounded-full"
-                    style={{ width: `${pct}%`, background: entry.color }}
-                  />
-                </div>
-                <p className="mt-2 font-mono text-[11px] tabular-nums text-[var(--text-muted)]">
-                  {summary?.completed ?? 0}/{entry.nodeCount} lessons
-                </p>
+                {!unavailable && (
+                  <>
+                    <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--border)]">
+                      <div
+                        className="h-full rounded-full"
+                        style={{ width: `${pct}%`, background: entry.color }}
+                      />
+                    </div>
+                    <p className="mt-2 font-mono text-[11px] tabular-nums text-[var(--text-muted)]">
+                      {summary?.completed ?? 0}/{entry.nodeCount} lessons
+                    </p>
+                  </>
+                )}
               </Link>
-              {next && (
+              {next && !unavailable && (
                 <Link to={`/subjects/${entry.id}/${next.id}`} className="mt-4 block">
                   <Button variant="secondary" className="h-9 w-full text-sm">
                     Continue

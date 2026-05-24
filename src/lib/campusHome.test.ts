@@ -78,7 +78,46 @@ describe("campusHome", () => {
     ];
 
     const progress = getTrackProgress(track, subjects, statusMap({ m1: "completed", m2: "available" }));
-    expect(progress).toEqual({ completed: 1, total: track.lessons.length, pct: 7 });
+    expect(progress.completed).toBe(1);
+    expect(progress.total).toBe(7);
+    expect(progress.pct).toBe(14);
+  });
+
+  it("getTrackProgress excludes missing lessons from the total", () => {
+    const track = getTrackById(DEFAULT_TRACK_ID)!;
+    const subjects = [satSubject()];
+
+    const progress = getTrackProgress(track, subjects, statusMap({}));
+    expect(progress.total).toBe(3);
+    expect(progress.completed).toBe(0);
+  });
+
+  it("getWeeklySyllabusNodes shows coming soon for missing lessons", () => {
+    const track = getTrackById(DEFAULT_TRACK_ID)!;
+    const subjects = [satSubject()];
+
+    const syllabus = getWeeklySyllabusNodes(
+      track,
+      subjects,
+      statusMap({ st1: "completed", st2: "completed", st3: "completed" }),
+      2,
+    );
+
+    expect(syllabus).toEqual([
+      { subjectId: "sat-prep", nodeId: "st4", title: "Coming soon", status: "coming_soon" },
+      { subjectId: "sat-prep", nodeId: "st5", title: "Coming soon", status: "coming_soon" },
+    ]);
+  });
+
+  it("getSatNextLesson returns coming soon when the next lesson is missing", () => {
+    const subjects = [satSubject()];
+
+    expect(getSatNextLesson(subjects, statusMap({ st1: "completed", st2: "completed", st3: "completed" }))).toEqual({
+      subjectId: "sat-prep",
+      nodeId: "st4",
+      title: "Coming soon",
+      status: "coming_soon",
+    });
   });
 
   it("getWeeklySyllabusNodes returns up to five upcoming incomplete lessons", () => {

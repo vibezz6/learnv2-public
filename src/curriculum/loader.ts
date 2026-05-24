@@ -3,17 +3,55 @@ import manifest from "./data/manifest.json";
 
 export type SubjectManifest = (typeof manifest)[number];
 
+export type LoadSubjectResult =
+  | { status: "ok"; subject: Subject }
+  | { status: "not_listed" }
+  | { status: "missing_file" }
+  | { status: "invalid_data"; error: string };
+
 export { manifest };
 
 const cache = new Map<string, Subject>();
 
+export function getManifestEntry(id: string): SubjectManifest | undefined {
+  return manifest.find((m) => m.id === id);
+}
+
+function isValidSubject(data: unknown): data is Subject {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    Array.isArray((data as Subject).nodes)
+  );
+}
+
+export async function loadSubjectResult(id: string): Promise<LoadSubjectResult> {
+  if (cache.has(id)) {
+    return { status: "ok", subject: cache.get(id)! };
+  }
+
+  if (!getManifestEntry(id)) {
+    return { status: "not_listed" };
+  }
+
+  try {
+    const mod = await import(`./data/${id}.json`);
+    const subject = mod.default;
+
+    if (!isValidSubject(subject)) {
+      return { status: "invalid_data", error: "Subject missing nodes array" };
+    }
+
+    cache.set(id, subject);
+    return { status: "ok", subject };
+  } catch {
+    return { status: "missing_file" };
+  }
+}
+
 export async function loadSubject(id: string): Promise<Subject | undefined> {
-  if (cache.has(id)) return cache.get(id);
-  if (!manifest.some((m) => m.id === id)) return undefined;
-  const mod = await import(`./data/${id}.json`);
-  const subject = mod.default as Subject;
-  cache.set(id, subject);
-  return subject;
+  const result = await loadSubjectResult(id);
+  return result.status === "ok" ? result.subject : undefined;
 }
 
 export async function loadAllSubjects(): Promise<Subject[]> {

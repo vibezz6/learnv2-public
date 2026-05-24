@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { BookOpen, ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
-import { Button } from "@/components/ui";
+import { Button, Card, EmptyState } from "@/components/ui";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
-import { loadSubject } from "@/curriculum/loader";
+import { loadSubjectResult } from "@/curriculum/loader";
+import type { LoadSubjectResult } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
@@ -426,29 +427,89 @@ function SkillNodeList({
   );
 }
 
+type SubjectLoadState =
+  | { phase: "loading" }
+  | { phase: "ok"; subject: Subject }
+  | { phase: "error"; reason: Exclude<LoadSubjectResult["status"], "ok"> };
+
+function unavailableDescription(reason: Exclude<LoadSubjectResult["status"], "ok">): string {
+  switch (reason) {
+    case "not_listed":
+      return "That subject isn't in the catalog. The link may be wrong, or it may have been removed.";
+    case "missing_file":
+      return "This course is listed but its content file hasn't been added yet. Check back later.";
+    case "invalid_data":
+      return "This course's data couldn't be read. It may be incomplete or formatted incorrectly.";
+  }
+}
+
 export function SubjectDetailPage() {
   const { subjectId = "" } = useParams();
   const progressNodes = useProgress((s) => s.data.nodes);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
-  const [subject, setSubject] = useState<Subject | null>(null);
+  const [loadState, setLoadState] = useState<SubjectLoadState>({ phase: "loading" });
 
   useEffect(() => {
-    loadSubject(subjectId).then((s) => setSubject(s ?? null));
+    let cancelled = false;
+    setLoadState({ phase: "loading" });
+    loadSubjectResult(subjectId).then((result) => {
+      if (cancelled) return;
+      if (result.status === "ok") {
+        setLoadState({ phase: "ok", subject: result.subject });
+      } else {
+        setLoadState({ phase: "error", reason: result.status });
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [subjectId]);
 
   const layout = useMemo(
-    () => (subject ? buildTreeLayout(subject.nodes) : null),
-    [subject],
+    () => (loadState.phase === "ok" ? buildTreeLayout(loadState.subject.nodes) : null),
+    [loadState],
   );
 
   const completedCount = useMemo(() => {
-    if (!subject) return 0;
-    return subject.nodes.filter((n) => getNodeStatus(n) === "completed").length;
-  }, [subject, getNodeStatus, progressNodes]);
+    if (loadState.phase !== "ok") return 0;
+    return loadState.subject.nodes.filter((n) => getNodeStatus(n) === "completed").length;
+  }, [loadState, getNodeStatus, progressNodes]);
 
-  if (!subject || !layout) {
+  if (loadState.phase === "loading") {
     return <div className="p-8 text-[var(--text-muted)]">Loading subject…</div>;
   }
+
+  if (loadState.phase === "error") {
+    return (
+      <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
+        <Link
+          to="/subjects"
+          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+        >
+          <ChevronLeft size={16} />
+          Subjects
+        </Link>
+        <Card>
+          <EmptyState
+            title="Course not available yet"
+            description={unavailableDescription(loadState.reason)}
+            actionLabel="Browse subjects"
+            actionTo="/subjects"
+          />
+        </Card>
+      </div>
+    );
+  }
+
+  if (loadState.phase !== "ok") {
+    return null;
+  }
+
+  if (!layout) {
+    return null;
+  }
+
+  const { subject } = loadState;
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">

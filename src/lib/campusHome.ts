@@ -1,8 +1,13 @@
 import type { LearningTrack } from "@/data/tracks";
 import { tracks } from "@/data/tracks";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import {
+  COMING_SOON_TITLE,
+  countAvailableTrackLessons,
+  resolveTrackLesson,
+} from "@/lib/trackIntegrity";
 
-export type NodeStatus = "locked" | "available" | "completed";
+export type NodeStatus = "locked" | "available" | "completed" | "coming_soon";
 
 export interface TrackProgress {
   completed: number;
@@ -23,13 +28,6 @@ export function getTrackById(id: string): LearningTrack | undefined {
   return tracks.find((track) => track.id === id);
 }
 
-function resolveTrackLesson(subjectId: string, nodeId: string, subjects: Subject[]) {
-  const subject = subjects.find((s) => s.id === subjectId);
-  const node = subject?.nodes.find((n) => n.id === nodeId);
-  if (!subject || !node) return null;
-  return { subject, node };
-}
-
 export function getTrackProgress(
   track: LearningTrack,
   subjects: Subject[],
@@ -44,7 +42,7 @@ export function getTrackProgress(
     }
   }
 
-  const total = track.lessons.length;
+  const total = countAvailableTrackLessons(track, subjects);
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return { completed, total, pct };
@@ -60,7 +58,16 @@ export function getWeeklySyllabusNodes(
 
   for (const { subjectId, nodeId } of track.lessons) {
     const resolved = resolveTrackLesson(subjectId, nodeId, subjects);
-    if (!resolved) continue;
+    if (!resolved) {
+      nodes.push({
+        subjectId,
+        nodeId,
+        title: COMING_SOON_TITLE,
+        status: "coming_soon",
+      });
+      if (nodes.length >= limit) break;
+      continue;
+    }
 
     const status = getNodeStatus(resolved.node);
     if (status === "completed") continue;
@@ -89,7 +96,14 @@ export function getSatNextLesson(
     if (subjectId !== "sat-prep") continue;
 
     const resolved = resolveTrackLesson(subjectId, nodeId, subjects);
-    if (!resolved) continue;
+    if (!resolved) {
+      return {
+        subjectId,
+        nodeId,
+        title: COMING_SOON_TITLE,
+        status: "coming_soon",
+      };
+    }
 
     const status = getNodeStatus(resolved.node);
     if (status !== "completed") {

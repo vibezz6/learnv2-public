@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getAdjacentLessonNodes } from "@/curriculum/loader";
+import {
+  getAdjacentLessonNodes,
+  getManifestEntry,
+  loadSubjectResult,
+} from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 
 const subject: Subject = {
@@ -14,6 +18,24 @@ const subject: Subject = {
     { id: "c", name: "C", description: "", xpValue: 10, parentIds: ["b"], estimatedMinutes: 10, difficulty: "beginner", keyConcepts: [], resources: [], whyItMatters: "", practiceProblems: [] },
   ],
 };
+
+describe("loadSubjectResult", () => {
+  it("returns not_listed for unknown subject id", async () => {
+    await expect(loadSubjectResult("not-a-real-subject")).resolves.toEqual({
+      status: "not_listed",
+    });
+  });
+
+  it("loads a listed subject with nodes", async () => {
+    const result = await loadSubjectResult("math");
+    expect(result.status).toBe("ok");
+    if (result.status !== "ok") return;
+    expect(result.subject.id).toBe("math");
+    expect(Array.isArray(result.subject.nodes)).toBe(true);
+    expect(result.subject.nodes.length).toBeGreaterThan(0);
+    expect(getManifestEntry("math")?.nodeCount).toBe(result.subject.nodes.length);
+  });
+});
 
 describe("getAdjacentLessonNodes", () => {
   it("returns previous and next siblings with wrap-around", () => {
