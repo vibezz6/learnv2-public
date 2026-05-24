@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, ClipboardList } from "lucide-react";
+import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import { getCampusAdmissionsNudges } from "@/lib/campusAdmissionsNudges";
 import { loadCollegeChecklist } from "@/lib/collegeChecklist";
 import { loadEssayTracker } from "@/lib/essayTracker";
@@ -9,32 +10,46 @@ import { usePreferences } from "@/stores/preferences";
 export function CampusAdmissionsNudges() {
   const location = useLocation();
   const placementGoal = usePreferences((s) => s.placementGoal);
-  const [tick, setTick] = useState(0);
+  const [revision, setRevision] = useState(0);
 
   useEffect(() => {
-    if (location.pathname === "/") setTick((t) => t + 1);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    const refresh = () => {
-      if (document.visibilityState === "visible") setTick((t) => t + 1);
+    const bump = () => setRevision((r) => r + 1);
+    window.addEventListener(ADMISSIONS_UPDATED_EVENT, bump);
+    const onStorage = (e: StorageEvent) => {
+      if (
+        e.key === "learnv2_college_checklist_v1" ||
+        e.key === "learnv2_essay_tracker_v1"
+      ) {
+        bump();
+      }
     };
-    document.addEventListener("visibilitychange", refresh);
-    return () => document.removeEventListener("visibilitychange", refresh);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener(ADMISSIONS_UPDATED_EVENT, bump);
+      window.removeEventListener("storage", onStorage);
+    };
   }, []);
 
+  useEffect(() => {
+    if (location.pathname === "/") setRevision((r) => r + 1);
+  }, [location.pathname]);
+
   const nudges = useMemo(() => {
-    void tick;
+    void revision;
     return getCampusAdmissionsNudges(loadCollegeChecklist(), loadEssayTracker(), {
       placementGoal,
       max: 3,
     });
-  }, [placementGoal, tick]);
+  }, [placementGoal, revision]);
 
   if (nudges.length === 0) return null;
 
   return (
-    <div className="mt-5 rounded-[var(--radius)] border border-[var(--warning)]/35 bg-[var(--warning-bg)] p-4">
+    <div
+      className="mt-5 rounded-[var(--radius)] border border-[var(--warning)]/35 bg-[var(--warning-bg)] p-4"
+      role="region"
+      aria-label="Admissions reminders"
+    >
       <div className="flex items-start gap-3">
         <ClipboardList
           size={16}
@@ -48,7 +63,7 @@ export function CampusAdmissionsNudges() {
               <li key={nudge.id}>
                 <Link
                   to={nudge.href}
-                  className="group flex items-start justify-between gap-2 rounded-[var(--radius)] py-0.5 text-sm transition hover:text-[var(--accent)]"
+                  className="group flex min-h-11 items-start justify-between gap-2 rounded-[var(--radius)] py-1 text-sm transition hover:text-[var(--accent)] touch-manipulation"
                 >
                   <span className="min-w-0">
                     <span className="font-medium text-[var(--text-heading)] group-hover:text-[var(--accent)]">
@@ -71,7 +86,7 @@ export function CampusAdmissionsNudges() {
           </ul>
           <Link
             to="/campus"
-            className="inline-block text-xs font-medium text-[var(--accent)] hover:underline"
+            className="inline-flex min-h-11 items-center text-xs font-medium text-[var(--accent)] hover:underline"
           >
             All campus services
           </Link>

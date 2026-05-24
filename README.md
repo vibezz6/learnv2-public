@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.12 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.13 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -49,13 +49,17 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 - **Deep focus mode** — `F` hides chrome for distraction-free study
 - **Study timer** — timed sessions with summary
 - **Review & stats** — SRS spotlight cards, level/streak hero, 7-day study chart, achievement unlocks
-- **Campus services** (`/campus`) — Trading Lab, calculators, SAT, algo lab hub
+- **Campus services** (`/campus`) — college checklist, essay tracker, Trading Lab, calculators, SAT, algo lab
+- **College checklist** — FAFSA, counselor, SAT send, custom deadlines (`/campus/college-checklist`)
+- **Essay tracker** — Common App / supplement prompts, draft status, due dates (`/campus/essay-tracker`)
+- **Placement onboarding** — SAT, foundations, or explore; enrolls default track on first run
+- **Admissions nudges** — dashboard reminders for overdue essays and checklist steps
 - **Study transcript** (Stats) — copy/download proof of study hours and progress
 - **Tools** — compound interest and expected value calculators (`/campus/calculators`)
 - **Achievements & sounds** — level-ups, toasts, optional audio
 - **Themes** — dark, light, system
 - **Export / import** — JSON backup of all `learnv2_*` and `learnapp_*` localStorage keys (OpenRouter API keys excluded)
-- **Onboarding** — first-run walkthrough; links to Settings when v1 data is detected
+- **Onboarding** — placement + track enrollment; links to Settings when v1 data is detected
 
 **v1 parity**
 
@@ -142,5 +146,6 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 4 Parity | ✅ |
 | 5 Cutover | ✅ **v2.0.0** (tagged) |
 | 6 Post-cutover polish | ✅ **v2.0.8** (daily driver) |
+| 7 College admissions (24–26) | ✅ **v2.0.13** — placement, checklist, essays, nudges |
 
 Full roadmap: `~/cursor/LEARN-V2-PLAN.md`

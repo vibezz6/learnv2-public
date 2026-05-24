@@ -1,3 +1,5 @@
+import { notifyAdmissionsUpdated } from "./admissionsSync";
+
 export const ESSAY_TRACKER_KEY = "learnv2_essay_tracker_v1";
 
 export type EssayDraftStatus =
@@ -146,6 +148,7 @@ export function loadEssayTracker(storage: Storage = localStorage): EssayTrackerS
 export function saveEssayTracker(state: EssayTrackerState, storage: Storage = localStorage): void {
   try {
     storage.setItem(ESSAY_TRACKER_KEY, JSON.stringify(state));
+    notifyAdmissionsUpdated();
   } catch {
     // ignore quota errors
   }

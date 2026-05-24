@@ -11,7 +11,27 @@ export interface CampusAdmissionsNudge {
   priority: number;
 }
 
-const BUILTIN_NUDGE_IDS = ["fafsa-submit", "essay-draft", "sat-send-scores"] as const;
+const SAT_BUILT_IN_IDS = ["essay-draft", "sat-send-scores"] as const;
+const FAFSA_ID = "fafsa-submit";
+
+function isDeadlineNudge(nudge: CampusAdmissionsNudge): boolean {
+  return (
+    nudge.id.startsWith("essay-overdue-") ||
+    nudge.id.startsWith("essay-due-") ||
+    nudge.id.startsWith("essay-soon-") ||
+    nudge.id.startsWith("checklist-overdue-") ||
+    nudge.id.startsWith("checklist-due-") ||
+    nudge.id.startsWith("checklist-soon-")
+  );
+}
+
+function isSoftNudge(nudge: CampusAdmissionsNudge): boolean {
+  return (
+    nudge.id.startsWith("checklist-builtin-") ||
+    nudge.id === "checklist-start" ||
+    nudge.id === "essay-tracker-empty"
+  );
+}
 
 export function dueDateToUtcMs(dueDate: string): number | null {
   const parts = dueDate.split("-").map(Number);
@@ -102,25 +122,38 @@ function checklistBuiltInNudges(
   placementGoal: PlacementGoal | null | undefined,
 ): CampusAdmissionsNudge[] {
   const out: CampusAdmissionsNudge[] = [];
-  const satFocus = placementGoal === "sat" || placementGoal === null;
+  const placement = placementGoal ?? null;
 
-  for (const id of BUILTIN_NUDGE_IDS) {
-    if (state.completed[id]) continue;
-    const def = DEFAULT_COLLEGE_CHECKLIST.find((i) => i.id === id);
-    if (!def) continue;
-    if (!satFocus && (id === "sat-send-scores" || id === "essay-draft")) continue;
+  if (!state.completed[FAFSA_ID] && placement !== "explore") {
+    const def = DEFAULT_COLLEGE_CHECKLIST.find((i) => i.id === FAFSA_ID);
+    if (def) {
+      out.push({
+        id: `checklist-builtin-${FAFSA_ID}`,
+        title: def.title,
+        detail: def.category,
+        href: "/campus/college-checklist",
+        priority: 44,
+      });
+    }
+  }
 
-    out.push({
-      id: `checklist-builtin-${id}`,
-      title: def.title,
-      detail: def.category,
-      href: "/campus/college-checklist",
-      priority: id === "essay-draft" ? 42 : id === "fafsa-submit" ? 44 : 46,
-    });
+  if (placement === "sat") {
+    for (const id of SAT_BUILT_IN_IDS) {
+      if (state.completed[id]) continue;
+      const def = DEFAULT_COLLEGE_CHECKLIST.find((i) => i.id === id);
+      if (!def) continue;
+      out.push({
+        id: `checklist-builtin-${id}`,
+        title: def.title,
+        detail: def.category,
+        href: "/campus/college-checklist",
+        priority: id === "essay-draft" ? 42 : 46,
+      });
+    }
   }
 
   const doneBuiltIn = DEFAULT_COLLEGE_CHECKLIST.filter((i) => state.completed[i.id]).length;
-  if (doneBuiltIn < 2) {
+  if (doneBuiltIn < 2 && placement !== "explore") {
     out.push({
       id: "checklist-start",
       title: "Start your college checklist",
@@ -135,21 +168,19 @@ function checklistBuiltInNudges(
 
 function essayPipelineNudges(
   essays: EssayTrackerState,
-  checklist: CollegeChecklistState,
   placementGoal: PlacementGoal | null | undefined,
 ): CampusAdmissionsNudge[] {
   const out: CampusAdmissionsNudge[] = [];
   const hasEssays = essays.essays.length > 0;
-  const draftIncomplete = !checklist.completed["essay-draft"];
   const satFocus = placementGoal === "sat";
 
-  if (!hasEssays && (satFocus || draftIncomplete)) {
+  if (!hasEssays && satFocus) {
     out.push({
       id: "essay-tracker-empty",
       title: "Track your application essays",
       detail: "Add prompts and deadlines in the essay tracker",
       href: "/campus/essay-tracker",
-      priority: 50,
+      priority: 38,
     });
   }
 
@@ -171,7 +202,7 @@ export function getCampusAdmissionsNudges(
   const all = [
     ...essayNudges(essays.essays, now),
     ...checklistCustomNudges(checklist, now),
-    ...essayPipelineNudges(essays, checklist, options?.placementGoal),
+    ...essayPipelineNudges(essays, options?.placementGoal),
     ...checklistBuiltInNudges(checklist, options?.placementGoal),
   ];
 
@@ -183,5 +214,12 @@ export function getCampusAdmissionsNudges(
     }
   }
 
-  return [...byId.values()].sort((a, b) => a.priority - b.priority).slice(0, max);
+  const sorted = [...byId.values()].sort((a, b) => a.priority - b.priority);
+  const deadline = sorted.filter(isDeadlineNudge);
+  const soft = sorted.filter(isSoftNudge);
+  const other = sorted.filter((n) => !isDeadlineNudge(n) && !isSoftNudge(n));
+
+  const softCap = deadline.length > 0 ? 1 : 2;
+  const merged = [...deadline, ...other, ...soft.slice(0, softCap)];
+  return merged.slice(0, max);
 }

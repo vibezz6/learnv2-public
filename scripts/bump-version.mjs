@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const versionTs = path.join(root, "src/lib/version.ts");
 const packageJson = path.join(root, "package.json");
+const serviceWorker = path.join(root, "public/sw.js");
 
 function readVersion() {
   const src = fs.readFileSync(versionTs, "utf8");
@@ -28,6 +29,15 @@ function writeVersion(next) {
   const pkg = JSON.parse(fs.readFileSync(packageJson, "utf8"));
   pkg.version = next;
   fs.writeFileSync(packageJson, JSON.stringify(pkg, null, 2) + "\n");
+
+  if (fs.existsSync(serviceWorker)) {
+    let sw = fs.readFileSync(serviceWorker, "utf8");
+    sw = sw.replace(
+      /const CACHE_NAME = "learnv2-v[\d.]+";/,
+      `const CACHE_NAME = "learnv2-v${next}";`,
+    );
+    fs.writeFileSync(serviceWorker, sw);
+  }
 }
 
 function bumpPatch(v) {

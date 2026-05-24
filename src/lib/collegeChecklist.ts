@@ -1,3 +1,5 @@
+import { notifyAdmissionsUpdated } from "./admissionsSync";
+
 export const COLLEGE_CHECKLIST_KEY = "learnv2_college_checklist_v1";
 
 export interface ChecklistItemDef {
@@ -125,6 +127,7 @@ export function saveCollegeChecklist(
 ): void {
   try {
     storage.setItem(COLLEGE_CHECKLIST_KEY, JSON.stringify(state));
+    notifyAdmissionsUpdated();
   } catch {
     // ignore quota errors
   }
