@@ -9,6 +9,7 @@ import {
 } from "@/stores/progress";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
+import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
 
 const OPENROUTER_KEY = "learnapp_openrouter_key";
 
@@ -125,6 +126,8 @@ export function SettingsPage() {
           Save API key
         </Button>
       </Card>
+
+      <PlacementSettingsCard onMessage={setMessage} />
 
       <AdmissionsSettingsCard onMessage={setMessage} />
 

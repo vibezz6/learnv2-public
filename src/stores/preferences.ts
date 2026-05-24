@@ -16,6 +16,7 @@ interface PreferencesState {
   setFocusMode: (value: boolean) => void;
   completeOnboarding: () => void;
   completeOnboardingWithPlacement: (goal: PlacementGoal) => void;
+  setPlacementGoal: (goal: PlacementGoal) => void;
   setEnrolledTrack: (id: string | null) => void;
 }
 
@@ -80,6 +81,11 @@ export const usePreferences = create<PreferencesState>()(
       completeOnboardingWithPlacement: (goal) =>
         set({
           onboardingCompleted: true,
+          placementGoal: goal,
+          enrolledTrackId: trackIdForPlacement(goal),
+        }),
+      setPlacementGoal: (goal) =>
+        set({
           placementGoal: goal,
           enrolledTrackId: trackIdForPlacement(goal),
         }),

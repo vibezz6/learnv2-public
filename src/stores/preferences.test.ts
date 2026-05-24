@@ -82,6 +82,15 @@ describe("preferences", () => {
     expect(usePreferences.getState().enrolledTrackId).toBeNull();
   });
 
+  it("setPlacementGoal updates track without replaying onboarding", () => {
+    usePreferences.getState().completeOnboardingWithPlacement("sat");
+    usePreferences.getState().setPlacementGoal("foundation");
+    const s = usePreferences.getState();
+    expect(s.onboardingCompleted).toBe(true);
+    expect(s.placementGoal).toBe("foundation");
+    expect(s.enrolledTrackId).toBe("foundation");
+  });
+
   it("learnv2_preferences includes onboardingCompleted in persisted shape", () => {
     localStorage.setItem(
       "learnv2_preferences",
