@@ -20,6 +20,7 @@ import { cn } from "@/lib/cn";
 import { labelForPlacement } from "@/lib/placement";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
+import { CampusAdmissionsNudges } from "./CampusAdmissionsNudges";
 
 interface Props {
   subjects: Subject[];
@@ -57,6 +58,8 @@ export function CampusHome({ subjects }: Props) {
           </>
         )}
       </p>
+
+      <CampusAdmissionsNudges />
 
       <div className="mt-5">
         <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
@@ -196,7 +199,13 @@ export function CampusHome({ subjects }: Props) {
         <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
           Quick links
         </p>
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <Link to="/campus" className="min-w-0">
+            <Button variant="ghost" className="min-h-11 w-full touch-manipulation">
+              <GraduationCap size={16} aria-hidden />
+              Campus
+            </Button>
+          </Link>
           <Link to="/timer" className="min-w-0">
             <Button variant="ghost" className="min-h-11 w-full touch-manipulation">
               <Timer size={16} aria-hidden />
