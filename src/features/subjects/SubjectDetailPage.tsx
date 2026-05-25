@@ -9,6 +9,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
 import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
+import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsCard";
 import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -561,6 +562,10 @@ export function SubjectDetailPage() {
             </Button>
           </Link>
         </Card>
+      ) : null}
+
+      {isSatPrep ? (
+        <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
       ) : null}
 
       {isSatPrep ? (

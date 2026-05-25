@@ -426,6 +426,10 @@ export function resetSatPretestDraft(draftId: string, storage: Storage = localSt
   saveRaw(state, storage);
 }
 
+export function clearAllSatPretestData(storage: Storage = localStorage): void {
+  storage.removeItem(SAT_PRETEST_STORAGE_KEY);
+}
+
 export const SAT_PRETEST_EXPORT_SCHEMA_VERSION = 1;
 
 export interface SatPretestExportQuestionReview {

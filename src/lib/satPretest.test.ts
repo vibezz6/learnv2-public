@@ -13,6 +13,7 @@ import {
   loadSatPretestState,
   parseSatPretestDraft2ImportJson,
   recordSatPretestResponse,
+  clearAllSatPretestData,
   resetSatPretestDraft,
   startSatPretestAttempt,
   type SatPretestQuestion,
@@ -405,5 +406,13 @@ describe("satPretest", () => {
     resetSatPretestDraft("draft-1", storage);
 
     expect(listSatPretestAttempts(storage).map((attempt) => attempt.draftId)).toEqual(["draft-2"]);
+  });
+
+  it("clearAllSatPretestData removes every attempt", () => {
+    startSatPretestAttempt("draft-1", questions, storage);
+    startSatPretestAttempt("draft-2", questions, storage);
+    clearAllSatPretestData(storage);
+    expect(storage.getItem(SAT_PRETEST_STORAGE_KEY)).toBeNull();
+    expect(listSatPretestAttempts(storage)).toEqual([]);
   });
 });

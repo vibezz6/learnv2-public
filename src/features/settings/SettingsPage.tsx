@@ -9,6 +9,7 @@ import {
 } from "@/stores/progress";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
+import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
 
 const OPENROUTER_KEY = "learnapp_openrouter_key";
@@ -130,6 +131,8 @@ export function SettingsPage() {
       <PlacementSettingsCard onMessage={setMessage} />
 
       <AdmissionsSettingsCard onMessage={setMessage} />
+
+      <SatPretestSettingsCard onMessage={setMessage} />
 
       <Card className="min-w-0 space-y-3">
         <h2 className="break-words font-semibold text-[var(--text-heading)]">Export / import</h2>
