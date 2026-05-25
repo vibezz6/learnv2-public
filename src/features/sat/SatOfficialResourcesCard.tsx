@@ -83,7 +83,7 @@ export function SatOfficialResourcesCard({ id }: Props) {
             daily engine either way.
           </p>
           <Link to="/sat/pretest" className="mt-3 inline-flex">
-            <Button variant="secondary" className="min-h-10">
+            <Button variant="secondary" className="min-h-11 w-full touch-manipulation sm:w-auto">
               Take optional baseline
             </Button>
           </Link>
@@ -98,7 +98,7 @@ export function SatOfficialResourcesCard({ id }: Props) {
             <select
               value={section}
               onChange={(e) => setSection(e.target.value as SatPracticeSection)}
-              className="w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
+              className="min-h-11 w-full touch-manipulation rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
             >
               <option value="math">Math module</option>
               <option value="rw">Reading &amp; Writing</option>
@@ -110,7 +110,7 @@ export function SatOfficialResourcesCard({ id }: Props) {
             <select
               value={source}
               onChange={(e) => setSource(e.target.value as SatPracticeSource)}
-              className="w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
+              className="min-h-11 w-full touch-manipulation rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
             >
               <option value="bluebook">Bluebook</option>
               <option value="khan">Khan Academy</option>
@@ -124,20 +124,20 @@ export function SatOfficialResourcesCard({ id }: Props) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="e.g. Module 2 — rushed on inference"
-            className="w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
+            className="min-h-11 w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
           />
         </label>
-        <label className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+        <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-[var(--text-muted)]">
           <input
             type="checkbox"
             checked={missesLogged}
             onChange={(e) => setMissesLogged(e.target.checked)}
-            className="h-4 w-4"
+            className="h-5 w-5 shrink-0"
           />
           Misses logged in mistake log
         </label>
         {error ? <p className="text-sm text-[var(--warning)]">{error}</p> : null}
-        <Button type="submit" variant="secondary" className="min-h-10">
+        <Button type="submit" variant="secondary" className="min-h-11 w-full touch-manipulation sm:w-auto">
           Save session
         </Button>
       </form>
@@ -175,7 +175,7 @@ export function SatOfficialResourcesCard({ id }: Props) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-start justify-between gap-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 no-underline transition hover:border-[var(--border-strong)]"
+              className="flex min-h-11 touch-manipulation items-start justify-between gap-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 no-underline transition hover:border-[var(--border-strong)]"
             >
               <span className="min-w-0">
                 <span className="block text-sm font-medium text-[var(--text-heading)]">

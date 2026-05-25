@@ -99,7 +99,7 @@ export function SatMistakeLogPanel({
                 {row.nodeId ? (
                   <Link
                     to={`/subjects/sat-prep/${row.nodeId}`}
-                    className="shrink-0 text-xs font-medium text-[var(--accent-2)] hover:underline"
+                    className="inline-flex min-h-11 shrink-0 items-center text-xs font-medium text-[var(--accent-2)] hover:underline"
                   >
                     Open lesson
                   </Link>
@@ -130,7 +130,7 @@ export function SatMistakeLogPanel({
               <select
                 value={section}
                 onChange={(event) => setSection(event.target.value as SatMistakeSection)}
-                className="w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
+                className="min-h-11 w-full touch-manipulation rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
               >
                 <option value="math">Math</option>
                 <option value="rw">Reading &amp; Writing</option>
@@ -155,7 +155,7 @@ export function SatMistakeLogPanel({
               value={category}
               onChange={(event) => setCategory(event.target.value)}
               placeholder="e.g. comma splices, scatterplots, inference"
-              className="w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)] placeholder:text-[var(--text-muted)]"
+              className="min-h-11 w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)] placeholder:text-[var(--text-muted)]"
             />
           </label>
 
@@ -185,7 +185,9 @@ export function SatMistakeLogPanel({
 
           {error ? <p className="text-sm text-[var(--warning)]">{error}</p> : null}
 
-          <Button type="submit">Log miss</Button>
+          <Button type="submit" className="min-h-11 w-full touch-manipulation sm:w-auto">
+            Log miss
+          </Button>
         </form>
       </Card>
 
@@ -245,7 +247,7 @@ function MistakeEntryRow({
             type="button"
             onClick={() => onDelete(entry.id)}
             aria-label={`Delete ${entry.category} entry`}
-            className="shrink-0 rounded-[var(--radius)] p-2 text-[var(--text-muted)] transition hover:bg-white/5 hover:text-[var(--warning)]"
+            className="flex min-h-11 min-w-11 shrink-0 touch-manipulation items-center justify-center rounded-[var(--radius)] text-[var(--text-muted)] transition hover:bg-white/5 hover:text-[var(--warning)]"
           >
             <Trash2 size={16} />
           </button>
