@@ -1,3 +1,5 @@
+import { recordStudyActivity } from "@/lib/studyActivity";
+
 export const SAT_MISTAKE_LOG_KEY = "learnv2_sat_mistakes_v1";
 
 export type SatMistakeSection = "math" | "rw";
@@ -89,6 +91,14 @@ export function addMistake(
   const entries = loadRaw(storage);
   entries.unshift(entry);
   saveRaw(entries, storage);
+  recordStudyActivity(
+    {
+      type: "sat_mistake_logged",
+      nodeId: entry.nodeId,
+      meta: { category, section: input.section },
+    },
+    storage,
+  );
   return entry;
 }
 

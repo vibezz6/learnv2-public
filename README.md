@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.2.6 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.3.3 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -195,6 +195,10 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 53 EmptyState Saved/Review (74) | ✅ **v2.2.4** — shared EmptyState on Saved and Review |
 | 54 Quiz keyboard a11y (75) | ✅ **v2.2.5** — radiogroup, arrow keys, aria-live feedback |
 | 55 Section rollout (76) | ✅ **v2.2.6** — Section on Review, SAT hub, college, tracks, timer, lab |
+| 56 Activity ledger (77) | ✅ **v2.3.0** — `studyActivity.ts` local timeline + tests + `ACTIVITY_UPDATED_EVENT` |
+| 57 Activity writers (78) | ✅ **v2.3.1** — record at progress, notes, SAT, timer mutation sites |
+| 58 Activity consumers (79) | ✅ **v2.3.2** — Today recent strip, Stats list, transcript bullets, Settings debug log |
+| 59 Smart routing (80) | ✅ **v2.3.3** — `getContinueTarget` + SAT today use activity timestamps |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

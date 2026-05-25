@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Subject } from "@/curriculum/types";
+import { recordStudyActivity } from "@/lib/studyActivity";
+import { upsertSession } from "@/stores/noteSessions";
 import {
   getToday,
   MAX_DAILY_REVIEWS,
@@ -350,6 +352,24 @@ describe("progress", () => {
     seedDueReviews(subjects[0].nodes.map((node) => node.id));
 
     expect(useProgress.getState().getRemainingReviewCount(subjects)).toBe(2);
+  });
+
+  it("prefers notes continue target when recent notes activity has open review", () => {
+    const subjects = mockSubjects();
+    useProgress.getState().completeNode("m1", 50);
+    upsertSession({
+      nodeId: "m2",
+      subjectId: "math",
+      responses: { q1: "filled answer" },
+      review: null,
+      mentorSession: null,
+      tags: [],
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+    recordStudyActivity({ type: "notes_updated", nodeId: "m2", subjectId: "math" });
+
+    expect(useProgress.getState().getContinueTarget(subjects)?.node.id).toBe("m2");
   });
 
   it("skips completed continue targets and decays stale streaks on read", () => {

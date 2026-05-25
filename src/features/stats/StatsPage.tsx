@@ -27,6 +27,7 @@ import { AdmissionsTranscriptPreview } from "@/features/stats/AdmissionsTranscri
 import { MathInspiredSection } from "@/features/stats/widgets/MathInspiredSection";
 import { QuizMasteryPanel } from "@/features/stats/widgets/QuizMasteryPanel";
 import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
+import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
@@ -389,6 +390,11 @@ export function StatsPage() {
                 </div>
               ))}
             </div>
+          </Card>
+
+          <Card className="stagger-item min-w-0">
+            <div className="mb-3 break-words font-semibold text-[var(--text-heading)]">Recent activity</div>
+            <StudyActivityList subjects={subjects} />
           </Card>
           </Section>
 

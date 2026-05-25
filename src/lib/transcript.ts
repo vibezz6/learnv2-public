@@ -12,7 +12,13 @@ import {
   getSatPretestTranscriptSummary,
 } from "@/lib/satPretest";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
+import {
+  formatActivityLabel,
+  listActivitiesForDate,
+  type StudyActivityType,
+} from "@/lib/studyActivity";
 import { formatAppVersion } from "@/lib/version";
+import { getToday } from "@/stores/progress";
 import type { ReviewStats, Stats } from "@/stores/progress";
 
 export interface SubjectBreakdown {
@@ -92,6 +98,20 @@ function buildNarrativeBullets(input: {
   return bullets;
 }
 
+function buildTodayActivityBullets(storage: Storage = localStorage): string[] {
+  const today = listActivitiesForDate(getToday(), storage);
+  if (today.length === 0) return [];
+  const seen = new Set<StudyActivityType>();
+  const bullets: string[] = [];
+  for (const event of today.slice(0, 8)) {
+    if (seen.has(event.type)) continue;
+    seen.add(event.type);
+    bullets.push(`Today: ${formatActivityLabel(event)}.`);
+    if (bullets.length >= 2) break;
+  }
+  return bullets;
+}
+
 export function buildTranscriptSummary(
   subjects: Subject[],
   getters: TranscriptProgressGetters,
@@ -132,15 +152,18 @@ export function buildTranscriptSummary(
     satPretest: getSatPretestTranscriptSummary("draft-1", "draft-2", "draft-3", storage),
     subjectBreakdown,
     admissions,
-    narrativeBullets: buildNarrativeBullets({
-      studyMinutes,
-      completedLessons: stats.completedNodes,
-      totalLessons: stats.totalNodes,
-      streak: stats.streakCurrent,
-      reviewPassRate: reviewStats.passRate,
-      satMistakesLogged,
-      subjectBreakdown,
-    }),
+    narrativeBullets: [
+      ...buildNarrativeBullets({
+        studyMinutes,
+        completedLessons: stats.completedNodes,
+        totalLessons: stats.totalNodes,
+        streak: stats.streakCurrent,
+        reviewPassRate: reviewStats.passRate,
+        satMistakesLogged,
+        subjectBreakdown,
+      }),
+      ...buildTodayActivityBullets(storage),
+    ],
   };
 }
 

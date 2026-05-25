@@ -6,10 +6,12 @@ import type { PlacementGoal } from "@/lib/placement";
 import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { getTodayReadinessEntry } from "@/lib/satReadiness";
+import { hasActivitySince, listActivitiesForDate } from "@/lib/studyActivity";
 import {
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
 } from "@/lib/satPretest";
+import { getToday } from "@/stores/progress";
 
 export type SatDailyStudyIntensity = "minimum" | "normal" | "stretch";
 
@@ -99,6 +101,11 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   const recommended = getSatRecommendedLessons(input.subjects, input.getNodeStatus);
   const topLesson = recommended.lessons[0];
   const satNext = getSatNextLesson(input.subjects, input.getNodeStatus);
+  const since24h = Date.now() - 86_400_000;
+  const recentMistake = hasActivitySince(["sat_mistake_logged"], since24h, storage);
+  const lessonToday = listActivitiesForDate(getToday(), storage).some(
+    (e) => e.type === "lesson_completed" || e.type === "lesson_started",
+  );
 
   let diagnosticNote: string | undefined;
   if (draft1Done?.scoreSummary) {
@@ -113,6 +120,20 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
       href: "/subjects/sat-prep#mistakes",
       buttonLabel: "Review mistake log",
       kind: "mistake_review",
+      intensity,
+      diagnosticNote,
+    };
+  }
+
+  if (recentMistake && !lessonToday && topMistake && intensity === "normal") {
+    return {
+      headline: focusPrefix,
+      detail: `You logged a mistake recently — review ${topMistake.category} before new lessons.`,
+      href: topMistake.nodeId
+        ? `/subjects/sat-prep/${topMistake.nodeId}`
+        : "/subjects/sat-prep#mistakes",
+      buttonLabel: topMistake.nodeId ? "Gap drill lesson" : "Review mistake log",
+      kind: topMistake.nodeId ? "gap_lesson" : "mistake_review",
       intensity,
       diagnosticNote,
     };

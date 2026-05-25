@@ -9,6 +9,7 @@ import {
 } from "@/stores/progress";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
+import { ActivityLogPanel } from "@/features/settings/widgets/ActivityLogPanel";
 import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
 import { OPENROUTER_KEY } from "@/services/llmReview";
@@ -145,6 +146,8 @@ export function SettingsPage() {
       <AdmissionsSettingsCard onMessage={setMessage} />
 
       <SatPretestSettingsCard onMessage={setMessage} />
+
+      <ActivityLogPanel />
 
       <Card className="min-w-0 space-y-3">
         <h2 className="break-words font-semibold text-[var(--text-heading)]">Export / import</h2>

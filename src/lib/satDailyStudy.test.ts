@@ -3,6 +3,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
 import { SAT_READINESS_STORAGE_KEY } from "@/lib/satReadiness";
+import { recordStudyActivity } from "@/lib/studyActivity";
 import { getSatDailyStudyCommand, shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 
 function mockLocalStorage(): Storage {
@@ -131,6 +132,73 @@ describe("satDailyStudy", () => {
     expect(command.kind).toBe("mistake_review");
     expect(command.intensity).toBe("minimum");
     expect(command.href).toContain("mistakes");
+  });
+
+  it("biases to mistake review after recent mistake when no lesson today", () => {
+    storage.setItem(
+      SAT_PRETEST_STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 1,
+        attempts: [
+          {
+            id: "a1",
+            draftId: "draft-1",
+            status: "completed",
+            startedAt: "2026-05-20T00:00:00.000Z",
+            completedAt: "2026-05-20T00:10:00.000Z",
+            questionOrder: ["q1"],
+            currentIndex: 0,
+            responses: {},
+            scoreSummary: {
+              totalQuestions: 10,
+              correctAnswers: 7,
+              pct: 70,
+              sectionBreakdown: [],
+              skillBreakdown: [],
+              weakSkills: [],
+              recommendedNodeIds: ["st4"],
+              timeSpentSeconds: 600,
+            },
+          },
+        ],
+      }),
+    );
+    storage.setItem(
+      SAT_MISTAKE_LOG_KEY,
+      JSON.stringify([
+        {
+          id: "m1",
+          date: "2026-05-24",
+          section: "math",
+          category: "Linear equations",
+          note: "Sign error",
+          createdAt: Date.now() - 3_600_000,
+        },
+      ]),
+    );
+    storage.setItem(
+      SAT_READINESS_STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 1,
+        entries: [{ date: "2026-05-24", rating: 3 }],
+      }),
+    );
+    recordStudyActivity(
+      {
+        type: "sat_mistake_logged",
+        meta: { category: "Linear equations", section: "math" },
+      },
+      storage,
+    );
+
+    const command = getSatDailyStudyCommand({
+      subjects,
+      getNodeStatus: () => "available",
+      storage,
+    });
+
+    expect(command.kind).toBe("mistake_review");
+    expect(command.detail).toContain("logged a mistake");
   });
 
   it("shouldShowSatTodayCard is true for SAT placement", () => {

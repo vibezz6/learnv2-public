@@ -1,5 +1,7 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import { getWeekDeadlineRows, type WeekDeadlineRow } from "@/lib/admissionsSummary";
+import { getLastActivity } from "@/lib/studyActivity";
 import { DEFAULT_TRACK_ID, getTrackById } from "@/lib/campusHome";
 import { getWeekAssignments } from "@/lib/coursework";
 import type { PlacementGoal } from "@/lib/placement";
@@ -60,7 +62,9 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
     rows.push(row);
   };
 
+  let hasUrgentCollege = false;
   for (const deadline of getWeekDeadlineRows(7)) {
+    if (deadline.overdue || deadline.daysUntil <= 1) hasUrgentCollege = true;
     push({
       id: deadline.id,
       title: deadline.title,
@@ -70,6 +74,23 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
       overdue: deadline.overdue,
     });
     if (rows.length >= maxRows) return rows;
+  }
+
+  if (!hasUrgentCollege) {
+    const lastNotes = getLastActivity(["notes_updated"], storage);
+    if (lastNotes?.nodeId) {
+      const found = findNodeAcrossSubjects(input.subjects, lastNotes.nodeId);
+      if (found) {
+        push({
+          id: `notes-${lastNotes.nodeId}`,
+          title: `Continue notes on ${found.node.name}`,
+          detail: "Office hours — pick up where you left off",
+          href: `/subjects/${found.subject.id}/${found.node.id}`,
+          source: "track",
+        });
+        if (rows.length >= maxRows) return rows;
+      }
+    }
   }
 
   const track = getTrackById(input.enrolledTrackId ?? DEFAULT_TRACK_ID);

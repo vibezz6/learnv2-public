@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
+import { getLastActivity, recordStudyActivity } from "@/lib/studyActivity";
+import { canAccessReview, getSession } from "@/stores/noteSessions";
 import {
   mergeBookmarksFromV1,
   mergeLegacyNotes,
@@ -378,7 +380,10 @@ export const useProgress = create<ProgressState>()(
         set((state) => {
           const data = structuredClone(state.data);
           if (!data.nodes[nodeId]) data.nodes[nodeId] = emptyNodeProgress();
-          if (!data.nodes[nodeId].startedAt) data.nodes[nodeId].startedAt = new Date().toISOString();
+          if (!data.nodes[nodeId].startedAt) {
+            data.nodes[nodeId].startedAt = new Date().toISOString();
+            recordStudyActivity({ type: "lesson_started", nodeId });
+          }
           return { data };
         }),
 
@@ -403,6 +408,11 @@ export const useProgress = create<ProgressState>()(
             const newLevel = Math.floor(data.totalXp / 500) + 1;
             if (newLevel > oldLevel) data.levelUpPending = newLevel;
             scheduleReview(data, nodeId, 0);
+            recordStudyActivity({
+              type: "lesson_completed",
+              nodeId,
+              meta: { xp: xpValue },
+            });
           }
           return { data };
         }),
@@ -416,6 +426,15 @@ export const useProgress = create<ProgressState>()(
           if (data.nodes[nodeId].completedAt) {
             reschedulePendingReview(data, nodeId, data.spacedRepetition[nodeId]?.currentIntervalIndex ?? 0);
           }
+          recordStudyActivity({
+            type: "quiz_completed",
+            nodeId,
+            meta: {
+              score: attempt.score,
+              correct: attempt.correctAnswers,
+              total: attempt.totalQuestions,
+            },
+          });
           return { data };
         }),
 
@@ -461,6 +480,27 @@ export const useProgress = create<ProgressState>()(
           }
           return null;
         };
+
+        for (const subject of subjects) {
+          for (const node of subject.nodes) {
+            if (get().getNodeStatus(node) === "locked") continue;
+            const prog = get().getNodeProgress(node.id);
+            if (prog.startedAt && !prog.completedAt) {
+              return { subject, node };
+            }
+          }
+        }
+
+        const lastNotes = getLastActivity(["notes_updated"]);
+        if (lastNotes?.nodeId) {
+          const session = getSession(lastNotes.nodeId);
+          if (session && canAccessReview(session) && !session.review?.completedAt) {
+            const found = findNodeAcrossSubjects(subjects, lastNotes.nodeId);
+            if (found && get().getNodeStatus(found.node) !== "locked") {
+              return found;
+            }
+          }
+        }
 
         const satSubject = subjects.find((s) => s.id === "sat-prep");
         if (satSubject) {
@@ -523,6 +563,7 @@ export const useProgress = create<ProgressState>()(
 
           scheduleReviewAtIndex(data, nodeId, nextIntervalIndex);
           pruneDailyMaps(data);
+          recordStudyActivity({ type: "review_done", nodeId, meta: { confidence } });
           return { data };
         }),
 
@@ -652,6 +693,13 @@ export const useProgress = create<ProgressState>()(
             }
             data.streaks.lastStudyDate = today;
           }
+          if (minutes >= 1) {
+            recordStudyActivity({
+              type: "timer_minutes",
+              nodeId,
+              meta: { minutes: Math.round(minutes) },
+            });
+          }
           pruneDailyMaps(data);
           return { data };
         }),
@@ -671,6 +719,10 @@ export const useProgress = create<ProgressState>()(
             data.totalXp += xpReward;
             const newLevel = Math.floor(data.totalXp / 500) + 1;
             if (newLevel > oldLevel) data.levelUpPending = newLevel;
+            recordStudyActivity({
+              type: "daily_challenge_done",
+              meta: { challengeId, xp: xpReward },
+            });
           }
           pruneDailyMaps(data);
           return { data };

@@ -2,6 +2,7 @@
 // localStorage key: learnapp_note_sessions_v2
 
 import type { NoteSession, NoteReview, MentorSession } from "@/curriculum/types";
+import { recordStudyActivity } from "@/lib/studyActivity";
 
 const STORAGE_KEY = "learnapp_note_sessions_v2";
 
@@ -35,6 +36,15 @@ export function updateResponses(nodeId: string, responses: Record<string, string
   all[nodeId].responses = { ...all[nodeId].responses, ...responses };
   all[nodeId].updatedAt = Date.now();
   saveAll(all);
+  const merged = all[nodeId].responses;
+  if (hasMinNotesContent(merged)) {
+    recordStudyActivity({
+      type: "notes_updated",
+      nodeId,
+      subjectId: all[nodeId].subjectId,
+      meta: { filled: countFilledResponses(merged) },
+    });
+  }
 }
 
 export const MIN_TAKEAWAYS = 1;
@@ -126,6 +136,12 @@ export function saveReview(nodeId: string, review: NoteReview) {
   all[nodeId].review = review;
   all[nodeId].updatedAt = Date.now();
   saveAll(all);
+  recordStudyActivity({
+    type: "notes_review_done",
+    nodeId,
+    subjectId: all[nodeId].subjectId,
+    meta: { score: review.score },
+  });
 }
 
 export function saveMentorSession(nodeId: string, mentor: MentorSession) {
@@ -134,6 +150,13 @@ export function saveMentorSession(nodeId: string, mentor: MentorSession) {
   all[nodeId].mentorSession = mentor;
   all[nodeId].updatedAt = Date.now();
   saveAll(all);
+  if (mentor.completedAt) {
+    recordStudyActivity({
+      type: "mentor_completed",
+      nodeId,
+      subjectId: all[nodeId].subjectId,
+    });
+  }
 }
 
 export function clearMentorSession(nodeId: string) {

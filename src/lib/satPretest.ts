@@ -1,4 +1,5 @@
 import type { SatLessonPlanEntry } from "@/lib/satLessonPlan";
+import { recordStudyActivity } from "@/lib/studyActivity";
 
 export const SAT_PRETEST_STORAGE_KEY = "learnv2_sat_pretest_v1";
 export const SAT_PRETEST_SCHEMA_VERSION = 1;
@@ -419,6 +420,16 @@ export function completeSatPretestAttempt(
   attempt.completedAt = nowIso();
   attempt.scoreSummary = buildSatPretestScoreSummary(attempt, questions);
   saveRaw(state, storage);
+  recordStudyActivity(
+    {
+      type: "sat_pretest_completed",
+      meta: {
+        draftId: attempt.draftId,
+        pct: attempt.scoreSummary?.pct ?? 0,
+      },
+    },
+    storage,
+  );
   return attempt;
 }
 

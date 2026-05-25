@@ -1,3 +1,5 @@
+import { recordStudyActivity } from "@/lib/studyActivity";
+
 export const SAT_PRACTICE_LOG_KEY = "learnv2_sat_practice_v1";
 
 export type SatPracticeSource = "bluebook" | "khan";
@@ -111,6 +113,13 @@ export function addPracticeSession(
   const sessions = loadRaw(storage);
   sessions.unshift(session);
   saveRaw(sessions, storage);
+  recordStudyActivity(
+    {
+      type: "sat_practice_logged",
+      meta: { section: input.section, source: input.source, label },
+    },
+    storage,
+  );
   return session;
 }
 

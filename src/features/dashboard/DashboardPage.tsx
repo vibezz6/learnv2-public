@@ -22,6 +22,7 @@ import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
 import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
 import { SatTodayCard } from "./widgets/SatTodayCard";
+import { RecentStudyStrip } from "./widgets/RecentStudyStrip";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
 
 export function DashboardPage() {
@@ -75,6 +76,7 @@ export function DashboardPage() {
           divider={false}
         />
         {stats && <DailyGoalStrip stats={stats} />}
+        {subjects.length > 0 && <RecentStudyStrip subjects={subjects} />}
       </div>
 
       <Section eyebrow="Today's focus">
