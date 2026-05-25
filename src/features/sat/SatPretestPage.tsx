@@ -37,7 +37,12 @@ import {
   type SatPretestAttempt,
   type SatPretestQuestion,
 } from "@/lib/satPretest";
+import { addMistake } from "@/lib/satMistakeLog";
 import { applySatLessonPlanImport, loadSatLessonPlan } from "@/lib/satLessonPlan";
+import {
+  buildMistakeDraftFromResponse,
+  listMissedPretestItems,
+} from "@/lib/satPretestMistake";
 import { cn } from "@/lib/cn";
 import { APP_VERSION } from "@/lib/version";
 
@@ -578,6 +583,11 @@ function ResultsCard({
 }) {
   const [copied, setCopied] = useState(false);
   const [cursorCopied, setCursorCopied] = useState(false);
+  const [loggedMisses, setLoggedMisses] = useState<Set<string>>(() => new Set());
+  const missedItems = useMemo(
+    () => listMissedPretestItems(attempt, questions),
+    [attempt, questions],
+  );
   const summary = attempt.scoreSummary;
   const isDraft2 = attempt.draftId === SAT_PRETEST_DRAFT_2_ID;
   const comparisons =
@@ -690,6 +700,58 @@ function ResultsCard({
               </li>
             ))}
           </ul>
+        </section>
+      ) : null}
+
+      {missedItems.length > 0 ? (
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold text-[var(--text-heading)]">
+            Log misses to mistake log
+          </h3>
+          <p className="text-sm text-[var(--text-muted)]">
+            One tap copies your diagnostic rationale into the SAT mistake log for retargeting.
+          </p>
+          <ul className="space-y-2">
+            {missedItems.map(({ question, response }) => {
+              const logged = loggedMisses.has(question.id);
+              return (
+                <li
+                  key={question.id}
+                  className="flex flex-col gap-2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0 text-sm">
+                    <span className="font-medium text-[var(--text-heading)]">
+                      {question.skill}
+                    </span>
+                    <span className="text-[var(--text-muted)]">
+                      {" "}
+                      · {SECTION_LABELS[question.section]}
+                    </span>
+                  </div>
+                  <Button
+                    variant="secondary"
+                    className="min-h-10 shrink-0 touch-manipulation"
+                    disabled={logged}
+                    onClick={() => {
+                      const input = buildMistakeDraftFromResponse(question, response);
+                      const entry = addMistake(input);
+                      if (entry) {
+                        setLoggedMisses((prev) => new Set(prev).add(question.id));
+                      }
+                    }}
+                  >
+                    {logged ? "Logged" : "Log to mistake log"}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+          <Link
+            to="/subjects/sat-prep#mistakes"
+            className="text-sm font-medium text-[var(--accent-2)] hover:underline"
+          >
+            Open mistake log
+          </Link>
         </section>
       ) : null}
 
