@@ -4,7 +4,6 @@ import { ArrowRight, BarChart3, Brain } from "lucide-react";
 import {
   Button,
   Card,
-  EmptyState,
   PageContainer,
   PageHeader,
   PageLoading,
@@ -23,7 +22,12 @@ import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
 import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
 import { SatTodayCard } from "./widgets/SatTodayCard";
 import { RecentStudyStrip } from "./widgets/RecentStudyStrip";
+import { DayNarrativeStrip } from "./widgets/DayNarrativeStrip";
+import { StudyIntentStrip } from "./widgets/StudyIntentStrip";
+import { EssayDueToday } from "./widgets/EssayDueToday";
+import { TodayEmptyFocus } from "./widgets/TodayEmptyFocus";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
+import { getStudyIntentSubtitle, loadStudyIntent } from "@/lib/studyIntent";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -63,6 +67,11 @@ export function DashboardPage() {
     reviewDue > 0 ||
     (nextReview !== null && typeof nextReview.daysUntil === "number" && nextReview.daysUntil <= 2);
 
+  const intentSubtitle = getStudyIntentSubtitle(loadStudyIntent().focus);
+  const pageSubtitle =
+    intentSubtitle ??
+    "Your next lesson, this week&apos;s plan, and college deadlines.";
+
   if (loadingSubjects) {
     return <PageLoading />;
   }
@@ -72,9 +81,11 @@ export function DashboardPage() {
       <div className="space-y-4 border-b border-[var(--border)] pb-6">
         <PageHeader
           title="Today"
-          subtitle="Your next lesson, this week&apos;s plan, and college deadlines."
+          subtitle={pageSubtitle}
           divider={false}
         />
+        <StudyIntentStrip />
+        <DayNarrativeStrip />
         {stats && <DailyGoalStrip stats={stats} />}
         {subjects.length > 0 && <RecentStudyStrip subjects={subjects} />}
       </div>
@@ -85,17 +96,11 @@ export function DashboardPage() {
         ) : showSatFocus ? (
           <SatTodayCard subjects={subjects} compact />
         ) : (
-          <Card variant="primary">
-            <EmptyState
-              icon={<span aria-hidden>◎</span>}
-              title="No lesson in progress"
-              description="Import v1 progress in Settings, or pick a subject to start your first lesson."
-              actionLabel="Browse subjects"
-              actionTo="/subjects"
-            />
-          </Card>
+          <TodayEmptyFocus />
         )}
       </Section>
+
+      <EssayDueToday />
 
       <Section
         eyebrow="This week"

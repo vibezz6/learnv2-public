@@ -24,6 +24,7 @@ import {
   Timer,
 } from "lucide-react";
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
+import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { useProgress } from "@/stores/progress";
 import { loadAllSubjects } from "@/curriculum/loader";
@@ -145,6 +146,21 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       const pick = picks[Math.floor(Math.random() * picks.length)];
       go(`/subjects/${pick.subId}/${pick.nodeId}`);
     };
+
+    const activityRecent: CommandItem[] = listActivities(5).map((event) => ({
+      id: `activity-${event.id}`,
+      label: formatActivityLabel(event),
+      description: event.date,
+      section: "Actions",
+      icon: Sparkles,
+      action: () => {
+        if (event.nodeId) {
+          const sub = subjects.find((s) => s.nodes.some((n) => n.id === event.nodeId));
+          if (sub) go(`/subjects/${sub.id}/${event.nodeId}`);
+          else go("/");
+        } else go("/");
+      },
+    }));
 
     const recent: CommandItem[] = recentSearches.map((term, i) => ({
       id: `recent-${i}-${term}`,
@@ -275,7 +291,15 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       { id: "theme-light", label: "Theme: Light", section: "Theme", icon: Sun, action: () => { setTheme("light"); onClose(); } },
     ];
 
-    return [...recent, ...navigateItems, ...campusItems, ...subjectItems, ...actionItems, ...themeItems];
+    return [
+      ...recent,
+      ...activityRecent,
+      ...navigateItems,
+      ...campusItems,
+      ...subjectItems,
+      ...actionItems,
+      ...themeItems,
+    ];
   }, [subjects, go, setTheme, onClose, recentSearches, fillQuery, satRecommended, urgentDeadlines]);
 
   const filtered = useMemo(() => {

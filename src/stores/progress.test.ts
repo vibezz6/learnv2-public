@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { Subject } from "@/curriculum/types";
-import { recordStudyActivity } from "@/lib/studyActivity";
+import { recordStudyActivity, STUDY_ACTIVITY_STORAGE_KEY } from "@/lib/studyActivity";
+import { quizProgressKey } from "@/features/quiz/quizProgress";
 import { upsertSession } from "@/stores/noteSessions";
 import {
   getToday,
@@ -148,7 +149,7 @@ describe("progress", () => {
   it("exportData returns valid JSON with version", () => {
     const exported = useProgress.getState().exportData();
     const parsed = JSON.parse(exported) as { version: number; keys: Record<string, string | null> };
-    expect(parsed.version).toBe(2);
+    expect(parsed.version).toBe(3);
     expect(typeof parsed.keys).toBe("object");
   });
 
@@ -399,6 +400,29 @@ describe("progress exportData/importData", () => {
 
   afterEach(() => {
     globalThis.localStorage = originalLocalStorage;
+  });
+
+  it("exportData includes study activity ledger when present", () => {
+    recordStudyActivity({ type: "lesson_started", nodeId: "m1" }, globalThis.localStorage);
+    const exported = JSON.parse(useProgress.getState().exportData()) as {
+      keys: Record<string, string | null>;
+    };
+    expect(exported.keys[STUDY_ACTIVITY_STORAGE_KEY]).toBeTruthy();
+  });
+
+  it("prefers in-progress quiz in getContinueTarget when quiz session exists", () => {
+    const subjects = mockSubjects();
+    useProgress.getState().completeNode("m1", 50);
+    globalThis.localStorage.setItem(
+      quizProgressKey("m2"),
+      JSON.stringify({
+        current: 1,
+        answers: [0, null],
+        questionCount: 2,
+        timestamp: Date.now(),
+      }),
+    );
+    expect(useProgress.getState().getContinueTarget(subjects)?.node.id).toBe("m2");
   });
 
   it("roundtrips progress through export and import", () => {

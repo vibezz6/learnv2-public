@@ -1,7 +1,7 @@
 {
   "name": "learnv2",
   "private": true,
-  "version": "2.3.3",
+  "version": "2.3.34",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
+import { getLastActivity, formatActivityLabel } from "@/lib/studyActivity";
 import {
   MAX_DAILY_REVIEWS,
   SPACED_REPETITION_INTERVALS,
@@ -28,13 +29,20 @@ import {
   type ReviewItem,
 } from "@/stores/progress";
 
+const CONFIDENCE_KEYS: Record<string, ReviewConfidence> = {
+  "1": "forgot",
+  "2": "hard",
+  "3": "normal",
+  "4": "easy",
+};
+
 const CONFIDENCE_STYLES: Record<
   ReviewConfidence,
   { label: string; hint: string; className: string }
 > = {
   forgot: {
     label: "Forgot",
-    hint: "Reset",
+    hint: "Resets interval",
     className:
       "border-[var(--danger)] bg-[var(--danger-bg)] text-[var(--danger)] hover:brightness-110",
   },
@@ -101,6 +109,24 @@ export function ReviewPage() {
       rest: ordered.slice(1),
     };
   }, [items]);
+
+  useEffect(() => {
+    if (!spotlight) return;
+    const nodeId = spotlight.node.id;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+      const confidence = CONFIDENCE_KEYS[e.key];
+      if (confidence) {
+        e.preventDefault();
+        completeReviewWithConfidence(nodeId, confidence);
+        setRefreshKey((k) => k + 1);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [spotlight, completeReviewWithConfidence]);
 
   if (loadingSubjects) {
     return <PageLoading size="wide" />;
@@ -309,6 +335,13 @@ function ReviewCard({
           </h3>
           <p className="mt-1 break-words text-sm text-[var(--text-muted)]">
             {item.subject.name} · last studied {item.daysAgo}d ago · interval {item.reviewInterval}d
+            {(() => {
+              const last = getLastActivity(undefined);
+              if (last?.nodeId === item.node.id) {
+                return ` · ${formatActivityLabel(last, item.node.name)}`;
+              }
+              return "";
+            })()}
           </p>
         </div>
         <Link
@@ -323,7 +356,10 @@ function ReviewCard({
 
       <div className="mt-4">
         <p className="mb-2 text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">
-          How well did you recall it?
+          How well did you recall it? <span className="normal-case">(keys 1–4)</span>
+        </p>
+        <p className="mb-3 text-xs text-[var(--text-muted)]">
+          Forgot resets the interval to day 1 — use when you need to relearn from scratch.
         </p>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {confidenceOptions.map(([key, days]) => {

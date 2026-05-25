@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearQuizProgress,
   loadQuizProgress,
+  findLatestInProgressQuizNodeId,
   quizProgressKey,
   restoreQuizSession,
   saveQuizProgress,
@@ -87,6 +88,15 @@ describe("quizProgress", () => {
 
     expect(localStorage.getItem(quizProgressKey("node-d"))).toBeNull();
     expect(localStorage.getItem(quizProgressKey("node-e"))).toBeNull();
+  });
+
+  it("findLatestInProgressQuizNodeId returns newest valid session", () => {
+    saveQuizProgress("node-z", { current: 0, answers: [null], startTime: Date.now() });
+    vi.useFakeTimers();
+    vi.advanceTimersByTime(1000);
+    saveQuizProgress("node-y", { current: 1, answers: [0, null], startTime: Date.now() });
+    expect(findLatestInProgressQuizNodeId()).toBe("node-y");
+    vi.useRealTimers();
   });
 
   it("returns no active question for empty quizzes", () => {

@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ACTIVITY_UPDATED_EVENT,
+  getTodayStudySummary,
+  getWeekActivityMix,
   listActivities,
   listActivitiesForDate,
   loadStudyActivities,
@@ -92,6 +94,21 @@ describe("studyActivity", () => {
   it("stores under learnv2_activity_v1", () => {
     recordStudyActivity({ type: "timer_minutes", meta: { minutes: 25 } }, storage);
     expect(storage.getItem(STUDY_ACTIVITY_STORAGE_KEY)).toContain("timer_minutes");
+  });
+
+  it("getTodayStudySummary aggregates today", () => {
+    recordStudyActivity({ type: "lesson_completed", nodeId: "a" }, storage);
+    recordStudyActivity({ type: "quiz_completed", nodeId: "b" }, storage);
+    const summary = getTodayStudySummary("2026-05-25", storage);
+    expect(summary.eventCount).toBe(2);
+    expect(summary.topTypes.length).toBeGreaterThan(0);
+  });
+
+  it("getWeekActivityMix counts last 7 days", () => {
+    recordStudyActivity({ type: "review_done", nodeId: "x" }, storage);
+    const mix = getWeekActivityMix(storage);
+    expect(mix.totalEvents).toBe(1);
+    expect(mix.byType.review_done).toBe(1);
   });
 
   it("subscribeActivityUpdated fires on record", () => {

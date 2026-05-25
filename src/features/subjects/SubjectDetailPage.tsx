@@ -18,6 +18,7 @@ import { useProgress } from "@/stores/progress";
 import { SatDiagnosticSection } from "@/features/sat/SatDiagnosticSection";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
 import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
+import { SatPracticeWeekCard } from "@/features/subjects/widgets/SatPracticeWeekCard";
 import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsCard";
 import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { cn } from "@/lib/cn";
@@ -586,6 +587,15 @@ export function SubjectDetailPage() {
           <div id="mistakes" className="scroll-mt-6">
             <SatMistakeLogPanel />
           </div>
+          <Card variant="quiet" className="mt-4 min-w-0">
+            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
+              This week
+            </p>
+            <p className="mt-1 text-sm font-medium text-[var(--text-heading)]">Practice rhythm</p>
+            <div className="mt-3">
+              <SatPracticeWeekCard />
+            </div>
+          </Card>
         </Section>
       ) : null}
 

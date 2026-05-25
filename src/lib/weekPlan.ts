@@ -1,7 +1,10 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import { getWeekDeadlineRows, type WeekDeadlineRow } from "@/lib/admissionsSummary";
-import { getLastActivity } from "@/lib/studyActivity";
+import { listActivitiesForDate } from "@/lib/studyActivity";
+import { loadStudyIntent } from "@/lib/studyIntent";
+import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
+import { getToday } from "@/stores/progress";
 import { DEFAULT_TRACK_ID, getTrackById } from "@/lib/campusHome";
 import { getWeekAssignments } from "@/lib/coursework";
 import type { PlacementGoal } from "@/lib/placement";
@@ -52,8 +55,11 @@ function tomorrowToWeekRow(task: TomorrowTask): WeekPlanRow {
 /** Unified “this week” rows: admissions deadlines, track lessons, SAT follow-ups. */
 export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRow[] {
   const storage = input.storage ?? localStorage;
+  const intent = loadStudyIntent(storage);
   const rows: WeekPlanRow[] = [];
   const used = new Set<string>();
+
+  const prioritizeSat = intent.focus === "sat";
 
   const push = (row: WeekPlanRow) => {
     const key = row.href;
@@ -77,12 +83,14 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
   }
 
   if (!hasUrgentCollege) {
-    const lastNotes = getLastActivity(["notes_updated"], storage);
-    if (lastNotes?.nodeId) {
-      const found = findNodeAcrossSubjects(input.subjects, lastNotes.nodeId);
+    const todayNotes = listActivitiesForDate(getToday(), storage).find(
+      (e) => e.type === "notes_updated",
+    );
+    if (todayNotes?.nodeId) {
+      const found = findNodeAcrossSubjects(input.subjects, todayNotes.nodeId);
       if (found) {
         push({
-          id: `notes-${lastNotes.nodeId}`,
+          id: `notes-${todayNotes.nodeId}`,
           title: `Continue notes on ${found.node.name}`,
           detail: "Office hours — pick up where you left off",
           href: `/subjects/${found.subject.id}/${found.node.id}`,
@@ -90,6 +98,22 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
         });
         if (rows.length >= maxRows) return rows;
       }
+    }
+  }
+
+  if (prioritizeSat && rows.length < maxRows) {
+    const topMistake = getPrimaryMistakeCategory(storage);
+    if (topMistake) {
+      push({
+        id: `sat-intent-${topMistake.category}`,
+        title: `Retarget ${topMistake.category}`,
+        detail: `${topMistake.count} in mistake log · SAT focus today`,
+        href: topMistake.nodeId
+          ? `/subjects/sat-prep/${topMistake.nodeId}`
+          : "/subjects/sat-prep#mistakes",
+        source: "sat",
+      });
+      if (rows.length >= maxRows) return rows;
     }
   }
 

@@ -2,6 +2,12 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Clock, Target } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import {
+  CONTINUE_KIND_LABELS,
+  continueHref,
+  resolveContinueKind,
+  type ContinueKind,
+} from "@/lib/continuePresentation";
 import { useProgress } from "@/stores/progress";
 
 interface Props {
@@ -10,6 +16,7 @@ interface Props {
 }
 
 export function ContinueHero({ subject, node }: Props) {
+  const kind: ContinueKind = resolveContinueKind(node.id);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const getNodeProgress = useProgress((s) => s.getNodeProgress);
 
@@ -29,6 +36,9 @@ export function ContinueHero({ subject, node }: Props) {
       <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
         <Target size={12} aria-hidden />
         <span>Today&apos;s focus</span>
+        <span className="normal-case tracking-normal text-[var(--accent)]">
+          · {CONTINUE_KIND_LABELS[kind]}
+        </span>
       </div>
 
       <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -73,11 +83,17 @@ export function ContinueHero({ subject, node }: Props) {
         </div>
 
         <Link
-          to={`/subjects/${subject.id}/${node.id}`}
+          to={continueHref(subject.id, node.id, kind)}
           className="w-full shrink-0 lg:w-auto"
         >
           <Button variant="secondary" className="min-h-11 w-full touch-manipulation lg:w-auto">
-            {started && status !== "completed" ? "Resume" : "Start lesson"}
+            {kind === "quiz"
+              ? "Resume quiz"
+              : kind === "notes"
+                ? "Continue notes"
+                : started && status !== "completed"
+                  ? "Resume"
+                  : "Start lesson"}
             <ArrowRight size={14} />
           </Button>
         </Link>

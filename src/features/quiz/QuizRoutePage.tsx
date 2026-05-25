@@ -71,6 +71,8 @@ export function QuizRoutePage() {
           key={node.id}
           questions={questions}
           nodeId={node.id}
+          subjectId={subject.id}
+          contextLine={node.whyItMatters || node.keyConcepts[0]}
           onComplete={() => {
             /* score saved in Quiz component */
           }}

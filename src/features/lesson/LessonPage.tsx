@@ -43,7 +43,7 @@ export function LessonPage() {
   const { subjectId = "", nodeId = "" } = useParams();
   const navigate = useNavigate();
   const { focusMode, toggleFocusMode } = usePreferences();
-  const { getNodeStatus, startNode, trackVisit, completeNode } = useProgress();
+  const { getNodeStatus, startNode, trackVisit, completeNode, getNodeProgress } = useProgress();
 
   const [subject, setSubject] = useState<Subject | null>(null);
   const [node, setNode] = useState<SkillNode | null>(null);
@@ -106,6 +106,7 @@ export function LessonPage() {
   const status = getNodeStatus(node);
   const isCompleted = status === "completed";
   const isLocked = status === "locked";
+  const timeSpent = Math.round(getNodeProgress(node.id).timeSpentMinutes);
   const tradingLessonIndex = subject.id === "trading" ? getTradingLessonIndex(node.id) : null;
   const showTradingLabCard = tradingLessonIndex !== null && tradingLessonIndex >= 11;
 
@@ -257,6 +258,7 @@ export function LessonPage() {
                   ? `${node.quiz!.length} questions · `
                   : ""}
                 {node.xpValue} XP on complete
+                {timeSpent > 0 ? ` · ${timeSpent} min logged` : ""}
               </p>
             </div>
             {isCompleted && (

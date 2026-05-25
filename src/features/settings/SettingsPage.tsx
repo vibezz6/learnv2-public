@@ -10,6 +10,7 @@ import {
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
 import { ActivityLogPanel } from "@/features/settings/widgets/ActivityLogPanel";
+import { StorageHealthPanel } from "@/features/settings/widgets/StorageHealthPanel";
 import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
 import { OPENROUTER_KEY } from "@/services/llmReview";
@@ -54,10 +55,14 @@ export function SettingsPage() {
     reader.onload = () => {
       const result = importData(reader.result as string);
       if (result.success) {
+        const report = result.importReport;
+        const summary = report
+          ? ` Restored ${report.restored.length} key${report.restored.length === 1 ? "" : "s"}${report.skipped.length ? `; skipped ${report.skipped.length}` : ""}.`
+          : "";
         setMessage(
-          result.reloadRequired
+          (result.reloadRequired
             ? "Import successful — reload the page so all stores pick up restored data."
-            : "Import successful.",
+            : "Import successful.") + summary,
         );
         if (result.reloadRequired) setTimeout(() => window.location.reload(), 500);
       } else {
@@ -149,6 +154,8 @@ export function SettingsPage() {
 
       <ActivityLogPanel />
 
+      <StorageHealthPanel />
+
       <Card className="min-w-0 space-y-3">
         <h2 className="break-words font-semibold text-[var(--text-heading)]">Export / import</h2>
         <p className="break-words text-sm text-[var(--text-muted)]">
@@ -160,7 +167,8 @@ export function SettingsPage() {
             </span>
           ))}
           . That covers progress, preferences, bookmarks, notes, achievements, quiz state, search
-          recents, and per-lesson UI state. OpenRouter credentials are never included.
+          recents, study activity (<code className="font-mono text-xs">learnv2_activity_v1</code>),
+          and per-lesson UI state. OpenRouter credentials are never included.
         </p>
         <details className="min-w-0 text-sm text-[var(--text-muted)]">
           <summary className="flex min-h-11 cursor-pointer touch-manipulation items-center font-medium text-[var(--text-heading)]">
@@ -177,6 +185,7 @@ export function SettingsPage() {
               , such as <code className="break-all font-mono text-xs">learnv2_progress</code>,{" "}
               <code className="break-all font-mono text-xs">learnv2_preferences</code>,{" "}
               <code className="break-all font-mono text-xs">learnv2_bookmarks</code>,{" "}
+              <code className="break-all font-mono text-xs">learnv2_activity_v1</code>,{" "}
               <code className="break-all font-mono text-xs">learnapp_note_sessions_v2</code>, and dynamic keys
               like <code className="break-all font-mono text-xs">learnapp_quiz_progress_v1_*</code>.
             </li>

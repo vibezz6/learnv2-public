@@ -11,6 +11,8 @@ import {
   getLatestCompletedSatPretestAttempt,
 } from "@/lib/satPretest";
 import type { PlacementGoal } from "@/lib/placement";
+import { getLastActivity, listActivitiesForDate } from "@/lib/studyActivity";
+import { getToday } from "@/stores/progress";
 
 export type TomorrowTaskSource = "college" | "review" | "sat" | "pretest";
 
@@ -44,6 +46,41 @@ export function buildTomorrowTasks(
     used.add(task.id);
     tasks.push(task);
   };
+
+  const todayActivity = listActivitiesForDate(getToday(), storage);
+  const lastLesson = getLastActivity(["lesson_completed", "lesson_started"], storage);
+  if (lastLesson?.nodeId) {
+    const found = input.subjects
+      .flatMap((s) => s.nodes.map((n) => ({ subject: s, node: n })))
+      .find((x) => x.node.id === lastLesson.nodeId);
+    if (found && input.getNodeStatus(found.node) !== "locked") {
+      push({
+        id: `activity-${lastLesson.nodeId}`,
+        title: found.node.name,
+        detail: "Continue from today’s study log",
+        href: `/subjects/${found.subject.id}/${found.node.id}`,
+        source: "sat",
+      });
+    }
+  }
+
+  if (todayActivity.some((e) => e.type === "notes_updated")) {
+    const notes = todayActivity.find((e) => e.type === "notes_updated");
+    if (notes?.nodeId) {
+      const found = input.subjects
+        .flatMap((s) => s.nodes.map((n) => ({ subject: s, node: n })))
+        .find((x) => x.node.id === notes.nodeId);
+      if (found) {
+        push({
+          id: `tomorrow-notes-${notes.nodeId}`,
+          title: `Finish notes on ${found.node.name}`,
+          detail: "You started office hours today",
+          href: `/subjects/${found.subject.id}/${found.node.id}/notes`,
+          source: "review",
+        });
+      }
+    }
+  }
 
   for (const row of getUrgentCollegeDeadlines(now, maxTasks)) {
     push({

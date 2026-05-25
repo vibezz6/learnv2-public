@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.3 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.3.34 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -28,8 +28,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 **Core loop**
 
-- **Today** — daily goal, continue lesson, week plan, spaced review, compact daily challenge
-- **Today** — continue learning, week plan, spaced review, daily challenge
+- **Today** — daily goal, study intent, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
 - **SAT Prep** — 80-lesson Digital SAT path (gap drills st76–st80, mistake log, in-app Draft 1/2/3 diagnostic, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
@@ -199,6 +198,37 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 57 Activity writers (78) | ✅ **v2.3.1** — record at progress, notes, SAT, timer mutation sites |
 | 58 Activity consumers (79) | ✅ **v2.3.2** — Today recent strip, Stats list, transcript bullets, Settings debug log |
 | 59 Smart routing (80) | ✅ **v2.3.3** — `getContinueTarget` + SAT today use activity timestamps |
+| 60 Merge + smoke (81) | ✅ **v2.3.4** — activity ledger on `main`; post-ledger QA gate |
+| 61 Activity quality (82) | ✅ **v2.3.5** — debounced notes activity; week plan uses today’s notes |
+| 62 Quiz continue (83) | ✅ **v2.3.6** — resume in-progress quiz in `getContinueTarget` |
+| 63 Backup truth (84) | ✅ **v2.3.7** — export docs + test for `learnv2_activity_v1` |
+| 64 Daily intent (85) | ✅ **v2.3.8** — `studyIntent.ts` + Today focus chips |
+| 65 Read APIs (86) | ✅ **v2.3.9** — `getTodayStudySummary`, `getWeekActivityMix` |
+| 66 Storage health (87) | ✅ **v2.3.10** — Settings storage health table |
+| 67 Boot prune (88) | ✅ **v2.3.11** — orphan quiz keys, stale pretest cleanup |
+| 68 Backup v3 (89) | ✅ **v2.3.12** — export v3 + import report |
+| 69 Data events (90) | ✅ **v2.3.13** — `DATA_UPDATED_EVENT` bus |
+| 70 Day narrative (91) | ✅ **v2.3.14** — Today headline from activity summary |
+| 71 Week plan v2 (92) | ✅ **v2.3.15** — intent + SAT mistake row in week plan |
+| 72 Continue variants (93) | ✅ **v2.3.16** — lesson / notes / quiz hero labels + links |
+| 73 Empty Today (94) | ✅ **v2.3.17** — rotating empty-state CTAs |
+| 74 Tomorrow v2 (95) | ✅ **v2.3.18** — tomorrow tasks from activity log |
+| 75 Lesson rail (96) | ✅ **v2.3.19** — time-on-lesson in next-step footer |
+| 76 Quiz context (97) | ✅ **v2.3.20** — dismissible why-it-matters intro |
+| 77 Quiz moment (98) | ✅ **v2.3.21** — score screen + notes/review links |
+| 78 Review cards (99) | ✅ **v2.3.22** — activity on card, keys 1–4 |
+| 79 Review copy (100) | ✅ **v2.3.23** — forgot interval consequence |
+| 80 Notes autosave (101) | ✅ **v2.3.24** — saved indicator on office hours |
+| 81 Notes diff (102) | — deferred |
+| 82 Mentor export (103) | ✅ **v2.3.32** — copy recall check-in as markdown |
+| 83 Notes stepper (104) | ✅ **v2.3.33** — editor → review → mentor flow nav |
+| 84 Mistake drill (105) | ✅ existing — SAT mistake → lesson links |
+| 85 SAT practice rhythm (106) | ✅ **v2.3.34** — weekly practice log on SAT Prep |
+| 86 Readiness copy (107) | — existing readiness surfaces |
+| 87 Pretest Monday (108) | — existing week plan + pretest flow |
+| 88 Essay on Today (109) | ✅ **v2.3.34** — essays due soon strip |
+| 89 ⌘K college (110) | ✅ **v2.3.34** — deadline counts + recent activity jumps |
+| 90 Campus pulse (111) | ✅ existing — admissions hub blocking row |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

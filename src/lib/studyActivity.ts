@@ -1,3 +1,4 @@
+import { notifyDataUpdated } from "@/lib/dataSync";
 import { getToday } from "@/stores/progress";
 
 export const STUDY_ACTIVITY_STORAGE_KEY = "learnv2_activity_v1";
@@ -124,6 +125,7 @@ export function recordStudyActivity(
   const next = pruneEvents([event, ...loadStudyActivities(storage)], at);
   saveStudyActivities(next, storage);
   notifyActivityUpdated();
+  notifyDataUpdated();
   return event;
 }
 
@@ -185,6 +187,75 @@ export function formatActivityLabel(
     return `${base}: ${event.meta.title}`;
   }
   return base;
+}
+
+export interface TodayStudySummary {
+  date: string;
+  eventCount: number;
+  topTypes: Array<{ type: StudyActivityType; count: number }>;
+  lastEvent: StudyActivityEvent | null;
+  headline: string;
+}
+
+export interface WeekActivityMix {
+  daysActive: number;
+  totalEvents: number;
+  byType: Partial<Record<StudyActivityType, number>>;
+}
+
+export function getTodayStudySummary(
+  date: string = getToday(),
+  storage: Storage = localStorage,
+): TodayStudySummary {
+  const events = listActivitiesForDate(date, storage);
+  const counts = new Map<StudyActivityType, number>();
+  for (const event of events) {
+    counts.set(event.type, (counts.get(event.type) ?? 0) + 1);
+  }
+  const topTypes = [...counts.entries()]
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3);
+  const lastEvent = events[0] ?? null;
+
+  let headline = "No study logged yet today.";
+  if (events.length > 0 && lastEvent) {
+    const primary = topTypes[0];
+    if (primary) {
+      headline = `${events.length} action${events.length === 1 ? "" : "s"} today — latest: ${STUDY_ACTIVITY_LABELS[primary.type].toLowerCase()}.`;
+    }
+  }
+
+  return {
+    date,
+    eventCount: events.length,
+    topTypes,
+    lastEvent,
+    headline,
+  };
+}
+
+export function getWeekActivityMix(
+  storage: Storage = localStorage,
+  now = Date.now(),
+): WeekActivityMix {
+  const cutoff = now - 7 * 86_400_000;
+  const byType: Partial<Record<StudyActivityType, number>> = {};
+  const activeDates = new Set<string>();
+  let totalEvents = 0;
+
+  for (const event of loadStudyActivities(storage)) {
+    if (event.at < cutoff) continue;
+    totalEvents++;
+    activeDates.add(event.date);
+    byType[event.type] = (byType[event.type] ?? 0) + 1;
+  }
+
+  return {
+    daysActive: activeDates.size,
+    totalEvents,
+    byType,
+  };
 }
 
 export function exportStudyActivitiesJson(storage: Storage = localStorage): string {

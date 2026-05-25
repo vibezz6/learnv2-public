@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
+import { findLatestInProgressQuizNodeId } from "@/features/quiz/quizProgress";
+import { type BackupImportReport, parseBackupKeys } from "@/lib/backupFormat";
+import { notifyDataUpdated } from "@/lib/dataSync";
 import { getLastActivity, recordStudyActivity } from "@/lib/studyActivity";
 import { canAccessReview, getSession } from "@/stores/noteSessions";
 import {
@@ -353,7 +356,12 @@ interface ProgressState {
   isDailyChallengeCompleted: (challengeId: string) => boolean;
   completeDailyChallenge: (challengeId: string, xpReward: number) => void;
   exportData: () => string;
-  importData: (json: string) => { success: boolean; error?: string; reloadRequired?: boolean };
+  importData: (json: string) => {
+    success: boolean;
+    error?: string;
+    reloadRequired?: boolean;
+    importReport?: BackupImportReport;
+  };
   resetProgress: () => void;
   clearLevelUpPending: () => void;
   migrateAllFromV1: () => MigrationResult;
@@ -499,6 +507,14 @@ export const useProgress = create<ProgressState>()(
             if (found && get().getNodeStatus(found.node) !== "locked") {
               return found;
             }
+          }
+        }
+
+        const quizNodeId = findLatestInProgressQuizNodeId();
+        if (quizNodeId) {
+          const found = findNodeAcrossSubjects(subjects, quizNodeId);
+          if (found && get().getNodeStatus(found.node) !== "locked") {
+            return found;
           }
         }
 
@@ -736,23 +752,39 @@ export const useProgress = create<ProgressState>()(
             keys[key] = localStorage.getItem(key);
           }
         }
-        return JSON.stringify({ version: 2, keys }, null, 2);
+        return JSON.stringify({ version: 3, keys }, null, 2);
       },
 
       importData: (json) => {
         try {
           const parsed = JSON.parse(json) as { version?: number; keys?: Record<string, unknown> };
-          if (parsed.version !== 2) return { success: false, error: "Unsupported export version." };
-          if (!parsed.keys || typeof parsed.keys !== "object") return { success: false, error: "Invalid export format." };
-          for (const [key, value] of Object.entries(parsed.keys)) {
-            if (!isManagedStorageKey(key)) return { success: false, error: `Unsupported storage key: ${key}` };
-            if (!isBackupKeyAllowed(key)) continue;
-            if (value !== null && typeof value !== "string") return { success: false, error: "Invalid export format." };
+          const keysResult = parseBackupKeys(parsed);
+          if ("error" in keysResult) return { success: false, error: keysResult.error };
+          const report: BackupImportReport = {
+            restored: [],
+            skipped: [],
+            removed: [],
+            formatVersion: keysResult.version,
+          };
+          for (const [key] of Object.entries(keysResult.keys)) {
+            if (!isManagedStorageKey(key)) {
+              return { success: false, error: `Unsupported storage key: ${key}` };
+            }
           }
-          for (const [key, value] of Object.entries(parsed.keys)) {
+          for (const [key] of Object.entries(keysResult.keys)) {
+            if (!isBackupKeyAllowed(key)) {
+              report.skipped.push(key);
+            }
+          }
+          for (const [key, value] of Object.entries(keysResult.keys)) {
             if (!isBackupKeyAllowed(key)) continue;
-            if (value === null) localStorage.removeItem(key);
-            else if (typeof value === "string") localStorage.setItem(key, value);
+            if (value === null) {
+              localStorage.removeItem(key);
+              report.removed.push(key);
+            } else {
+              localStorage.setItem(key, value);
+              report.restored.push(key);
+            }
           }
           const raw = localStorage.getItem(V2_STORAGE_KEY);
           if (raw) {
@@ -763,7 +795,8 @@ export const useProgress = create<ProgressState>()(
               set({ data: imported });
             }
           }
-          return { success: true, reloadRequired: true };
+          notifyDataUpdated();
+          return { success: true, reloadRequired: true, importReport: report };
         } catch {
           return { success: false, error: "Failed to parse import file." };
         }

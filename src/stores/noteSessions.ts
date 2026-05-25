@@ -2,9 +2,33 @@
 // localStorage key: learnapp_note_sessions_v2
 
 import type { NoteSession, NoteReview, MentorSession } from "@/curriculum/types";
+import { notifyDataUpdated } from "@/lib/dataSync";
 import { recordStudyActivity } from "@/lib/studyActivity";
 
 const STORAGE_KEY = "learnapp_note_sessions_v2";
+const NOTES_ACTIVITY_DEBOUNCE_MS = 45_000;
+const notesActivityTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+function scheduleNotesActivityRecord(
+  nodeId: string,
+  subjectId: string,
+  filled: number,
+): void {
+  const existing = notesActivityTimers.get(nodeId);
+  if (existing) clearTimeout(existing);
+  notesActivityTimers.set(
+    nodeId,
+    setTimeout(() => {
+      notesActivityTimers.delete(nodeId);
+      recordStudyActivity({
+        type: "notes_updated",
+        nodeId,
+        subjectId,
+        meta: { filled },
+      });
+    }, NOTES_ACTIVITY_DEBOUNCE_MS),
+  );
+}
 
 function loadAll(): Record<string, NoteSession> {
   try {
@@ -17,6 +41,7 @@ function loadAll(): Record<string, NoteSession> {
 function saveAll(data: Record<string, NoteSession>) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    notifyDataUpdated();
   } catch { /* quota exceeded — silent fail */ }
 }
 
@@ -38,12 +63,11 @@ export function updateResponses(nodeId: string, responses: Record<string, string
   saveAll(all);
   const merged = all[nodeId].responses;
   if (hasMinNotesContent(merged)) {
-    recordStudyActivity({
-      type: "notes_updated",
+    scheduleNotesActivityRecord(
       nodeId,
-      subjectId: all[nodeId].subjectId,
-      meta: { filled: countFilledResponses(merged) },
-    });
+      all[nodeId].subjectId,
+      countFilledResponses(merged),
+    );
   }
 }
 

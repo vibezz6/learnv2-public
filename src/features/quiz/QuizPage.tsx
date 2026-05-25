@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { CheckCircle2, ChevronRight, XCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CheckCircle2, ChevronRight, FileText, XCircle } from "lucide-react";
 import type { QuizQuestion } from "@/curriculum/types";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -9,10 +10,16 @@ import { clearQuizProgress, restoreQuizSession, saveQuizProgress } from "@/featu
 interface QuizProps {
   questions: QuizQuestion[];
   nodeId: string;
+  subjectId?: string;
+  contextLine?: string;
   onComplete: (score: number, total: number) => void;
 }
 
-export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
+function introDismissKey(nodeId: string): string {
+  return `learnv2_quiz_intro_dismissed_${nodeId}`;
+}
+
+export function Quiz({ questions, nodeId, subjectId, contextLine, onComplete }: QuizProps) {
   const saveQuizAttempt = useProgress((s) => s.saveQuizAttempt);
   const [initial] = useState(() => restoreQuizSession(nodeId, questions.length));
   const [current, setCurrent] = useState(initial.current);
@@ -20,6 +27,13 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
   const [answered, setAnswered] = useState(initial.answered);
   const [answers, setAnswers] = useState<(number | null)[]>(initial.answers);
   const [showResults, setShowResults] = useState(false);
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      return contextLine ? localStorage.getItem(introDismissKey(nodeId)) !== "1" : false;
+    } catch {
+      return !!contextLine;
+    }
+  });
   const [startTime] = useState(initial.startTime);
   const [focusedOption, setFocusedOption] = useState(0);
   const groupRef = useRef<HTMLDivElement>(null);
@@ -123,14 +137,63 @@ export function Quiz({ questions, nodeId, onComplete }: QuizProps) {
 
   if (showResults) {
     const pct = Math.round((score / questions.length) * 100);
+    const lessonPath =
+      subjectId ? `/subjects/${subjectId}/${nodeId}` : undefined;
     return (
       <Card glow className="stagger-item space-y-4">
         <h2 className="text-xl font-bold text-[var(--text-heading)]">Quiz complete</h2>
         <p className="font-mono text-3xl text-[var(--accent)]">
           {score}/{questions.length} · {pct}%
         </p>
-        <Button onClick={() => window.history.back()} className="min-h-11 w-full sm:w-auto">
-          Back to lesson
+        <p className="text-sm text-[var(--text-muted)]">
+          {pct >= 80
+            ? "Strong recall — office hours can lock this in."
+            : "Review the lesson, then try notes for gaps."}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {lessonPath && (
+            <>
+              <Link to={`${lessonPath}/notes`}>
+                <Button variant="secondary" className="min-h-11 gap-2">
+                  <FileText size={14} />
+                  Office hours
+                </Button>
+              </Link>
+              <Link to="/review">
+                <Button variant="secondary" className="min-h-11">
+                  Spaced review
+                </Button>
+              </Link>
+            </>
+          )}
+          <Button onClick={() => window.history.back()} className="min-h-11 w-full sm:w-auto">
+            Back to lesson
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+
+  if (showIntro && contextLine) {
+    return (
+      <Card className="stagger-item space-y-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-muted)]">
+          Why this quiz matters
+        </p>
+        <p className="text-sm leading-relaxed text-[var(--text)]">{contextLine}</p>
+        <Button
+          className="min-h-11 w-full sm:w-auto"
+          onClick={() => {
+            try {
+              localStorage.setItem(introDismissKey(nodeId), "1");
+            } catch {
+              // ignore
+            }
+            setShowIntro(false);
+          }}
+        >
+          Start quiz
+          <ChevronRight size={14} />
         </Button>
       </Card>
     );

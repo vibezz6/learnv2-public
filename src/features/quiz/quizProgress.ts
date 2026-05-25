@@ -78,6 +78,32 @@ export function saveQuizProgress(
   }
 }
 
+const QUIZ_PROGRESS_PREFIX = "learnapp_quiz_progress_v1_";
+
+export function findLatestInProgressQuizNodeId(storage: Storage = localStorage): string | null {
+  let latest: { nodeId: string; timestamp: number } | null = null;
+
+  for (let i = 0; i < storage.length; i++) {
+    const key = storage.key(i);
+    if (!key?.startsWith(QUIZ_PROGRESS_PREFIX)) continue;
+    const nodeId = key.slice(QUIZ_PROGRESS_PREFIX.length);
+    try {
+      const raw = storage.getItem(key);
+      if (!raw) continue;
+      const parsed = JSON.parse(raw) as { timestamp?: number };
+      if (typeof parsed.timestamp !== "number") continue;
+      if (Date.now() - parsed.timestamp >= TWENTY_FOUR_HOURS) continue;
+      if (!latest || parsed.timestamp > latest.timestamp) {
+        latest = { nodeId, timestamp: parsed.timestamp };
+      }
+    } catch {
+      // ignore corrupt entry
+    }
+  }
+
+  return latest?.nodeId ?? null;
+}
+
 export function clearQuizProgress(nodeId: string): void {
   try {
     localStorage.removeItem(quizProgressKey(nodeId));

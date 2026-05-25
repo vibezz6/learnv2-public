@@ -260,6 +260,7 @@ function NoteEditor({
   const prompts = useMemo(() => getPromptsForSubject(subject.id), [subject.id]);
   const [responses, setResponses] = useState<Record<string, string>>(() => getSession(node.id)?.responses ?? {});
   const [activeIndex, setActiveIndex] = useState(0);
+  const [saveHint, setSaveHint] = useState<"idle" | "saved">("idle");
 
   const activePrompt = prompts[activeIndex];
   const filledCount = countFilledResponses(responses);
@@ -282,9 +283,16 @@ function NoteEditor({
           updatedAt: Date.now(),
         });
       }
+      setSaveHint("saved");
     },
     [node.id, subject.id],
   );
+
+  useEffect(() => {
+    if (saveHint !== "saved") return;
+    const t = window.setTimeout(() => setSaveHint("idle"), 2500);
+    return () => window.clearTimeout(t);
+  }, [saveHint]);
 
   const handleChange = (value: string) => {
     if (!activePrompt) return;
@@ -325,6 +333,9 @@ function NoteEditor({
             {node.name}
           </span>
           <Badge className="shrink-0">{filledCount}/{prompts.length} answered</Badge>
+          {saveHint === "saved" && (
+            <span className="text-xs text-[var(--success)]">Saved locally</span>
+          )}
         </div>
 
         <div className="mb-4">
@@ -636,6 +647,14 @@ function ReviewSection({
   );
 }
 
+function mentorSessionToMarkdown(lessonName: string, session: MentorSession): string {
+  const lines = [`# Recall check-in — ${lessonName}`, ""];
+  session.messages.forEach((msg, i) => {
+    lines.push(`## Q${i + 1}: ${msg.question}`, "", msg.answer, "", `> ${msg.feedback}`, "");
+  });
+  return lines.join("\n");
+}
+
 function NoteMentorPanel({
   node,
   subject,
@@ -795,6 +814,16 @@ function NoteMentorPanel({
               Back to lesson
             </Button>
           </Link>
+          <Button
+            variant="secondary"
+            className="min-h-11 flex-1"
+            onClick={() => {
+              const md = mentorSessionToMarkdown(node.name, mentorSession);
+              void navigator.clipboard.writeText(md);
+            }}
+          >
+            Copy as markdown
+          </Button>
           <Button variant="secondary" onClick={retake} className="min-h-11 flex-1">
             Retake check-in
           </Button>
