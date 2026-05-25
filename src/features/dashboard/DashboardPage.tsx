@@ -11,6 +11,7 @@ import { DEFAULT_TRACK_ID } from "@/lib/campusHome";
 import { getTrackChallengeCategory } from "@/lib/coursework";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { CampusHome } from "./widgets/CampusHome";
+import { SatTodayCard } from "./widgets/SatTodayCard";
 import { WeekAssignments } from "./widgets/WeekAssignments";
 import { WeekDeadlinesStrip } from "./widgets/WeekDeadlinesStrip";
 import { ContinueHero } from "./widgets/ContinueHero";
@@ -62,7 +63,8 @@ export function DashboardPage() {
       </header>
 
       {subjects.length > 0 && (
-        <section>
+        <section className="space-y-4">
+          <SatTodayCard subjects={subjects} />
           <CampusHome subjects={subjects} />
         </section>
       )}

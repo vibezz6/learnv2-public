@@ -1,14 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   SAT_PRETEST_STORAGE_KEY,
+  buildDraft2FromGaps,
   buildSatPretestExportPayload,
   buildSatPretestScoreSummary,
+  compareDraftScores,
   completeSatPretestAttempt,
   formatSatPretestMarkdown,
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
   listSatPretestAttempts,
   loadSatPretestState,
+  parseSatPretestDraft2ImportJson,
   recordSatPretestResponse,
   resetSatPretestDraft,
   startSatPretestAttempt,
@@ -259,6 +262,138 @@ describe("satPretest", () => {
     const attempt = startSatPretestAttempt("draft-1", questions, storage)!;
     expect(buildSatPretestExportPayload(attempt, questions, "2.0.23")).toBeNull();
     expect(formatSatPretestMarkdown(attempt, questions, "2.0.23")).toBeNull();
+  });
+
+  it("builds Draft 2 from Draft 1 weak skills", () => {
+    const attempt = startSatPretestAttempt("draft-1", questions, storage)!;
+    recordSatPretestResponse(
+      {
+        attemptId: attempt.id,
+        questionId: "sp1",
+        selectedChoiceId: "a",
+        rationale: "guessed wrong",
+        timeSpentSeconds: 5,
+      },
+      questions,
+      storage,
+    );
+    recordSatPretestResponse(
+      {
+        attemptId: attempt.id,
+        questionId: "sp2",
+        selectedChoiceId: "c",
+        rationale: "semicolon join",
+        timeSpentSeconds: 5,
+      },
+      questions,
+      storage,
+    );
+    const completed = completeSatPretestAttempt(attempt.id, questions, storage)!;
+
+    const draft2Pool: SatPretestQuestion[] = [
+      {
+        id: "d2-linear",
+        draftId: "draft-2",
+        section: "math",
+        domain: "Algebra",
+        skill: "Linear equations",
+        difficulty: "easy",
+        prompt: "follow-up",
+        choices: [
+          { id: "a", text: "1" },
+          { id: "b", text: "2" },
+        ],
+        correctChoiceId: "a",
+        explanation: "x",
+      },
+      {
+        id: "d2-rw",
+        draftId: "draft-2",
+        section: "rw",
+        domain: "Grammar",
+        skill: "Sentence boundaries",
+        difficulty: "easy",
+        prompt: "follow-up rw",
+        choices: [
+          { id: "a", text: "1" },
+          { id: "b", text: "2" },
+        ],
+        correctChoiceId: "a",
+        explanation: "x",
+      },
+    ];
+
+    const built = buildDraft2FromGaps(completed, draft2Pool, 4)!;
+    expect(built.questions.map((q) => q.id)).toEqual(["d2-linear", "d2-rw"]);
+    expect(built.questionTargets[0].reason).toContain("Linear equations");
+  });
+
+  it("parses Draft 2 import JSON", () => {
+    const result = parseSatPretestDraft2ImportJson(
+      JSON.stringify({
+        questions: [
+          {
+            id: "import-1",
+            draftId: "draft-2",
+            section: "math",
+            domain: "Algebra",
+            skill: "Linear equations",
+            difficulty: "easy",
+            prompt: "Imported",
+            choices: [
+              { id: "a", text: "1" },
+              { id: "b", text: "2" },
+            ],
+            correctChoiceId: "a",
+            explanation: "ok",
+          },
+        ],
+      }),
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.questions).toHaveLength(1);
+  });
+
+  it("compares skill scores between drafts", () => {
+    const draft1 = {
+      id: "d1",
+      draftId: "draft-1",
+      status: "completed" as const,
+      startedAt: "2026-05-24T18:00:00.000Z",
+      questionOrder: ["sp1", "sp2"],
+      currentIndex: 1,
+      responses: {},
+      scoreSummary: buildSatPretestScoreSummary(
+        {
+          id: "d1",
+          draftId: "draft-1",
+          status: "in_progress",
+          startedAt: "2026-05-24T18:00:00.000Z",
+          questionOrder: ["sp1", "sp2"],
+          currentIndex: 1,
+          responses: {
+            sp1: {
+              questionId: "sp1",
+              selectedChoiceId: "b",
+              rationale: "ok",
+              answeredAt: "2026-05-24T18:00:00.000Z",
+              timeSpentSeconds: 1,
+            },
+            sp2: {
+              questionId: "sp2",
+              selectedChoiceId: "a",
+              rationale: "bad",
+              answeredAt: "2026-05-24T18:00:00.000Z",
+              timeSpentSeconds: 1,
+            },
+          },
+        },
+        questions,
+      ),
+    };
+    const draft2 = { ...draft1, id: "d2", draftId: "draft-2" };
+    const rows = compareDraftScores(draft1, draft2);
+    expect(rows.some((row) => row.skill === "Linear equations")).toBe(true);
   });
 
   it("ignores corrupt stored data and can reset a draft", () => {

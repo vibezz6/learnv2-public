@@ -189,6 +189,30 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         icon: FlaskConical,
         action: () => go("/lab/trading"),
       },
+      {
+        id: "sat-pretest",
+        label: "SAT Draft 1 diagnostic",
+        description: "In-app pretest with rationale",
+        section: "Campus",
+        icon: GraduationCap,
+        action: () => go("/sat/pretest"),
+      },
+      {
+        id: "sat-mistake-log",
+        label: "SAT mistake log",
+        description: "Log misses after Bluebook or Khan",
+        section: "Campus",
+        icon: ClipboardList,
+        action: () => go("/subjects/sat-prep#mistakes"),
+      },
+      {
+        id: "sat-prep",
+        label: "SAT Prep subject",
+        description: "75-lesson August track",
+        section: "Campus",
+        icon: BookOpen,
+        action: () => go("/subjects/sat-prep"),
+      },
     ];
 
     const subjectItems: CommandItem[] = subjects.map((sub) => ({

@@ -16,12 +16,19 @@ import {
   satPretestDraft1Questions,
 } from "@/data/satPretestDraft1";
 import {
+  SAT_PRETEST_DRAFT_2_ID,
+  satPretestDraft2Questions,
+} from "@/data/satPretestDraft2";
+import {
   advanceSatPretestAttempt,
+  buildDraft2FromGaps,
+  compareDraftScores,
   completeSatPretestAttempt,
   copySatPretestMarkdownToClipboard,
   downloadSatPretestJson,
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
+  parseSatPretestDraft2ImportJson,
   recordSatPretestResponse,
   resetSatPretestDraft,
   startSatPretestAttempt,
@@ -43,53 +50,117 @@ function formatSeconds(seconds: number): string {
   return `${minutes}m ${remainder}s`;
 }
 
-function getCurrentQuestion(attempt: SatPretestAttempt): SatPretestQuestion | null {
+function resolveQuestionBank(
+  attempt: SatPretestAttempt | null,
+  importedDraft2: SatPretestQuestion[],
+): SatPretestQuestion[] {
+  if (!attempt || attempt.draftId === SAT_PRETEST_DRAFT_1_ID) {
+    return satPretestDraft1Questions;
+  }
+  const pool = [...satPretestDraft2Questions, ...importedDraft2];
+  return attempt.questionOrder
+    .map((id) => pool.find((question) => question.id === id))
+    .filter((question): question is SatPretestQuestion => !!question);
+}
+
+function getCurrentQuestion(
+  attempt: SatPretestAttempt,
+  bank: SatPretestQuestion[],
+): SatPretestQuestion | null {
   const questionId = attempt.questionOrder[attempt.currentIndex];
-  return satPretestDraft1Questions.find((question) => question.id === questionId) ?? null;
+  return bank.find((question) => question.id === questionId) ?? null;
+}
+
+function loadAttemptForDraft(draftId: string): SatPretestAttempt | null {
+  return (
+    getActiveSatPretestAttempt(draftId) ?? getLatestCompletedSatPretestAttempt(draftId)
+  );
 }
 
 export function SatPretestPage() {
+  const [viewDraftId, setViewDraftId] = useState(SAT_PRETEST_DRAFT_1_ID);
+  const [importedDraft2, setImportedDraft2] = useState<SatPretestQuestion[]>([]);
   const [attempt, setAttempt] = useState<SatPretestAttempt | null>(() =>
-    getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID)
-      ?? getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID),
+    loadAttemptForDraft(SAT_PRETEST_DRAFT_1_ID),
   );
+  const draft1Completed = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const [selectedChoiceId, setSelectedChoiceId] = useState("");
   const [rationale, setRationale] = useState("");
   const [error, setError] = useState("");
   const [submittedQuestionId, setSubmittedQuestionId] = useState<string | null>(null);
   const [questionStartedAt, setQuestionStartedAt] = useState(() => Date.now());
 
-  const currentQuestion = attempt?.status === "in_progress" ? getCurrentQuestion(attempt) : null;
-  const currentResponse = currentQuestion ? attempt?.responses[currentQuestion.id] : null;
-  const completedAttempt = attempt?.status === "completed" ? attempt : null;
+  const activeAttempt =
+    attempt && attempt.draftId === viewDraftId ? attempt : null;
+  const questionBank = resolveQuestionBank(activeAttempt, importedDraft2);
+  const currentQuestion =
+    activeAttempt?.status === "in_progress"
+      ? getCurrentQuestion(activeAttempt, questionBank)
+      : null;
+  const currentResponse = currentQuestion ? activeAttempt?.responses[currentQuestion.id] : null;
+  const completedAttempt = activeAttempt?.status === "completed" ? activeAttempt : null;
 
   const sectionCounts = useMemo(() => {
     const math = satPretestDraft1Questions.filter((question) => question.section === "math").length;
     return { math, rw: satPretestDraft1Questions.length - math };
   }, []);
 
+  const resetQuestionUi = useCallback(() => {
+    setSelectedChoiceId("");
+    setRationale("");
+    setSubmittedQuestionId(null);
+    setQuestionStartedAt(Date.now());
+    setError("");
+  }, []);
+
   const startAttempt = useCallback(() => {
     const nextAttempt = startSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID, satPretestDraft1Questions);
+    setViewDraftId(SAT_PRETEST_DRAFT_1_ID);
     setAttempt(nextAttempt);
-    setSelectedChoiceId("");
-    setRationale("");
-    setSubmittedQuestionId(null);
-    setQuestionStartedAt(Date.now());
-    setError("");
-  }, []);
+    resetQuestionUi();
+  }, [resetQuestionUi]);
+
+  const startDraft2FromGaps = useCallback(() => {
+    if (!draft1Completed) {
+      setError("Finish Draft 1 before starting Draft 2.");
+      return;
+    }
+    const built = buildDraft2FromGaps(draft1Completed, [
+      ...satPretestDraft2Questions,
+      ...importedDraft2,
+    ]);
+    if (!built) {
+      setError("Could not build a Draft 2 set from your gaps.");
+      return;
+    }
+    const nextAttempt = startSatPretestAttempt(
+      SAT_PRETEST_DRAFT_2_ID,
+      built.questions,
+      localStorage,
+      {
+        compareDraftId: SAT_PRETEST_DRAFT_1_ID,
+        questionTargets: built.questionTargets,
+      },
+    );
+    setViewDraftId(SAT_PRETEST_DRAFT_2_ID);
+    setAttempt(nextAttempt);
+    resetQuestionUi();
+  }, [draft1Completed, importedDraft2, resetQuestionUi]);
 
   const restartDraft = useCallback(() => {
-    resetSatPretestDraft(SAT_PRETEST_DRAFT_1_ID);
+    resetSatPretestDraft(viewDraftId);
     setAttempt(null);
-    setSelectedChoiceId("");
-    setRationale("");
-    setSubmittedQuestionId(null);
-    setQuestionStartedAt(Date.now());
-    setError("");
-  }, []);
+    resetQuestionUi();
+  }, [viewDraftId, resetQuestionUi]);
+
+  const switchToDraft = useCallback((draftId: string) => {
+    setViewDraftId(draftId);
+    setAttempt(loadAttemptForDraft(draftId));
+    resetQuestionUi();
+  }, [resetQuestionUi]);
 
   const submitQuestion = useCallback(() => {
-    if (!attempt || !currentQuestion) return;
+    if (!activeAttempt || !currentQuestion) return;
     if (!selectedChoiceId) {
       setError("Choose an answer before submitting this diagnostic item.");
       return;
@@ -101,13 +172,13 @@ export function SatPretestPage() {
 
     const updated = recordSatPretestResponse(
       {
-        attemptId: attempt.id,
+        attemptId: activeAttempt.id,
         questionId: currentQuestion.id,
         selectedChoiceId,
         rationale,
         timeSpentSeconds: Math.max(1, Math.round((Date.now() - questionStartedAt) / 1000)),
       },
-      satPretestDraft1Questions,
+      questionBank,
     );
 
     if (!updated) {
@@ -118,26 +189,24 @@ export function SatPretestPage() {
     setAttempt({ ...updated });
     setSubmittedQuestionId(currentQuestion.id);
     setError("");
-  }, [attempt, currentQuestion, questionStartedAt, rationale, selectedChoiceId]);
+  }, [activeAttempt, currentQuestion, questionBank, questionStartedAt, rationale, selectedChoiceId]);
 
   const goNext = useCallback(() => {
-    if (!attempt || !currentQuestion) return;
+    if (!activeAttempt || !currentQuestion) return;
 
-    const isLast = attempt.currentIndex >= attempt.questionOrder.length - 1;
+    const isLast = activeAttempt.currentIndex >= activeAttempt.questionOrder.length - 1;
     if (isLast) {
-      const completed = completeSatPretestAttempt(attempt.id, satPretestDraft1Questions);
+      const completed = completeSatPretestAttempt(activeAttempt.id, questionBank);
       if (completed) setAttempt({ ...completed });
     } else {
-      const updated = advanceSatPretestAttempt(attempt.id);
+      const updated = advanceSatPretestAttempt(activeAttempt.id);
       if (updated) setAttempt({ ...updated });
     }
 
-    setSelectedChoiceId("");
-    setRationale("");
-    setSubmittedQuestionId(null);
-    setQuestionStartedAt(Date.now());
-    setError("");
-  }, [attempt, currentQuestion]);
+    resetQuestionUi();
+  }, [activeAttempt, currentQuestion, questionBank, resetQuestionUi]);
+
+  const draftLabel = viewDraftId === SAT_PRETEST_DRAFT_2_ID ? "Draft 2" : "Draft 1";
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-4xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:p-4 sm:pb-4 md:p-8">
@@ -154,27 +223,65 @@ export function SatPretestPage() {
           SAT diagnostic
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
-          Draft 1 pretest
+          {draftLabel} pretest
         </h1>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={viewDraftId === SAT_PRETEST_DRAFT_1_ID ? "primary" : "secondary"}
+            className="min-h-9"
+            onClick={() => switchToDraft(SAT_PRETEST_DRAFT_1_ID)}
+          >
+            Draft 1
+          </Button>
+          <Button
+            variant={viewDraftId === SAT_PRETEST_DRAFT_2_ID ? "primary" : "secondary"}
+            className="min-h-9"
+            onClick={() => switchToDraft(SAT_PRETEST_DRAFT_2_ID)}
+            disabled={!draft1Completed}
+          >
+            Draft 2
+          </Button>
+        </div>
         <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-muted)]">
           This is a local Learn v2 diagnostic, not an official score predictor. The goal is to
           capture your answer and your reasoning before feedback so Draft 2 can target real gaps.
         </p>
       </header>
 
-      {!attempt ? (
+      {!activeAttempt ? (
         <StartCard
+          draftId={viewDraftId}
           mathCount={sectionCounts.math}
           rwCount={sectionCounts.rw}
-          total={satPretestDraft1Questions.length}
-          onStart={startAttempt}
+          total={
+            viewDraftId === SAT_PRETEST_DRAFT_1_ID
+              ? satPretestDraft1Questions.length
+              : satPretestDraft2Questions.length
+          }
+          draft1Done={!!draft1Completed}
+          onStart={viewDraftId === SAT_PRETEST_DRAFT_1_ID ? startAttempt : startDraft2FromGaps}
+          onImportDraft2={setImportedDraft2}
         />
       ) : completedAttempt ? (
-        <ResultsCard attempt={completedAttempt} onRestart={restartDraft} />
-      ) : currentQuestion ? (
+        <ResultsCard
+          attempt={completedAttempt}
+          questions={questionBank}
+          draft1Baseline={
+            completedAttempt.draftId === SAT_PRETEST_DRAFT_2_ID ? draft1Completed : null
+          }
+          onRestart={restartDraft}
+          onStartDraft2={startDraft2FromGaps}
+          showDraft2Cta={completedAttempt.draftId === SAT_PRETEST_DRAFT_1_ID}
+        />
+      ) : currentQuestion && activeAttempt ? (
         <QuestionCard
-          attempt={attempt}
+          attempt={activeAttempt}
           question={currentQuestion}
+          targetReason={
+            activeAttempt.questionTargets?.find(
+              (target) => target.questionId === currentQuestion.id,
+            )?.reason
+          }
           selectedChoiceId={selectedChoiceId}
           rationale={rationale}
           submitted={submittedQuestionId === currentQuestion.id || !!currentResponse}
@@ -186,7 +293,7 @@ export function SatPretestPage() {
         />
       ) : (
         <Card>
-          <p className="text-sm text-[var(--text-muted)]">No Draft 1 question is available.</p>
+          <p className="text-sm text-[var(--text-muted)]">No {draftLabel} question is available.</p>
         </Card>
       )}
     </div>
@@ -194,32 +301,89 @@ export function SatPretestPage() {
 }
 
 function StartCard({
+  draftId,
   mathCount,
   rwCount,
   total,
+  draft1Done,
   onStart,
+  onImportDraft2,
 }: {
+  draftId: string;
   mathCount: number;
   rwCount: number;
   total: number;
+  draft1Done: boolean;
   onStart: () => void;
+  onImportDraft2: (questions: SatPretestQuestion[]) => void;
 }) {
+  const [importText, setImportText] = useState("");
+  const [importError, setImportError] = useState("");
+  const isDraft2 = draftId === SAT_PRETEST_DRAFT_2_ID;
+
+  const handleImport = () => {
+    const result = parseSatPretestDraft2ImportJson(importText);
+    if (!result.ok) {
+      setImportError(result.error);
+      return;
+    }
+    setImportError("");
+    onImportDraft2(result.questions);
+  };
+
   return (
     <Card variant="primary" className="space-y-5">
       <div className="space-y-2">
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Start Draft 1</h2>
+        <h2 className="text-xl font-semibold text-[var(--text-heading)]">
+          {isDraft2 ? "Start Draft 2" : "Start Draft 1"}
+        </h2>
         <p className="text-sm leading-relaxed text-[var(--text-muted)]">
-          You will answer {total} original diagnostic questions: {mathCount} Math and {rwCount}
-          Reading & Writing. Each item requires an answer and a written rationale.
+          {isDraft2 ? (
+            draft1Done ? (
+              <>
+                Targeted follow-up from your Draft 1 gaps (up to 6 questions). Each item still
+                requires answer plus rationale.
+              </>
+            ) : (
+              "Complete Draft 1 first so Draft 2 can target your weak skills."
+            )
+          ) : (
+            <>
+              You will answer {total} original diagnostic questions: {mathCount} Math and {rwCount}{" "}
+              Reading & Writing. Each item requires an answer and a written rationale.
+            </>
+          )}
         </p>
       </div>
+      {isDraft2 ? (
+        <div className="space-y-2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 p-4">
+          <p className="text-sm font-medium text-[var(--text-heading)]">
+            Optional: import Draft 2 JSON from Cursor
+          </p>
+          <textarea
+            value={importText}
+            onChange={(event) => setImportText(event.target.value)}
+            rows={4}
+            placeholder='{ "questions": [ ... ] }'
+            className="w-full resize-y rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-xs text-[var(--text)]"
+          />
+          {importError ? <p className="text-sm text-[var(--warning)]">{importError}</p> : null}
+          <Button variant="secondary" onClick={handleImport} className="min-h-10">
+            Validate import
+          </Button>
+        </div>
+      ) : null}
       <div className="grid gap-3 sm:grid-cols-3">
         <Metric label="Feedback" value="After submit" />
         <Metric label="Storage" value="Local only" />
         <Metric label="Resume" value="After refresh" />
       </div>
-      <Button onClick={onStart} className="min-h-11 w-full sm:w-auto">
-        Start diagnostic
+      <Button
+        onClick={onStart}
+        disabled={isDraft2 && !draft1Done}
+        className="min-h-11 w-full sm:w-auto"
+      >
+        {isDraft2 ? "Start targeted Draft 2" : "Start diagnostic"}
         <ArrowRight size={16} />
       </Button>
     </Card>
@@ -229,6 +393,7 @@ function StartCard({
 function QuestionCard({
   attempt,
   question,
+  targetReason,
   selectedChoiceId,
   rationale,
   submitted,
@@ -240,6 +405,7 @@ function QuestionCard({
 }: {
   attempt: SatPretestAttempt;
   question: SatPretestQuestion;
+  targetReason?: string;
   selectedChoiceId: string;
   rationale: string;
   submitted: boolean;
@@ -271,6 +437,9 @@ function QuestionCard({
           <span>·</span>
           <span>{question.difficulty}</span>
         </div>
+        {targetReason ? (
+          <p className="text-sm text-[var(--accent-2)]">{targetReason}</p>
+        ) : null}
         <h2 className="break-words text-xl font-semibold leading-relaxed text-[var(--text-heading)]">
           {question.prompt}
         </h2>
@@ -363,18 +532,29 @@ function QuestionCard({
 
 function ResultsCard({
   attempt,
+  questions,
+  draft1Baseline,
   onRestart,
+  onStartDraft2,
+  showDraft2Cta,
 }: {
   attempt: SatPretestAttempt;
+  questions: SatPretestQuestion[];
+  draft1Baseline: SatPretestAttempt | null;
   onRestart: () => void;
+  onStartDraft2: () => void;
+  showDraft2Cta: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   const summary = attempt.scoreSummary;
+  const isDraft2 = attempt.draftId === SAT_PRETEST_DRAFT_2_ID;
+  const comparisons =
+    draft1Baseline && isDraft2 ? compareDraftScores(draft1Baseline, attempt) : [];
 
   const handleCopy = async () => {
     const ok = await copySatPretestMarkdownToClipboard(
       attempt,
-      satPretestDraft1Questions,
+      questions,
       APP_VERSION,
     );
     if (ok) {
@@ -384,13 +564,15 @@ function ResultsCard({
   };
 
   const handleDownload = () => {
-    downloadSatPretestJson(attempt, satPretestDraft1Questions, APP_VERSION);
+    downloadSatPretestJson(attempt, questions, APP_VERSION);
   };
 
   if (!summary) {
     return (
       <Card>
-        <p className="text-sm text-[var(--text-muted)]">Draft 1 is complete, but no summary is available.</p>
+        <p className="text-sm text-[var(--text-muted)]">
+          {isDraft2 ? "Draft 2" : "Draft 1"} is complete, but no summary is available.
+        </p>
       </Card>
     );
   }
@@ -399,7 +581,7 @@ function ResultsCard({
     <Card glow className="space-y-5">
       <div className="space-y-2">
         <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--accent-2)]">
-          Draft 1 complete
+          {isDraft2 ? "Draft 2 complete" : "Draft 1 complete"}
         </p>
         <h2 className="text-2xl font-semibold text-[var(--text-heading)]">
           {summary.correctAnswers}/{summary.totalQuestions} · {summary.pct}%
@@ -440,6 +622,26 @@ function ResultsCard({
         )}
       </section>
 
+      {comparisons.length > 0 ? (
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold text-[var(--text-heading)]">Draft 1 vs Draft 2 by skill</h3>
+          <ul className="space-y-2">
+            {comparisons.map((row) => (
+              <li
+                key={row.skill}
+                className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 px-4 py-3 text-sm"
+              >
+                <span className="font-medium text-[var(--text-heading)]">{row.skill}</span>{" "}
+                <span className="text-[var(--text-muted)]">
+                  {row.draft1Pct}% → {row.draft2Pct}% ({row.delta >= 0 ? "+" : ""}
+                  {row.delta})
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {summary.recommendedNodeIds.length > 0 ? (
         <section className="space-y-3">
           <h3 className="text-sm font-semibold text-[var(--text-heading)]">Recommended SAT lessons</h3>
@@ -460,12 +662,12 @@ function ResultsCard({
       <section className="space-y-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 p-4">
         <h3 className="text-sm font-semibold text-[var(--text-heading)]">Export for Cursor</h3>
         <p className="text-sm text-[var(--text-muted)]">
-          Copy a Markdown summary or download JSON when you finish Draft 1 and want gap analysis.
+          Copy Markdown or download JSON for Cursor gap analysis.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button variant="secondary" onClick={handleCopy} className="min-h-11 w-full sm:w-auto">
             {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? "Copied!" : "Copy Draft 1 summary"}
+            {copied ? "Copied!" : isDraft2 ? "Copy Draft 2 summary" : "Copy Draft 1 summary"}
           </Button>
           <Button variant="secondary" onClick={handleDownload} className="min-h-11 w-full sm:w-auto">
             <Download size={16} />
@@ -473,6 +675,13 @@ function ResultsCard({
           </Button>
         </div>
       </section>
+
+      {showDraft2Cta ? (
+        <Button onClick={onStartDraft2} className="min-h-11 w-full sm:w-auto">
+          Start Draft 2 from gaps
+          <ArrowRight size={16} />
+        </Button>
+      ) : null}
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <Link to="/subjects/sat-prep" className="sm:w-auto">
@@ -482,7 +691,7 @@ function ResultsCard({
           </Button>
         </Link>
         <Button variant="secondary" onClick={onRestart} className="min-h-11 w-full sm:w-auto">
-          Restart Draft 1
+          Restart {isDraft2 ? "Draft 2" : "Draft 1"}
           <RotateCcw size={16} />
         </Button>
       </div>

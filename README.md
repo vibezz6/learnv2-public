@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.23 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.25 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -31,7 +31,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 - **Campus home** — enrolled track, weekly syllabus, SAT next step, review/timer/stats links
 - **Neural Command Center** — continue learning, review queue, daily challenge, track recommendation
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
-- **SAT Prep** — 75-lesson Digital SAT path (st66+ round-4/5 drills, mistake log, Bluebook checkpoints) with **August SAT Track**
+- **SAT Prep** — 75-lesson Digital SAT path (st66+ round-4/5 drills, mistake log, in-app Draft 1/2 diagnostic, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
 - **SRS review** — spaced repetition queue with due-date scheduling
 - **Tracks** — guided learning paths across subjects
@@ -157,6 +157,8 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 15 College hub on campus (34) | ✅ **v2.0.21** — admissions summary on `/campus`, focus/backup deep links |
 | 16 PWA + chunks (36) | ✅ **v2.0.22** — update reload banner, route lazy-load, vendor split (tagged) |
 | 17 Command palette campus (37) | ✅ **v2.0.23** — ⌘K shortcuts for checklist, essays, focus, lab |
+| 18 SAT Draft 1 pretest (38) | ✅ **v2.0.24** — in-app diagnostic, rationale, export for Cursor |
+| 19 SAT polish + Draft 2 (39) | ✅ **v2.0.25** — dashboard SAT card, ⌘K SAT shortcuts, Draft 2 gaps + import |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

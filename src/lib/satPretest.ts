@@ -54,6 +54,11 @@ export interface SatPretestScoreSummary {
   timeSpentSeconds: number;
 }
 
+export interface SatPretestQuestionTarget {
+  questionId: string;
+  reason: string;
+}
+
 export interface SatPretestAttempt {
   id: string;
   draftId: string;
@@ -64,6 +69,8 @@ export interface SatPretestAttempt {
   currentIndex: number;
   responses: Record<string, SatPretestResponse>;
   scoreSummary?: SatPretestScoreSummary;
+  compareDraftId?: string;
+  questionTargets?: SatPretestQuestionTarget[];
 }
 
 export interface SatPretestState {
@@ -163,7 +170,17 @@ function isValidAttempt(value: unknown): value is SatPretestAttempt {
     !!responses &&
     typeof responses === "object" &&
     Object.values(responses).every(isValidResponse) &&
-    (attempt.scoreSummary === undefined || isValidScoreSummary(attempt.scoreSummary))
+    (attempt.scoreSummary === undefined || isValidScoreSummary(attempt.scoreSummary)) &&
+    (attempt.compareDraftId === undefined || typeof attempt.compareDraftId === "string") &&
+    (attempt.questionTargets === undefined ||
+      (Array.isArray(attempt.questionTargets) &&
+        attempt.questionTargets.every(
+          (target) =>
+            !!target &&
+            typeof target === "object" &&
+            typeof target.questionId === "string" &&
+            typeof target.reason === "string",
+        )))
   );
 }
 
@@ -244,10 +261,16 @@ export function getLatestCompletedSatPretestAttempt(
   );
 }
 
+export interface StartSatPretestOptions {
+  compareDraftId?: string;
+  questionTargets?: SatPretestQuestionTarget[];
+}
+
 export function startSatPretestAttempt(
   draftId: string,
   questions: SatPretestQuestion[],
   storage: Storage = localStorage,
+  options: StartSatPretestOptions = {},
 ): SatPretestAttempt | null {
   const questionOrder = questions.map((question) => question.id);
   if (!draftId.trim() || questionOrder.length === 0) return null;
@@ -261,6 +284,8 @@ export function startSatPretestAttempt(
     questionOrder,
     currentIndex: 0,
     responses: {},
+    compareDraftId: options.compareDraftId,
+    questionTargets: options.questionTargets,
   };
 
   state.attempts.unshift(attempt);
@@ -644,6 +669,141 @@ export async function copySatPretestMarkdownToClipboard(
   } catch {
     return false;
   }
+}
+
+export interface Draft2BuildResult {
+  questions: SatPretestQuestion[];
+  questionTargets: SatPretestQuestionTarget[];
+}
+
+export function buildDraft2FromGaps(
+  draft1Attempt: SatPretestAttempt,
+  pool: SatPretestQuestion[],
+  limit = 6,
+): Draft2BuildResult | null {
+  if (draft1Attempt.status !== "completed" || !draft1Attempt.scoreSummary) return null;
+
+  const weakLabels = new Set(
+    draft1Attempt.scoreSummary.weakSkills.map((skill) => skill.label.toLowerCase()),
+  );
+  const selected: SatPretestQuestion[] = [];
+  const targets: SatPretestQuestionTarget[] = [];
+  const used = new Set<string>();
+
+  for (const question of pool) {
+    if (selected.length >= limit) break;
+    if (!weakLabels.has(question.skill.toLowerCase())) continue;
+    if (used.has(question.id)) continue;
+    selected.push(question);
+    used.add(question.id);
+    const weak = draft1Attempt.scoreSummary.weakSkills.find(
+      (skill) => skill.label.toLowerCase() === question.skill.toLowerCase(),
+    );
+    targets.push({
+      questionId: question.id,
+      reason: weak
+        ? `Draft 1 gap: ${weak.label} (${weak.correct}/${weak.total} correct).`
+        : `Draft 1 gap in ${question.skill}.`,
+    });
+  }
+
+  if (selected.length < Math.min(4, limit)) {
+    const sectionOrder = [...draft1Attempt.scoreSummary.sectionBreakdown].sort(
+      (a, b) => a.pct - b.pct,
+    );
+    for (const section of sectionOrder) {
+      for (const question of pool) {
+        if (selected.length >= limit) break;
+        if (question.section !== section.key || used.has(question.id)) continue;
+        selected.push(question);
+        used.add(question.id);
+        targets.push({
+          questionId: question.id,
+          reason: `Draft 1 ${section.label} was ${section.pct}% — extra practice here.`,
+        });
+      }
+    }
+  }
+
+  if (selected.length === 0) return null;
+  return { questions: selected, questionTargets: targets };
+}
+
+export type Draft2ImportResult =
+  | { ok: true; questions: SatPretestQuestion[] }
+  | { ok: false; error: string };
+
+function isValidDraft2Question(value: unknown): value is SatPretestQuestion {
+  if (!value || typeof value !== "object") return false;
+  const question = value as Partial<SatPretestQuestion>;
+  return (
+    typeof question.id === "string" &&
+    typeof question.draftId === "string" &&
+    (question.section === "math" || question.section === "rw") &&
+    typeof question.domain === "string" &&
+    typeof question.skill === "string" &&
+    (question.difficulty === "easy" ||
+      question.difficulty === "medium" ||
+      question.difficulty === "hard") &&
+    typeof question.prompt === "string" &&
+    Array.isArray(question.choices) &&
+    question.choices.length >= 2 &&
+    question.choices.every(
+      (choice) =>
+        !!choice &&
+        typeof choice === "object" &&
+        typeof choice.id === "string" &&
+        typeof choice.text === "string",
+    ) &&
+    typeof question.correctChoiceId === "string" &&
+    typeof question.explanation === "string"
+  );
+}
+
+export function parseSatPretestDraft2Import(raw: unknown): Draft2ImportResult {
+  if (!raw || typeof raw !== "object") {
+    return { ok: false, error: "Invalid JSON: expected an object." };
+  }
+  const payload = raw as Record<string, unknown>;
+  const questions = payload.questions;
+  if (!Array.isArray(questions) || questions.length === 0) {
+    return { ok: false, error: "Missing or empty questions array." };
+  }
+  const parsed = questions.filter(isValidDraft2Question);
+  if (parsed.length !== questions.length) {
+    return { ok: false, error: "One or more questions failed validation." };
+  }
+  return { ok: true, questions: parsed };
+}
+
+export function parseSatPretestDraft2ImportJson(text: string): Draft2ImportResult {
+  try {
+    return parseSatPretestDraft2Import(JSON.parse(text));
+  } catch {
+    return { ok: false, error: "Could not parse JSON." };
+  }
+}
+
+export function compareDraftScores(
+  baseline: SatPretestAttempt,
+  followUp: SatPretestAttempt,
+): { skill: string; draft1Pct: number; draft2Pct: number; delta: number }[] {
+  if (!baseline.scoreSummary || !followUp.scoreSummary) return [];
+  const draft1BySkill = new Map(
+    baseline.scoreSummary.skillBreakdown.map((skill) => [skill.label, skill.pct]),
+  );
+  const rows: { skill: string; draft1Pct: number; draft2Pct: number; delta: number }[] = [];
+  for (const skill of followUp.scoreSummary.skillBreakdown) {
+    const draft1Pct = draft1BySkill.get(skill.label);
+    if (draft1Pct === undefined) continue;
+    rows.push({
+      skill: skill.label,
+      draft1Pct,
+      draft2Pct: skill.pct,
+      delta: skill.pct - draft1Pct,
+    });
+  }
+  return rows.sort((a, b) => a.skill.localeCompare(b.skill));
 }
 
 export function downloadSatPretestJson(
