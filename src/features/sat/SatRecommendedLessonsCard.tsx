@@ -21,7 +21,7 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
     plan.source === "lesson_plan"
       ? "Recommended from Cursor lesson plan"
       : plan.source === "pretest_gaps"
-        ? "Recommended from Draft 1 gaps"
+        ? "From your baseline misses"
         : plan.source === "track_next"
           ? "Recommended next"
           : "SAT lesson suggestions";
@@ -30,11 +30,11 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
     plan.source === "lesson_plan"
       ? "Imported on the Draft 2 tab — study these before or after Draft 2."
       : plan.source === "pretest_gaps"
-      ? "These lessons map to questions you missed on the diagnostic."
+      ? "These lessons map to questions you missed on the optional baseline."
       : plan.source === "track_next"
         ? plan.draft1Complete
           ? "No open gap lessons — continue the August SAT track."
-          : "Follow the track now; Draft 1 adds gap targeting when you are ready."
+          : "Follow the track now; optional baseline adds gap targeting when you are ready."
         : plan.emptyMessage;
 
   return (
@@ -70,7 +70,7 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
         <Link to="/sat/pretest" className="inline-block">
           <Button variant="secondary" className="min-h-11 touch-manipulation">
             <BookOpen size={14} />
-            Open SAT diagnostic
+            Optional diagnostic
           </Button>
         </Link>
       )}

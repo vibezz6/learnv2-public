@@ -4,13 +4,13 @@ Use this when running copy-audit (or any) DAG via `~/.cursor/skills/dag-task-run
 
 ## One-time setup
 
-1. **API key** — export before each run (not in repo by default):
+1. **API key** — on this machine it lives in Hermes (do not commit):
 
    ```bash
-   export CURSOR_API_KEY=crsr_...
+   set -a && source "$HOME/.hermes/autonomous/.env" && set +a
    ```
 
-   Or add to `learnv2/.env` (do not commit):
+   Or export manually / add to `learnv2/.env` (gitignored):
 
    ```
    CURSOR_API_KEY=crsr_...

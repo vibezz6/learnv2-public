@@ -84,7 +84,7 @@ export function SatOfficialResourcesCard({ id }: Props) {
           </p>
           <Link to="/sat/pretest" className="mt-3 inline-flex">
             <Button variant="secondary" className="min-h-10">
-              Take Draft 1 diagnostic
+              Take optional baseline
             </Button>
           </Link>
         </div>
