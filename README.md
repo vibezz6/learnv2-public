@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.1.2 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.1.3 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -185,6 +185,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 43 Dashboard condense (64) | ✅ **v2.1.0** — Today → focus → This week → review → challenge; WeekPlanCard; demote stats toys off `/` |
 | 44 Dashboard white-screen fix (65) | ✅ **v2.1.1** — WeekPlanCard no longer passes `undefined` into admissions loaders (crashed `/`) |
 | 45 Route page chrome (66) | ✅ **v2.1.2** — PageContainer + PageHeader on Review, Saved, Stats, Settings, Campus tools, subjects/tracks, college, SAT pretest, lessons, notes, quiz |
+| 46 Stats-only analytics (67) | ✅ **v2.1.3** — heatmap, quiz scores, math visualizations live on `/stats` only; removed dead dashboard widgets |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

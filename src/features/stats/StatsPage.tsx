@@ -13,7 +13,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader, Section } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -23,9 +23,10 @@ import {
 } from "@/lib/transcript";
 import { hasSeen, achievementLabel, type Achievement } from "@/stores/achievements";
 import { useProgress } from "@/stores/progress";
-import { StreakCalendar } from "@/features/dashboard/widgets/StreakCalendar";
-import { EulerQuizMastery } from "@/features/dashboard/widgets/EulerQuizMastery";
 import { AdmissionsTranscriptPreview } from "@/features/stats/AdmissionsTranscriptPreview";
+import { MathInspiredSection } from "@/features/stats/widgets/MathInspiredSection";
+import { QuizMasteryPanel } from "@/features/stats/widgets/QuizMasteryPanel";
+import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
@@ -150,7 +151,7 @@ export function StatsPage() {
     <PageContainer size="lg" className="space-y-6 md:space-y-8">
       <PageHeader
         title="Stats"
-        subtitle="Your progress proof and study transcript — XP, streaks, and reviews compound over time."
+        subtitle="Progress proof, study time, and optional deep dives — Today stays focused on your next lesson."
       />
 
       {!stats || stats.completedNodes === 0 ? (
@@ -166,6 +167,7 @@ export function StatsPage() {
         </Card>
       ) : (
         <>
+          <Section eyebrow="Progress" title="At a glance">
           {transcript && (
             <Card className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
               <div className="mb-4 flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between">
@@ -332,6 +334,12 @@ export function StatsPage() {
               <div className="mt-1 text-xs text-[var(--text-muted)]">Unlocked badges</div>
             </Card>
           </div>
+          </Section>
+
+          <Section eyebrow="Study activity" title="Time on task">
+          <Card className="stagger-item min-w-0">
+            <StreakCalendar dailyMinutes={stats.dailyMinutes} />
+          </Card>
 
           <Card className="stagger-item min-w-0">
             <div className="mb-4 flex flex-col gap-1 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
@@ -368,9 +376,23 @@ export function StatsPage() {
           </Card>
 
           <Card className="stagger-item min-w-0">
-            <StreakCalendar dailyMinutes={stats.dailyMinutes} />
+            <div className="mb-4 break-words font-semibold text-[var(--text-heading)]">Weekly trend</div>
+            <div className="flex min-w-0 items-end gap-2" style={{ height: 100 }}>
+              {weeklyTrend.map((w) => (
+                <div key={w.weekLabel} className="flex flex-1 flex-col items-center gap-1">
+                  <div
+                    className="w-full rounded-t-[var(--radius-sm)] bg-[var(--accent-2)]/80 transition-all"
+                    style={{ height: `${(w.totalMinutes / maxWeek) * 100}%`, minHeight: w.totalMinutes > 0 ? 4 : 0 }}
+                    title={`${w.weekLabel}: ${Math.round(w.totalMinutes)}m`}
+                  />
+                  <span className="text-[9px] text-[var(--text-muted)]">{w.weekLabel}</span>
+                </div>
+              ))}
+            </div>
           </Card>
+          </Section>
 
+          <Section eyebrow="Optional" title="Deeper analytics">
           {xpBySubject.length > 0 && (
             <Card className="stagger-item min-w-0">
               <div className="mb-3 break-words font-semibold text-[var(--text-heading)]">XP by subject</div>
@@ -431,23 +453,12 @@ export function StatsPage() {
             </div>
           </Card>
 
-          <Card className="stagger-item min-w-0">
-            <div className="mb-4 break-words font-semibold text-[var(--text-heading)]">Weekly trend</div>
-            <div className="flex min-w-0 items-end gap-2" style={{ height: 100 }}>
-              {weeklyTrend.map((w) => (
-                <div key={w.weekLabel} className="flex flex-1 flex-col items-center gap-1">
-                  <div
-                    className="w-full rounded-t-[var(--radius-sm)] bg-[var(--accent-2)]/80 transition-all"
-                    style={{ height: `${(w.totalMinutes / maxWeek) * 100}%`, minHeight: w.totalMinutes > 0 ? 4 : 0 }}
-                    title={`${w.weekLabel}: ${Math.round(w.totalMinutes)}m`}
-                  />
-                  <span className="text-[9px] text-[var(--text-muted)]">{w.weekLabel}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <EulerQuizMastery subjects={subjects} />
+          <QuizMasteryPanel subjects={subjects} />
+          <MathInspiredSection
+            completedNodes={stats.completedNodes}
+            totalNodes={stats.totalNodes}
+          />
+          </Section>
         </>
       )}
     </PageContainer>

@@ -26,7 +26,7 @@ export function MathInspiredSection({ completedNodes, totalNodes }: Props) {
       >
         <div className="flex items-center gap-2">
           <span className="text-lg text-[var(--accent)]">Σ</span>
-          <span className="font-semibold text-[var(--text-heading)]">Math Inspired Progress</span>
+          <span className="font-semibold text-[var(--text-heading)]">Progress visualizations</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
           {completedNodes}/{totalNodes}

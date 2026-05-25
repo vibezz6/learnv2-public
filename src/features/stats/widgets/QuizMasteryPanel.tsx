@@ -8,7 +8,7 @@ interface Props {
   subjects: Subject[];
 }
 
-export function EulerQuizMastery({ subjects }: Props) {
+export function QuizMasteryPanel({ subjects }: Props) {
   const [open, setOpen] = useState(false);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const getQuizScoreForNode = useProgress((s) => s.getQuizScoreForNode);
@@ -33,18 +33,17 @@ export function EulerQuizMastery({ subjects }: Props) {
         completed: completedCount,
         avgScore: scoreCount > 0 ? Math.round(totalScore / scoreCount) : null,
         quizCount: scoreCount,
-        mastery: scoreCount > 0 ? totalScore / scoreCount / 100 : 0,
       };
     })
     .filter((s) => s.quizCount > 0);
 
   const overallPct =
     subjectQuizData.length > 0
-      ? subjectQuizData.reduce((a, b) => a + b.mastery, 0) / subjectQuizData.length
-      : 0;
-  const eulerMastery = Math.exp(-Math.PI * (1 - overallPct));
-  const sorted = [...subjectQuizData].sort((a, b) => b.mastery - a.mastery);
-
+      ? Math.round(
+          subjectQuizData.reduce((sum, s) => sum + (s.avgScore ?? 0), 0) / subjectQuizData.length,
+        )
+      : null;
+  const sorted = [...subjectQuizData].sort((a, b) => (b.avgScore ?? 0) - (a.avgScore ?? 0));
   const hasData = subjectQuizData.length > 0;
 
   return (
@@ -57,11 +56,11 @@ export function EulerQuizMastery({ subjects }: Props) {
       >
         <div className="flex items-center gap-2">
           <BookOpen size={16} className="text-[var(--text-muted)]" />
-          <span className="font-medium text-[var(--text-heading)]">Quiz mastery</span>
+          <span className="font-medium text-[var(--text-heading)]">Quiz scores by subject</span>
         </div>
         <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-          {hasData ? (
-            <span className="font-mono text-xs tabular-nums">{Math.round(overallPct * 100)}% avg</span>
+          {overallPct !== null ? (
+            <span className="font-mono text-xs tabular-nums">{overallPct}% avg</span>
           ) : (
             <span className="text-xs">—</span>
           )}
@@ -74,24 +73,16 @@ export function EulerQuizMastery({ subjects }: Props) {
           <EmptyState
             className="py-10"
             title="No quiz data yet"
-            description="Complete lesson quizzes to see mastery scores by subject."
+            description="Complete lesson quizzes to see average scores by subject."
             actionLabel="Start a quiz"
             actionTo="/subjects"
           />
         </div>
       )}
 
-      {open && (
-        hasData ? (
+      {open &&
+        (hasData ? (
           <div className="mt-4">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="font-mono text-xs text-[var(--text-muted)]" title="Euler mastery index">
-                e^(-π(1-x)) = {eulerMastery.toFixed(3)}
-              </div>
-              <div className="border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]">
-                e<sup>iπ</sup> + 1 = 0
-              </div>
-            </div>
             <div className="flex flex-col gap-2">
               {sorted.map((sub) => {
                 const pct = sub.avgScore ?? 0;
@@ -115,15 +106,14 @@ export function EulerQuizMastery({ subjects }: Props) {
               })}
             </div>
             <p className="mt-3 text-xs text-[var(--text-muted)]">
-              {subjectQuizData.length}/{subjects.length} subjects · {Math.round(overallPct * 100)}% avg
+              {subjectQuizData.length}/{subjects.length} subjects with quiz attempts
             </p>
           </div>
         ) : (
           <div className="mt-4 flex flex-col items-center gap-2 py-2 text-center text-sm text-[var(--text-muted)]">
-            <p>Take quizzes in lessons to see mastery scores here.</p>
+            <p>Take quizzes in lessons to see scores here.</p>
           </div>
-        )
-      )}
+        ))}
     </Card>
   );
 }
