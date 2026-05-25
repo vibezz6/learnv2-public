@@ -86,5 +86,4 @@ Generated for batched implementation (Runs B–E). Do not ship as one release.
 
 ## Approval
 
-- [ ] Alex approves this spec → parent runs **Batch B** (or SDK Run B DAG)
-- [ ] After B ships → C → D → E
+- [x] Batches B–E shipped (v2.0.41–v2.0.44 on `main`)
