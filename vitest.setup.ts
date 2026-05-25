@@ -1,28 +1,31 @@
 /** Node test runs (CI) do not provide localStorage by default. */
-const store = new Map<string, string>();
+if (typeof globalThis.localStorage === "undefined") {
+  const store = new Map<string, string>();
 
-const localStorageMock: Storage = {
-  get length() {
-    return store.size;
-  },
-  clear() {
-    store.clear();
-  },
-  getItem(key: string) {
-    return store.get(key) ?? null;
-  },
-  key(index: number) {
-    return [...store.keys()][index] ?? null;
-  },
-  removeItem(key: string) {
-    store.delete(key);
-  },
-  setItem(key: string, value: string) {
-    store.set(key, value);
-  },
-};
+  const localStorageMock: Storage = {
+    get length() {
+      return store.size;
+    },
+    clear() {
+      store.clear();
+    },
+    getItem(key: string) {
+      return store.get(key) ?? null;
+    },
+    key(index: number) {
+      return [...store.keys()][index] ?? null;
+    },
+    removeItem(key: string) {
+      store.delete(key);
+    },
+    setItem(key: string, value: string) {
+      store.set(key, value);
+    },
+  };
 
-Object.defineProperty(globalThis, "localStorage", {
-  value: localStorageMock,
-  writable: true,
-});
+  Object.defineProperty(globalThis, "localStorage", {
+    value: localStorageMock,
+    writable: true,
+    configurable: true,
+  });
+}
