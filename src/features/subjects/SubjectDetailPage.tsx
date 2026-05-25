@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { ArrowRight, BookOpen, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
-import { Button, Card, EmptyState, PageContainer, PageHeader } from "@/components/ui";
+import {
+  Button,
+  Card,
+  EmptyState,
+  PageContainer,
+  PageHeader,
+  PageLoading,
+  Section,
+} from "@/components/ui";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { loadSubjectResult } from "@/curriculum/loader";
 import type { LoadSubjectResult } from "@/curriculum/loader";
@@ -495,11 +503,7 @@ export function SubjectDetailPage() {
   }, [loadState, getNodeStatus, progressNodes]);
 
   if (loadState.phase === "loading") {
-    return (
-      <PageContainer size="xl" className="text-[var(--text-muted)]">
-        Loading subject…
-      </PageContainer>
-    );
+    return <PageLoading size="xl" />;
   }
 
   if (loadState.phase === "error") {
@@ -547,6 +551,7 @@ export function SubjectDetailPage() {
       />
 
       {isSatPrep && satStudy ? (
+        <Section eyebrow="SAT today">
         <Card variant="primary" className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1">
             <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
@@ -561,28 +566,30 @@ export function SubjectDetailPage() {
             </Button>
           </Link>
         </Card>
+        </Section>
       ) : null}
 
       {isSatPrep ? (
-        <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
+        <Section eyebrow="Recommended">
+          <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
+        </Section>
       ) : null}
-
-      {isSatPrep ? <SatDiagnosticSection /> : null}
 
       {isSatPrep ? (
-        <div id="mistakes" className="scroll-mt-6">
-          <SatMistakeLogPanel />
-        </div>
+        <Section eyebrow="Optional baseline">
+          <SatDiagnosticSection />
+        </Section>
       ) : null}
 
-      <section className="space-y-5 pt-2">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-sm font-medium uppercase tracking-widest text-[var(--text-muted)]">
-            Skill tree
-          </h2>
-          <SkillTreeLegend />
-        </div>
+      {isSatPrep ? (
+        <Section eyebrow="Mistake log">
+          <div id="mistakes" className="scroll-mt-6">
+            <SatMistakeLogPanel />
+          </div>
+        </Section>
+      ) : null}
 
+      <Section eyebrow="Skill tree" actions={<SkillTreeLegend />}>
         {isSatPrep ? <SatOfficialResourcesCard id="official" /> : null}
 
         <div className="md:hidden">
@@ -600,7 +607,7 @@ export function SubjectDetailPage() {
             getNodeStatus={getNodeStatus}
           />
         </div>
-      </section>
+      </Section>
     </PageContainer>
   );
 }

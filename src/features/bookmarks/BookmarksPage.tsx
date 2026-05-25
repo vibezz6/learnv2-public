@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Star } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import { Star } from "lucide-react";
+import {
+  Button,
+  Card,
+  EmptyState,
+  PageContainer,
+  PageHeader,
+  PageLoading,
+  Section,
+} from "@/components/ui";
 import { findNodeAcrossSubjects, getNode, loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
@@ -9,12 +17,16 @@ import { useBookmarks } from "@/stores/bookmarks";
 
 export function BookmarksPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
   const resourceBookmarks = useBookmarks((s) => s.resourceBookmarks);
   const lessonBookmarks = useBookmarks((s) => s.lessonBookmarks);
   const toggleLessonBookmark = useBookmarks((s) => s.toggleLessonBookmark);
 
   useEffect(() => {
-    loadAllSubjects().then(setSubjects);
+    loadAllSubjects().then((loaded) => {
+      setSubjects(loaded);
+      setLoading(false);
+    });
   }, []);
 
   const resolvedResources = resourceBookmarks
@@ -39,6 +51,10 @@ export function BookmarksPage() {
 
   const isEmpty = resolvedResources.length === 0 && resolvedLessons.length === 0;
 
+  if (loading) {
+    return <PageLoading size="narrow" />;
+  }
+
   if (isEmpty) {
     return (
       <PageContainer size="narrow" className="space-y-4">
@@ -46,14 +62,14 @@ export function BookmarksPage() {
           title="Saved"
           subtitle="Star resources on a lesson page to save them here."
         />
-        <Card className="text-center">
-          <Star className="mx-auto mb-3 text-[var(--accent)]" size={32} />
-          <p className="text-sm text-[var(--text-muted)]">
-            Star resources on a lesson page to save them here.
-          </p>
-          <Link to="/subjects" className="mt-4 inline-block">
-            <Button variant="secondary">Browse subjects</Button>
-          </Link>
+        <Card variant="quiet">
+          <EmptyState
+            icon={<Star size={32} className="text-[var(--accent)]" />}
+            title="Nothing saved yet"
+            description="Star resources or lessons while you study — they'll show up here."
+            actionLabel="Browse subjects"
+            actionTo="/subjects"
+          />
         </Card>
       </PageContainer>
     );
@@ -69,12 +85,7 @@ export function BookmarksPage() {
       />
 
       {resolvedLessons.length > 0 && (
-        <section className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-            <BookOpen size={16} />
-            Lessons
-            <span className="text-[var(--text-muted)]">({resolvedLessons.length})</span>
-          </div>
+        <Section eyebrow="Lessons" title={`${resolvedLessons.length} bookmarked`}>
           <div className="space-y-3">
             {resolvedLessons.map(({ bookmark, subject, node }) => (
               <Card key={`${bookmark.subjectId}-${bookmark.nodeId}`}>
@@ -100,16 +111,11 @@ export function BookmarksPage() {
               </Card>
             ))}
           </div>
-        </section>
+        </Section>
       )}
 
       {resolvedResources.length > 0 && (
-        <section className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-            <Star size={16} />
-            Resources
-            <span className="text-[var(--text-muted)]">({resolvedResources.length})</span>
-          </div>
+        <Section eyebrow="Resources" title={`${resolvedResources.length} bookmarked`}>
           <div className="grid min-w-0 gap-3">
             {resolvedResources.map(({ bookmark, subject, node, resource }) => (
               <div key={`${bookmark.nodeId}-${bookmark.resourceIndex}`} className="space-y-1">
@@ -124,7 +130,7 @@ export function BookmarksPage() {
               </div>
             ))}
           </div>
-        </section>
+        </Section>
       )}
     </PageContainer>
   );

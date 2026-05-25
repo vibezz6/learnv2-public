@@ -27,11 +27,10 @@ import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
+import { PageLoading } from "@/components/ui";
 
 function RouteFallback() {
-  return (
-    <p className="px-4 py-12 text-center text-sm text-[var(--text-muted)] md:px-8">Loading…</p>
-  );
+  return <PageLoading />;
 }
 
 export function App() {

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, Check, ExternalLink, Plus, Trash2 } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader, Section } from "@/components/ui";
 import {
   addCustomItem,
   getChecklistProgress,
@@ -43,9 +43,10 @@ export function CollegeChecklistPage() {
         subtitle="Real college steps outside Learn — FAFSA, counselor, SAT scores, essays. Check items off as you go; add your own deadlines."
       />
 
+      <Section eyebrow="Progress" title="Checklist completion">
       <Card variant="quiet" className="space-y-3 p-5">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-sm font-medium text-[var(--text-heading)]">Progress</span>
+          <span className="text-sm font-medium text-[var(--text-heading)]">Overall</span>
           <span className="font-mono text-sm tabular-nums text-[var(--accent)]">
             {progress.done}/{progress.total} · {progress.pct}%
           </span>
@@ -61,12 +62,10 @@ export function CollegeChecklistPage() {
           financial advice.
         </p>
       </Card>
+      </Section>
 
       {[...grouped.entries()].map(([category, items]) => (
-        <section key={category} className="space-y-2">
-          <h2 className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-            {category}
-          </h2>
+        <Section key={category} eyebrow={category}>
           <ul className="space-y-2">
             {items.map((item) => {
               const done = !!state.completed[item.id];
@@ -125,13 +124,10 @@ export function CollegeChecklistPage() {
               );
             })}
           </ul>
-        </section>
+        </Section>
       ))}
 
-      <section className="space-y-3">
-        <h2 className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-          Your deadlines
-        </h2>
+      <Section eyebrow="Your deadlines" title="Custom checklist items">
         {state.customItems.length === 0 ? (
           <p className="text-sm text-[var(--text-muted)]">No custom items yet.</p>
         ) : (
@@ -209,7 +205,7 @@ export function CollegeChecklistPage() {
             Add to checklist
           </Button>
         </Card>
-      </section>
+      </Section>
 
       <p className="text-xs text-[var(--text-muted)]">
         Pair with{" "}

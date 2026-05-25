@@ -4,6 +4,8 @@ export { Card } from "./Card";
 export { EmptyState } from "./EmptyState";
 export { ConfirmDialog } from "./ConfirmDialog";
 export { FocusShell } from "./FocusShell";
+export { FocusStudyBar } from "./FocusStudyBar";
 export { PageContainer } from "./PageContainer";
+export { PageLoading } from "./PageLoading";
 export { PageHeader } from "./PageHeader";
 export { Section } from "./Section";

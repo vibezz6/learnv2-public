@@ -22,7 +22,17 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
-import { Badge, Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  FocusShell,
+  FocusStudyBar,
+  PageContainer,
+  PageHeader,
+  PageLoading,
+} from "@/components/ui";
+import { usePreferences } from "@/stores/preferences";
 import { getNode, loadSubject } from "@/curriculum/loader";
 import type { MentorMessage, MentorSession, NoteReview, SkillNode, Subject } from "@/curriculum/types";
 import { getPromptsForSubject } from "@/data/notePrompts";
@@ -67,6 +77,7 @@ function hasOpenRouterKey(): boolean {
 
 export function NotesPage() {
   const { subjectId = "", nodeId = "" } = useParams();
+  const { focusMode, toggleFocusMode } = usePreferences();
   const [view, setView] = useState<NotesFlowView>("editor");
   const [autoReview, setAutoReview] = useState(false);
   const [subject, setSubject] = useState<Subject | null>(null);
@@ -105,15 +116,7 @@ export function NotesPage() {
   }, [reviewUnlocked, mentorUnlocked]);
 
   if (loading) {
-    return (
-      <PageContainer size="narrow" className="space-y-8 md:space-y-10">
-        <div className="h-4 w-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
-        <Card className="space-y-3">
-          <div className="h-5 w-2/3 animate-pulse rounded bg-[var(--bg-elevated)]" />
-          <div className="h-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
-        </Card>
-      </PageContainer>
-    );
+    return <PageLoading size="narrow" />;
   }
 
   if (loadError || !subject || !node) {
@@ -137,15 +140,24 @@ export function NotesPage() {
   const stepIndex = STEPS.findIndex((s) => s.id === view);
 
   return (
-    <PageContainer size="narrow" className="space-y-8 md:space-y-10">
-      <PageHeader
-        backTo={{ to: lessonPath, label: node.name }}
-        eyebrow={`Office hours · ${subject.name}`}
-        title="Office hours"
-        subtitle={OFFICE_HOURS_TAGLINE}
-      />
+    <FocusShell active={focusMode}>
+      <PageContainer size="narrow" className="space-y-8 md:space-y-10">
+        {focusMode ? (
+          <FocusStudyBar
+            backTo={lessonPath}
+            backLabel={node.name}
+            onExitFocus={toggleFocusMode}
+          />
+        ) : (
+          <PageHeader
+            backTo={{ to: lessonPath, label: node.name }}
+            eyebrow={`Office hours · ${subject.name}`}
+            title="Office hours"
+            subtitle={OFFICE_HOURS_TAGLINE}
+          />
+        )}
 
-      <div className="space-y-4 border-b border-[var(--border)] pb-6">
+        <div className="space-y-4 border-b border-[var(--border)] pb-6">
         <nav
           aria-label="Notes flow"
           className="-mx-3 flex items-center gap-1 overflow-x-auto px-3 pb-1 sm:mx-0 sm:gap-2 sm:overflow-visible sm:px-0 sm:pb-0"
@@ -228,10 +240,11 @@ export function NotesPage() {
         />
       )}
 
-      <p className="text-center text-xs text-[var(--text-muted)]">
-        Step {stepIndex + 1} of {STEPS.length} · {STEPS[stepIndex].description}
-      </p>
-    </PageContainer>
+        <p className="text-center text-xs text-[var(--text-muted)]">
+          Step {stepIndex + 1} of {STEPS.length} · {STEPS[stepIndex].description}
+        </p>
+      </PageContainer>
+    </FocusShell>
   );
 }
 

@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
 import { PageContainer } from "./PageContainer";
 import { PageHeader } from "./PageHeader";
+import { PageLoading } from "./PageLoading";
 import { Section } from "./Section";
 
 describe("PageContainer", () => {
@@ -36,6 +37,14 @@ describe("PageHeader", () => {
     expect(html).toContain('href="/campus"');
     expect(html).toContain("Campus");
     expect(html).toContain("Settings");
+  });
+});
+
+describe("PageLoading", () => {
+  it("renders skeleton inside PageContainer", () => {
+    const html = renderToStaticMarkup(<PageLoading size="narrow" />);
+    expect(html).toContain("max-w-3xl");
+    expect(html).toContain("animate-pulse");
   });
 });
 

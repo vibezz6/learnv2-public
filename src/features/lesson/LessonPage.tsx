@@ -9,7 +9,15 @@ import {
   Lightbulb,
   Lock,
 } from "lucide-react";
-import { Badge, Button, Card, FocusShell, PageContainer, PageHeader } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  FocusShell,
+  PageContainer,
+  PageHeader,
+  PageLoading,
+} from "@/components/ui";
 import { getAdjacentLessonNodes, getNode, loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
@@ -79,11 +87,7 @@ export function LessonPage() {
   }, [node, getNodeStatus, startNode, trackVisit]);
 
   if (loading) {
-    return (
-      <PageContainer size="narrow" className="text-[var(--text-muted)]">
-        Loading lesson…
-      </PageContainer>
-    );
+    return <PageLoading size="narrow" />;
   }
 
   if (!subject || !node) {

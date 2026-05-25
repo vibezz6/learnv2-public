@@ -9,7 +9,15 @@ import {
   RotateCcw,
   XCircle,
 } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import {
+  Button,
+  Card,
+  FocusShell,
+  FocusStudyBar,
+  PageContainer,
+  PageHeader,
+} from "@/components/ui";
+import { usePreferences } from "@/stores/preferences";
 import {
   SAT_PRETEST_DRAFT_1_ID,
   satPretestDraft1Questions,
@@ -102,6 +110,7 @@ function loadAttemptForDraft(draftId: string): SatPretestAttempt | null {
 }
 
 export function SatPretestPage() {
+  const { focusMode, toggleFocusMode } = usePreferences();
   const [viewDraftId, setViewDraftId] = useState(SAT_PRETEST_DRAFT_1_ID);
   const [importedDraft2, setImportedDraft2] = useState<SatPretestQuestion[]>(() =>
     loadImportedDraft2Questions(),
@@ -269,16 +278,29 @@ export function SatPretestPage() {
     }
   }, [viewDraftId, startAttempt, startDraft2FromGaps, startDraft3Retest]);
 
-  return (
-    <PageContainer size="wide" className="space-y-6">
-      <PageHeader
-        backTo={{ to: "/subjects/sat-prep", label: "SAT Prep" }}
-        eyebrow="SAT optional baseline"
-        title={`${draftLabel} pretest`}
-        subtitle="Optional local baseline—not an official score. Daily SAT work is the lesson track, mistake log, and official practice; Draft 2 can target gaps when you want a follow-up."
-        divider={false}
-      />
+  const inProgress =
+    activeAttempt?.status === "in_progress" && !!currentQuestion;
 
+  return (
+    <FocusShell active={focusMode}>
+      <PageContainer size="wide" className="space-y-6">
+        {focusMode ? (
+          <FocusStudyBar
+            backTo="/subjects/sat-prep"
+            backLabel="SAT Prep"
+            onExitFocus={toggleFocusMode}
+          />
+        ) : (
+          <PageHeader
+            backTo={{ to: "/subjects/sat-prep", label: "SAT Prep" }}
+            eyebrow="SAT optional baseline"
+            title={`${draftLabel} pretest`}
+            subtitle="Optional local baseline—not an official score. Daily SAT work is the lesson track, mistake log, and official practice; Draft 2 can target gaps when you want a follow-up."
+            divider={false}
+          />
+        )}
+
+        {(!focusMode || !inProgress) && (
       <div className="flex flex-wrap gap-2">
         {SAT_PRETEST_DRAFT_CONFIGS.map((draft) => {
           const requires = draft.requiresCompletedDraftId;
@@ -297,6 +319,7 @@ export function SatPretestPage() {
           );
         })}
       </div>
+        )}
 
       {!activeAttempt ? (
         <StartCard
@@ -354,7 +377,8 @@ export function SatPretestPage() {
           <p className="text-sm text-[var(--text-muted)]">No {draftLabel} question is available.</p>
         </Card>
       )}
-    </PageContainer>
+      </PageContainer>
+    </FocusShell>
   );
 }
 

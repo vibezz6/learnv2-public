@@ -1,5 +1,5 @@
 import { StudyTimer } from "./StudyTimer";
-import { Card, PageContainer, PageHeader } from "@/components/ui";
+import { Card, PageContainer, PageHeader, Section } from "@/components/ui";
 
 export function TimerPage() {
   return (
@@ -8,9 +8,11 @@ export function TimerPage() {
         title="Timer"
         subtitle="Focus session timer — logs study minutes to your streak and daily goal."
       />
-      <Card className="stagger-item">
-        <StudyTimer estimatedMinutes={25} />
-      </Card>
+      <Section eyebrow="Session" title="Focus timer">
+        <Card className="stagger-item">
+          <StudyTimer estimatedMinutes={25} />
+        </Card>
+      </Section>
     </PageContainer>
   );
 }

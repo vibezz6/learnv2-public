@@ -4,12 +4,20 @@ import {
   AlertTriangle,
   Brain,
   CheckCircle2,
-  Clock,
   Flame,
   Sparkles,
   Target,
 } from "lucide-react";
-import { Badge, Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  PageContainer,
+  PageHeader,
+  PageLoading,
+  Section,
+} from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -52,6 +60,7 @@ const CONFIDENCE_STYLES: Record<
 
 export function ReviewPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loadingSubjects, setLoadingSubjects] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const getDailyReviewItems = useProgress((s) => s.getDailyReviewItems);
@@ -62,7 +71,10 @@ export function ReviewPage() {
   const completeReviewWithConfidence = useProgress((s) => s.completeReviewWithConfidence);
 
   useEffect(() => {
-    loadAllSubjects().then(setSubjects);
+    loadAllSubjects().then((loaded) => {
+      setSubjects(loaded);
+      setLoadingSubjects(false);
+    });
   }, []);
 
   const items = useMemo(
@@ -90,6 +102,10 @@ export function ReviewPage() {
     };
   }, [items]);
 
+  if (loadingSubjects) {
+    return <PageLoading size="wide" />;
+  }
+
   if (items.length === 0 && dailyCount === 0) {
     return (
       <PageContainer size="wide" className="space-y-6">
@@ -98,15 +114,14 @@ export function ReviewPage() {
           title="Review"
           subtitle="Complete lessons to build your memory queue — reviews show up here on schedule."
         />
-        <Card className="stagger-item py-14 text-center">
-          <Brain className="mx-auto mb-4 text-[var(--accent)]" size={40} />
-          <p className="font-medium text-[var(--text-heading)]">Nothing to review yet</p>
-          <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--text-muted)]">
-            Finish a lesson and mark it complete. We&apos;ll schedule your first review automatically.
-          </p>
-          <Link to="/subjects" className="mt-6 inline-block">
-            <Button>Browse subjects</Button>
-          </Link>
+        <Card variant="quiet">
+          <EmptyState
+            icon={<Brain size={32} className="text-[var(--accent)]" />}
+            title="Nothing to review yet"
+            description="Finish a lesson and mark it complete. We'll schedule your first review automatically."
+            actionLabel="Browse subjects"
+            actionTo="/subjects"
+          />
         </Card>
       </PageContainer>
     );
@@ -120,6 +135,7 @@ export function ReviewPage() {
         subtitle="Rate each recall — honest taps train the interval algorithm."
       />
 
+      <Section eyebrow="Daily goal" title="Today's review cap">
       <Card glow className="stagger-item border-l-2 border-l-[var(--accent)]">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0 flex-1">
@@ -181,26 +197,24 @@ export function ReviewPage() {
           </div>
         </div>
       </Card>
+      </Section>
 
       {spotlight && (
-        <section className="stagger-item space-y-3">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
-            <Sparkles size={14} />
-            Up next
-          </div>
+        <Section eyebrow="Up next" title="Current recall">
+        <div className="stagger-item space-y-3">
           <ReviewCard
             item={spotlight}
             onConfidence={handleConfidence}
             urgent={spotlight.daysAgo > spotlight.reviewInterval}
             spotlight
           />
-        </section>
+        </div>
+        </Section>
       )}
 
       {rest.length > 0 && (
         <ReviewSection
           title="Still in queue"
-          icon={<Clock size={16} className="text-[var(--text-muted)]" />}
           items={rest}
           onConfidence={handleConfidence}
         />
@@ -224,23 +238,16 @@ export function ReviewPage() {
 
 function ReviewSection({
   title,
-  icon,
   items,
   onConfidence,
 }: {
   title: string;
-  icon: React.ReactNode;
   items: ReviewItem[];
   onConfidence: (nodeId: string, confidence: ReviewConfidence) => void;
 }) {
   return (
-    <section className="stagger-item space-y-3">
-      <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-        {icon}
-        {title}
-        <span className="font-normal text-[var(--text-muted)]">({items.length})</span>
-      </div>
-      <div className="space-y-3">
+    <Section eyebrow={title} title={`${items.length} in queue`}>
+      <div className="stagger-item space-y-3">
         {items.map((item) => (
           <ReviewCard
             key={item.node.id}
@@ -250,7 +257,7 @@ function ReviewSection({
           />
         ))}
       </div>
-    </section>
+    </Section>
   );
 }
 

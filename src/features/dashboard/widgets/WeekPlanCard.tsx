@@ -14,9 +14,11 @@ import { useProgress } from "@/stores/progress";
 
 interface Props {
   subjects: Subject[];
+  /** When true, parent Section supplies the "This week" eyebrow. */
+  embedded?: boolean;
 }
 
-export function WeekPlanCard({ subjects }: Props) {
+export function WeekPlanCard({ subjects, embedded = false }: Props) {
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const placementGoal = usePreferences((s) => s.placementGoal);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
@@ -44,10 +46,12 @@ export function WeekPlanCard({ subjects }: Props) {
   if (rows.length === 0) {
     return (
       <Card variant="default" className="min-w-0 p-5">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
-          This week
-        </p>
-        <p className="mt-2 text-sm text-[var(--text-muted)]">
+        {!embedded ? (
+          <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
+            This week
+          </p>
+        ) : null}
+        <p className={embedded ? "text-sm text-[var(--text-muted)]" : "mt-2 text-sm text-[var(--text-muted)]"}>
           You&apos;re caught up on track lessons and application deadlines for the next 7 days.
         </p>
         {track ? (
@@ -68,14 +72,20 @@ export function WeekPlanCard({ subjects }: Props) {
       <div className="flex items-start gap-3">
         <CalendarClock size={16} className="mt-0.5 shrink-0 text-[var(--accent-2)]" aria-hidden />
         <div className="min-w-0 flex-1 space-y-3">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
-              This week
-            </p>
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+          {!embedded ? (
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
+                This week
+              </p>
+              <p className="mt-1 text-sm text-[var(--text-muted)]">
+                Track lessons, college deadlines, and SAT follow-ups — up to six items.
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-[var(--text-muted)]">
               Track lessons, college deadlines, and SAT follow-ups — up to six items.
             </p>
-          </div>
+          )}
           <ul className="divide-y divide-[var(--border)]">
             {rows.map((row) => (
               <li key={row.id}>

@@ -10,7 +10,7 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-import { Card, EmptyState, PageContainer, PageHeader } from "@/components/ui";
+import { Card, EmptyState, PageContainer, PageHeader, Section } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { LearningTrack } from "@/data/tracks";
 import { tracks } from "@/data/tracks";
@@ -151,7 +151,8 @@ export function TracksPage() {
             />
           </Card>
         ) : (
-          <div className="space-y-3 pt-2">
+          <Section eyebrow="Lessons" title={`${lessons.length} on this path`}>
+          <div className="space-y-3">
             {lessons.map(({ index, subject, node }) => {
               const status = getNodeStatus(node);
               const locked = status === "locked";
@@ -200,6 +201,7 @@ export function TracksPage() {
               );
             })}
           </div>
+          </Section>
         )}
       </PageContainer>
     );

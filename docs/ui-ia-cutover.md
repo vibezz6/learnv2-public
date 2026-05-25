@@ -1,17 +1,28 @@
 # UI/IA cutover (Alex daily driver)
 
-Shipped **v2.0.46 → v2.1.4** (README cutover rows 42–47). Goal: study loop first on **Today**, diagnostics and toys only where they belong.
+Shipped **v2.0.46 → v2.2.6** (README cutover rows 42–55). Goal: study loop first on **Today**, diagnostics and toys only where they belong. **Desktop/laptop** is the daily driver; mobile bottom nav is unchanged.
 
-## Navigation map
+## Desktop navigation (sidebar)
 
-| Nav label | Route | Page title |
-|-----------|-------|------------|
-| Today | `/` | Today |
-| Saved | `/bookmarks` | Saved |
-| Review | `/review` | Review |
-| Timer | `/timer` | Timer |
-| Stats | `/stats` | Stats |
-| Campus | `/campus` | Campus |
+| Section | Nav label | Route | Page title |
+|---------|-----------|-------|------------|
+| Learn | Today | `/` | Today |
+| Learn | Subjects | `/subjects` | Subjects |
+| Learn | Tracks | `/tracks` | Tracks |
+| Learn | Campus | `/campus` | Campus |
+| Learn | Saved | `/bookmarks` | Saved |
+| Productivity | Review | `/review` | Review |
+| Productivity | Timer | `/timer` | Timer |
+| Productivity | Stats | `/stats` | Stats |
+| System | Settings | `/settings` | Settings |
+
+**Trading Lab** — route `/lab/trading`; linked from **Campus → Subjects & labs** and ⌘K (not a top-level sidebar item).
+
+**⌘K Navigate:** Today, Saved, Subjects, Review, Stats, Timer, Settings (+ Campus/SAT sections).
+
+## Mobile navigation (unchanged)
+
+Bottom bar: Today, Review, Timer, Stats. Campus, Saved, and Subjects remain reachable via ⌘K or in-page links.
 
 ## Today (`/`)
 
@@ -42,11 +53,16 @@ No heatmap, quiz mastery, math toys, or campus duplicate blocks.
 
 Today and week plan link to **SAT Prep sections**, not directly to pretest (except ⌘K).
 
+## Focus mode (`F`)
+
+Hides app chrome (sidebar, topbar). **FocusShell** on: lesson, office hours (notes), quiz, SAT pretest. Toggle again or use Exit focus on the page.
+
 ## Primitives
 
 - `PageContainer` — consistent width/padding (`sm` … `xl`)  
 - `PageHeader` — eyebrow, title, subtitle, optional `backTo`  
-- `Section` — in-page blocks (Today dashboard, Stats)  
+- `Section` — in-page blocks (Today, Stats, Campus, Review, Saved, college tools, SAT hub, tracks, timer, lab)  
+- `PageLoading` — skeleton inside `PageContainer` while routes load  
 
 ## Verify after pull
 
@@ -55,4 +71,4 @@ npm run test && npm run build
 npm run dev   # http://127.0.0.1:8080
 ```
 
-Smoke: `/` loads, `/stats` shows heatmap, `/campus` has two sections, SAT Prep `#diagnostic` scrolls into view.
+Smoke: `/` loads with Section blocks; ⌘K shows **Today** and **Saved**; `/stats` shows heatmap; `/campus` has two sections; SAT Prep `#diagnostic` scrolls into view; `F` on a quiz widens content like a lesson.

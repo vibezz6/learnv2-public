@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.1.5 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.2.6 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -188,6 +188,13 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 46 Stats-only analytics (67) | ✅ **v2.1.3** — heatmap, quiz scores, math visualizations live on `/stats` only; removed dead dashboard widgets |
 | 47 Campus hub + SAT pretest IA (68) | ✅ **v2.1.4** — `/campus` sections (college + study/labs); pretest via SAT Prep `#diagnostic` + ⌘K only; voice cleanup |
 | 48 Post-IA polish (69) | ✅ **v2.1.5** — SAT Prep `#diagnostic` scroll; slimmer SAT hub card; `docs/ui-ia-cutover.md`; ⌘K SAT section |
+| 49 Desktop nav + ⌘K (70) | ✅ **v2.2.0** — sidebar doc truth; Trading Lab via Campus only; ⌘K Today + Saved |
+| 50 Focus mode routes (71) | ✅ **v2.2.1** — FocusShell on notes, quiz, SAT pretest; FocusStudyBar |
+| 51 Today Section blocks (72) | ✅ **v2.2.2** — This week, spaced review, daily challenge use Section |
+| 52 PageLoading skeletons (73) | ✅ **v2.2.3** — PageLoading + route/dashboard/lesson loading states |
+| 53 EmptyState Saved/Review (74) | ✅ **v2.2.4** — shared EmptyState on Saved and Review |
+| 54 Quiz keyboard a11y (75) | ✅ **v2.2.5** — radiogroup, arrow keys, aria-live feedback |
+| 55 Section rollout (76) | ✅ **v2.2.6** — Section on Review, SAT hub, college, tracks, timer, lab |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

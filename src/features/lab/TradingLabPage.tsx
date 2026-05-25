@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, ExternalLink, FlaskConical, TrendingUp } from "lucide-react";
-import { Badge, Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import { Badge, Button, Card, PageContainer, PageHeader, Section } from "@/components/ui";
 import {
   type BacktestRunCard,
   fetchEnrichmentQueueCount,
@@ -57,9 +57,10 @@ export function TradingLabPage() {
         subtitle="A sandbox for applying what you learn — paper trade, replay scenarios, and experiment with strategies without risking real capital. Pair the curriculum with hands-on practice before you go live."
       />
 
+      <Section eyebrow="Status" title="Journal backend">
       <Card className="stagger-item">
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-[var(--text-muted)]">Journal backend</span>
+          <span className="text-[var(--text-muted)]">Connection</span>
           {status === "checking" && <Badge className="text-[var(--text-muted)]">Checking…</Badge>}
           {status === "online" && (
             <Badge className="border-[var(--success)]/40 text-[var(--success)]">Online</Badge>
@@ -77,9 +78,11 @@ export function TradingLabPage() {
           </p>
         )}
       </Card>
+      </Section>
 
+      <Section eyebrow="Backtest" title="Last run">
       <Card className="stagger-item space-y-3">
-        <div className="font-semibold text-[var(--text-heading)]">Last backtest</div>
+        <div className="font-semibold text-[var(--text-heading)]">Summary</div>
         {status === "online" && backtestLoaded && lastBacktest && (
           <div className="space-y-2 text-sm">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -104,9 +107,10 @@ export function TradingLabPage() {
           <p className="text-sm text-[var(--text-muted)]">Loading…</p>
         )}
       </Card>
+      </Section>
 
+      <Section eyebrow="Workflow" title="FX Replay → journal">
       <Card className="stagger-item space-y-3">
-        <div className="font-semibold text-[var(--text-heading)]">FX Replay → journal</div>
         <ol className="list-decimal space-y-2 pl-5 text-sm text-[var(--text-muted)]">
           <li>Backtest in FX Replay, then export CSV (or use the template in tradingv1).</li>
           <li>
@@ -142,7 +146,9 @@ export function TradingLabPage() {
           </Button>
         </a>
       </Card>
+      </Section>
 
+      <Section eyebrow="Curriculum" title="Related subjects">
       <div className="stagger-item space-y-3">
         <Link to="/subjects/trading" className="block">
           <Card className="transition hover:border-[var(--accent-border)]">
@@ -205,6 +211,7 @@ export function TradingLabPage() {
           </div>
         </Card>
       </div>
+      </Section>
     </PageContainer>
   );
 }

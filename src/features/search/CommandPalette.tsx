@@ -19,6 +19,7 @@ import {
   Settings,
   Shuffle,
   Sparkles,
+  Star,
   Sun,
   Timer,
 } from "lucide-react";
@@ -155,7 +156,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     }));
 
     const navigateItems: CommandItem[] = [
-      { id: "home", label: "Dashboard", section: "Navigate", icon: Home, action: () => go("/") },
+      { id: "home", label: "Today", section: "Navigate", icon: Home, action: () => go("/") },
+      { id: "bookmarks", label: "Saved", section: "Navigate", icon: Star, action: () => go("/bookmarks") },
       { id: "subjects", label: "Subjects", section: "Navigate", icon: BookOpen, action: () => go("/subjects") },
       { id: "review", label: "Review queue", section: "Navigate", icon: Brain, action: () => go("/review") },
       { id: "stats", label: "Stats & transcript", section: "Navigate", icon: BarChart3, action: () => go("/stats") },

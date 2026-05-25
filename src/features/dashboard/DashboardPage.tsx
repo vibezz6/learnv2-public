@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BarChart3, Brain } from "lucide-react";
-import { Button, Card, EmptyState, PageContainer, PageHeader, Section } from "@/components/ui";
+import {
+  Button,
+  Card,
+  EmptyState,
+  PageContainer,
+  PageHeader,
+  PageLoading,
+  Section,
+} from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { usePreferences } from "@/stores/preferences";
@@ -26,9 +34,13 @@ export function DashboardPage() {
   const placementGoal = usePreferences((s) => s.placementGoal);
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loadingSubjects, setLoadingSubjects] = useState(true);
 
   useEffect(() => {
-    loadAllSubjects().then(setSubjects);
+    loadAllSubjects().then((loaded) => {
+      setSubjects(loaded);
+      setLoadingSubjects(false);
+    });
   }, []);
 
   const target = subjects.length ? getContinueTarget(subjects) : null;
@@ -49,6 +61,10 @@ export function DashboardPage() {
   const showSpacedReview =
     reviewDue > 0 ||
     (nextReview !== null && typeof nextReview.daysUntil === "number" && nextReview.daysUntil <= 2);
+
+  if (loadingSubjects) {
+    return <PageLoading />;
+  }
 
   return (
     <PageContainer className="space-y-8">
@@ -79,9 +95,15 @@ export function DashboardPage() {
         )}
       </Section>
 
-      {subjects.length > 0 && <WeekPlanCard subjects={subjects} />}
+      <Section
+        eyebrow="This week"
+        title="Track, deadlines, and SAT follow-ups"
+      >
+        <WeekPlanCard subjects={subjects} embedded />
+      </Section>
 
       {showSpacedReview && (
+        <Section eyebrow="Spaced review">
         <Card variant="quiet" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
             <Brain size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
@@ -113,9 +135,12 @@ export function DashboardPage() {
             </Link>
           )}
         </Card>
+        </Section>
       )}
 
-      <DailyChallengeCompact defaultCategory={challengeCategory} />
+      <Section eyebrow="Daily challenge">
+        <DailyChallengeCompact defaultCategory={challengeCategory} />
+      </Section>
 
       <p className="text-[11px] text-[var(--text-muted)]">
         <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">F</kbd> focus ·{" "}

@@ -7,7 +7,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader, Section } from "@/components/ui";
 import {
   addCustomEssay,
   addEssayFromTemplate,
@@ -78,9 +78,10 @@ export function EssayTrackerPage() {
         subtitle="Common App and supplement prompts, draft status, and deadlines. Write in Google Docs or Word — Learn only tracks your pipeline, not the text."
       />
 
+      <Section eyebrow="Pipeline" title="Draft status">
       <Card variant="quiet" className="space-y-3 p-5">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-sm font-medium text-[var(--text-heading)]">Pipeline</span>
+          <span className="text-sm font-medium text-[var(--text-heading)]">Overview</span>
           <span className="font-mono text-sm tabular-nums text-[var(--accent)]">
             {progress.finalCount}/{progress.total} final · {progress.inProgress} in progress
           </span>
@@ -99,7 +100,9 @@ export function EssayTrackerPage() {
           </p>
         )}
       </Card>
+      </Section>
 
+      <Section eyebrow="Essays" title={state.essays.length === 0 ? "None yet" : `${state.essays.length} tracked`}>
       {state.essays.length === 0 ? (
         <Card variant="default" className="flex gap-3 p-5">
           <FileText size={20} className="shrink-0 text-[var(--text-muted)]" />
@@ -205,11 +208,9 @@ export function EssayTrackerPage() {
           })}
         </ul>
       )}
+      </Section>
 
-      <section className="space-y-3">
-        <h2 className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-          Add from prompt
-        </h2>
+      <Section eyebrow="Add from prompt" title="New essay row">
         <Card variant="quiet" className="space-y-3 p-4">
           <label className="block space-y-1">
             <span className="text-xs text-[var(--text-muted)]">Template</span>
@@ -285,7 +286,7 @@ export function EssayTrackerPage() {
             </Button>
           </Card>
         )}
-      </section>
+      </Section>
     </PageContainer>
   );
 }
