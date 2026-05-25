@@ -9,7 +9,6 @@ import {
 } from "@/lib/notesOfficeHours";
 import {
   AlertCircle,
-  ArrowLeft,
   BookOpen,
   Info,
   Check,
@@ -23,7 +22,7 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Badge, Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { getNode, loadSubject } from "@/curriculum/loader";
 import type { MentorMessage, MentorSession, NoteReview, SkillNode, Subject } from "@/curriculum/types";
 import { getPromptsForSubject } from "@/data/notePrompts";
@@ -107,19 +106,19 @@ export function NotesPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full min-w-0 max-w-3xl space-y-8 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-10 md:p-8">
+      <PageContainer size="narrow" className="space-y-8 md:space-y-10">
         <div className="h-4 w-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
         <Card className="space-y-3">
           <div className="h-5 w-2/3 animate-pulse rounded bg-[var(--bg-elevated)]" />
           <div className="h-32 animate-pulse rounded bg-[var(--bg-elevated)]" />
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
   if (loadError || !subject || !node) {
     return (
-      <div className="mx-auto w-full min-w-0 max-w-3xl overflow-x-hidden px-3 py-4 sm:p-4 md:p-8">
+      <PageContainer size="narrow">
         <Card className="space-y-4 text-center">
           <AlertCircle className="mx-auto text-[var(--warning)]" size={32} />
           <h2 className="text-lg font-semibold text-[var(--text-heading)]">Lesson not found</h2>
@@ -130,7 +129,7 @@ export function NotesPage() {
             <Button variant="secondary">Back to subjects</Button>
           </Link>
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -138,32 +137,15 @@ export function NotesPage() {
   const stepIndex = STEPS.findIndex((s) => s.id === view);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-8 overflow-x-hidden px-3 py-4 pb-24 sm:p-4 sm:pb-4 md:space-y-10 md:p-8">
+    <PageContainer size="narrow" className="space-y-8 md:space-y-10">
+      <PageHeader
+        backTo={{ to: lessonPath, label: node.name }}
+        eyebrow={`Office hours · ${subject.name}`}
+        title="Office hours"
+        subtitle={OFFICE_HOURS_TAGLINE}
+      />
+
       <div className="space-y-4 border-b border-[var(--border)] pb-6">
-        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-          <Link
-            to={lessonPath}
-            className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-          >
-            <ArrowLeft size={16} />
-            Back to lesson
-          </Link>
-          <span className="hidden text-[var(--text-muted)] sm:inline">·</span>
-          <span className="min-w-0 break-words text-sm text-[var(--text-muted)]">{node.name}</span>
-        </div>
-
-        <div className="space-y-2">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
-            Office hours · {subject.name}
-          </p>
-          <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
-            Office hours
-          </h1>
-          <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)] max-[480px]:text-base">
-            {OFFICE_HOURS_TAGLINE}
-          </p>
-        </div>
-
         <nav
           aria-label="Notes flow"
           className="-mx-3 flex items-center gap-1 overflow-x-auto px-3 pb-1 sm:mx-0 sm:gap-2 sm:overflow-visible sm:px-0 sm:pb-0"
@@ -249,7 +231,7 @@ export function NotesPage() {
       <p className="text-center text-xs text-[var(--text-muted)]">
         Step {stepIndex + 1} of {STEPS.length} · {STEPS[stepIndex].description}
       </p>
-    </div>
+    </PageContainer>
   );
 }
 

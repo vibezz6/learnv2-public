@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
   CheckCircle2,
@@ -10,7 +9,7 @@ import {
   Lightbulb,
   Lock,
 } from "lucide-react";
-import { Badge, Button, Card, FocusShell } from "@/components/ui";
+import { Badge, Button, Card, FocusShell, PageContainer, PageHeader } from "@/components/ui";
 import { getAdjacentLessonNodes, getNode, loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
@@ -81,22 +80,22 @@ export function LessonPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-3 py-6 text-[var(--text-muted)] sm:p-6 md:p-8">
+      <PageContainer size="narrow" className="text-[var(--text-muted)]">
         Loading lesson…
-      </div>
+      </PageContainer>
     );
   }
 
   if (!subject || !node) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-3 py-6 sm:p-6 md:p-8">
+      <PageContainer size="narrow">
         <p>Lesson not found.</p>
         <Link to="/subjects">
           <Button variant="secondary" className="mt-4">
             Back
           </Button>
         </Link>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -112,23 +111,18 @@ export function LessonPage() {
 
   return (
     <FocusShell active={focusMode}>
-      <div
-        className={cn(
-          "mx-auto w-full min-w-0 max-w-3xl space-y-8 overflow-x-hidden px-3 py-4 sm:p-4 md:space-y-10 md:p-8",
-          focusMode && "pt-2",
-        )}
+      <PageContainer
+        size="narrow"
+        className={cn("space-y-8 md:space-y-10", focusMode && "pt-2")}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         {!focusMode && (
-          <Link
-            to={`/subjects/${subject.id}`}
-            className="-ml-1 inline-flex min-h-11 items-center gap-1 rounded-[var(--radius)] px-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-          >
-            <ArrowLeft size={16} />
-            <span className="break-words">{subject.name}</span>
-          </Link>
+          <PageHeader
+            backTo={{ to: `/subjects/${subject.id}`, label: subject.name }}
+            divider={false}
+          />
         )}
 
         <header className="stagger-item space-y-4">
@@ -296,7 +290,7 @@ export function LessonPage() {
             )}
           </div>
         </Card>
-      </div>
+      </PageContainer>
     </FocusShell>
   );
 }

@@ -9,7 +9,7 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Badge, Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -92,16 +92,12 @@ export function ReviewPage() {
 
   if (items.length === 0 && dailyCount === 0) {
     return (
-      <div className="mx-auto w-full min-w-0 max-w-4xl space-y-6 overflow-x-hidden px-3 py-4 md:p-8">
-        <section className="stagger-item space-y-1.5">
-          <Badge>Spaced repetition</Badge>
-          <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
-            Review queue
-          </h1>
-          <p className="text-sm text-[var(--text-muted)]">
-            Complete lessons to build your memory queue — reviews show up here on schedule.
-          </p>
-        </section>
+      <PageContainer size="wide" className="space-y-6">
+        <PageHeader
+          eyebrow="Spaced repetition"
+          title="Review"
+          subtitle="Complete lessons to build your memory queue — reviews show up here on schedule."
+        />
         <Card className="stagger-item py-14 text-center">
           <Brain className="mx-auto mb-4 text-[var(--accent)]" size={40} />
           <p className="font-medium text-[var(--text-heading)]">Nothing to review yet</p>
@@ -112,24 +108,17 @@ export function ReviewPage() {
             <Button>Browse subjects</Button>
           </Link>
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div
-      className="mx-auto w-full min-w-0 max-w-4xl space-y-6 overflow-x-hidden px-3 py-4 md:space-y-8 md:p-8"
-      key={refreshKey}
-    >
-      <section className="stagger-item space-y-1.5">
-        <Badge>Spaced repetition</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
-          Review queue
-        </h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Rate each recall — honest taps train the interval algorithm.
-        </p>
-      </section>
+    <PageContainer size="wide" className="space-y-6 md:space-y-8" key={refreshKey}>
+      <PageHeader
+        eyebrow="Spaced repetition"
+        title="Review"
+        subtitle="Rate each recall — honest taps train the interval algorithm."
+      />
 
       <Card glow className="stagger-item border-l-2 border-l-[var(--accent)]">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -229,7 +218,7 @@ export function ReviewPage() {
           </Link>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

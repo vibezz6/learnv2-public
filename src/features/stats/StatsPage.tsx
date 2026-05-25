@@ -13,7 +13,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -147,16 +147,11 @@ export function StatsPage() {
     .sort((a, b) => b.xp - a.xp);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:space-y-8 md:p-8 md:pb-8">
-      <section className="stagger-item min-w-0 space-y-1.5">
-        <Badge>Progress</Badge>
-        <h1 className="break-words text-[clamp(1.5rem,6vw,1.875rem)] font-bold tracking-tight text-[var(--text-heading)] min-[481px]:text-3xl">
-          Your progress
-        </h1>
-        <p className="break-words text-sm text-[var(--text-muted)]">
-          Your progress proof and study transcript — XP, streaks, and reviews compound over time.
-        </p>
-      </section>
+    <PageContainer size="lg" className="space-y-6 md:space-y-8">
+      <PageHeader
+        title="Stats"
+        subtitle="Your progress proof and study transcript — XP, streaks, and reviews compound over time."
+      />
 
       {!stats || stats.completedNodes === 0 ? (
         <Card className="stagger-item min-w-0 py-14 text-center">
@@ -455,6 +450,6 @@ export function StatsPage() {
           <EulerQuizMastery subjects={subjects} />
         </>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -4,13 +4,12 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
-  ChevronLeft,
   Copy,
   Download,
   RotateCcw,
   XCircle,
 } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import {
   SAT_PRETEST_DRAFT_1_ID,
   satPretestDraft1Questions,
@@ -271,46 +270,33 @@ export function SatPretestPage() {
   }, [viewDraftId, startAttempt, startDraft2FromGaps, startDraft3Retest]);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-4xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:p-4 sm:pb-4 md:p-8">
-      <Link
-        to="/subjects/sat-prep"
-        className="inline-flex min-h-11 items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-      >
-        <ChevronLeft size={16} />
-        Back to SAT Prep
-      </Link>
+    <PageContainer size="wide" className="space-y-6">
+      <PageHeader
+        backTo={{ to: "/subjects/sat-prep", label: "SAT Prep" }}
+        eyebrow="SAT optional baseline"
+        title={`${draftLabel} pretest`}
+        subtitle="Optional local baseline—not an official score. Daily SAT work is the lesson track, mistake log, and official practice; Draft 2 can target gaps when you want a follow-up."
+        divider={false}
+      />
 
-      <header className="space-y-3">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--accent-2)]">
-          SAT optional baseline
-        </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
-          {draftLabel} pretest
-        </h1>
-        <div className="flex flex-wrap gap-2">
-          {SAT_PRETEST_DRAFT_CONFIGS.map((draft) => {
-            const requires = draft.requiresCompletedDraftId;
-            const unlocked =
-              !requires || !!getLatestCompletedSatPretestAttempt(requires);
-            return (
-              <Button
-                key={draft.id}
-                variant={viewDraftId === draft.id ? "primary" : "secondary"}
-                className="min-h-9"
-                onClick={() => switchToDraft(draft.id)}
-                disabled={!unlocked}
-                title={draft.shortLabel}
-              >
-                {draft.label}
-              </Button>
-            );
-          })}
-        </div>
-        <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-muted)]">
-          Optional local baseline—not an official score. Daily SAT work is the lesson track, mistake
-          log, and official practice; Draft 2 can target gaps when you want a follow-up.
-        </p>
-      </header>
+      <div className="flex flex-wrap gap-2">
+        {SAT_PRETEST_DRAFT_CONFIGS.map((draft) => {
+          const requires = draft.requiresCompletedDraftId;
+          const unlocked = !requires || !!getLatestCompletedSatPretestAttempt(requires);
+          return (
+            <Button
+              key={draft.id}
+              variant={viewDraftId === draft.id ? "primary" : "secondary"}
+              className="min-h-9"
+              onClick={() => switchToDraft(draft.id)}
+              disabled={!unlocked}
+              title={draft.shortLabel}
+            >
+              {draft.label}
+            </Button>
+          );
+        })}
+      </div>
 
       {!activeAttempt ? (
         <StartCard
@@ -368,7 +354,7 @@ export function SatPretestPage() {
           <p className="text-sm text-[var(--text-muted)]">No {draftLabel} question is available.</p>
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

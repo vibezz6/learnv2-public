@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BarChart3 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { cn } from "@/lib/cn";
 
 export function ExpectedValueCalculator() {
@@ -123,19 +123,16 @@ export function ExpectedValueCalculator() {
 
 export function ExpectedValueToolPage() {
   return (
-    <div className="mx-auto max-w-lg space-y-6 p-4 md:p-8">
-      <section className="stagger-item space-y-2">
-        <Badge>Tools · Probability</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
-          Expected value
-        </h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Weight outcomes by probability to see whether a bet is +EV over time.
-        </p>
-      </section>
+    <PageContainer size="sm" className="space-y-6">
+      <PageHeader
+        backTo={{ to: "/tools", label: "Calculators" }}
+        eyebrow="Probability"
+        title="Expected value"
+        subtitle="Weight outcomes by probability to see whether a bet is +EV over time."
+      />
       <Card className="stagger-item border-[var(--accent-border)] bg-[var(--accent-bg)]">
         <ExpectedValueCalculator />
       </Card>
-    </div>
+    </PageContainer>
   );
 }

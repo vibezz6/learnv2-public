@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { BarChart3, TrendingUp, Wrench } from "lucide-react";
-import { Badge, Card } from "@/components/ui";
+import { Card, PageContainer, PageHeader } from "@/components/ui";
 
 const tools = [
   {
@@ -21,14 +21,12 @@ const tools = [
 
 export function ToolsPage() {
   return (
-    <div className="mx-auto max-w-lg space-y-6 p-4 md:p-8">
-      <section className="stagger-item space-y-2">
-        <Badge>Tools</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">Calculators</h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Standalone calculators from the curriculum — use them while studying or planning.
-        </p>
-      </section>
+    <PageContainer size="sm" className="space-y-6">
+      <PageHeader
+        eyebrow="Calculators"
+        title="Calculators"
+        subtitle="Standalone calculators from the curriculum — use them while studying or planning."
+      />
 
       <div className="stagger-item space-y-3">
         {tools.map(({ to, title, description, icon: Icon, tone }) => (
@@ -46,6 +44,6 @@ export function ToolsPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </PageContainer>
   );
 }

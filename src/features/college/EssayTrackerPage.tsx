@@ -2,13 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Calendar,
-  ChevronLeft,
   FileText,
   PenLine,
   Plus,
   Trash2,
 } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import {
   addCustomEssay,
   addEssayFromTemplate,
@@ -71,25 +70,13 @@ export function EssayTrackerPage() {
   };
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 md:p-8 md:pb-8">
-      <Link
-        to="/campus"
-        className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-      >
-        <ChevronLeft size={16} />
-        Campus services
-      </Link>
-
-      <section className="space-y-2">
-        <Badge>Applications</Badge>
-        <h1 className="text-[clamp(1.5rem,5vw,2rem)] font-semibold tracking-tight text-[var(--text-heading)]">
-          Essay tracker
-        </h1>
-        <p className="text-sm leading-relaxed text-[var(--text-muted)]">
-          Common App and supplement prompts, draft status, and deadlines. Write in Google Docs or
-          Word — Learn only tracks your pipeline, not the text.
-        </p>
-      </section>
+    <PageContainer size="md" className="space-y-6">
+      <PageHeader
+        backTo={{ to: "/campus", label: "Campus" }}
+        eyebrow="Applications"
+        title="Essay tracker"
+        subtitle="Common App and supplement prompts, draft status, and deadlines. Write in Google Docs or Word — Learn only tracks your pipeline, not the text."
+      />
 
       <Card variant="quiet" className="space-y-3 p-5">
         <div className="flex items-center justify-between gap-3">
@@ -299,6 +286,6 @@ export function EssayTrackerPage() {
           </Card>
         )}
       </section>
-    </div>
+    </PageContainer>
   );
 }

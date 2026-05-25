@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { Badge, Card } from "@/components/ui";
+import { Card, PageContainer, PageHeader } from "@/components/ui";
 
 export function CompoundInterestCalculator() {
   const [principal, setPrincipal] = useState("10000");
@@ -120,19 +120,16 @@ export function CompoundInterestCalculator() {
 
 export function CompoundInterestToolPage() {
   return (
-    <div className="mx-auto max-w-lg space-y-6 p-4 md:p-8">
-      <section className="stagger-item space-y-2">
-        <Badge>Tools · Finance</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
-          Compound interest
-        </h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Project growth from an initial investment, monthly contributions, and annual return.
-        </p>
-      </section>
+    <PageContainer size="sm" className="space-y-6">
+      <PageHeader
+        backTo={{ to: "/tools", label: "Calculators" }}
+        eyebrow="Finance"
+        title="Compound interest"
+        subtitle="Project growth from an initial investment, monthly contributions, and annual return."
+      />
       <Card className="stagger-item border-[var(--success)]/40 bg-[var(--success-bg)]">
         <CompoundInterestCalculator />
       </Card>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Star } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { findNodeAcrossSubjects, getNode, loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
@@ -41,8 +41,11 @@ export function BookmarksPage() {
 
   if (isEmpty) {
     return (
-      <div className="mx-auto max-w-3xl space-y-4 p-4 md:p-8">
-        <h1 className="text-3xl font-bold text-[var(--text-heading)]">Saved</h1>
+      <PageContainer size="narrow" className="space-y-4">
+        <PageHeader
+          title="Saved"
+          subtitle="Star resources on a lesson page to save them here."
+        />
         <Card className="text-center">
           <Star className="mx-auto mb-3 text-[var(--accent)]" size={32} />
           <p className="text-sm text-[var(--text-muted)]">
@@ -52,20 +55,18 @@ export function BookmarksPage() {
             <Button variant="secondary">Browse subjects</Button>
           </Link>
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
+  const savedCount = resolvedResources.length + resolvedLessons.length;
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-4 md:p-8">
-      <div>
-        <Badge>Saved</Badge>
-        <h1 className="mt-2 text-3xl font-bold text-[var(--text-heading)]">Bookmarks</h1>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          {resolvedResources.length + resolvedLessons.length} saved item
-          {resolvedResources.length + resolvedLessons.length === 1 ? "" : "s"}
-        </p>
-      </div>
+    <PageContainer size="narrow" className="space-y-6">
+      <PageHeader
+        title="Saved"
+        subtitle={`${savedCount} saved item${savedCount === 1 ? "" : "s"}`}
+      />
 
       {resolvedLessons.length > 0 && (
         <section className="space-y-3">
@@ -125,6 +126,6 @@ export function BookmarksPage() {
           </div>
         </section>
       )}
-    </div>
+    </PageContainer>
   );
 }

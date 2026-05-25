@@ -8,7 +8,7 @@ import {
   Wrench,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Badge, Card } from "@/components/ui";
+import { Card, PageContainer, PageHeader } from "@/components/ui";
 import { getManifestEntry } from "@/curriculum";
 import { CampusAdmissionsHub } from "@/features/campus/CampusAdmissionsHub";
 
@@ -85,16 +85,11 @@ const services = buildServiceCards();
 
 export function CampusServicesPage() {
   return (
-    <div className="mx-auto max-w-lg space-y-6 p-4 md:p-8">
-      <section className="stagger-item space-y-2">
-        <Badge>Campus</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
-          Campus services
-        </h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Calculators, labs, and practice tools — everything outside the main lesson flow.
-        </p>
-      </section>
+    <PageContainer size="sm" className="space-y-6">
+      <PageHeader
+        title="Campus"
+        subtitle="Calculators, labs, and practice tools — everything outside the main lesson flow."
+      />
 
       <div className="stagger-item">
         <CampusAdmissionsHub />
@@ -116,6 +111,6 @@ export function CampusServicesPage() {
           </Link>
         ))}
       </div>
-    </div>
+    </PageContainer>
   );
 }

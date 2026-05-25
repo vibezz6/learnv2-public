@@ -228,7 +228,7 @@ describe("transcript", () => {
 
     expect(markdown).toContain("# Learn v2 Study Transcript");
     expect(markdown).toContain("Generated: 2026-05-24T12:00:00.000Z");
-    expect(markdown).toMatch(/App: v2\.0\.\d+/);
+    expect(markdown).toMatch(/App: v2\.\d+\.\d+/);
     expect(markdown).toContain("- Study time: 90 minutes");
     expect(markdown).toContain("- Lessons completed: 1 / 2");
     expect(markdown).toContain("- Math: 1/2 (50%)");

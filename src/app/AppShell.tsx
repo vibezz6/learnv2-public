@@ -35,7 +35,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
   {
     label: "Learn",
     items: [
-      { to: "/", label: "Command", icon: Home, end: true },
+      { to: "/", label: "Today", icon: Home, end: true },
       { to: "/subjects", label: "Subjects", icon: BookOpen },
       { to: "/tracks", label: "Tracks", icon: Route },
       { to: "/campus", label: "Campus", icon: LayoutGrid },
@@ -108,10 +108,7 @@ export function AppShell() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--accent)]/15 text-[var(--accent)]">
               <Brain size={18} />
             </div>
-            <div>
-              <div className="text-sm font-semibold text-[var(--text-heading)]">Learn v2</div>
-              <div className="text-xs text-[var(--text-muted)]">Neural Utopia</div>
-            </div>
+            <div className="text-sm font-semibold text-[var(--text-heading)]">Learn v2</div>
           </div>
         </div>
         <nav className="flex flex-1 flex-col gap-5 overflow-y-auto p-3">
@@ -164,10 +161,7 @@ export function AppShell() {
             focusMode && "hidden",
           )}
         >
-          <div className="text-sm text-[var(--text-muted)]">
-            IQ maxxing · deep focus ready
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 md:ml-auto">
             {stats && (
               <span className="hidden rounded-full border border-[var(--border)] px-2.5 py-1 font-mono text-xs tabular-nums text-[var(--text-muted)] sm:inline">
                 Lv {stats.level}

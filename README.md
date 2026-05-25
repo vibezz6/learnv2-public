@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.45 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.1.2 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -181,6 +181,10 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 39 Study-first command palette copy (60) | ✅ **v2.0.43** — optional baseline wording on SAT pretest and recommended-lessons shortcuts |
 | 40 Study-first pretest + settings copy (61) | ✅ **v2.0.44** — optional baseline on pretest page header/StartCard; diagnostic backup in Settings |
 | 41 SAT study forms mobile (62) | ✅ **v2.0.45** — 44px touch targets on mistake log and official practice forms |
+| 42 Page chrome + nav copy (63) | ✅ **v2.0.46** — PageContainer, PageHeader, Section primitives; sidebar/mobile “Today”; drop Neural Utopia / IQ maxxing topbar copy |
+| 43 Dashboard condense (64) | ✅ **v2.1.0** — Today → focus → This week → review → challenge; WeekPlanCard; demote stats toys off `/` |
+| 44 Dashboard white-screen fix (65) | ✅ **v2.1.1** — WeekPlanCard no longer passes `undefined` into admissions loaders (crashed `/`) |
+| 45 Route page chrome (66) | ✅ **v2.1.2** — PageContainer + PageHeader on Review, Saved, Stats, Settings, Campus tools, subjects/tracks, college, SAT pretest, lessons, notes, quiz |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

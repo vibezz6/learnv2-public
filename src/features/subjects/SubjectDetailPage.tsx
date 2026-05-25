@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { ArrowRight, BookOpen, ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
-import { Button, Card, EmptyState } from "@/components/ui";
+import { ArrowRight, BookOpen, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
+import { Button, Card, EmptyState, PageContainer, PageHeader } from "@/components/ui";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { loadSubjectResult } from "@/curriculum/loader";
 import type { LoadSubjectResult } from "@/curriculum/loader";
@@ -497,14 +497,8 @@ export function SubjectDetailPage() {
 
   if (loadState.phase === "error") {
     return (
-      <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
-        <Link
-          to="/subjects"
-          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-        >
-          <ChevronLeft size={16} />
-          Subjects
-        </Link>
+      <PageContainer size="wide" className="space-y-6">
+        <PageHeader backTo={{ to: "/subjects", label: "Subjects" }} divider={false} />
         <Card>
           <EmptyState
             title="Course not available yet"
@@ -513,7 +507,7 @@ export function SubjectDetailPage() {
             actionTo="/subjects"
           />
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -532,14 +526,8 @@ export function SubjectDetailPage() {
     : null;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
-      <Link
-        to="/subjects"
-        className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-      >
-        <ChevronLeft size={16} />
-        Subjects
-      </Link>
+    <PageContainer size="xl" className="space-y-8">
+      <PageHeader backTo={{ to: "/subjects", label: "Subjects" }} divider={false} />
 
       <TrackDetailHeader
         name={subject.name}
@@ -612,6 +600,6 @@ export function SubjectDetailPage() {
           />
         </div>
       </section>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, ExternalLink, FlaskConical, TrendingUp } from "lucide-react";
-import { Badge, Button, Card } from "@/components/ui";
+import { Badge, Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import {
   type BacktestRunCard,
   fetchEnrichmentQueueCount,
@@ -50,18 +50,12 @@ export function TradingLabPage() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-lg space-y-6 p-4 md:p-8">
-      <section className="stagger-item space-y-3">
-        <Badge>Lab</Badge>
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--text-heading)]">
-          Trading Lab
-        </h1>
-        <p className="text-sm leading-relaxed text-[var(--text-muted)]">
-          A sandbox for applying what you learn — paper trade, replay scenarios, and experiment
-          with strategies without risking real capital. Pair the curriculum with hands-on practice
-          before you go live.
-        </p>
-      </section>
+    <PageContainer size="sm" className="space-y-6">
+      <PageHeader
+        eyebrow="Lab"
+        title="Trading Lab"
+        subtitle="A sandbox for applying what you learn — paper trade, replay scenarios, and experiment with strategies without risking real capital. Pair the curriculum with hands-on practice before you go live."
+      />
 
       <Card className="stagger-item">
         <div className="flex items-center justify-between gap-3 text-sm">
@@ -211,6 +205,6 @@ export function TradingLabPage() {
           </div>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

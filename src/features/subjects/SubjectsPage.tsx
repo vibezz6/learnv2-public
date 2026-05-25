@@ -4,7 +4,7 @@ import { ArrowRight, Search } from "lucide-react";
 import { manifest } from "@/curriculum";
 import { loadSubjectResult } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
-import { Badge, Button, Card, EmptyState } from "@/components/ui";
+import { Badge, Button, Card, EmptyState, PageContainer, PageHeader } from "@/components/ui";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
@@ -74,14 +74,12 @@ export function SubjectsPage() {
   }, [filterId, query, sort, summaries]);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 p-4 md:p-8">
-      <header className="space-y-1 border-b border-[var(--border)] pb-5">
-        <p className="font-mono text-xs text-[var(--text-muted)]">{manifest.length} subjects</p>
-        <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)] md:text-3xl">
-          Subjects
-        </h1>
-        <p className="text-sm text-[var(--text-muted)]">Pick a track and work through its skill tree.</p>
-      </header>
+    <PageContainer size="lg" className="space-y-8">
+      <PageHeader
+        eyebrow={`${manifest.length} subjects`}
+        title="Subjects"
+        subtitle="Pick a track and work through its skill tree."
+      />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative min-w-0 flex-1 sm:max-w-sm">
@@ -198,7 +196,7 @@ export function SubjectsPage() {
           />
         </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

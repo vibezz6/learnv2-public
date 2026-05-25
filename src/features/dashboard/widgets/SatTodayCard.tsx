@@ -10,9 +10,11 @@ import { useProgress } from "@/stores/progress";
 
 interface Props {
   subjects: Subject[];
+  /** Single primary CTA when used inside Today's focus (no competing primary card). */
+  compact?: boolean;
 }
 
-export function SatTodayCard({ subjects }: Props) {
+export function SatTodayCard({ subjects, compact = false }: Props) {
   const placementGoal = usePreferences((s) => s.placementGoal);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const study = getSatDailyStudyCommand({ subjects, getNodeStatus });
@@ -63,33 +65,61 @@ export function SatTodayCard({ subjects }: Props) {
               </p>
             )}
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            <Link to={study.href} className="min-w-0 sm:flex-1">
-              <Button className="min-h-11 w-full touch-manipulation">
-                {study.buttonLabel}
-                <ArrowRight size={14} />
-              </Button>
-            </Link>
-            <Link to="/subjects/sat-prep#mistakes" className="min-w-0 sm:flex-1">
-              <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-                <ClipboardList size={14} />
-                Mistake log
-              </Button>
-            </Link>
-            {showDiagnosticLink ? (
-              <Link to="/sat/pretest" className="min-w-0 sm:flex-1">
-                <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-                  Optional diagnostic
+          {compact ? (
+            <div className="space-y-3">
+              <Link to={study.href} className="block">
+                <Button className="min-h-11 w-full touch-manipulation">
+                  {study.buttonLabel}
+                  <ArrowRight size={14} />
                 </Button>
               </Link>
-            ) : (
-              <Link to="/subjects/sat-prep#official" className="min-w-0 sm:flex-1">
-                <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-                  Official practice
+              <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                <Link to="/subjects/sat-prep#mistakes" className="text-[var(--accent-2)] hover:underline">
+                  Mistake log
+                </Link>
+                {showDiagnosticLink ? (
+                  <Link to="/sat/pretest" className="text-[var(--accent-2)] hover:underline">
+                    Optional diagnostic
+                  </Link>
+                ) : (
+                  <Link
+                    to="/subjects/sat-prep#official"
+                    className="text-[var(--accent-2)] hover:underline"
+                  >
+                    Official practice
+                  </Link>
+                )}
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <Link to={study.href} className="min-w-0 sm:flex-1">
+                <Button className="min-h-11 w-full touch-manipulation">
+                  {study.buttonLabel}
+                  <ArrowRight size={14} />
                 </Button>
               </Link>
-            )}
-          </div>
+              <Link to="/subjects/sat-prep#mistakes" className="min-w-0 sm:flex-1">
+                <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
+                  <ClipboardList size={14} />
+                  Mistake log
+                </Button>
+              </Link>
+              {showDiagnosticLink ? (
+                <Link to="/sat/pretest" className="min-w-0 sm:flex-1">
+                  <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
+                    Optional diagnostic
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/subjects/sat-prep#official" className="min-w-0 sm:flex-1">
+                  <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
+                    Official practice
+                  </Button>
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Card>

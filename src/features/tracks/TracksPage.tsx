@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from
 import { Link, useParams } from "react-router-dom";
 import {
   CheckCircle2,
-  ChevronLeft,
   Circle,
   Code,
   FunctionSquare,
@@ -11,7 +10,7 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react";
-import { Card, EmptyState } from "@/components/ui";
+import { Card, EmptyState, PageContainer, PageHeader } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { LearningTrack } from "@/data/tracks";
 import { tracks } from "@/data/tracks";
@@ -111,14 +110,8 @@ export function TracksPage() {
 
   if (trackId && subjects.length > 0 && !selected) {
     return (
-      <div className="mx-auto max-w-4xl space-y-4 p-4 md:p-8">
-        <Link
-          to="/tracks"
-          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-        >
-          <ChevronLeft size={16} />
-          All tracks
-        </Link>
+      <PageContainer size="wide" className="space-y-4">
+        <PageHeader backTo={{ to: "/tracks", label: "Tracks" }} divider={false} />
         <Card>
           <EmptyState
             title="Track not found"
@@ -127,7 +120,7 @@ export function TracksPage() {
             actionTo="/tracks"
           />
         </Card>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -136,14 +129,8 @@ export function TracksPage() {
     const Icon = trackIcons[track.icon] ?? Circle;
 
     return (
-      <div className="mx-auto max-w-4xl space-y-6 p-4 md:p-8">
-        <Link
-          to="/tracks"
-          className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
-        >
-          <ChevronLeft size={16} />
-          All tracks
-        </Link>
+      <PageContainer size="wide" className="space-y-6">
+        <PageHeader backTo={{ to: "/tracks", label: "Tracks" }} divider={false} />
 
         <TrackDetailHeader
           name={track.name}
@@ -214,25 +201,19 @@ export function TracksPage() {
             })}
           </div>
         )}
-      </div>
+      </PageContainer>
     );
   }
 
   const allEmpty = trackStats.every(({ completed }) => completed === 0);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 p-4 md:p-8">
-      <header className="space-y-1 border-b border-[var(--border)] pb-6">
-        <p className="font-mono text-xs uppercase tracking-widest text-[var(--text-muted)]">
-          {tracks.length} learning paths
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)] md:text-3xl">
-          Tracks
-        </h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Curated paths through the curriculum — pick a track and follow the sequence.
-        </p>
-      </header>
+    <PageContainer size="lg" className="space-y-8">
+      <PageHeader
+        eyebrow={`${tracks.length} learning paths`}
+        title="Tracks"
+        subtitle="Curated paths through the curriculum — pick a track and follow the sequence."
+      />
 
       {allEmpty && subjects.length > 0 && (
         <Card variant="quiet">
@@ -282,6 +263,6 @@ export function TracksPage() {
           );
         })}
       </div>
-    </div>
+    </PageContainer>
   );
 }

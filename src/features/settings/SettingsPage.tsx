@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { usePreferences } from "@/stores/preferences";
 import {
@@ -67,10 +67,11 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-6 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:p-8 md:pb-8">
-      <h1 className="break-words text-[clamp(1.5rem,6vw,1.875rem)] font-bold text-[var(--text-heading)] min-[481px]:text-3xl">
-        Settings
-      </h1>
+    <PageContainer size="md" className="space-y-6">
+      <PageHeader
+        title="Settings"
+        subtitle="Theme, placement, backups, and optional integrations."
+      />
 
       <Card className="min-w-0 space-y-3">
         <h2 className="break-words font-semibold text-[var(--text-heading)]">Theme</h2>
@@ -280,6 +281,6 @@ export function SettingsPage() {
         }}
         onCancel={() => setShowResetConfirm(false)}
       />
-    </div>
+    </PageContainer>
   );
 }

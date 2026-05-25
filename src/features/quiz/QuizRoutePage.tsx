@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { loadSubject, getNode } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { PageContainer, PageHeader } from "@/components/ui";
 import { Quiz } from "@/features/quiz/QuizPage";
 
 export function QuizRoutePage() {
@@ -18,23 +19,24 @@ export function QuizRoutePage() {
 
   if (!subject || !node) {
     return (
-      <div className="mx-auto w-full min-w-0 max-w-3xl overflow-x-hidden px-3 py-4 pb-24 text-[var(--text-muted)] sm:p-4 sm:pb-4 md:p-8">
+      <PageContainer size="narrow" className="text-[var(--text-muted)]">
         Loading quiz…
-      </div>
+      </PageContainer>
     );
   }
 
   const questions = node.quiz ?? [];
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-3xl space-y-4 overflow-x-hidden px-3 py-4 pb-24 sm:p-4 sm:pb-4 md:p-8">
-      <Link
-        to={`/subjects/${subject.id}/${node.id}`}
-        className="inline-flex min-h-11 items-center text-sm text-[var(--text-muted)]"
-      >
-        ← Back to {node.name}
-      </Link>
-      <h1 className="break-words text-2xl font-bold text-[var(--text-heading)]">Quiz · {node.name}</h1>
+    <PageContainer size="narrow" className="space-y-4">
+      <PageHeader
+        backTo={{
+          to: `/subjects/${subject.id}/${node.id}`,
+          label: node.name,
+        }}
+        title={`Quiz · ${node.name}`}
+        divider={false}
+      />
       <Quiz
         key={node.id}
         questions={questions}
@@ -43,6 +45,6 @@ export function QuizRoutePage() {
           /* score saved in Quiz component */
         }}
       />
-    </div>
+    </PageContainer>
   );
 }

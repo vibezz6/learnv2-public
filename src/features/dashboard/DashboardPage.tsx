@@ -1,27 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Brain } from "lucide-react";
-import { Button, Card, EmptyState } from "@/components/ui";
+import { ArrowRight, BarChart3, Brain } from "lucide-react";
+import { Button, Card, EmptyState, PageContainer, PageHeader, Section } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
-import { formatAppVersion } from "@/lib/version";
 import { DEFAULT_TRACK_ID } from "@/lib/campusHome";
 import { getTrackChallengeCategory } from "@/lib/coursework";
+import { shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
-import { CampusHome } from "./widgets/CampusHome";
-import { SatTodayCard } from "./widgets/SatTodayCard";
-import { TomorrowTasks } from "./widgets/TomorrowTasks";
-import { WeekAssignments } from "./widgets/WeekAssignments";
-import { WeekDeadlinesStrip } from "./widgets/WeekDeadlinesStrip";
 import { ContinueHero } from "./widgets/ContinueHero";
-import { DailyChallengeWidget } from "./widgets/DailyChallengeWidget";
+import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
 import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
-import { EulerQuizMastery } from "./widgets/EulerQuizMastery";
-import { MathInspiredSection } from "./widgets/MathInspiredSection";
-import { StreakCalendar } from "./widgets/StreakCalendar";
-import { TrackRecommendation } from "./widgets/TrackRecommendation";
+import { SatTodayCard } from "./widgets/SatTodayCard";
+import { WeekPlanCard } from "./widgets/WeekPlanCard";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -29,6 +22,8 @@ export function DashboardPage() {
   const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
   const getDailyReviewCount = useProgress((s) => s.getDailyReviewCount);
   const getNextScheduledReview = useProgress((s) => s.getNextScheduledReview);
+  const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const placementGoal = usePreferences((s) => s.placementGoal);
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const [subjects, setSubjects] = useState<Subject[]>([]);
 
@@ -46,129 +41,90 @@ export function DashboardPage() {
     getTrackChallengeCategory(activeTrackId) ??
     (target ? subjectToChallengeCategory(target.subject.id) : null);
 
+  const showSatFocus =
+    !target &&
+    subjects.length > 0 &&
+    shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
+
+  const showSpacedReview =
+    reviewDue > 0 ||
+    (nextReview !== null && typeof nextReview.daysUntil === "number" && nextReview.daysUntil <= 2);
+
   return (
-    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-10 overflow-x-hidden px-3 py-4 pb-24 sm:px-4 md:p-8 md:pb-8">
-      <header className="space-y-4 border-b border-[var(--border)] pb-6">
-        <div className="space-y-2">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
-            {formatAppVersion()}
-          </p>
-          <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
-            Dashboard
-          </h1>
-          <p className="text-sm text-[var(--text-muted)]">
-            Today&apos;s campus — your track, this week, and what to do next.
-          </p>
-        </div>
+    <PageContainer className="space-y-8">
+      <div className="space-y-4 border-b border-[var(--border)] pb-6">
+        <PageHeader
+          title="Today"
+          subtitle="Your next lesson, this week&apos;s plan, and college deadlines."
+          divider={false}
+        />
         {stats && <DailyGoalStrip stats={stats} />}
-      </header>
+      </div>
 
-      {subjects.length > 0 && (
-        <section className="space-y-4">
-          <SatTodayCard subjects={subjects} />
-          <CampusHome subjects={subjects} />
-        </section>
-      )}
-
-      {subjects.length > 0 && (
-        <section className="space-y-4">
-          <TomorrowTasks subjects={subjects} />
-          <WeekDeadlinesStrip />
-          <WeekAssignments subjects={subjects} />
-        </section>
-      )}
-
-      {/* Primary — continue hero */}
-      <section>
+      <Section eyebrow="Today's focus">
         {target ? (
           <ContinueHero subject={target.subject} node={target.node} />
+        ) : showSatFocus ? (
+          <SatTodayCard subjects={subjects} compact />
         ) : (
           <Card variant="primary">
             <EmptyState
               icon={<span aria-hidden>◎</span>}
-              title="Neural pathways idle"
-              description="Import v1 progress in Settings, or pick a subject to light up your first lesson."
+              title="No lesson in progress"
+              description="Import v1 progress in Settings, or pick a subject to start your first lesson."
               actionLabel="Browse subjects"
               actionTo="/subjects"
             />
           </Card>
         )}
-      </section>
+      </Section>
 
-      {/* Secondary — daily challenge + track */}
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <DailyChallengeWidget defaultCategory={challengeCategory} />
-        {subjects.length > 0 && enrolledTrackId === null && (
-          <TrackRecommendation subjects={subjects} />
-        )}
-      </section>
+      {subjects.length > 0 && <WeekPlanCard subjects={subjects} />}
 
-      {(reviewDue > 0 || nextReview) && (
-        <section>
-          <Card variant="quiet" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              <Brain size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
-              <div>
-                <p className="text-sm font-medium text-[var(--text-heading)]">Spaced review</p>
-                {reviewDue > 0 ? (
-                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                    <span className="font-mono tabular-nums text-[var(--text-heading)]">{reviewDue}</span> due
-                    {reviewedToday > 0 && ` · ${reviewedToday} done today`}
-                  </p>
-                ) : nextReview ? (
-                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                    Next review in{" "}
-                    <span className="font-mono tabular-nums text-[var(--text-heading)]">
-                      {nextReview.daysUntil}
-                    </span>{" "}
-                    {nextReview.daysUntil === 1 ? "day" : "days"}
-                  </p>
-                ) : null}
-              </div>
+      {showSpacedReview && (
+        <Card variant="quiet" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <Brain size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
+            <div>
+              <p className="text-sm font-medium text-[var(--text-heading)]">Spaced review</p>
+              {reviewDue > 0 ? (
+                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                  <span className="font-mono tabular-nums text-[var(--text-heading)]">{reviewDue}</span>{" "}
+                  due
+                  {reviewedToday > 0 && ` · ${reviewedToday} done today`}
+                </p>
+              ) : nextReview ? (
+                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                  Next review in{" "}
+                  <span className="font-mono tabular-nums text-[var(--text-heading)]">
+                    {nextReview.daysUntil}
+                  </span>{" "}
+                  {nextReview.daysUntil === 1 ? "day" : "days"}
+                </p>
+              ) : null}
             </div>
-            {reviewDue > 0 && (
-              <Link to="/review" className="shrink-0">
-                <Button variant="secondary" className="min-h-10 w-full sm:w-auto">
-                  Review
-                  <ArrowRight size={14} />
-                </Button>
-              </Link>
-            )}
-          </Card>
-        </section>
+          </div>
+          {reviewDue > 0 && (
+            <Link to="/review" className="shrink-0">
+              <Button variant="secondary" className="min-h-10 w-full sm:w-auto">
+                Review
+                <ArrowRight size={14} />
+              </Button>
+            </Link>
+          )}
+        </Card>
       )}
 
-      {/* Stats — only when there is activity */}
-      {stats && stats.completedNodes > 0 && (
-        <section className="space-y-4">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-            Activity
-          </p>
-          <Card variant="quiet">
-            <StreakCalendar dailyMinutes={stats.dailyMinutes} />
-          </Card>
-        </section>
-      )}
-
-      {subjects.length > 0 && (
-        <section className="space-y-4">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-            Mastery
-          </p>
-          <EulerQuizMastery subjects={subjects} />
-        </section>
-      )}
-
-      {stats && (
-        <section>
-          <MathInspiredSection completedNodes={stats.completedNodes} totalNodes={stats.totalNodes} />
-        </section>
-      )}
+      <DailyChallengeCompact defaultCategory={challengeCategory} />
 
       <p className="text-[11px] text-[var(--text-muted)]">
         <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">F</kbd> focus ·{" "}
-        <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">⌘K</kbd> search
+        <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">⌘K</kbd> search ·{" "}
+        <Link to="/stats" className="text-[var(--accent-2)] hover:underline">
+          <BarChart3 size={12} className="mr-0.5 inline" aria-hidden />
+          Stats
+        </Link>
       </p>
-    </div>
+    </PageContainer>
   );
 }
