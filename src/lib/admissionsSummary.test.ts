@@ -5,6 +5,7 @@ import {
   buildAdmissionsExportPayload,
   buildAdmissionsSummary,
   formatAdmissionsTranscriptSection,
+  getUrgentCollegeDeadlines,
   getWeekDeadlineRows,
 } from "./admissionsSummary";
 
@@ -33,6 +34,21 @@ describe("admissionsSummary", () => {
     const rows = getWeekDeadlineRows(7, now, checklist, essays);
     expect(rows.length).toBe(2);
     expect(rows[0]?.overdue).toBe(true);
+  });
+
+  it("getUrgentCollegeDeadlines returns overdue, today, and tomorrow only", () => {
+    const now = new Date("2026-05-24T12:00:00Z");
+    let essays = loadEssayTracker();
+    essays = addEssayFromTemplate(essays, "why-us", { dueDate: "2026-05-20" });
+    let checklist = loadCollegeChecklist();
+    checklist = addCustomItem(checklist, "Due tomorrow", "2026-05-25");
+    checklist = addCustomItem(checklist, "Due next week", "2026-06-01");
+
+    const urgent = getUrgentCollegeDeadlines(now, 3, checklist, essays);
+    expect(urgent).toHaveLength(2);
+    expect(urgent[0]?.overdue).toBe(true);
+    expect(urgent[1]?.title).toBe("Due tomorrow");
+    expect(urgent[1]?.daysUntil).toBe(1);
   });
 
   it("formatAdmissionsTranscriptSection omits when empty", () => {

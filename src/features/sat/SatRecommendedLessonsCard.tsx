@@ -31,7 +31,7 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
         : plan.emptyMessage;
 
   return (
-    <Card className="min-w-0 space-y-4 p-5">
+    <Card id="recommended" className="min-w-0 scroll-mt-6 space-y-4 p-5">
       <div className="flex items-start gap-3">
         <Sparkles size={18} className="mt-0.5 shrink-0 text-[var(--accent-2)]" aria-hidden />
         <div className="min-w-0 space-y-1">

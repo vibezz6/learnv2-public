@@ -472,7 +472,7 @@ export function SubjectDetailPage() {
   useEffect(() => {
     if (subjectId !== "sat-prep" || loadState.phase !== "ok") return;
     const hash = location.hash.replace("#", "");
-    if (hash !== "mistakes" && hash !== "official") return;
+    if (hash !== "mistakes" && hash !== "official" && hash !== "recommended") return;
     const target = document.getElementById(hash);
     if (!target) return;
     requestAnimationFrame(() => {

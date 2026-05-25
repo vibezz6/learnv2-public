@@ -102,6 +102,18 @@ export function getWeekDeadlineRows(
   return rows.sort((a, b) => a.daysUntil - b.daysUntil).slice(0, 6);
 }
 
+/** Overdue, due today, or due tomorrow — for campus and dashboard chips. */
+export function getUrgentCollegeDeadlines(
+  now = new Date(),
+  max = 2,
+  checklist: CollegeChecklistState = loadCollegeChecklist(),
+  essays: EssayTrackerState = loadEssayTracker(),
+): WeekDeadlineRow[] {
+  return getWeekDeadlineRows(14, now, checklist, essays)
+    .filter((row) => row.overdue || (row.daysUntil >= 0 && row.daysUntil <= 1))
+    .slice(0, max);
+}
+
 export function formatAdmissionsTranscriptSection(summary: AdmissionsSummary): string[] {
   if (!summary.hasActivity) return [];
 

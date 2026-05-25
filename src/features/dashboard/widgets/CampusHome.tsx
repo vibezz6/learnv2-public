@@ -21,6 +21,7 @@ import { labelForPlacement } from "@/lib/placement";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { CampusAdmissionsNudges } from "./CampusAdmissionsNudges";
+import { CampusDeadlineChip } from "./CampusDeadlineChip";
 
 interface Props {
   subjects: Subject[];
@@ -65,6 +66,7 @@ export function CampusHome({ subjects }: Props) {
         )}
       </p>
 
+      <CampusDeadlineChip />
       <CampusAdmissionsNudges />
 
       <div className="mt-5">

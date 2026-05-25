@@ -17,9 +17,12 @@ import {
   SearchX,
   Settings,
   Shuffle,
+  Sparkles,
   Sun,
   Timer,
 } from "lucide-react";
+import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
+import { useProgress } from "@/stores/progress";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -56,6 +59,7 @@ interface DisplayBlock {
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
   const { setTheme } = usePreferences();
+  const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -120,6 +124,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       .slice(0, 20)
       .map((r) => r.item);
   }, [query, subjects, go]);
+
+  const satRecommended = useMemo(
+    () => getSatRecommendedLessons(subjects, getNodeStatus),
+    [subjects, getNodeStatus],
+  );
 
   const staticCommands = useMemo((): CommandItem[] => {
     const surprise = () => {
@@ -198,6 +207,20 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         action: () => go("/sat/pretest"),
       },
       {
+        id: "sat-recommended",
+        label: "SAT recommended lessons",
+        description:
+          satRecommended.lessons[0]?.title ??
+          (satRecommended.draft1Complete ? "Track or diagnostic" : "Track next or Draft 1"),
+        section: "Campus",
+        icon: Sparkles,
+        action: () => {
+          const lesson = satRecommended.lessons[0];
+          if (lesson) go(`/subjects/${lesson.subjectId}/${lesson.nodeId}`);
+          else go("/subjects/sat-prep#recommended");
+        },
+      },
+      {
         id: "sat-mistake-log",
         label: "SAT mistake log",
         description: "Log misses after Bluebook or Khan",
@@ -236,7 +259,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     ];
 
     return [...recent, ...navigateItems, ...campusItems, ...subjectItems, ...actionItems, ...themeItems];
-  }, [subjects, go, setTheme, onClose, recentSearches, fillQuery]);
+  }, [subjects, go, setTheme, onClose, recentSearches, fillQuery, satRecommended]);
 
   const filtered = useMemo(() => {
     const q = query.trim();
