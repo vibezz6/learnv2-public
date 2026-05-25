@@ -56,7 +56,7 @@ export function AchievementToast() {
     return () => {
       cancelled = true;
     };
-  }, [data.totalXp, data.streaks.current, data.totalStudyMinutes, getStats, enqueue]);
+  }, [data.totalXp, data.totalStudyMinutes, getStats, enqueue]);
 
   useEffect(() => {
     const onActivity = () => {

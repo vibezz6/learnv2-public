@@ -163,7 +163,11 @@ export function AppShell() {
             focusMode && "hidden",
           )}
         >
-          <div className="flex items-center gap-2 md:ml-auto">
+          <div className="flex min-w-0 flex-1 items-center gap-2 md:hidden">
+            <Brain size={18} className="shrink-0 text-[var(--accent)]" aria-hidden />
+            <span className="truncate text-sm font-semibold text-[var(--text-heading)]">Learn v2</span>
+          </div>
+          <div className="flex shrink-0 items-center gap-2 md:ml-auto">
             {stats && (
               <span className="hidden rounded-full border border-[var(--border)] px-2.5 py-1 font-mono text-xs tabular-nums text-[var(--text-muted)] sm:inline">
                 Lv {stats.level}

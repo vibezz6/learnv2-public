@@ -4,10 +4,11 @@ import { Clock } from "lucide-react";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { Card } from "@/components/ui";
+import { DATA_UPDATED_EVENT } from "@/lib/dataSync";
 import {
-  ACTIVITY_UPDATED_EVENT,
   formatActivityLabel,
   listActivitiesForDate,
+  subscribeActivityUpdated,
   type StudyActivityEvent,
 } from "@/lib/studyActivity";
 import { getToday } from "@/stores/progress";
@@ -37,8 +38,12 @@ export function RecentStudyStrip({ subjects }: { subjects: Subject[] }) {
   useEffect(() => {
     const refresh = () => setEvents(listActivitiesForDate(getToday()).slice(0, 5));
     refresh();
-    window.addEventListener(ACTIVITY_UPDATED_EVENT, refresh);
-    return () => window.removeEventListener(ACTIVITY_UPDATED_EVENT, refresh);
+    const unsubActivity = subscribeActivityUpdated(refresh);
+    window.addEventListener(DATA_UPDATED_EVENT, refresh);
+    return () => {
+      unsubActivity();
+      window.removeEventListener(DATA_UPDATED_EVENT, refresh);
+    };
   }, []);
 
   if (events.length === 0) return null;

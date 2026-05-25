@@ -26,6 +26,7 @@ import {
   Badge,
   Button,
   Card,
+  EmptyState,
   FocusShell,
   FocusStudyBar,
   PageContainer,
@@ -525,13 +526,14 @@ function NoteReviewPanel({
 
   if (!session || !hasMinNotesContent(session.responses)) {
     return (
-      <Card className="space-y-4 text-center">
-        <BookOpen className="mx-auto text-[var(--text-muted)]" size={32} />
-        <h2 className="text-xl font-semibold text-[var(--text-heading)]">Nothing to review yet</h2>
-        <p className="text-sm text-[var(--text-muted)]">
-          Fill in at least one guided prompt so TA feedback has something to analyze.
-        </p>
-        <Button onClick={onBackToWrite}>Back to session notes</Button>
+      <Card variant="quiet">
+        <EmptyState
+          icon={<BookOpen size={32} className="text-[var(--text-muted)]" />}
+          title="Nothing to review yet"
+          description="Fill in at least one guided prompt so TA feedback has something to analyze."
+          actionLabel="Back to session notes"
+          onAction={onBackToWrite}
+        />
       </Card>
     );
   }

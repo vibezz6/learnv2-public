@@ -50,7 +50,16 @@ interface CommandItem {
   id: string;
   label: string;
   description?: string;
-  section: "Recent" | "Navigate" | "Campus" | "SAT" | "Subjects" | "Lessons" | "Actions" | "Theme";
+  section:
+    | "Recent actions"
+    | "Recent searches"
+    | "Navigate"
+    | "Campus"
+    | "SAT"
+    | "Subjects"
+    | "Lessons"
+    | "Actions"
+    | "Theme";
   groupKey?: string;
   subjectColor?: string;
   recentPath?: string;
@@ -183,8 +192,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     const recentActionItems: CommandItem[] = recentActions.map((item) => ({
       id: `recent-action-${item.id}`,
       label: item.label,
-      description: "Recent action",
-      section: "Recent" as const,
+      description: "Jump back",
+      section: "Recent actions" as const,
       icon: Clock,
       action: () => go(item.path, { id: item.id, label: item.label }),
     }));
@@ -192,8 +201,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     const recent: CommandItem[] = recentSearches.map((term, i) => ({
       id: `recent-${i}-${term}`,
       label: term,
-      description: "Recent search",
-      section: "Recent",
+      description: "Search again",
+      section: "Recent searches",
       icon: Clock,
       action: () => fillQuery(term),
     }));
@@ -359,7 +368,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       return staticCommands.filter((cmd) => cmd.section !== "Subjects");
     }
 
-    const combined = [...staticCommands.filter((c) => c.section !== "Recent"), ...lessonCommands];
+    const combined = [
+      ...staticCommands.filter(
+        (c) => c.section !== "Recent searches" && c.section !== "Recent actions",
+      ),
+      ...lessonCommands,
+    ];
     return combined
       .map((cmd) => scoreCommandMatch(q, cmd))
       .filter((r): r is NonNullable<typeof r> => r !== null)
@@ -372,8 +386,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     const blocks: DisplayBlock[] = [];
 
     if (!q) {
-      const recent = filtered.filter((c) => c.section === "Recent");
-      if (recent.length > 0) blocks.push({ key: "recent", title: "Recent", items: recent });
+      const recentActionsBlock = filtered.filter((c) => c.section === "Recent actions");
+      if (recentActionsBlock.length > 0) {
+        blocks.push({ key: "recent-actions", title: "Recent actions", items: recentActionsBlock });
+      }
+      const recentSearchesBlock = filtered.filter((c) => c.section === "Recent searches");
+      if (recentSearchesBlock.length > 0) {
+        blocks.push({ key: "recent-searches", title: "Recent searches", items: recentSearchesBlock });
+      }
 
       for (const section of ["Navigate", "Campus", "SAT", "Actions", "Theme"] as const) {
         const items = filtered.filter((c) => c.section === section);
@@ -423,7 +443,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const execute = useCallback(
     (cmd: CommandItem) => {
       const q = query.trim();
-      if (q && !cmd.id.startsWith("recent-")) addRecentSearch(q);
+      if (q && !cmd.id.startsWith("recent-") && cmd.section !== "Recent actions") {
+        addRecentSearch(q);
+      }
       cmd.action();
     },
     [query],
