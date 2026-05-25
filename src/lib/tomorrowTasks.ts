@@ -88,7 +88,7 @@ export function buildTomorrowTasks(
       id: "sat-pretest-resume-draft1",
       title: "Resume SAT Draft 1",
       detail: "Diagnostic in progress",
-      href: "/sat/pretest",
+      href: "/subjects/sat-prep#diagnostic",
       source: "pretest",
     });
   } else if (satFocus && draft2Active) {
@@ -96,15 +96,15 @@ export function buildTomorrowTasks(
       id: "sat-pretest-resume-draft2",
       title: "Resume SAT Draft 2",
       detail: "Gap follow-up in progress",
-      href: "/sat/pretest",
+      href: "/subjects/sat-prep#diagnostic",
       source: "pretest",
     });
   } else if (satFocus && !draft1Done && !draft1Active) {
     push({
       id: "sat-pretest-draft1",
-      title: "SAT Draft 1 diagnostic",
-      detail: readinessNudge ?? "15–20 min · answer + rationale",
-      href: "/sat/pretest",
+      title: "Optional SAT baseline",
+      detail: readinessNudge ?? "On SAT Prep when ready",
+      href: "/subjects/sat-prep#diagnostic",
       source: "pretest",
     });
   } else if (draft1Done) {
@@ -139,7 +139,7 @@ export function buildTomorrowTasks(
         id: "sat-pretest-draft2",
         title: "SAT Draft 2 from gaps (optional)",
         detail: weak ? `When ready · ${weak}` : "Optional gap follow-up",
-        href: "/sat/pretest",
+        href: "/subjects/sat-prep#diagnostic",
         source: "pretest",
       });
     }

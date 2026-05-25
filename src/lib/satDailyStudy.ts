@@ -64,9 +64,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (draft1Active) {
     return {
       headline: focusPrefix,
-      detail: "Draft 1 in progress — finish when you have 15–20 minutes.",
-      href: "/sat/pretest",
-      buttonLabel: "Resume Draft 1",
+      detail: "Draft 1 in progress — open SAT Prep to resume your optional baseline.",
+      href: "/subjects/sat-prep#diagnostic",
+      buttonLabel: "Open SAT Prep",
       kind: "resume_draft1",
       intensity,
     };
@@ -75,9 +75,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (draft2Active) {
     return {
       headline: focusPrefix,
-      detail: "Draft 2 gap follow-up in progress.",
-      href: "/sat/pretest",
-      buttonLabel: "Resume Draft 2",
+      detail: "Draft 2 gap follow-up in progress — continue from SAT Prep.",
+      href: "/subjects/sat-prep#diagnostic",
+      buttonLabel: "Open SAT Prep",
       kind: "resume_draft2",
       intensity,
     };
@@ -87,10 +87,11 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
     return {
       headline: focusPrefix,
       detail: "Optional one-time baseline — daily study is track, mistake log, and official practice.",
-      href: "/sat/pretest",
-      buttonLabel: "Start baseline (optional)",
+      href: "/subjects/sat-prep#official",
+      buttonLabel: "Official practice",
       kind: "start_draft1",
       intensity,
+      diagnosticNote: "Optional baseline lives on SAT Prep when you want it.",
     };
   }
 

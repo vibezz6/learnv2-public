@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Claude Cloud — warm dark, terracotta accent (see ~/cursor/LEARN-V2-PLAN.md) */
+/* Learn v2 — warm dark, terracotta accent */
 :root {
   --bg: #131110;
   --bg-elevated: #1c1a18;

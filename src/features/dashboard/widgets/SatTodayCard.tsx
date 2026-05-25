@@ -78,7 +78,10 @@ export function SatTodayCard({ subjects, compact = false }: Props) {
                   Mistake log
                 </Link>
                 {showDiagnosticLink ? (
-                  <Link to="/sat/pretest" className="text-[var(--accent-2)] hover:underline">
+                  <Link
+                    to="/subjects/sat-prep#diagnostic"
+                    className="text-[var(--accent-2)] hover:underline"
+                  >
                     Optional diagnostic
                   </Link>
                 ) : (
@@ -106,7 +109,7 @@ export function SatTodayCard({ subjects, compact = false }: Props) {
                 </Button>
               </Link>
               {showDiagnosticLink ? (
-                <Link to="/sat/pretest" className="min-w-0 sm:flex-1">
+                <Link to="/subjects/sat-prep#diagnostic" className="min-w-0 sm:flex-1">
                   <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
                     Optional diagnostic
                   </Button>

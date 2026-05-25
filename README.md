@@ -1,8 +1,8 @@
 # Learn v2
 
-Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
+Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.1.3 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.1.4 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -19,7 +19,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 ## Stack
 
 - React 19 + TypeScript + Vite 8
-- Tailwind CSS v4 · Neural Utopia design tokens
+- Tailwind CSS v4 · warm dark design tokens
 - React Router v7 · shareable lesson URLs
 - Zustand + persist · localStorage-first, no accounts
 - KaTeX · PWA (manifest + service worker)
@@ -29,7 +29,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 **Core loop**
 
 - **Campus home** — enrolled track, weekly syllabus, SAT next step, review/timer/stats links
-- **Neural Command Center** — continue learning, review queue, daily challenge, track recommendation
+- **Today** — continue learning, week plan, spaced review, daily challenge
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
 - **SAT Prep** — 80-lesson Digital SAT path (gap drills st76–st80, mistake log, in-app Draft 1/2/3 diagnostic, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
@@ -186,6 +186,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 44 Dashboard white-screen fix (65) | ✅ **v2.1.1** — WeekPlanCard no longer passes `undefined` into admissions loaders (crashed `/`) |
 | 45 Route page chrome (66) | ✅ **v2.1.2** — PageContainer + PageHeader on Review, Saved, Stats, Settings, Campus tools, subjects/tracks, college, SAT pretest, lessons, notes, quiz |
 | 46 Stats-only analytics (67) | ✅ **v2.1.3** — heatmap, quiz scores, math visualizations live on `/stats` only; removed dead dashboard widgets |
+| 47 Campus hub + SAT pretest IA (68) | ✅ **v2.1.4** — `/campus` sections (college + study/labs); pretest via SAT Prep `#diagnostic` + ⌘K only; voice cleanup |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

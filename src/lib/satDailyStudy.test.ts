@@ -68,7 +68,8 @@ describe("satDailyStudy", () => {
       storage,
     });
     expect(command.kind).toBe("start_draft1");
-    expect(command.href).toBe("/sat/pretest");
+    expect(command.href).toBe("/subjects/sat-prep#official");
+    expect(command.diagnosticNote).toContain("SAT Prep");
   });
 
   it("prefers mistake review on low readiness after Draft 1", () => {

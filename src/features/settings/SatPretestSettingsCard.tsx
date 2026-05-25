@@ -144,9 +144,9 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       </div>
 
       <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
-        <Link to="/sat/pretest" className="min-w-0 min-[481px]:flex-1">
+        <Link to="/subjects/sat-prep#diagnostic" className="min-w-0 min-[481px]:flex-1">
           <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-            Open diagnostic tool
+            Open SAT Prep diagnostic
           </Button>
         </Link>
         <Button

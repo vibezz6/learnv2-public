@@ -2,8 +2,6 @@ import { useCallback, useState, type FormEvent } from "react";
 import { Calendar, ExternalLink, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button, Card } from "@/components/ui";
-import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
-import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
 import {
   addPracticeSession,
   getLatestPracticeSession,
@@ -35,7 +33,6 @@ interface Props {
 }
 
 export function SatOfficialResourcesCard({ id }: Props) {
-  const draft1Done = !!getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const [revision, setRevision] = useState(0);
   const [section, setSection] = useState<SatPracticeSection>("math");
   const [source, setSource] = useState<SatPracticeSource>("bluebook");
@@ -74,21 +71,6 @@ export function SatOfficialResourcesCard({ id }: Props) {
           </p>
         </div>
       </div>
-
-      {!draft1Done ? (
-        <div className="rounded-[var(--radius)] border border-[var(--accent-border)] bg-[var(--accent-bg)]/40 px-4 py-3">
-          <p className="text-sm font-medium text-[var(--text-heading)]">Optional: Draft 1 baseline</p>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            One in-app diagnostic captures how you think before feedback. Official practice is your
-            daily engine either way.
-          </p>
-          <Link to="/sat/pretest" className="mt-3 inline-flex">
-            <Button variant="secondary" className="min-h-11 w-full touch-manipulation sm:w-auto">
-              Take optional baseline
-            </Button>
-          </Link>
-        </div>
-      ) : null}
 
       <form onSubmit={handleLogSession} className="space-y-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 p-4">
         <p className="text-sm font-medium text-[var(--text-heading)]">Log a practice session</p>

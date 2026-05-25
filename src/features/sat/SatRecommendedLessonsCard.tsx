@@ -67,7 +67,7 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
           ))}
         </ul>
       ) : (
-        <Link to="/sat/pretest" className="inline-block">
+        <Link to="#diagnostic" className="inline-block">
           <Button variant="secondary" className="min-h-11 touch-manipulation">
             <BookOpen size={14} />
             Optional diagnostic

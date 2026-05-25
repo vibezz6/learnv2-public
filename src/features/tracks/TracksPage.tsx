@@ -220,7 +220,7 @@ export function TracksPage() {
           <EmptyState
             icon={<span aria-hidden>◎</span>}
             title="No tracks started yet"
-            description="Your neural pathways are waiting. Pick a track below to begin building your foundation."
+            description="Pick a track below to start your first lessons."
           />
         </Card>
       )}

@@ -7,6 +7,7 @@ import { loadSubjectResult } from "@/curriculum/loader";
 import type { LoadSubjectResult } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
+import { SatDiagnosticSection } from "@/features/sat/SatDiagnosticSection";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
 import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
 import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsCard";
@@ -567,6 +568,8 @@ export function SubjectDetailPage() {
       {isSatPrep ? (
         <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
       ) : null}
+
+      {isSatPrep ? <SatDiagnosticSection /> : null}
 
       {isSatPrep ? (
         <div id="mistakes" className="scroll-mt-6">
