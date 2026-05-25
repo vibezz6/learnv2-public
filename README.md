@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.33 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.34 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -167,6 +167,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 25 Unified Cursor import (45) | ✅ **v2.0.31** — Draft 2 + lesson plan import; recommended lessons prefer plan |
 | 26 Pretest to mistake log (46) | ✅ **v2.0.32** — log diagnostic misses to SAT mistake log from results |
 | 27 Gap lesson manifest (47) | ✅ **v2.0.33** — proposed vs existing nodes from imported lesson plan |
+| 28 Narrow gap curriculum (48) | ✅ **v2.0.34** — five targeted SAT prep nodes (st76–st80) on August track |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

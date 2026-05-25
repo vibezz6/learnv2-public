@@ -100,6 +100,11 @@ export const tracks: LearningTrack[] = [
       lesson("sat-prep", "st73"),
       lesson("sat-prep", "st74"),
       lesson("sat-prep", "st75"),
+      lesson("sat-prep", "st76"),
+      lesson("sat-prep", "st77"),
+      lesson("sat-prep", "st78"),
+      lesson("sat-prep", "st79"),
+      lesson("sat-prep", "st80"),
     ],
   },
   {

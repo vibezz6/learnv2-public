@@ -19,7 +19,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "c",
     explanation: "Add 7 to both sides to get 3x = 27, then divide by 3 to get x = 9.",
-    relatedNodeIds: ["st4", "st17"],
+    relatedNodeIds: ["st4", "st76", "st17"],
   },
   {
     id: "draft1-math-percent-1",
@@ -38,7 +38,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: "The increase is 12 dollars. 12 divided by the original 80 is 0.15, or 15%.",
-    relatedNodeIds: ["st5", "st19"],
+    relatedNodeIds: ["st5", "st77", "st19"],
   },
   {
     id: "draft1-math-quadratic-1",
@@ -56,7 +56,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "a",
     explanation: "The factors need to multiply to 12 and add to 7, so 3 and 4 work.",
-    relatedNodeIds: ["st6", "st20"],
+    relatedNodeIds: ["st6", "st80", "st20"],
   },
   {
     id: "draft1-math-data-1",
@@ -111,7 +111,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "c",
     explanation: "Two independent clauses can be joined with a semicolon.",
-    relatedNodeIds: ["st10", "st27"],
+    relatedNodeIds: ["st10", "st78", "st27"],
   },
   {
     id: "draft1-rw-transition-1",
@@ -130,7 +130,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: "The second sentence contrasts cost and durability with the first design.",
-    relatedNodeIds: ["st13", "st33"],
+    relatedNodeIds: ["st13", "st79", "st33"],
   },
   {
     id: "draft1-rw-inference-1",

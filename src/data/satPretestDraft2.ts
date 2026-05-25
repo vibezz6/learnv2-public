@@ -20,7 +20,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: "Subtract 2x and 12 from both sides: 3x = 15, so x = 5.",
-    relatedNodeIds: ["st4", "st17"],
+    relatedNodeIds: ["st4", "st76", "st17"],
   },
   {
     id: "draft2-math-percent-1",
@@ -38,7 +38,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "c",
     explanation: "25% of 60 is 15, so the sale price is 60 − 15 = 45 dollars.",
-    relatedNodeIds: ["st5", "st19"],
+    relatedNodeIds: ["st5", "st77", "st19"],
   },
   {
     id: "draft2-math-quadratic-1",
@@ -56,7 +56,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "a",
     explanation: "Factor: (x - 2)(x - 3) = 0.",
-    relatedNodeIds: ["st6", "st20"],
+    relatedNodeIds: ["st6", "st80", "st20"],
   },
   {
     id: "draft2-rw-boundaries-1",
@@ -74,7 +74,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: "Two independent clauses need a semicolon or period, not only a comma.",
-    relatedNodeIds: ["st10", "st27"],
+    relatedNodeIds: ["st10", "st78", "st27"],
   },
   {
     id: "draft2-rw-transition-1",
@@ -92,7 +92,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     ],
     correctChoiceId: "b",
     explanation: "However signals contrast between noisy and clean samples.",
-    relatedNodeIds: ["st13", "st33"],
+    relatedNodeIds: ["st13", "st79", "st33"],
   },
   {
     id: "draft2-rw-inference-1",

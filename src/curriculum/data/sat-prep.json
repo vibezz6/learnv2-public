@@ -4538,6 +4538,191 @@
           "explanation": "Full-test practice trains stamina and pacing — protect time with eliminate-and-guess habits."
         }
       ]
+    },
+    {
+      "id": "st76",
+      "name": "Gap drill — Linear equations",
+      "description": "Short retarget set for isolating x, checking arithmetic, and translating one-step word problems after a diagnostic miss.",
+      "xpValue": 70,
+      "parentIds": ["st4"],
+      "estimatedMinutes": 35,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Same operation on both sides",
+        "Plug answer back in",
+        "Define the variable before solving"
+      ],
+      "whyItMatters": "Diagnostic gaps in linear equations usually come from rushing isolation — this drill slows the steps down.",
+      "practiceProblems": [
+        "Solve 4x - 9 = 15 and verify by substitution.",
+        "Write an equation for: a fee of $12 plus $3 per mile for m miles."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Linear equations",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-basic-eq-ineq",
+          "type": "practice",
+          "whyHelpful": "Extra reps after a Learn diagnostic miss."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st76_1",
+          "question": "If 5x + 2 = 27, what is x?",
+          "options": ["4", "5", "6", "25"],
+          "correctIndex": 1,
+          "explanation": "Subtract 2, then divide by 5: x = 5."
+        }
+      ]
+    },
+    {
+      "id": "st77",
+      "name": "Gap drill — Percent change",
+      "description": "Retarget percent increase/decrease and which number is the original when a diagnostic flagged PSDA misses.",
+      "xpValue": 70,
+      "parentIds": ["st5"],
+      "estimatedMinutes": 35,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Percent change uses the original as denominator",
+        "Increase vs decrease direction",
+        "Quick estimate to catch unreasonable answers"
+      ],
+      "whyItMatters": "Percent traps on the SAT are often reading traps — this lesson pairs with mistake-log retargeting.",
+      "practiceProblems": [
+        "A price drops from $96 to $84. Find the percent decrease.",
+        "After a 20% raise, salary is $36/hr. What was the old wage?"
+      ],
+      "resources": [
+        {
+          "title": "Khan — Percent problems",
+          "url": "https://www.khanacademy.org/math/pre-algebra/pre-algebra-ratios-rates",
+          "type": "practice",
+          "whyHelpful": "Timed percent drills."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st77_1",
+          "question": "From $50 to $65 is what percent increase?",
+          "options": ["15%", "30%", "65%", "130%"],
+          "correctIndex": 1,
+          "explanation": "Change is 15; 15/50 = 0.30 → 30%."
+        }
+      ]
+    },
+    {
+      "id": "st78",
+      "name": "Gap drill — Sentence boundaries",
+      "description": "Comma splices, run-ons, and semicolon joins — targeted R&W drill after diagnostic grammar gaps.",
+      "xpValue": 70,
+      "parentIds": ["st10"],
+      "estimatedMinutes": 30,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Two independent clauses need strong punctuation",
+        "Semicolon between complete sentences",
+        "Fanboys with comma for compound sentences"
+      ],
+      "whyItMatters": "Standard English conventions are fast points when you recognize boundary patterns.",
+      "practiceProblems": [
+        "Fix: \"The trial ended, the results were published.\"",
+        "Choose the best join for two related independent clauses."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Sentence boundaries",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Official-style grammar practice."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st78_1",
+          "question": "Which best joins two independent clauses?",
+          "options": [
+            "The door opened, the room was dark.",
+            "The door opened; the room was dark.",
+            "The door opened the room was dark.",
+            "The door opened, and the room was dark."
+          ],
+          "correctIndex": 1,
+          "explanation": "A semicolon can link two independent clauses without a conjunction."
+        }
+      ]
+    },
+    {
+      "id": "st79",
+      "name": "Gap drill — Transitions",
+      "description": "Contrast, continuation, and cause-effect transitions in context — for rhetorical synthesis and passage logic misses.",
+      "xpValue": 70,
+      "parentIds": ["st13"],
+      "estimatedMinutes": 30,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Contrast vs continuation signals",
+        "However vs therefore vs likewise",
+        "Read the sentence before and after the blank"
+      ],
+      "whyItMatters": "Transition items test logic between sentences, not vocabulary alone.",
+      "practiceProblems": [
+        "Pick the transition that shows contrast between two ideas.",
+        "Remove the transition that does not match the logic."
+      ],
+      "resources": [
+        {
+          "title": "Khan — Transitions",
+          "url": "https://www.khanacademy.org/test-prep/sat/sat-reading-writing-practice",
+          "type": "practice",
+          "whyHelpful": "Expression of Ideas practice set."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st79_1",
+          "question": "The first plan was cheap but fragile. _____, the redesign cost more but lasted.",
+          "options": ["Similarly", "By contrast", "For example", "Therefore"],
+          "correctIndex": 1,
+          "explanation": "By contrast signals opposition between the two designs."
+        }
+      ]
+    },
+    {
+      "id": "st80",
+      "name": "Gap drill — Quadratics",
+      "description": "Factoring, roots, and the vertex form intuition — for Advanced Math diagnostic gaps.",
+      "xpValue": 80,
+      "parentIds": ["st6"],
+      "estimatedMinutes": 40,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Factor when coefficients are friendly",
+        "Zero product property",
+        "Quadratic graphs: parabola opens up or down"
+      ],
+      "whyItMatters": "Quadratic misses often mix algebra slips with not checking both solutions.",
+      "practiceProblems": [
+        "Solve x^2 - 5x + 6 = 0 by factoring.",
+        "How many real solutions does x^2 + 4 = 0 have?"
+      ],
+      "resources": [
+        {
+          "title": "Khan — Quadratics",
+          "url": "https://www.khanacademy.org/math/algebra-home/alg-quadratics",
+          "type": "practice",
+          "whyHelpful": "Structured quadratic drills."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_st80_1",
+          "question": "What are the solutions to x^2 - 9 = 0?",
+          "options": ["x = 3 only", "x = -3 only", "x = 3 or x = -3", "x = 9"],
+          "correctIndex": 2,
+          "explanation": "Difference of squares: (x - 3)(x + 3) = 0."
+        }
+      ]
     }
   ]
 }
