@@ -12,6 +12,7 @@ import {
   NotesPage,
   QuizRoutePage,
   ReviewPage,
+  SatPretestPage,
   SettingsPage,
   StatsPage,
   TimerPage,
@@ -48,6 +49,7 @@ export function App() {
               <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
               <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
               <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
+              <Route path="sat/pretest" element={<SatPretestPage />} />
               <Route path="bookmarks" element={<BookmarksPage />} />
               <Route path="review" element={<ReviewPage />} />
               <Route path="stats" element={<StatsPage />} />

@@ -139,6 +139,12 @@ export function CampusHome({ subjects }: Props) {
               </p>
               <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
                 <Link
+                  to="/sat/pretest"
+                  className="text-[var(--accent-2)] hover:underline"
+                >
+                  Draft 1 diagnostic
+                </Link>
+                <Link
                   to="/subjects/sat-prep#mistakes"
                   className="text-[var(--accent-2)] hover:underline"
                 >

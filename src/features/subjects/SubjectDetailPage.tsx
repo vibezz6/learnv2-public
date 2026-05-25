@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { BookOpen, ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronLeft, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
 import { Button, Card, EmptyState } from "@/components/ui";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { loadSubjectResult } from "@/curriculum/loader";
@@ -545,6 +545,23 @@ export function SubjectDetailPage() {
         total={subject.nodes.length}
         className="mt-4"
       />
+
+      {isSatPrep ? (
+        <Card variant="primary" className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-[var(--text-heading)]">Draft 1 SAT diagnostic</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              Answer original SAT-style questions and explain your reasoning before feedback.
+            </p>
+          </div>
+          <Link to="/sat/pretest" className="shrink-0">
+            <Button className="min-h-11 w-full sm:w-auto">
+              Take Draft 1
+              <ArrowRight size={14} />
+            </Button>
+          </Link>
+        </Card>
+      ) : null}
 
       {isSatPrep ? (
         <div id="mistakes" className="scroll-mt-6">

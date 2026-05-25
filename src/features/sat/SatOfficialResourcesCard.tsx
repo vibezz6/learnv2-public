@@ -1,5 +1,6 @@
 import { Calendar, ExternalLink, GraduationCap } from "lucide-react";
-import { Card } from "@/components/ui";
+import { Link } from "react-router-dom";
+import { Button, Card } from "@/components/ui";
 
 const LINKS = [
   {
@@ -35,6 +36,18 @@ export function SatOfficialResourcesCard({ id }: Props) {
             within 24 hours so retarget drills stay focused.
           </p>
         </div>
+      </div>
+
+      <div className="rounded-[var(--radius)] border border-[var(--accent-border)] bg-[var(--accent-bg)]/40 px-4 py-3">
+        <p className="text-sm font-medium text-[var(--text-heading)]">Start with Learn Draft 1</p>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">
+          Take the in-app diagnostic first to capture answer choices and reasoning before feedback.
+        </p>
+        <Link to="/sat/pretest" className="mt-3 inline-flex">
+          <Button variant="secondary" className="min-h-10">
+            Take Draft 1 diagnostic
+          </Button>
+        </Link>
       </div>
 
       <ul className="space-y-2">

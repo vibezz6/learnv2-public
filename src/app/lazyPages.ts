@@ -6,6 +6,9 @@ export const LessonPage = lazy(() =>
 export const QuizRoutePage = lazy(() =>
   import("@/features/quiz/QuizRoutePage").then((m) => ({ default: m.QuizRoutePage })),
 );
+export const SatPretestPage = lazy(() =>
+  import("@/features/sat/SatPretestPage").then((m) => ({ default: m.SatPretestPage })),
+);
 export const NotesPage = lazy(() =>
   import("@/features/notes/NotesPage").then((m) => ({ default: m.NotesPage })),
 );

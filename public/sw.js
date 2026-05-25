@@ -1,4 +1,4 @@
-const CACHE_NAME = "learnv2-v2.0.23";
+const CACHE_NAME = "learnv2-v2.0.24";
 const STATIC_ASSETS = ["/", "/index.html", "/manifest.json", "/favicon.svg"];
 const ASSET_EXTENSIONS = [".js", ".css", ".woff2", ".svg", ".png", ".json"];
 
