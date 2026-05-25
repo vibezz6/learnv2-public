@@ -21,6 +21,7 @@ import {
   TradingLabPage,
 } from "./lazyPages";
 import { AchievementToast } from "@/components/AchievementToast";
+import { LevelUpModal } from "@/components/LevelUpModal";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { ServiceWorkerUpdateBanner } from "@/components/ServiceWorkerUpdateBanner";
 import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
@@ -67,6 +68,7 @@ export function App() {
           </Routes>
         </Suspense>
         <AchievementToast />
+        <LevelUpModal />
         <OnboardingModal />
         <ServiceWorkerUpdateBanner />
       </ComponentErrorBoundary>

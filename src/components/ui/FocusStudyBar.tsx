@@ -5,12 +5,18 @@ interface FocusStudyBarProps {
   backTo: string;
   backLabel: string;
   onExitFocus: () => void;
+  accentColor?: string;
 }
 
 /** Compact chrome shown in focus mode instead of PageHeader. */
-export function FocusStudyBar({ backTo, backLabel, onExitFocus }: FocusStudyBarProps) {
+export function FocusStudyBar({ backTo, backLabel, onExitFocus, accentColor }: FocusStudyBarProps) {
   return (
-    <div className="flex items-center justify-between gap-3 pb-4">
+    <div
+      className="flex items-center justify-between gap-3 border-b pb-4"
+      style={{
+        borderColor: accentColor ? `${accentColor}40` : "var(--border)",
+      }}
+    >
       <Link
         to={backTo}
         className="text-sm text-[var(--text-muted)] hover:text-[var(--text-heading)]"

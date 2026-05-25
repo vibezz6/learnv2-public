@@ -6,6 +6,7 @@ import {
   ACTIVITY_UPDATED_EVENT,
   formatActivityLabel,
   listActivities,
+  listActivitiesForDate,
   type StudyActivityEvent,
 } from "@/lib/studyActivity";
 
@@ -19,10 +20,23 @@ function activityHref(event: StudyActivityEvent, subjects: Subject[]): string | 
   return `/subjects/${found.subject.id}/${found.node.id}`;
 }
 
-export function StudyActivityList({ subjects, limit = 25 }: { subjects: Subject[]; limit?: number }) {
-  const [events, setEvents] = useState<StudyActivityEvent[]>(() => listActivities(limit));
+export function StudyActivityList({
+  subjects,
+  limit = 25,
+  filterDate,
+}: {
+  subjects: Subject[];
+  limit?: number;
+  filterDate?: string | null;
+}) {
+  const loadEvents = useCallback(() => {
+    if (filterDate) return listActivitiesForDate(filterDate).slice(0, limit);
+    return listActivities(limit);
+  }, [filterDate, limit]);
 
-  const refresh = useCallback(() => setEvents(listActivities(limit)), [limit]);
+  const [events, setEvents] = useState<StudyActivityEvent[]>(loadEvents);
+
+  const refresh = useCallback(() => setEvents(loadEvents()), [loadEvents]);
 
   useEffect(() => {
     refresh();
@@ -33,7 +47,9 @@ export function StudyActivityList({ subjects, limit = 25 }: { subjects: Subject[
   if (events.length === 0) {
     return (
       <p className="text-sm text-[var(--text-muted)]">
-        Complete a lesson, save office-hours notes, or log SAT practice to build your activity timeline.
+        {filterDate
+          ? `No activity logged on ${filterDate}.`
+          : "Complete a lesson, save office-hours notes, or log SAT practice to build your activity timeline."}
       </p>
     );
   }

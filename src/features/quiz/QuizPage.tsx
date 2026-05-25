@@ -11,6 +11,7 @@ interface QuizProps {
   questions: QuizQuestion[];
   nodeId: string;
   subjectId?: string;
+  accentColor?: string;
   contextLine?: string;
   onComplete: (score: number, total: number) => void;
 }
@@ -19,7 +20,14 @@ function introDismissKey(nodeId: string): string {
   return `learnv2_quiz_intro_dismissed_${nodeId}`;
 }
 
-export function Quiz({ questions, nodeId, subjectId, contextLine, onComplete }: QuizProps) {
+export function Quiz({
+  questions,
+  nodeId,
+  subjectId,
+  accentColor = "var(--accent)",
+  contextLine,
+  onComplete,
+}: QuizProps) {
   const saveQuizAttempt = useProgress((s) => s.saveQuizAttempt);
   const [initial] = useState(() => restoreQuizSession(nodeId, questions.length));
   const [current, setCurrent] = useState(initial.current);
@@ -211,7 +219,25 @@ export function Quiz({ questions, nodeId, subjectId, contextLine, onComplete }: 
       <div className="font-mono text-xs text-[var(--text-muted)]" aria-live="polite">
         Q{current + 1} / {questions.length}
       </div>
-      <Card className="stagger-item min-w-0">
+      <div
+        className="h-1 overflow-hidden rounded-full bg-[var(--border)]"
+        role="progressbar"
+        aria-valuenow={current + 1}
+        aria-valuemin={1}
+        aria-valuemax={questions.length}
+      >
+        <div
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${((current + 1) / questions.length) * 100}%`,
+            backgroundColor: accentColor,
+          }}
+        />
+      </div>
+      <Card
+        className="stagger-item min-w-0 border-l-[3px]"
+        style={{ borderLeftColor: accentColor }}
+      >
         <h2 id={questionId} className="break-words text-lg font-semibold text-[var(--text-heading)]">
           {q.question}
         </h2>

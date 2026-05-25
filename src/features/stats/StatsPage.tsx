@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Check,
@@ -28,6 +28,7 @@ import { MathInspiredSection } from "@/features/stats/widgets/MathInspiredSectio
 import { QuizMasteryPanel } from "@/features/stats/widgets/QuizMasteryPanel";
 import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
+import { WeekInReviewStrip } from "@/features/stats/widgets/WeekInReviewStrip";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
@@ -103,6 +104,8 @@ export function StatsPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [copiedTranscript, setCopiedTranscript] = useState(false);
   const [admissionsRevision, setAdmissionsRevision] = useState(0);
+  const [activityFilterDate, setActivityFilterDate] = useState<string | null>(null);
+  const clearActivityFilter = useCallback(() => setActivityFilterDate(null), []);
 
   useEffect(() => {
     loadAllSubjects().then(setSubjects);
@@ -338,8 +341,16 @@ export function StatsPage() {
           </Section>
 
           <Section eyebrow="Study activity" title="Time on task">
+          <Card className="stagger-item min-w-0 p-4 md:p-5">
+            <WeekInReviewStrip dailyMinutes={stats.dailyMinutes} />
+          </Card>
+
           <Card className="stagger-item min-w-0">
-            <StreakCalendar dailyMinutes={stats.dailyMinutes} />
+            <StreakCalendar
+              dailyMinutes={stats.dailyMinutes}
+              selectedDate={activityFilterDate}
+              onSelectDate={setActivityFilterDate}
+            />
           </Card>
 
           <Card className="stagger-item min-w-0">
@@ -393,8 +404,18 @@ export function StatsPage() {
           </Card>
 
           <Card className="stagger-item min-w-0">
-            <div className="mb-3 break-words font-semibold text-[var(--text-heading)]">Recent activity</div>
-            <StudyActivityList subjects={subjects} />
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <div className="break-words font-semibold text-[var(--text-heading)]">Recent activity</div>
+              {activityFilterDate && (
+                <Button variant="ghost" className="min-h-9 text-xs" onClick={clearActivityFilter}>
+                  Clear filter ({activityFilterDate})
+                </Button>
+              )}
+            </div>
+            <StudyActivityList
+              subjects={subjects}
+              filterDate={activityFilterDate}
+            />
           </Card>
           </Section>
 

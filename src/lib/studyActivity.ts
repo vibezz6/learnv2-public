@@ -235,6 +235,60 @@ export function getTodayStudySummary(
   };
 }
 
+/** UTC date keys for the last 7 calendar days ending today (inclusive). */
+export function last7UtcDateKeys(now = Date.now()): string[] {
+  const d = new Date(now);
+  const todayUTC = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const keys: string[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(todayUTC);
+    date.setUTCDate(date.getUTCDate() - i);
+    keys.push(
+      `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`,
+    );
+  }
+  return keys;
+}
+
+export function sumMinutesForDates(
+  dailyMinutes: Record<string, number>,
+  dates: string[],
+): number {
+  return dates.reduce((sum, key) => sum + (dailyMinutes[key] ?? 0), 0);
+}
+
+export function buildWeekInReviewParagraph(
+  dailyMinutes: Record<string, number>,
+  storage: Storage = localStorage,
+  now = Date.now(),
+): string {
+  const mix = getWeekActivityMix(storage, now);
+  const weekMinutes = Math.round(sumMinutesForDates(dailyMinutes, last7UtcDateKeys(now)));
+
+  if (mix.totalEvents === 0 && weekMinutes === 0) {
+    return "No study logged this week yet — a lesson or office-hours session starts your streak.";
+  }
+
+  const parts: string[] = [];
+  parts.push(
+    `${mix.daysActive} active day${mix.daysActive === 1 ? "" : "s"} · ${mix.totalEvents} action${mix.totalEvents === 1 ? "" : "s"}`,
+  );
+  if (weekMinutes > 0) {
+    parts.push(`${weekMinutes}m on the timer`);
+  }
+
+  const ranked = Object.entries(mix.byType)
+    .map(([type, count]) => ({ type: type as StudyActivityType, count: count ?? 0 }))
+    .sort((a, b) => b.count - a.count);
+  const top = ranked[0];
+  if (top && top.count > 0) {
+    const label = STUDY_ACTIVITY_LABELS[top.type]?.toLowerCase() ?? top.type;
+    parts.push(`most: ${label}`);
+  }
+
+  return `This week — ${parts.join(" · ")}.`;
+}
+
 export function getWeekActivityMix(
   storage: Storage = localStorage,
   now = Date.now(),

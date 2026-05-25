@@ -21,6 +21,7 @@ import {
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { getLastActivity, formatActivityLabel } from "@/lib/studyActivity";
+import { getSubjectAccent } from "@/lib/subjectChrome";
 import {
   MAX_DAILY_REVIEWS,
   SPACED_REPETITION_INTERVALS,
@@ -309,14 +310,19 @@ function ReviewCard({
     ["easy", nextEasy],
   ] as const;
 
+  const subjectAccent = getSubjectAccent(item.subject);
+
   return (
     <Card
       glow={spotlight}
-      className={`min-w-0 overflow-hidden ${spotlight ? "p-6 md:p-8" : "p-4 md:p-5"} ${
-        urgent
-          ? "border-l-[3px] border-l-[var(--danger)]"
-          : "border-l-[3px] border-l-[var(--warning)]"
-      }`}
+      className={`min-w-0 overflow-hidden border-l-[3px] ${spotlight ? "p-6 md:p-8" : "p-4 md:p-5"}`}
+      style={{
+        borderLeftColor: urgent
+          ? "var(--danger)"
+          : spotlight
+            ? subjectAccent
+            : "var(--warning)",
+      }}
     >
       <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0 flex-1">

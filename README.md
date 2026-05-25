@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.34 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.3.39 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -229,6 +229,11 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 88 Essay on Today (109) | ✅ **v2.3.34** — essays due soon strip |
 | 89 ⌘K college (110) | ✅ **v2.3.34** — deadline counts + recent activity jumps |
 | 90 Campus pulse (111) | ✅ existing — admissions hub blocking row |
+| 91 Week in review (112) | ✅ **v2.3.35** — Stats paragraph from activity + minutes |
+| 92 Heatmap filter (113) | ✅ **v2.3.36** — calendar day filters recent activity |
+| 93 Activity milestones (114) | ✅ **v2.3.37** — ledger milestone toasts |
+| 94 Level-up modal (115) | ✅ **v2.3.38** — level-up modal separate from achievement toast |
+| 95 Subject chrome (116) | ✅ **v2.3.39** — quiz/review accent from subject color |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

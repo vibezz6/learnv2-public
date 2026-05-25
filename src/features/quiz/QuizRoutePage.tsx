@@ -10,6 +10,7 @@ import {
   PageLoading,
 } from "@/components/ui";
 import { Quiz } from "@/features/quiz/QuizPage";
+import { getSubjectAccent } from "@/lib/subjectChrome";
 import { usePreferences } from "@/stores/preferences";
 
 export function QuizRoutePage() {
@@ -47,15 +48,21 @@ export function QuizRoutePage() {
 
   const questions = node.quiz ?? [];
   const lessonPath = `/subjects/${subject.id}/${node.id}`;
+  const accentColor = getSubjectAccent(subject);
 
   return (
     <FocusShell active={focusMode}>
-      <PageContainer size="narrow" className="space-y-4">
+      <PageContainer
+        size="narrow"
+        className="space-y-4"
+        style={{ borderLeft: `3px solid ${accentColor}`, paddingLeft: "1rem" }}
+      >
         {focusMode ? (
           <FocusStudyBar
             backTo={lessonPath}
             backLabel={node.name}
             onExitFocus={toggleFocusMode}
+            accentColor={accentColor}
           />
         ) : (
           <PageHeader
@@ -64,6 +71,7 @@ export function QuizRoutePage() {
               label: node.name,
             }}
             title={`Quiz · ${node.name}`}
+            subtitle={subject.name}
             divider={false}
           />
         )}
@@ -72,6 +80,7 @@ export function QuizRoutePage() {
           questions={questions}
           nodeId={node.id}
           subjectId={subject.id}
+          accentColor={accentColor}
           contextLine={node.whyItMatters || node.keyConcepts[0]}
           onComplete={() => {
             /* score saved in Quiz component */

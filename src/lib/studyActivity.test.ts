@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ACTIVITY_UPDATED_EVENT,
+  buildWeekInReviewParagraph,
   getTodayStudySummary,
   getWeekActivityMix,
   listActivities,
@@ -109,6 +110,18 @@ describe("studyActivity", () => {
     const mix = getWeekActivityMix(storage);
     expect(mix.totalEvents).toBe(1);
     expect(mix.byType.review_done).toBe(1);
+  });
+
+  it("buildWeekInReviewParagraph summarizes an active week", () => {
+    recordStudyActivity({ type: "lesson_completed", nodeId: "a" }, storage);
+    recordStudyActivity({ type: "quiz_completed", nodeId: "b" }, storage);
+    const text = buildWeekInReviewParagraph({ "2026-05-25": 20 }, storage);
+    expect(text).toContain("This week");
+    expect(text).toContain("20m on the timer");
+  });
+
+  it("buildWeekInReviewParagraph handles empty week", () => {
+    expect(buildWeekInReviewParagraph({}, storage)).toContain("No study logged");
   });
 
   it("subscribeActivityUpdated fires on record", () => {
