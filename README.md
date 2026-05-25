@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.35 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.36 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -31,7 +31,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 - **Campus home** — enrolled track, weekly syllabus, SAT next step, review/timer/stats links
 - **Neural Command Center** — continue learning, review queue, daily challenge, track recommendation
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
-- **SAT Prep** — 75-lesson Digital SAT path (st66+ round-4/5 drills, mistake log, in-app Draft 1/2 diagnostic, Bluebook checkpoints) with **August SAT Track**
+- **SAT Prep** — 80-lesson Digital SAT path (gap drills st76–st80, mistake log, in-app Draft 1/2/3 diagnostic, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
 - **SRS review** — spaced repetition queue with due-date scheduling
 - **Tracks** — guided learning paths across subjects
@@ -169,6 +169,9 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 27 Gap lesson manifest (47) | ✅ **v2.0.33** — proposed vs existing nodes from imported lesson plan |
 | 28 Narrow gap curriculum (48) | ✅ **v2.0.34** — five targeted SAT prep nodes (st76–st80) on August track |
 | 29 Sleep readiness micro (49) | ✅ **v2.0.35** — local test-week check-in and nudge on campus home |
+| 30 OpenRouter pretest review (50) | ✅ **v2.0.36** — optional AI rationale review on diagnostic misses |
+| 31 Draft 3 retest cycle (51) | ✅ **v2.0.36** — third diagnostic tab with Draft 1 comparison |
+| 32 Tomorrow + SAT hub (52–53) | ✅ **v2.0.36** — pretest-aware tomorrow tasks; dashboard SAT week card |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

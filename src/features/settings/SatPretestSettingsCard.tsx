@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Card, ConfirmDialog } from "@/components/ui";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
+import { SAT_PRETEST_DRAFT_3_ID } from "@/data/satPretestDrafts";
 import { clearSatLessonPlan, loadSatLessonPlan } from "@/lib/satLessonPlan";
 import {
   clearAllSatPretestData,
@@ -23,12 +24,14 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
     const attempts = listSatPretestAttempts();
     const draft1 = attempts.filter((attempt) => attempt.draftId === SAT_PRETEST_DRAFT_1_ID);
     const draft2 = attempts.filter((attempt) => attempt.draftId === SAT_PRETEST_DRAFT_2_ID);
+    const draft3 = attempts.filter((attempt) => attempt.draftId === SAT_PRETEST_DRAFT_3_ID);
     const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
     const lessonPlan = loadSatLessonPlan();
     return {
       hasData: attempts.length > 0 || !!lessonPlan,
       draft1Count: draft1.length,
       draft2Count: draft2.length,
+      draft3Count: draft3.length,
       draft1Score: draft1Done?.scoreSummary
         ? `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`
         : null,
@@ -55,7 +58,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       <div>
         <h2 className="break-words font-semibold text-[var(--text-heading)]">SAT diagnostic</h2>
         <p className="mt-1 break-words text-sm text-[var(--text-muted)]">
-          Draft 1 and Draft 2 attempts, rationales, and exports live in localStorage on this device.
+          Draft 1–3 attempts, rationales, and exports live in localStorage on this device.
         </p>
       </div>
 
@@ -75,6 +78,10 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
           <li>
             Draft 2 attempts:{" "}
             <span className="font-medium text-[var(--text-heading)]">{summary.draft2Count}</span>
+          </li>
+          <li>
+            Draft 3 attempts:{" "}
+            <span className="font-medium text-[var(--text-heading)]">{summary.draft3Count}</span>
           </li>
           {summary.lessonPlanCount > 0 ? (
             <li>
@@ -116,7 +123,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       <ConfirmDialog
         open={resetOpen}
         title="Clear SAT diagnostic data?"
-        message="Removes Draft 1 and Draft 2 attempts, responses, scores, and the imported lesson plan on this device. Study progress and the mistake log are not affected."
+        message="Removes Draft 1–3 attempts, responses, scores, and the imported lesson plan on this device. Study progress and the mistake log are not affected."
         confirmLabel="Clear"
         danger
         onConfirm={handleResetConfirm}

@@ -1,7 +1,7 @@
 {
   "name": "learnv2",
   "private": true,
-  "version": "2.0.35",
+  "version": "2.0.36",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "openrouter:check": "node scripts/check-openrouter.mjs",
+    "openrouter:apply": "node scripts/apply-openrouter-key-from-env.mjs",
     "test:watch": "vitest",
     "curriculum:split": "node --experimental-strip-types scripts/split-curriculum.mts",
     "version:bump": "node scripts/bump-version.mjs patch",

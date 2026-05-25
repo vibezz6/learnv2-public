@@ -11,8 +11,9 @@ import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
 import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
+import { OPENROUTER_KEY } from "@/services/llmReview";
 
-const OPENROUTER_KEY = "learnapp_openrouter_key";
+const LEGACY_OPENROUTER_KEY = "learnapp_openrouter_key";
 
 export function SettingsPage() {
   const { theme, setTheme } = usePreferences();
@@ -27,7 +28,9 @@ export function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [apiKey, setApiKey] = useState(() => {
     try {
-      return localStorage.getItem(OPENROUTER_KEY) ?? "";
+      return (
+        localStorage.getItem(OPENROUTER_KEY) ?? localStorage.getItem(LEGACY_OPENROUTER_KEY) ?? ""
+      );
     } catch {
       return "";
     }
@@ -104,10 +107,14 @@ export function SettingsPage() {
       </Card>
 
       <Card className="min-w-0 space-y-3">
-        <h2 className="break-words font-semibold text-[var(--text-heading)]">OpenRouter API key (office hours)</h2>
+        <h2 className="break-words font-semibold text-[var(--text-heading)]">OpenRouter API key</h2>
         <p className="break-words text-sm text-[var(--text-muted)]">
-          Optional. Powers AI TA feedback and recall check-in on lesson office hours. Stored locally as{" "}
-          <code className="break-all font-mono text-xs">{OPENROUTER_KEY}</code>.
+          Optional. Powers office-hours TA feedback and post-completion SAT rationale review on
+          diagnostic misses (not live tutoring). Stored locally as{" "}
+          <code className="break-all font-mono text-xs">{OPENROUTER_KEY}</code>. Use{" "}
+          <code className="font-mono text-xs">npm run openrouter:check</code> with{" "}
+          <code className="font-mono text-xs">.env.local</code> to smoke-test the key — never commit
+          that file.
         </p>
         <input
           type="password"
@@ -119,8 +126,12 @@ export function SettingsPage() {
         <Button
           className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
           onClick={() => {
-            if (apiKey.trim()) localStorage.setItem(OPENROUTER_KEY, apiKey.trim());
-            else localStorage.removeItem(OPENROUTER_KEY);
+            if (apiKey.trim()) {
+              localStorage.setItem(OPENROUTER_KEY, apiKey.trim());
+            } else {
+              localStorage.removeItem(OPENROUTER_KEY);
+              localStorage.removeItem(LEGACY_OPENROUTER_KEY);
+            }
             setMessage("OpenRouter key saved locally.");
           }}
         >

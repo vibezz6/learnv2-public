@@ -4,11 +4,15 @@
 import type { NoteReview } from "@/curriculum/types";
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_KEY = "learnv2_openrouter_key";
+export const OPENROUTER_KEY = "learnv2_openrouter_key";
 const LEGACY_OPENROUTER_KEY = "learnapp_openrouter_key";
 const OPENROUTER_MODEL_KEY = "learnv2_openrouter_model";
 const LEGACY_OPENROUTER_MODEL_KEY = "learnapp_openrouter_model";
-const DEFAULT_MODEL = "deepseek/deepseek-chat-v3.1:free";
+const DEFAULT_MODEL = "openai/gpt-oss-20b:free";
+
+export function hasOpenRouterApiKey(): boolean {
+  return !!getApiKey();
+}
 
 // Get API key from localStorage (set by user or from config)
 function getApiKey(): string | null {
@@ -79,7 +83,7 @@ async function sendLLMRequest(
       "Content-Type": "application/json",
       "Authorization": `Bearer ${config.apiKey}`,
       "HTTP-Referer": "https://learnv2.app",
-      "X-Title": "Learn v2 Notes",
+      "X-Title": "Learn v2",
     },
     body: buildLLMRequestBody(config, systemPrompt, userPrompt, includeJsonFormat),
   });
@@ -286,4 +290,82 @@ Evaluate this answer and provide feedback in the specified JSON format.`;
     : "good-start";
 
   return { feedback: parsed.feedback, quality };
+}
+
+// --- SAT Pretest rationale review (post-completion only) ---
+
+export interface PretestRationaleReviewInput {
+  skill: string;
+  section: "math" | "rw";
+  domain: string;
+  prompt: string;
+  choices: { id: string; text: string }[];
+  selectedChoiceId: string;
+  correctChoiceId: string;
+  studentRationale: string;
+  explanation: string;
+}
+
+export interface SatPretestRationaleReview {
+  feedback: string;
+  misconception: string | null;
+  studyTip: string;
+}
+
+const PRETEST_RATIONALE_SYSTEM_PROMPT = `You are an SAT study coach reviewing a completed diagnostic item. The student already submitted their answer and rationale and can see the correct answer.
+
+Return JSON only:
+{
+  "feedback": "<2-3 sentences on their reasoning quality>",
+  "misconception": "<one short phrase for the likely error, or null if unclear>",
+  "studyTip": "<one concrete next step tied to the skill, not generic motivation>"
+}
+
+Rules:
+- Be encouraging but direct; reference their actual rationale text.
+- Do not suggest they are taking the test right now — this is a post-mortem review.
+- Do not invent official SAT score predictions.
+- studyTip should point to a practice habit (e.g. redo similar problems, check sign rules) not "study harder."
+- Keep misconception null if the miss was a careless slip with sound reasoning.`;
+
+export async function generateLLMPretestRationaleReview(
+  input: PretestRationaleReviewInput,
+): Promise<SatPretestRationaleReview | null> {
+  const selected = input.choices.find((choice) => choice.id === input.selectedChoiceId)?.text ?? input.selectedChoiceId;
+  const correct = input.choices.find((choice) => choice.id === input.correctChoiceId)?.text ?? input.correctChoiceId;
+
+  const userPrompt = `Section: ${input.section === "math" ? "Math" : "Reading & Writing"}
+Domain: ${input.domain}
+Skill: ${input.skill}
+
+Question: ${input.prompt}
+
+Choices: ${input.choices.map((choice) => `${choice.id}) ${choice.text}`).join(" | ")}
+
+Student selected: ${input.selectedChoiceId} (${selected})
+Correct answer: ${input.correctChoiceId} (${correct})
+
+Student rationale (their words): ${input.studentRationale}
+
+Lesson explanation: ${input.explanation}
+
+Review their thinking and return the JSON object.`;
+
+  const response = await callLLM(PRETEST_RATIONALE_SYSTEM_PROMPT, userPrompt);
+  if (!response) return null;
+
+  interface LLPretestOutput {
+    feedback: string;
+    misconception: string | null;
+    studyTip: string;
+  }
+
+  const parsed = parseJSON<LLPretestOutput>(response);
+  if (!parsed?.feedback?.trim() || !parsed.studyTip?.trim()) return null;
+
+  return {
+    feedback: parsed.feedback.trim(),
+    misconception: parsed.misconception?.trim() || null,
+    studyTip: parsed.studyTip.trim(),
+  };
 }
