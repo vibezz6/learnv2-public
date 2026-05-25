@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.54 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.3.55 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -99,7 +99,13 @@ Re-sync from v1: `npm run curriculum:split` (reads `Learn-v1/src/data/curriculum
 npm install
 npm run dev
 # → http://127.0.0.1:8080 (port is in vite.config.ts — do not pass :8080 on the command line)
+```
 
+If the app is dead locally, nothing is listening on 8080 — run `npm run dev` in this directory (or `npm run preview:live` after a build).
+
+**GitHub Pages** deploys on push to `main` (`.github/workflows/deploy-pages.yml`). Enable **Settings → Pages → GitHub Actions** once. Public URL: https://dishwashersol.github.io/learnv2/ (separate localStorage from localhost).
+
+```bash
 npm run build
 npm run preview
 npm run test
@@ -219,7 +225,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 78 Review cards (99) | ✅ **v2.3.22** — activity on card, keys 1–4 |
 | 79 Review copy (100) | ✅ **v2.3.23** — forgot interval consequence |
 | 80 Notes autosave (101) | ✅ **v2.3.24** — saved indicator on office hours |
-| 81 Notes diff (102) | — deferred |
+| 81 Notes diff (102) | ✅ **v2.3.55** — your notes panel on TA review step |
 | 82 Mentor export (103) | ✅ **v2.3.32** — copy recall check-in as markdown |
 | 83 Notes stepper (104) | ✅ **v2.3.33** — editor → review → mentor flow nav |
 | 84 Mistake drill (105) | ✅ existing — SAT mistake → lesson links |
@@ -244,6 +250,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 108 Curriculum lint (124) | ✅ **v2.3.52** — `npm run curriculum:lint` |
 | 109 SAT gap nodes (125) | ✅ existing — st76–st80 in sat-prep.json |
 | 110 Playwright smoke (126) | ✅ **v2.3.54** — Today + Stats e2e via `npm run test:e2e` |
+| 111 DAG examples (127) | ✅ **v2.3.55** — `examples/learnv2-wave1.json` + Pages deploy |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

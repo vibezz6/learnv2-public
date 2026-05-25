@@ -36,7 +36,7 @@ function RouteFallback() {
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ComponentErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>

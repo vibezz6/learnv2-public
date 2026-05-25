@@ -1,10 +1,12 @@
 {
   "name": "learnv2",
   "private": true,
-  "version": "2.3.54",
+  "version": "2.3.55",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host 127.0.0.1 --port 8080",
+    "preview:live": "npm run build && vite preview",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",

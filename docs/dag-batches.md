@@ -179,7 +179,7 @@ Operational map for the [52-batch roadmap](file:///Users/clawbot/.cursor/plans/l
 | 8 | ✅ v2.3.44 — batches 96–100 (motion, EmptyState, sidebar hints, ⌘K actions, focus bar) |
 | 9 | Skipped — mobile daily driver unchanged |
 | 10 | ✅ v2.3.54 — batches 106–110 (lazy Stats, defer KaTeX, curriculum lint, Playwright) |
-| 11 | Not started |
+| 11 | ✅ v2.3.55 — batch 111 + batch 81 notes diff; GitHub Pages deploy |
 
 ## Related
 

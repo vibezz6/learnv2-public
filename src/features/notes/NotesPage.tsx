@@ -36,6 +36,7 @@ import { usePreferences } from "@/stores/preferences";
 import { getNode, loadSubject } from "@/curriculum/loader";
 import type { MentorMessage, MentorSession, NoteReview, SkillNode, Subject } from "@/curriculum/types";
 import { getPromptsForSubject } from "@/data/notePrompts";
+import { NotesReviewDiffPanel } from "@/features/notes/widgets/NotesReviewDiffPanel";
 import {
   canAccessMentor,
   canAccessReview,
@@ -484,6 +485,7 @@ function NoteReviewPanel({
   onQuizMe: () => void;
 }) {
   const session = getSession(node.id);
+  const prompts = getPromptsForSubject(subject.id);
   const [review, setReview] = useState<NoteReview | null>(() => session?.review ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -582,6 +584,10 @@ function NoteReviewPanel({
             : "Rule-based TA feedback · saved on this lesson"}
         </p>
       </Card>
+
+      {session && (
+        <NotesReviewDiffPanel responses={session.responses} prompts={prompts} />
+      )}
 
       <ReviewSection title="Strengths" items={review.strengths} />
       <ReviewSection title="Gaps" items={review.gaps} emptyHint="No major gaps flagged — nice work." />

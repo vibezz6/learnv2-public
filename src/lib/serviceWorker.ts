@@ -19,7 +19,7 @@ export function registerAppServiceWorker(): void {
 
   window.addEventListener("load", () => {
     void navigator.serviceWorker
-      .register("/sw.js")
+      .register(`${import.meta.env.BASE_URL}sw.js`.replace(/\/+/g, "/"))
       .then((reg) => {
         registration = reg;
 
