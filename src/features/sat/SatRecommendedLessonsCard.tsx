@@ -4,6 +4,7 @@ import { Button, Card } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
 import type { SkillNode } from "@/curriculum/types";
 import type { NodeStatus } from "@/lib/campusHome";
+import { buildSatGapLessonManifest } from "@/lib/satGapLessonManifest";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
 
 export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
   const plan = getSatRecommendedLessons(subjects, getNodeStatus);
+  const gapManifest = buildSatGapLessonManifest(subjects);
+  const proposedRows = gapManifest?.rows.filter((row) => row.status === "proposed_new") ?? [];
 
   const heading =
     plan.source === "lesson_plan"
@@ -71,6 +74,32 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
           </Button>
         </Link>
       )}
+
+      {proposedRows.length > 0 ? (
+        <section className="space-y-2 rounded-[var(--radius)] border border-[var(--warning)]/35 bg-[var(--warning-bg)] p-4">
+          <h3 className="text-sm font-semibold text-[var(--text-heading)]">
+            Pending curriculum gaps
+          </h3>
+          <p className="text-sm text-[var(--text-muted)]">
+            These node ids are in your imported lesson plan but not in sat-prep.json yet. See{" "}
+            <code className="font-mono text-xs">docs/sat-gap-lesson-authoring.md</code>.
+          </p>
+          <ul className="space-y-2 text-sm">
+            {proposedRows.map((row) => (
+              <li
+                key={row.nodeId}
+                className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 px-3 py-2"
+              >
+                <span className="font-mono text-xs text-[var(--accent-2)]">{row.nodeId}</span>
+                <span className="mt-1 block text-[var(--text-muted)]">{row.reason}</span>
+                <span className="mt-1 block text-[11px] font-medium uppercase tracking-wide text-[var(--warning)]">
+                  Proposed new lesson
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </Card>
   );
 }
