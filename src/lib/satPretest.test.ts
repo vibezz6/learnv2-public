@@ -17,7 +17,9 @@ import {
   parseSatPretestDraft2ImportJson,
   recordSatPretestResponse,
   clearAllSatPretestData,
+  parseSatPretestExportRestoreJson,
   resetSatPretestDraft,
+  restoreSatPretestFromExport,
   startSatPretestAttempt,
   type SatPretestQuestion,
 } from "@/lib/satPretest";
@@ -456,5 +458,34 @@ describe("satPretest", () => {
     clearAllSatPretestData(storage);
     expect(storage.getItem(SAT_PRETEST_STORAGE_KEY)).toBeNull();
     expect(listSatPretestAttempts(storage)).toEqual([]);
+  });
+
+  it("restores a completed attempt from export JSON", () => {
+    const attempt = startSatPretestAttempt("draft-1", questions, storage)!;
+    for (const questionId of attempt.questionOrder) {
+      recordSatPretestResponse(
+        {
+          attemptId: attempt.id,
+          questionId,
+          selectedChoiceId: questionId === "sp1" ? "b" : "a",
+          rationale: "Because of the rule I applied.",
+          timeSpentSeconds: 30,
+        },
+        questions,
+        storage,
+      );
+    }
+    const done = completeSatPretestAttempt(attempt.id, questions, storage)!;
+    const payload = buildSatPretestExportPayload(done, questions, "2.0.37");
+    expect(payload).not.toBeNull();
+
+    clearAllSatPretestData(storage);
+    const restored = restoreSatPretestFromExport(payload, storage);
+    expect(restored).toMatchObject({ ok: true, draftId: "draft-1", replaced: false });
+    expect(getLatestCompletedSatPretestAttempt("draft-1", storage)?.id).toBe(done.id);
+  });
+
+  it("rejects invalid export restore JSON", () => {
+    expect(parseSatPretestExportRestoreJson("{}").ok).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Card, ConfirmDialog } from "@/components/ui";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
@@ -9,6 +9,7 @@ import {
   clearAllSatPretestData,
   getLatestCompletedSatPretestAttempt,
   listSatPretestAttempts,
+  parseSatPretestExportRestoreJson,
 } from "@/lib/satPretest";
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 export function SatPretestSettingsCard({ onMessage }: Props) {
   const [revision, setRevision] = useState(0);
   const [resetOpen, setResetOpen] = useState(false);
+  const restoreInputRef = useRef<HTMLInputElement>(null);
 
   const summary = useMemo(() => {
     void revision;
@@ -51,6 +53,23 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
     clearSatLessonPlan();
     setRevision((r) => r + 1);
     onMessage("Imported SAT lesson plan cleared.");
+  };
+
+  const handleRestoreFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = parseSatPretestExportRestoreJson(String(reader.result ?? ""));
+      if (!result.ok) {
+        onMessage(result.error);
+        return;
+      }
+      setRevision((r) => r + 1);
+      const verb = result.replaced ? "updated" : "restored";
+      onMessage(
+        `Draft ${result.draftId} attempt ${verb} on this device (${result.attemptId.slice(0, 8)}…).`,
+      );
+    };
+    reader.readAsText(file);
   };
 
   return (
@@ -95,6 +114,32 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       ) : (
         <p className="text-sm text-[var(--text-muted)]">No diagnostic attempts saved yet.</p>
       )}
+
+      <div className="space-y-2 border-t border-[var(--border)] pt-4">
+        <h3 className="text-sm font-medium text-[var(--text-heading)]">Restore export</h3>
+        <p className="text-xs text-[var(--text-muted)]">
+          Re-import a JSON file you downloaded from the diagnostic results screen (Draft 1–3). Replaces
+          the same attempt id if it already exists on this device.
+        </p>
+        <Button
+          variant="secondary"
+          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
+          onClick={() => restoreInputRef.current?.click()}
+        >
+          Restore from export JSON
+        </Button>
+        <input
+          ref={restoreInputRef}
+          type="file"
+          accept="application/json,.json"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleRestoreFile(file);
+            e.target.value = "";
+          }}
+        />
+      </div>
 
       <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
         <Link to="/sat/pretest" className="min-w-0 min-[481px]:flex-1">

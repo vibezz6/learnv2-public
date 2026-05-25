@@ -1043,3 +1043,67 @@ export function downloadSatPretestJson(
   URL.revokeObjectURL(url);
   return true;
 }
+
+export type SatPretestRestoreResult =
+  | { ok: true; draftId: string; attemptId: string; replaced: boolean }
+  | { ok: false; error: string };
+
+function isValidExportPayload(value: unknown): value is SatPretestExportPayload {
+  if (!value || typeof value !== "object") return false;
+  const payload = value as Partial<SatPretestExportPayload>;
+  return (
+    payload.schemaVersion === SAT_PRETEST_EXPORT_SCHEMA_VERSION &&
+    typeof payload.draftId === "string" &&
+    !!payload.attempt &&
+    isValidAttempt(payload.attempt) &&
+    payload.attempt.draftId === payload.draftId
+  );
+}
+
+/** Restore a diagnostic attempt from a downloaded export JSON file. */
+export function restoreSatPretestFromExport(
+  raw: unknown,
+  storage: Storage = localStorage,
+): SatPretestRestoreResult {
+  if (!isValidExportPayload(raw)) {
+    return {
+      ok: false,
+      error: "Invalid export — use a Learn v2 SAT pretest export JSON (schemaVersion 1).",
+    };
+  }
+
+  const payload = raw as SatPretestExportPayload;
+  const attempt: SatPretestAttempt = { ...payload.attempt };
+  if (attempt.status === "completed") {
+    if (payload.scoring && isValidScoreSummary(payload.scoring)) {
+      attempt.scoreSummary = payload.scoring;
+    } else if (!attempt.scoreSummary) {
+      return { ok: false, error: "Completed export is missing a score summary." };
+    }
+  }
+
+  const state = loadRaw(storage);
+  const existingIndex = state.attempts.findIndex((candidate) => candidate.id === attempt.id);
+  const replaced = existingIndex >= 0;
+  if (replaced) {
+    state.attempts[existingIndex] = attempt;
+  } else {
+    state.attempts.unshift(attempt);
+  }
+  saveRaw(state, storage);
+
+  return {
+    ok: true,
+    draftId: attempt.draftId,
+    attemptId: attempt.id,
+    replaced,
+  };
+}
+
+export function parseSatPretestExportRestoreJson(text: string): SatPretestRestoreResult {
+  try {
+    return restoreSatPretestFromExport(JSON.parse(text));
+  } catch {
+    return { ok: false, error: "Could not parse JSON." };
+  }
+}
