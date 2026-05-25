@@ -4,6 +4,7 @@ import {
   BarChart3,
   BookOpen,
   Brain,
+  CalendarClock,
   ClipboardList,
   Clock,
   Command,
@@ -21,6 +22,7 @@ import {
   Sun,
   Timer,
 } from "lucide-react";
+import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { useProgress } from "@/stores/progress";
 import { loadAllSubjects } from "@/curriculum/loader";
@@ -130,6 +132,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     [subjects, getNodeStatus],
   );
 
+  const urgentDeadlines = useMemo(() => getUrgentCollegeDeadlines(), []);
+
   const staticCommands = useMemo((): CommandItem[] => {
     const surprise = () => {
       const picks: Array<{ subId: string; nodeId: string }> = [];
@@ -174,6 +178,17 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         section: "Campus",
         icon: ClipboardList,
         action: () => go("/campus/college-checklist"),
+      },
+      {
+        id: "college-deadlines",
+        label: "College deadlines",
+        description:
+          urgentDeadlines.length > 0
+            ? `${urgentDeadlines.length} overdue or due soon`
+            : "Checklist and essay due dates",
+        section: "Campus",
+        icon: CalendarClock,
+        action: () => go(urgentDeadlines[0]?.href ?? "/campus/college-checklist"),
       },
       {
         id: "essay-tracker",
@@ -259,7 +274,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     ];
 
     return [...recent, ...navigateItems, ...campusItems, ...subjectItems, ...actionItems, ...themeItems];
-  }, [subjects, go, setTheme, onClose, recentSearches, fillQuery, satRecommended]);
+  }, [subjects, go, setTheme, onClose, recentSearches, fillQuery, satRecommended, urgentDeadlines]);
 
   const filtered = useMemo(() => {
     const q = query.trim();

@@ -4,6 +4,7 @@ import { Button, Card } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { getSatNextLesson } from "@/lib/campusHome";
+import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import {
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
@@ -21,6 +22,8 @@ export function SatTodayCard({ subjects }: Props) {
   const satNext = getSatNextLesson(subjects, getNodeStatus);
   const draft1Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
+  const recommended = getSatRecommendedLessons(subjects, getNodeStatus);
+  const topRecommended = recommended.lessons[0];
 
   const showSatFocus = placementGoal === "sat" || !!satNext || !!draft1Active || !!draft1Done;
   if (!showSatFocus) return null;
@@ -61,17 +64,24 @@ export function SatTodayCard({ subjects }: Props) {
                 Mistake log
               </Button>
             </Link>
-            {satNext && (satNext.status === "available" || satNext.status === "locked") ? (
+            {topRecommended ? (
               <Link
-                to={`/subjects/${satNext.subjectId}/${satNext.nodeId}`}
+                to={`/subjects/${topRecommended.subjectId}/${topRecommended.nodeId}`}
                 className="min-w-0 sm:flex-1"
               >
                 <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
                   <GraduationCap size={14} />
-                  SAT lesson
+                  {recommended.source === "pretest_gaps" ? "Gap lesson" : "SAT lesson"}
                 </Button>
               </Link>
-            ) : null}
+            ) : (
+              <Link to="/subjects/sat-prep#recommended" className="min-w-0 sm:flex-1">
+                <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
+                  <GraduationCap size={14} />
+                  SAT picks
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>

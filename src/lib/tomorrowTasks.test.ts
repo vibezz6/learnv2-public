@@ -83,6 +83,40 @@ describe("tomorrowTasks", () => {
     });
   });
 
+  it("includes overdue college deadlines", () => {
+    saveCollegeChecklist(
+      {
+        completed: {},
+        customItems: [
+          {
+            id: "late",
+            title: "Late application fee",
+            completed: false,
+            dueDate: "2026-05-20",
+            createdAt: 1,
+          },
+        ],
+      },
+      storage,
+    );
+
+    const tasks = buildTomorrowTasks(
+      {
+        subjects: [],
+        getNodeStatus: () => "available",
+        reviewDueCount: 0,
+        storage,
+      },
+      3,
+    );
+
+    expect(tasks[0]).toMatchObject({
+      id: "checklist-late",
+      detail: "Overdue",
+      source: "college",
+    });
+  });
+
   it("includes review and SAT pretest when no draft is complete", () => {
     const subjects: Subject[] = [
       {

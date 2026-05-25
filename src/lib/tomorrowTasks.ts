@@ -1,7 +1,7 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
-import { getWeekDeadlineRows } from "@/lib/admissionsSummary";
-import { daysUntilDue } from "@/lib/campusAdmissionsNudges";
+import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
+import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { getSatNextLesson, type NodeStatus } from "@/lib/campusHome";
 import {
   getActiveSatPretestAttempt,
@@ -27,11 +27,6 @@ export interface TomorrowTasksInput {
   storage?: Storage;
 }
 
-function isDueTodayOrTomorrow(dueDate: string, now: Date): boolean {
-  const days = daysUntilDue(dueDate, now);
-  return days !== null && days >= 0 && days <= 1;
-}
-
 export function buildTomorrowTasks(
   input: TomorrowTasksInput,
   maxTasks = 3,
@@ -47,8 +42,7 @@ export function buildTomorrowTasks(
     tasks.push(task);
   };
 
-  for (const row of getWeekDeadlineRows(14, now)) {
-    if (!isDueTodayOrTomorrow(row.dueDate, now)) continue;
+  for (const row of getUrgentCollegeDeadlines(now, maxTasks)) {
     push({
       id: row.id,
       title: row.title,
@@ -90,16 +84,20 @@ export function buildTomorrowTasks(
       href: "/sat/pretest",
       source: "pretest",
     });
-  } else if (draft1Done?.scoreSummary?.weakSkills[0]) {
-    const weak = draft1Done.scoreSummary.weakSkills[0];
-    const lessonId = draft1Done.scoreSummary.recommendedNodeIds[0];
-    push({
-      id: lessonId ? `sat-gap-${lessonId}` : `sat-gap-${weak.key}`,
-      title: lessonId ? `Retarget ${lessonId}` : `Retarget ${weak.label}`,
-      detail: `Draft 1 gap: ${weak.label}`,
-      href: lessonId ? `/subjects/sat-prep/${lessonId}` : "/subjects/sat-prep",
-      source: "pretest",
-    });
+  } else if (draft1Done) {
+    const gapLesson = getSatRecommendedLessons(
+      input.subjects,
+      input.getNodeStatus,
+    ).lessons[0];
+    if (gapLesson) {
+      push({
+        id: `sat-gap-${gapLesson.nodeId}`,
+        title: gapLesson.title,
+        detail: gapLesson.reason,
+        href: `/subjects/${gapLesson.subjectId}/${gapLesson.nodeId}`,
+        source: "pretest",
+      });
+    }
   }
 
   return tasks.slice(0, maxTasks);
