@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.38 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.39 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -73,7 +73,7 @@ Audited 2026-05-23 via `node ~/cursor/scripts/audit-curriculum.mjs`:
 | Metric | Count |
 |--------|------:|
 | Subjects | 11 |
-| Lessons (nodes) | **321** |
+| Lessons (nodes) | **326** |
 | Quiz questions | **1,039** |
 | Worked examples | **724** |
 | Threshold flags | **110** (all SAT Prep — drill lessons, no worked examples by design) |
@@ -174,6 +174,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 32 Tomorrow + SAT hub (52–53) | ✅ **v2.0.36** — pretest-aware tomorrow tasks; dashboard SAT week card |
 | 33 Real study loop (54) | ✅ **v2.0.37** — SAT today command card; mistake triage; practice session log; college blocking item; diagnostics demoted after Draft 1 |
 | 34 Pretest export restore (55) | ✅ **v2.0.38** — restore diagnostic attempt from downloaded export JSON in Settings |
+| 35 Transcript + docs sync (56) | ✅ **v2.0.39** — Draft 3 retest line on study transcript; README lesson count 326 |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

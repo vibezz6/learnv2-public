@@ -17,6 +17,8 @@ import {
   parseSatPretestDraft2ImportJson,
   recordSatPretestResponse,
   clearAllSatPretestData,
+  formatSatPretestTranscriptSection,
+  getSatPretestTranscriptSummary,
   parseSatPretestExportRestoreJson,
   resetSatPretestDraft,
   restoreSatPretestFromExport,
@@ -487,5 +489,43 @@ describe("satPretest", () => {
 
   it("rejects invalid export restore JSON", () => {
     expect(parseSatPretestExportRestoreJson("{}").ok).toBe(false);
+  });
+
+  it("includes Draft 3 retest in transcript when completed", () => {
+    const attempt = startSatPretestAttempt("draft-1", questions, storage)!;
+    for (const questionId of attempt.questionOrder) {
+      recordSatPretestResponse(
+        {
+          attemptId: attempt.id,
+          questionId,
+          selectedChoiceId: questionId === "sp1" ? "b" : "a",
+          rationale: "Because of the rule I applied.",
+          timeSpentSeconds: 30,
+        },
+        questions,
+        storage,
+      );
+    }
+    completeSatPretestAttempt(attempt.id, questions, storage);
+
+    const draft3 = startSatPretestAttempt("draft-3", questions, storage)!;
+    for (const questionId of draft3.questionOrder) {
+      recordSatPretestResponse(
+        {
+          attemptId: draft3.id,
+          questionId,
+          selectedChoiceId: "a",
+          rationale: "Retest rationale.",
+          timeSpentSeconds: 20,
+        },
+        questions,
+        storage,
+      );
+    }
+    completeSatPretestAttempt(draft3.id, questions, storage);
+
+    const section = formatSatPretestTranscriptSection(getSatPretestTranscriptSummary());
+    expect(section.join("\n")).toContain("Draft 3 retest: completed");
+    expect(section.join("\n")).toContain("vs Draft 1:");
   });
 });

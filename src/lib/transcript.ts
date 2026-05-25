@@ -129,7 +129,7 @@ export function buildTranscriptSummary(
     streak: stats.streakCurrent,
     reviewPassRate: reviewStats.passRate,
     satMistakesLogged,
-    satPretest: getSatPretestTranscriptSummary("draft-1", "draft-2", storage),
+    satPretest: getSatPretestTranscriptSummary("draft-1", "draft-2", "draft-3", storage),
     subjectBreakdown,
     admissions,
     narrativeBullets: buildNarrativeBullets({

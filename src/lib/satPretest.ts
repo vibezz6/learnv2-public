@@ -977,24 +977,37 @@ export interface SatPretestTranscriptSummary {
   draft1WeakSkills: string[];
   draft2Completed: boolean;
   draft2ScorePct: number | null;
+  draft3Completed: boolean;
+  draft3ScorePct: number | null;
+  draft3VsDraft1Delta: number | null;
 }
 
 export function getSatPretestTranscriptSummary(
   draft1Id = "draft-1",
   draft2Id = "draft-2",
+  draft3Id = "draft-3",
   storage: Storage = localStorage,
 ): SatPretestTranscriptSummary {
   const draft1Active = getActiveSatPretestAttempt(draft1Id, storage);
   const draft1Done = getLatestCompletedSatPretestAttempt(draft1Id, storage);
   const draft2Done = getLatestCompletedSatPretestAttempt(draft2Id, storage);
+  const draft3Done = getLatestCompletedSatPretestAttempt(draft3Id, storage);
+  const draft1ScorePct = draft1Done?.scoreSummary?.pct ?? null;
+  const draft3ScorePct = draft3Done?.scoreSummary?.pct ?? null;
 
   return {
     draft1InProgress: !!draft1Active,
     draft1Completed: !!draft1Done,
-    draft1ScorePct: draft1Done?.scoreSummary?.pct ?? null,
+    draft1ScorePct,
     draft1WeakSkills: draft1Done?.scoreSummary?.weakSkills.map((s) => s.label) ?? [],
     draft2Completed: !!draft2Done,
     draft2ScorePct: draft2Done?.scoreSummary?.pct ?? null,
+    draft3Completed: !!draft3Done,
+    draft3ScorePct: draft3ScorePct,
+    draft3VsDraft1Delta:
+      draft1ScorePct !== null && draft3ScorePct !== null
+        ? draft3ScorePct - draft1ScorePct
+        : null,
   };
 }
 
@@ -1018,6 +1031,17 @@ export function formatSatPretestTranscriptSection(
     lines.push(`- Draft 2 follow-up: completed (${summary.draft2ScorePct}%).`);
   } else if (summary.draft1Completed) {
     lines.push("- Draft 2 follow-up: available after Draft 1.");
+  }
+
+  if (summary.draft3Completed && summary.draft3ScorePct !== null) {
+    let draft3Line = `- Draft 3 retest: completed (${summary.draft3ScorePct}%).`;
+    if (summary.draft3VsDraft1Delta !== null) {
+      const sign = summary.draft3VsDraft1Delta >= 0 ? "+" : "";
+      draft3Line += ` vs Draft 1: ${sign}${summary.draft3VsDraft1Delta} pts.`;
+    }
+    lines.push(draft3Line);
+  } else if (summary.draft1Completed) {
+    lines.push("- Draft 3 retest: available after Draft 1.");
   }
 
   lines.push("");
