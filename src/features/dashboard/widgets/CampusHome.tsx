@@ -150,7 +150,7 @@ export function CampusHome({ subjects }: Props) {
                   to="/sat/pretest"
                   className="text-[var(--accent-2)] hover:underline"
                 >
-                  Draft 1 diagnostic
+                  Optional diagnostic
                 </Link>
                 <Link
                   to="/subjects/sat-prep#mistakes"

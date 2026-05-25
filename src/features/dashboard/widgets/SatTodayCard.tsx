@@ -79,7 +79,7 @@ export function SatTodayCard({ subjects }: Props) {
             {showDiagnosticLink ? (
               <Link to="/sat/pretest" className="min-w-0 sm:flex-1">
                 <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-                  SAT diagnostic
+                  Optional diagnostic
                 </Button>
               </Link>
             ) : (

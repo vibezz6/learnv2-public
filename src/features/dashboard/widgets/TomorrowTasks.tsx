@@ -14,7 +14,7 @@ const SOURCE_LABELS = {
   college: "College",
   review: "Review",
   sat: "SAT",
-  pretest: "Diagnostic",
+  pretest: "Optional diagnostic",
 } as const;
 
 export function TomorrowTasks({ subjects }: Props) {
@@ -42,7 +42,7 @@ export function TomorrowTasks({ subjects }: Props) {
               Tomorrow
             </p>
             <p className="mt-1 text-sm text-[var(--text-muted)]">
-              Up to three realistic next steps after work — college, review, SAT, or diagnostic.
+              Up to three realistic next steps after work — college, review, SAT study, or an optional diagnostic.
             </p>
           </div>
           <ul className="divide-y divide-[var(--border)]">

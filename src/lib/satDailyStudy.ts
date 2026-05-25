@@ -86,9 +86,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (!draft1Done) {
     return {
       headline: focusPrefix,
-      detail: "One-time baseline diagnostic — then daily study is track + mistake log.",
+      detail: "Optional one-time baseline — daily study is track, mistake log, and official practice.",
       href: "/sat/pretest",
-      buttonLabel: "Start Draft 1",
+      buttonLabel: "Start baseline (optional)",
       kind: "start_draft1",
       intensity,
     };
@@ -102,7 +102,7 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   let diagnosticNote: string | undefined;
   if (draft1Done?.scoreSummary) {
     const score = `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`;
-    diagnosticNote = `Draft 1 done: ${score} — retest later from SAT diagnostic when ready.`;
+    diagnosticNote = `Baseline done: ${score} — optional retest on SAT diagnostic when ready.`;
   }
 
   if (intensity === "minimum" && topMistake) {
