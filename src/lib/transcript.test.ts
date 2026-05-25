@@ -183,6 +183,19 @@ describe("transcript", () => {
     ]);
   });
 
+  it("formatTranscriptMarkdown includes SAT diagnostic without a completed draft", () => {
+    const markdown = formatTranscriptMarkdown(
+      buildTranscriptSummary(
+        [subject("sat-prep", "SAT Prep", ["st1"])],
+        makeGetters({}, {}, {}),
+        storage,
+      ),
+    );
+
+    expect(markdown).toContain("## SAT diagnostic");
+    expect(markdown).toContain("Draft 1 diagnostic: not started yet");
+  });
+
   it("formatTranscriptMarkdown includes college applications when tracked", () => {
     let checklist = loadCollegeChecklist(storage);
     checklist = toggleBuiltInItem(checklist, "counselor-intro", true);

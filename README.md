@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.25 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.26 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -159,6 +159,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 17 Command palette campus (37) | ✅ **v2.0.23** — ⌘K shortcuts for checklist, essays, focus, lab |
 | 18 SAT Draft 1 pretest (38) | ✅ **v2.0.24** — in-app diagnostic, rationale, export for Cursor |
 | 19 SAT polish + Draft 2 (39) | ✅ **v2.0.25** — dashboard SAT card, ⌘K SAT shortcuts, Draft 2 gaps + import |
+| 20 Tomorrow tasks + transcript SAT (40) | ✅ **v2.0.26** — up to 3 dashboard tasks without finishing Draft 1; transcript SAT diagnostic block |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

@@ -12,6 +12,7 @@ import { getTrackChallengeCategory } from "@/lib/coursework";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { CampusHome } from "./widgets/CampusHome";
 import { SatTodayCard } from "./widgets/SatTodayCard";
+import { TomorrowTasks } from "./widgets/TomorrowTasks";
 import { WeekAssignments } from "./widgets/WeekAssignments";
 import { WeekDeadlinesStrip } from "./widgets/WeekDeadlinesStrip";
 import { ContinueHero } from "./widgets/ContinueHero";
@@ -71,6 +72,7 @@ export function DashboardPage() {
 
       {subjects.length > 0 && (
         <section className="space-y-4">
+          <TomorrowTasks subjects={subjects} />
           <WeekDeadlinesStrip />
           <WeekAssignments subjects={subjects} />
         </section>

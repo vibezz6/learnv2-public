@@ -806,6 +806,60 @@ export function compareDraftScores(
   return rows.sort((a, b) => a.skill.localeCompare(b.skill));
 }
 
+export interface SatPretestTranscriptSummary {
+  draft1InProgress: boolean;
+  draft1Completed: boolean;
+  draft1ScorePct: number | null;
+  draft1WeakSkills: string[];
+  draft2Completed: boolean;
+  draft2ScorePct: number | null;
+}
+
+export function getSatPretestTranscriptSummary(
+  draft1Id = "draft-1",
+  draft2Id = "draft-2",
+  storage: Storage = localStorage,
+): SatPretestTranscriptSummary {
+  const draft1Active = getActiveSatPretestAttempt(draft1Id, storage);
+  const draft1Done = getLatestCompletedSatPretestAttempt(draft1Id, storage);
+  const draft2Done = getLatestCompletedSatPretestAttempt(draft2Id, storage);
+
+  return {
+    draft1InProgress: !!draft1Active,
+    draft1Completed: !!draft1Done,
+    draft1ScorePct: draft1Done?.scoreSummary?.pct ?? null,
+    draft1WeakSkills: draft1Done?.scoreSummary?.weakSkills.map((s) => s.label) ?? [],
+    draft2Completed: !!draft2Done,
+    draft2ScorePct: draft2Done?.scoreSummary?.pct ?? null,
+  };
+}
+
+export function formatSatPretestTranscriptSection(
+  summary: SatPretestTranscriptSummary,
+): string[] {
+  const lines: string[] = ["## SAT diagnostic", ""];
+
+  if (summary.draft1InProgress) {
+    lines.push("- Draft 1 diagnostic: in progress (resume at /sat/pretest).");
+  } else if (summary.draft1Completed && summary.draft1ScorePct !== null) {
+    lines.push(`- Draft 1 diagnostic: completed (${summary.draft1ScorePct}% on short draft).`);
+    if (summary.draft1WeakSkills.length > 0) {
+      lines.push(`- Top gaps: ${summary.draft1WeakSkills.join(", ")}.`);
+    }
+  } else {
+    lines.push("- Draft 1 diagnostic: not started yet.");
+  }
+
+  if (summary.draft2Completed && summary.draft2ScorePct !== null) {
+    lines.push(`- Draft 2 follow-up: completed (${summary.draft2ScorePct}%).`);
+  } else if (summary.draft1Completed) {
+    lines.push("- Draft 2 follow-up: available after Draft 1.");
+  }
+
+  lines.push("");
+  return lines;
+}
+
 export function downloadSatPretestJson(
   attempt: SatPretestAttempt,
   questions: SatPretestQuestion[],

@@ -7,6 +7,10 @@ import {
 import { loadCollegeChecklist } from "@/lib/collegeChecklist";
 import { loadEssayTracker } from "@/lib/essayTracker";
 import { listMistakes } from "@/lib/satMistakeLog";
+import {
+  formatSatPretestTranscriptSection,
+  getSatPretestTranscriptSummary,
+} from "@/lib/satPretest";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
 import { formatAppVersion } from "@/lib/version";
 import type { ReviewStats, Stats } from "@/stores/progress";
@@ -27,6 +31,7 @@ export interface TranscriptSummary {
   streak: number;
   reviewPassRate: number;
   satMistakesLogged: number;
+  satPretest: ReturnType<typeof getSatPretestTranscriptSummary>;
   subjectBreakdown: SubjectBreakdown[];
   narrativeBullets: string[];
   admissions: AdmissionsSummary;
@@ -124,6 +129,7 @@ export function buildTranscriptSummary(
     streak: stats.streakCurrent,
     reviewPassRate: reviewStats.passRate,
     satMistakesLogged,
+    satPretest: getSatPretestTranscriptSummary("draft-1", "draft-2", storage),
     subjectBreakdown,
     admissions,
     narrativeBullets: buildNarrativeBullets({
@@ -155,6 +161,8 @@ export function formatTranscriptMarkdown(summary: TranscriptSummary): string {
     `- SAT mistakes logged: ${summary.satMistakesLogged}`,
     "",
   ];
+
+  lines.push(...formatSatPretestTranscriptSection(summary.satPretest));
 
   if (summary.subjectBreakdown.length > 0) {
     lines.push("## Subject breakdown", "");
