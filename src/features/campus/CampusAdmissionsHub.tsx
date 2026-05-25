@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import { ClipboardList, FileText, Settings } from "lucide-react";
 import { Card } from "@/components/ui";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
-import { buildAdmissionsSummary } from "@/lib/admissionsSummary";
+import {
+  buildAdmissionsSummary,
+  getBlockingApplicationItem,
+} from "@/lib/admissionsSummary";
 
 export function CampusAdmissionsHub() {
   const [revision, setRevision] = useState(0);
@@ -19,12 +22,42 @@ export function CampusAdmissionsHub() {
     return buildAdmissionsSummary();
   }, [revision]);
 
+  const blocking = useMemo(() => {
+    void revision;
+    return getBlockingApplicationItem();
+  }, [revision]);
+
   return (
     <Card className="min-w-0 space-y-3">
       <div>
         <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
           College applications
         </p>
+        {blocking ? (
+          <div className="mt-3 rounded-[var(--radius)] border border-[var(--warning)]/35 bg-[var(--warning-bg)] p-4">
+            <p className="text-sm font-medium text-[var(--text-heading)]">Blocking this week</p>
+            <p className="mt-1 text-sm text-[var(--text-heading)]">{blocking.title}</p>
+            {blocking.detail ? (
+              <p className="mt-0.5 text-xs text-[var(--text-muted)]">{blocking.detail}</p>
+            ) : null}
+            {blocking.nextStep ? (
+              <p className="mt-2 text-sm text-[var(--accent-2)]">Next: {blocking.nextStep}</p>
+            ) : null}
+            <p className="mt-1 text-xs font-medium text-[var(--text-muted)]">
+              {blocking.overdue
+                ? "Overdue"
+                : blocking.daysUntil === 0
+                  ? "Due today"
+                  : `Due in ${blocking.daysUntil} day${blocking.daysUntil === 1 ? "" : "s"}`}
+            </p>
+            <Link
+              to={blocking.href}
+              className="mt-2 inline-flex min-h-10 items-center text-sm font-medium text-[var(--accent)] hover:underline"
+            >
+              Open and update
+            </Link>
+          </div>
+        ) : null}
         {summary.hasActivity ? (
           <p className="mt-2 text-sm text-[var(--text-muted)]">
             Checklist{" "}

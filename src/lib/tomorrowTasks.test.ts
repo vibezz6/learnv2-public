@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { saveCollegeChecklist } from "@/lib/collegeChecklist";
+import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
+import { addMistake } from "@/lib/satMistakeLog";
 import { buildTomorrowTasks } from "@/lib/tomorrowTasks";
 
 function mockLocalStorage(): Storage {
@@ -139,5 +141,73 @@ describe("tomorrowTasks", () => {
 
     expect(tasks.some((task) => task.source === "review")).toBe(true);
     expect(tasks.some((task) => task.id === "sat-pretest-draft1")).toBe(true);
+  });
+
+  it("after Draft 1 complete, prefers mistake review before optional Draft 2", () => {
+    storage.setItem(
+      SAT_PRETEST_STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 1,
+        attempts: [
+          {
+            id: "d1",
+            draftId: "draft-1",
+            status: "completed",
+            startedAt: "2026-05-20T00:00:00.000Z",
+            completedAt: "2026-05-20T00:10:00.000Z",
+            questionOrder: ["q1"],
+            currentIndex: 0,
+            responses: {},
+            scoreSummary: {
+              totalQuestions: 10,
+              correctAnswers: 3,
+              pct: 30,
+              sectionBreakdown: [],
+              skillBreakdown: [],
+              weakSkills: [{ key: "linear", label: "Linear equations", correct: 0, total: 2, pct: 0 }],
+              recommendedNodeIds: ["st4"],
+              timeSpentSeconds: 600,
+            },
+          },
+        ],
+      }),
+    );
+    addMistake(
+      { section: "math", category: "Linear equations", note: "sign error" },
+      storage,
+    );
+
+    const subjects: Subject[] = [
+      {
+        id: "sat-prep",
+        name: "SAT Prep",
+        description: "",
+        color: "#000",
+        icon: "book",
+        nodes: [node("st4")],
+      },
+    ];
+
+    const tasks = buildTomorrowTasks(
+      {
+        subjects,
+        getNodeStatus: () => "available",
+        reviewDueCount: 0,
+        placementGoal: "sat",
+        storage,
+      },
+      3,
+    );
+
+    const mistakeIdx = tasks.findIndex((t) => t.id.startsWith("sat-mistake-"));
+    const draft2Idx = tasks.findIndex((t) => t.id === "sat-pretest-draft2");
+    expect(mistakeIdx).toBeGreaterThanOrEqual(0);
+    if (draft2Idx >= 0 && mistakeIdx >= 0) {
+      expect(mistakeIdx).toBeLessThan(draft2Idx);
+    }
+    expect(tasks[mistakeIdx]).toMatchObject({
+      source: "sat",
+      title: "Review Linear equations",
+    });
   });
 });

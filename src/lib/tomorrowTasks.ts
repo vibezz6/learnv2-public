@@ -3,6 +3,7 @@ import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
+import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
 import { getSatNextLesson, type NodeStatus } from "@/lib/campusHome";
 import { getReadinessNudge } from "@/lib/satReadiness";
 import {
@@ -106,24 +107,39 @@ export function buildTomorrowTasks(
       href: "/sat/pretest",
       source: "pretest",
     });
-  } else if (satFocus && draft1Done && !draft2Done && !draft2Active) {
-    const weak = draft1Done.scoreSummary?.weakSkills[0]?.label;
-    push({
-      id: "sat-pretest-draft2",
-      title: "SAT Draft 2 from gaps",
-      detail: weak ? `Target: ${weak}` : "Gap follow-up after Draft 1",
-      href: "/sat/pretest",
-      source: "pretest",
-    });
   } else if (draft1Done) {
+    const topMistake = getPrimaryMistakeCategory(storage);
+    if (topMistake) {
+      push({
+        id: `sat-mistake-${topMistake.category}`,
+        title: `Review ${topMistake.category}`,
+        detail: `${topMistake.count} logged miss${topMistake.count === 1 ? "" : "es"} · retarget before next module`,
+        href: topMistake.nodeId
+          ? `/subjects/sat-prep/${topMistake.nodeId}`
+          : "/subjects/sat-prep#mistakes",
+        source: "sat",
+      });
+    }
+
     const gapLesson = getSatRecommendedLessons(input.subjects, input.getNodeStatus).lessons[0];
-    if (gapLesson) {
+    if (gapLesson && !used.has(`sat-lesson-${gapLesson.nodeId}`)) {
       const weak = draft1Done.scoreSummary?.weakSkills[0]?.label;
       push({
         id: `sat-gap-${gapLesson.nodeId}`,
         title: gapLesson.title,
         detail: weak ? `${gapLesson.reason} · gap: ${weak}` : gapLesson.reason,
         href: `/subjects/${gapLesson.subjectId}/${gapLesson.nodeId}`,
+        source: "sat",
+      });
+    }
+
+    if (satFocus && !draft2Done && !draft2Active && tasks.length < maxTasks) {
+      const weak = draft1Done.scoreSummary?.weakSkills[0]?.label;
+      push({
+        id: "sat-pretest-draft2",
+        title: "SAT Draft 2 from gaps (optional)",
+        detail: weak ? `When ready · ${weak}` : "Optional gap follow-up",
+        href: "/sat/pretest",
         source: "pretest",
       });
     }

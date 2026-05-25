@@ -10,6 +10,7 @@ import { useProgress } from "@/stores/progress";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
 import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
 import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsCard";
+import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -526,6 +527,9 @@ export function SubjectDetailPage() {
 
   const { subject } = loadState;
   const isSatPrep = subject.id === "sat-prep";
+  const satStudy = isSatPrep
+    ? getSatDailyStudyCommand({ subjects: [subject], getNodeStatus })
+    : null;
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 p-4 md:p-8">
@@ -547,20 +551,28 @@ export function SubjectDetailPage() {
         className="mt-4"
       />
 
-      {isSatPrep ? (
+      {isSatPrep && satStudy ? (
         <Card variant="primary" className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-[var(--text-heading)]">Draft 1 SAT diagnostic</p>
-            <p className="text-sm text-[var(--text-muted)]">
-              Answer original SAT-style questions and explain your reasoning before feedback.
-            </p>
+          <div className="min-w-0 space-y-1">
+            <p className="text-sm font-semibold text-[var(--text-heading)]">{satStudy.headline}</p>
+            <p className="text-sm text-[var(--text-muted)]">{satStudy.detail}</p>
+            {satStudy.diagnosticNote ? (
+              <p className="text-xs text-[var(--text-muted)]">{satStudy.diagnosticNote}</p>
+            ) : null}
           </div>
-          <Link to="/sat/pretest" className="shrink-0">
-            <Button className="min-h-11 w-full sm:w-auto">
-              Take Draft 1
-              <ArrowRight size={14} />
-            </Button>
-          </Link>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <Link to={satStudy.href}>
+              <Button className="min-h-11 w-full sm:w-auto">
+                {satStudy.buttonLabel}
+                <ArrowRight size={14} />
+              </Button>
+            </Link>
+            <Link to="/subjects/sat-prep#mistakes">
+              <Button variant="secondary" className="min-h-11 w-full sm:w-auto">
+                Mistake log
+              </Button>
+            </Link>
+          </div>
         </Card>
       ) : null}
 

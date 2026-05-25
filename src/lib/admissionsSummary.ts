@@ -8,6 +8,7 @@ import {
   ESSAY_STATUS_LABELS,
   getEssayTrackerProgress,
   loadEssayTracker,
+  type EssayDraftStatus,
   type EssayTrackerState,
 } from "@/lib/essayTracker";
 
@@ -34,6 +35,80 @@ export interface WeekDeadlineRow {
   daysUntil: number;
   href: string;
   overdue: boolean;
+}
+
+export interface BlockingApplicationItem {
+  id: string;
+  title: string;
+  detail?: string;
+  href: string;
+  nextStep?: string;
+  overdue: boolean;
+  daysUntil: number;
+}
+
+const ESSAY_NEXT_STEP: Record<EssayDraftStatus, string | null> = {
+  not_started: "Move to outline",
+  outline: "Write first draft",
+  draft: "Start revision pass",
+  revision: "Mark final when ready",
+  final: null,
+};
+
+function essayNextStep(status: EssayDraftStatus): string | undefined {
+  const step = ESSAY_NEXT_STEP[status];
+  return step ?? undefined;
+}
+
+/** Single highest-priority admissions action for dashboard/campus triage. */
+export function getBlockingApplicationItem(
+  now = new Date(),
+  checklist: CollegeChecklistState = loadCollegeChecklist(),
+  essays: EssayTrackerState = loadEssayTracker(),
+): BlockingApplicationItem | null {
+  const rows = getWeekDeadlineRows(14, now, checklist, essays);
+  const urgent = rows.filter((row) => row.overdue || row.daysUntil <= 7);
+  if (urgent.length === 0) return null;
+
+  const top = urgent[0]!;
+  let nextStep: string | undefined;
+
+  if (top.id.startsWith("essay-")) {
+    const essayId = top.id.replace("essay-", "");
+    const essay = essays.essays.find((e) => e.id === essayId);
+    if (essay) {
+      nextStep = essayNextStep(essay.status);
+      const statusLabel = ESSAY_STATUS_LABELS[essay.status];
+      const detailParts = [top.detail, `Status: ${statusLabel}`].filter(Boolean);
+      return {
+        id: top.id,
+        title: top.title,
+        detail: detailParts.join(" · "),
+        href: top.href,
+        nextStep,
+        overdue: top.overdue,
+        daysUntil: top.daysUntil,
+      };
+    }
+  }
+
+  if (top.overdue) {
+    nextStep = "Complete or reschedule this step";
+  } else if (top.daysUntil === 0) {
+    nextStep = "Due today — block 30–45 min";
+  } else {
+    nextStep = `Due in ${top.daysUntil} day${top.daysUntil === 1 ? "" : "s"}`;
+  }
+
+  return {
+    id: top.id,
+    title: top.title,
+    detail: top.detail,
+    href: top.href,
+    nextStep,
+    overdue: top.overdue,
+    daysUntil: top.daysUntil,
+  };
 }
 
 export function buildAdmissionsSummary(

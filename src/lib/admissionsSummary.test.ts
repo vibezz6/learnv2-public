@@ -5,6 +5,7 @@ import {
   buildAdmissionsExportPayload,
   buildAdmissionsSummary,
   formatAdmissionsTranscriptSection,
+  getBlockingApplicationItem,
   getUrgentCollegeDeadlines,
   getWeekDeadlineRows,
 } from "./admissionsSummary";
@@ -53,6 +54,20 @@ describe("admissionsSummary", () => {
 
   it("formatAdmissionsTranscriptSection omits when empty", () => {
     expect(formatAdmissionsTranscriptSection(buildAdmissionsSummary())).toEqual([]);
+  });
+
+  it("getBlockingApplicationItem returns essay with next status step", () => {
+    const now = new Date("2026-05-24T12:00:00Z");
+    let essays = loadEssayTracker();
+    essays = addEssayFromTemplate(essays, "common-app-personal", { dueDate: "2026-05-25" });
+    essays = updateEssayStatus(essays, essays.essays[0]!.id, "outline");
+
+    const blocking = getBlockingApplicationItem(now, loadCollegeChecklist(), essays);
+    expect(blocking).toMatchObject({
+      title: "Common App personal statement",
+      nextStep: "Write first draft",
+      daysUntil: 1,
+    });
   });
 
   it("buildAdmissionsExportPayload includes summary and raw state", () => {
