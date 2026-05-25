@@ -21,6 +21,7 @@ import { labelForPlacement } from "@/lib/placement";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { CampusAdmissionsNudges } from "./CampusAdmissionsNudges";
+import { SatReadinessCard } from "@/features/sat/SatReadinessCard";
 import { CampusDeadlineChip } from "./CampusDeadlineChip";
 
 interface Props {
@@ -67,6 +68,9 @@ export function CampusHome({ subjects }: Props) {
       </p>
 
       <CampusDeadlineChip />
+      {placementGoal === "sat" || activeTrackId === DEFAULT_TRACK_ID ? (
+        <SatReadinessCard />
+      ) : null}
       <CampusAdmissionsNudges />
 
       <div className="mt-5">
