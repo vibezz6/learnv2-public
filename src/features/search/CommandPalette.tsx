@@ -215,8 +215,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       },
       {
         id: "sat-pretest",
-        label: "SAT Draft 1 diagnostic",
-        description: "In-app pretest with rationale",
+        label: "SAT optional baseline (Draft 1)",
+        description: "Short in-app baseline; optional",
         section: "Campus",
         icon: GraduationCap,
         action: () => go("/sat/pretest"),
@@ -226,7 +226,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         label: "SAT recommended lessons",
         description:
           satRecommended.lessons[0]?.title ??
-          (satRecommended.draft1Complete ? "Track or diagnostic" : "Track next or Draft 1"),
+          "Next lesson or optional baseline",
         section: "Campus",
         icon: Sparkles,
         action: () => {
