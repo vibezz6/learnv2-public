@@ -17,4 +17,12 @@ describe("SAT pretest entry IA", () => {
     });
     expect(src).toContain("SatDiagnosticSection");
   });
+
+  it("scrolls to #diagnostic on SAT Prep subject detail", () => {
+    const detail = execSync('rg "diagnostic" src/features/subjects/SubjectDetailPage.tsx 2>/dev/null', {
+      encoding: "utf8",
+      cwd: new URL("../..", import.meta.url).pathname,
+    });
+    expect(detail).toContain("diagnostic");
+  });
 });

@@ -142,7 +142,7 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
           Restore dismissed reminders
         </Button>
         <p className="text-xs text-[var(--text-muted)]">
-          Campus home hides each reminder for {DEFAULT_SNOOZE_DAYS} days when you tap dismiss.
+          Today hides each reminder for {DEFAULT_SNOOZE_DAYS} days when you tap dismiss.
         </p>
       </div>
 

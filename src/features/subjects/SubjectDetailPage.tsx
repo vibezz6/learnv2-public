@@ -474,7 +474,9 @@ export function SubjectDetailPage() {
   useEffect(() => {
     if (subjectId !== "sat-prep" || loadState.phase !== "ok") return;
     const hash = location.hash.replace("#", "");
-    if (hash !== "mistakes" && hash !== "official" && hash !== "recommended") return;
+    if (hash !== "mistakes" && hash !== "official" && hash !== "recommended" && hash !== "diagnostic") {
+      return;
+    }
     const target = document.getElementById(hash);
     if (!target) return;
     requestAnimationFrame(() => {
@@ -493,7 +495,11 @@ export function SubjectDetailPage() {
   }, [loadState, getNodeStatus, progressNodes]);
 
   if (loadState.phase === "loading") {
-    return <div className="p-8 text-[var(--text-muted)]">Loading subject…</div>;
+    return (
+      <PageContainer size="xl" className="text-[var(--text-muted)]">
+        Loading subject…
+      </PageContainer>
+    );
   }
 
   if (loadState.phase === "error") {
@@ -543,25 +549,17 @@ export function SubjectDetailPage() {
       {isSatPrep && satStudy ? (
         <Card variant="primary" className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1">
-            <p className="text-sm font-semibold text-[var(--text-heading)]">{satStudy.headline}</p>
+            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
+              {satStudy.headline}
+            </p>
             <p className="text-sm text-[var(--text-muted)]">{satStudy.detail}</p>
-            {satStudy.diagnosticNote ? (
-              <p className="text-xs text-[var(--text-muted)]">{satStudy.diagnosticNote}</p>
-            ) : null}
           </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-            <Link to={satStudy.href}>
-              <Button className="min-h-11 w-full sm:w-auto">
-                {satStudy.buttonLabel}
-                <ArrowRight size={14} />
-              </Button>
-            </Link>
-            <Link to="/subjects/sat-prep#mistakes">
-              <Button variant="secondary" className="min-h-11 w-full sm:w-auto">
-                Mistake log
-              </Button>
-            </Link>
-          </div>
+          <Link to={satStudy.href} className="shrink-0">
+            <Button className="min-h-11 w-full sm:w-auto">
+              {satStudy.buttonLabel}
+              <ArrowRight size={14} />
+            </Button>
+          </Link>
         </Card>
       ) : null}
 

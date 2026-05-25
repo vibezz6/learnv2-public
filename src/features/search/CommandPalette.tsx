@@ -44,7 +44,7 @@ interface CommandItem {
   id: string;
   label: string;
   description?: string;
-  section: "Recent" | "Navigate" | "Campus" | "Subjects" | "Lessons" | "Actions" | "Theme";
+  section: "Recent" | "Navigate" | "Campus" | "SAT" | "Subjects" | "Lessons" | "Actions" | "Theme";
   groupKey?: string;
   subjectColor?: string;
   icon: React.ComponentType<{ size?: number }>;
@@ -216,8 +216,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       {
         id: "sat-pretest",
         label: "SAT optional baseline (Draft 1)",
-        description: "Short in-app baseline; optional",
-        section: "Campus",
+        description: "In-app diagnostic · also under SAT Prep",
+        section: "SAT",
         icon: GraduationCap,
         action: () => go("/sat/pretest"),
       },
@@ -227,7 +227,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description:
           satRecommended.lessons[0]?.title ??
           "Next lesson or optional baseline",
-        section: "Campus",
+        section: "SAT",
         icon: Sparkles,
         action: () => {
           const lesson = satRecommended.lessons[0];
@@ -239,7 +239,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         id: "sat-mistake-log",
         label: "SAT mistake log",
         description: "Log misses after Bluebook or Khan",
-        section: "Campus",
+        section: "SAT",
         icon: ClipboardList,
         action: () => go("/subjects/sat-prep#mistakes"),
       },
@@ -247,7 +247,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         id: "sat-prep",
         label: "SAT Prep subject",
         description: "75-lesson August track",
-        section: "Campus",
+        section: "SAT",
         icon: BookOpen,
         action: () => go("/subjects/sat-prep"),
       },
@@ -298,7 +298,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       const recent = filtered.filter((c) => c.section === "Recent");
       if (recent.length > 0) blocks.push({ key: "recent", title: "Recent", items: recent });
 
-      for (const section of ["Navigate", "Campus", "Actions", "Theme"] as const) {
+      for (const section of ["Navigate", "Campus", "SAT", "Actions", "Theme"] as const) {
         const items = filtered.filter((c) => c.section === section);
         if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
       }
@@ -322,7 +322,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       });
     }
 
-    for (const section of ["Navigate", "Campus", "Subjects", "Actions", "Theme"] as const) {
+    for (const section of ["Navigate", "Campus", "SAT", "Subjects", "Actions", "Theme"] as const) {
       const items = filtered.filter((c) => c.section === section);
       if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
     }
