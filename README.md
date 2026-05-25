@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.44 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.3.54 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -239,6 +239,11 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 98 Sidebar labels (119) | ✅ **v2.3.42** — desktop nav hints (title/aria) |
 | 99 ⌘K recent actions (120) | ✅ **v2.3.43** — persisted recent command jumps |
 | 100 Focus bar elapsed (121) | ✅ **v2.3.44** — FocusStudyBar subject + elapsed time |
+| 106 Lazy Stats widgets (122) | ✅ **v2.3.50** — QuizMastery + MathInspired lazy-loaded |
+| 107 Defer KaTeX (123) | ✅ **v2.3.51** — display math loads on scroll into view |
+| 108 Curriculum lint (124) | ✅ **v2.3.52** — `npm run curriculum:lint` |
+| 109 SAT gap nodes (125) | ✅ existing — st76–st80 in sat-prep.json |
+| 110 Playwright smoke (126) | ✅ **v2.3.54** — Today + Stats e2e via `npm run test:e2e` |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

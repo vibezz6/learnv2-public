@@ -23,8 +23,7 @@ import {
 import { hasSeen, achievementLabel, type Achievement } from "@/stores/achievements";
 import { useProgress } from "@/stores/progress";
 import { AdmissionsTranscriptPreview } from "@/features/stats/AdmissionsTranscriptPreview";
-import { MathInspiredSection } from "@/features/stats/widgets/MathInspiredSection";
-import { QuizMasteryPanel } from "@/features/stats/widgets/QuizMasteryPanel";
+import { LazyOptionalStats } from "@/features/stats/widgets/LazyOptionalStats";
 import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
 import { WeekInReviewStrip } from "@/features/stats/widgets/WeekInReviewStrip";
@@ -478,8 +477,8 @@ export function StatsPage() {
             </div>
           </Card>
 
-          <QuizMasteryPanel subjects={subjects} />
-          <MathInspiredSection
+          <LazyOptionalStats
+            subjects={subjects}
             completedNodes={stats.completedNodes}
             totalNodes={stats.totalNodes}
           />
