@@ -6,10 +6,11 @@ import {
   getSatNextLesson,
   type NodeStatus,
 } from "@/lib/campusHome";
+import { loadSatLessonPlan } from "@/lib/satLessonPlan";
 import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
 import { resolveTrackLesson } from "@/lib/trackIntegrity";
 
-export type SatRecommendedSource = "pretest_gaps" | "track_next" | "empty";
+export type SatRecommendedSource = "pretest_gaps" | "lesson_plan" | "track_next" | "empty";
 
 export interface SatRecommendedLesson {
   subjectId: string;
@@ -34,6 +35,38 @@ function satTrackOrder(nodeId: string): number {
   return track.lessons.findIndex(
     (lesson) => lesson.subjectId === "sat-prep" && lesson.nodeId === nodeId,
   );
+}
+
+function lessonsFromLessonPlan(
+  subjects: Subject[],
+  getNodeStatus: (node: SkillNode) => NodeStatus,
+): SatRecommendedLesson[] {
+  const plan = loadSatLessonPlan();
+  if (!plan) return [];
+
+  const satSubject = subjects.find((subject) => subject.id === "sat-prep");
+  if (!satSubject) return [];
+
+  const byId = new Map(satSubject.nodes.map((node) => [node.id, node]));
+  const lessons: SatRecommendedLesson[] = [];
+
+  for (const entry of plan.entries) {
+    const node = byId.get(entry.nodeId);
+    if (!node) continue;
+    const status = getNodeStatus(node);
+    if (status === "completed") continue;
+
+    lessons.push({
+      subjectId: "sat-prep",
+      nodeId: entry.nodeId,
+      title: node.name,
+      reason: entry.reason,
+      status,
+    });
+    if (lessons.length >= MAX_LESSONS) break;
+  }
+
+  return lessons;
 }
 
 function lessonsFromPretestGaps(
@@ -74,6 +107,16 @@ export function getSatRecommendedLessons(
 ): SatRecommendedPlan {
   const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const draft1Complete = !!draft1Done;
+
+  const planLessons = lessonsFromLessonPlan(subjects, getNodeStatus);
+  if (planLessons.length > 0) {
+    return {
+      source: "lesson_plan",
+      draft1Complete,
+      lessons: planLessons,
+      emptyMessage: "",
+    };
+  }
 
   const gapIds = draft1Done?.scoreSummary?.recommendedNodeIds ?? [];
   if (draft1Complete && gapIds.length > 0) {

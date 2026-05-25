@@ -1,3 +1,5 @@
+import type { SatLessonPlanEntry } from "@/lib/satLessonPlan";
+
 export const SAT_PRETEST_STORAGE_KEY = "learnv2_sat_pretest_v1";
 export const SAT_PRETEST_SCHEMA_VERSION = 1;
 
@@ -882,8 +884,65 @@ export function parseSatPretestDraft2Import(raw: unknown): Draft2ImportResult {
 }
 
 export function parseSatPretestDraft2ImportJson(text: string): Draft2ImportResult {
+  const cursor = parseSatPretestCursorImportJson(text);
+  if (cursor.ok) return { ok: true, questions: cursor.questions };
+  return cursor;
+}
+
+export interface SatPretestCursorImportPayload {
+  schemaVersion?: number;
+  questions: SatPretestQuestion[];
+  lessonPlan?: SatLessonPlanEntry[];
+  notes?: string;
+}
+
+export type SatPretestCursorImportResult =
+  | {
+      ok: true;
+      questions: SatPretestQuestion[];
+      lessonPlan: SatLessonPlanEntry[];
+      notes?: string;
+    }
+  | { ok: false; error: string };
+
+function parseLessonPlanEntries(raw: unknown): SatLessonPlanEntry[] {
+  if (!Array.isArray(raw)) return [];
+  const entries: SatLessonPlanEntry[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const entry = item as Record<string, unknown>;
+    if (typeof entry.nodeId !== "string" || typeof entry.reason !== "string") continue;
+    const nodeId = entry.nodeId.trim();
+    const reason = entry.reason.trim();
+    if (!nodeId || !reason) continue;
+    entries.push({
+      nodeId,
+      reason,
+      priority: typeof entry.priority === "number" ? entry.priority : undefined,
+    });
+  }
+  return entries;
+}
+
+export function parseSatPretestCursorImport(raw: unknown): SatPretestCursorImportResult {
+  const draft2 = parseSatPretestDraft2Import(raw);
+  if (!draft2.ok) return draft2;
+
+  const payload = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+  const lessonPlan = parseLessonPlanEntries(payload.lessonPlan);
+  const notes = typeof payload.notes === "string" ? payload.notes.trim() : undefined;
+
+  return {
+    ok: true,
+    questions: draft2.questions,
+    lessonPlan,
+    notes: notes || undefined,
+  };
+}
+
+export function parseSatPretestCursorImportJson(text: string): SatPretestCursorImportResult {
   try {
-    return parseSatPretestDraft2Import(JSON.parse(text));
+    return parseSatPretestCursorImport(JSON.parse(text));
   } catch {
     return { ok: false, error: "Could not parse JSON." };
   }

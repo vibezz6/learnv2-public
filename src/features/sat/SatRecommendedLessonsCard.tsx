@@ -15,14 +15,18 @@ export function SatRecommendedLessonsCard({ subjects, getNodeStatus }: Props) {
   const plan = getSatRecommendedLessons(subjects, getNodeStatus);
 
   const heading =
-    plan.source === "pretest_gaps"
-      ? "Recommended from Draft 1 gaps"
-      : plan.source === "track_next"
-        ? "Recommended next"
-        : "SAT lesson suggestions";
+    plan.source === "lesson_plan"
+      ? "Recommended from Cursor lesson plan"
+      : plan.source === "pretest_gaps"
+        ? "Recommended from Draft 1 gaps"
+        : plan.source === "track_next"
+          ? "Recommended next"
+          : "SAT lesson suggestions";
 
   const subcopy =
-    plan.source === "pretest_gaps"
+    plan.source === "lesson_plan"
+      ? "Imported on the Draft 2 tab — study these before or after Draft 2."
+      : plan.source === "pretest_gaps"
       ? "These lessons map to questions you missed on the diagnostic."
       : plan.source === "track_next"
         ? plan.draft1Complete

@@ -6,6 +6,7 @@ import {
   recordSatPretestResponse,
   startSatPretestAttempt,
 } from "@/lib/satPretest";
+import { applySatLessonPlanImport } from "@/lib/satLessonPlan";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 
 function mockLocalStorage(): Storage {
@@ -57,6 +58,20 @@ describe("getSatRecommendedLessons", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it("prefers imported lesson plan over track next", () => {
+    const subjects = [miniSatSubject(["st4", "st17"])];
+    applySatLessonPlanImport(
+      [{ nodeId: "st4", reason: "Cursor says retarget linear equations", priority: 1 }],
+      {},
+      storage,
+    );
+
+    const plan = getSatRecommendedLessons(subjects, () => "available");
+
+    expect(plan.source).toBe("lesson_plan");
+    expect(plan.lessons[0]?.nodeId).toBe("st4");
   });
 
   it("suggests track-next lesson when Draft 1 is not complete", () => {

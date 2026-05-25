@@ -30,13 +30,14 @@ import {
   getSatPretestCursorResponseTemplate,
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
-  parseSatPretestDraft2ImportJson,
+  parseSatPretestCursorImportJson,
   recordSatPretestResponse,
   resetSatPretestDraft,
   startSatPretestAttempt,
   type SatPretestAttempt,
   type SatPretestQuestion,
 } from "@/lib/satPretest";
+import { applySatLessonPlanImport, loadSatLessonPlan } from "@/lib/satLessonPlan";
 import { cn } from "@/lib/cn";
 import { APP_VERSION } from "@/lib/version";
 
@@ -321,16 +322,27 @@ function StartCard({
 }) {
   const [importText, setImportText] = useState("");
   const [importError, setImportError] = useState("");
+  const [importOk, setImportOk] = useState("");
   const isDraft2 = draftId === SAT_PRETEST_DRAFT_2_ID;
+  const savedPlan = isDraft2 ? loadSatLessonPlan() : null;
 
   const handleImport = () => {
-    const result = parseSatPretestDraft2ImportJson(importText);
+    const result = parseSatPretestCursorImportJson(importText);
     if (!result.ok) {
       setImportError(result.error);
+      setImportOk("");
       return;
     }
     setImportError("");
     onImportDraft2(result.questions);
+    if (result.lessonPlan.length > 0 || result.notes) {
+      applySatLessonPlanImport(result.lessonPlan, { notes: result.notes });
+    }
+    const parts = [`${result.questions.length} Draft 2 question(s) ready.`];
+    if (result.lessonPlan.length > 0) {
+      parts.push(`${result.lessonPlan.length} lesson plan item(s) saved.`);
+    }
+    setImportOk(parts.join(" "));
   };
 
   return (
@@ -360,19 +372,36 @@ function StartCard({
       {isDraft2 ? (
         <div className="space-y-2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 p-4">
           <p className="text-sm font-medium text-[var(--text-heading)]">
-            Optional: import Draft 2 JSON from Cursor
+            Import Cursor response JSON (Draft 2 questions + optional lesson plan)
           </p>
           <textarea
             value={importText}
             onChange={(event) => setImportText(event.target.value)}
-            rows={4}
-            placeholder='{ "questions": [ ... ] }'
+            rows={6}
+            placeholder='{ "questions": [ ... ], "lessonPlan": [ { "nodeId": "st4", "reason": "..." } ] }'
             className="w-full resize-y rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-xs text-[var(--text)]"
           />
           {importError ? <p className="text-sm text-[var(--warning)]">{importError}</p> : null}
+          {importOk ? <p className="text-sm text-[var(--accent-2)]">{importOk}</p> : null}
           <Button variant="secondary" onClick={handleImport} className="min-h-10">
-            Validate import
+            Validate Cursor import
           </Button>
+          {savedPlan ? (
+            <ul className="mt-2 space-y-1 text-sm text-[var(--text-muted)]">
+              <li className="font-medium text-[var(--text-heading)]">Saved lesson plan</li>
+              {savedPlan.entries.slice(0, 5).map((entry) => (
+                <li key={entry.nodeId}>
+                  <Link
+                    to={`/subjects/sat-prep/${entry.nodeId}`}
+                    className="text-[var(--accent-2)] hover:underline"
+                  >
+                    {entry.nodeId}
+                  </Link>
+                  — {entry.reason}
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-3">

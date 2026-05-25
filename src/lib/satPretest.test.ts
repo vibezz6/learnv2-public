@@ -13,6 +13,7 @@ import {
   getLatestCompletedSatPretestAttempt,
   listSatPretestAttempts,
   loadSatPretestState,
+  parseSatPretestCursorImportJson,
   parseSatPretestDraft2ImportJson,
   recordSatPretestResponse,
   clearAllSatPretestData,
@@ -362,6 +363,38 @@ describe("satPretest", () => {
     );
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.questions).toHaveLength(1);
+  });
+
+  it("parses Cursor import with lesson plan", () => {
+    const result = parseSatPretestCursorImportJson(
+      JSON.stringify({
+        schemaVersion: 1,
+        questions: [
+          {
+            id: "import-1",
+            draftId: "draft-2",
+            section: "math",
+            domain: "Algebra",
+            skill: "Linear equations",
+            difficulty: "easy",
+            prompt: "Imported",
+            choices: [
+              { id: "a", text: "1" },
+              { id: "b", text: "2" },
+            ],
+            correctChoiceId: "a",
+            explanation: "ok",
+          },
+        ],
+        lessonPlan: [{ nodeId: "st4", reason: "Retarget algebra", priority: 1 }],
+        notes: "From Cursor",
+      }),
+    );
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.lessonPlan).toHaveLength(1);
+      expect(result.notes).toBe("From Cursor");
+    }
   });
 
   it("compares skill scores between drafts", () => {

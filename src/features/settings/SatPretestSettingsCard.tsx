@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Card, ConfirmDialog } from "@/components/ui";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
+import { clearSatLessonPlan, loadSatLessonPlan } from "@/lib/satLessonPlan";
 import {
   clearAllSatPretestData,
   getLatestCompletedSatPretestAttempt,
@@ -23,21 +24,30 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
     const draft1 = attempts.filter((attempt) => attempt.draftId === SAT_PRETEST_DRAFT_1_ID);
     const draft2 = attempts.filter((attempt) => attempt.draftId === SAT_PRETEST_DRAFT_2_ID);
     const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
+    const lessonPlan = loadSatLessonPlan();
     return {
-      hasData: attempts.length > 0,
+      hasData: attempts.length > 0 || !!lessonPlan,
       draft1Count: draft1.length,
       draft2Count: draft2.length,
       draft1Score: draft1Done?.scoreSummary
         ? `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`
         : null,
+      lessonPlanCount: lessonPlan?.entries.length ?? 0,
     };
   }, [revision]);
 
   const handleResetConfirm = () => {
     clearAllSatPretestData();
+    clearSatLessonPlan();
     setResetOpen(false);
     setRevision((r) => r + 1);
-    onMessage("SAT diagnostic attempts cleared on this device.");
+    onMessage("SAT diagnostic attempts and imported lesson plan cleared.");
+  };
+
+  const handleClearLessonPlan = () => {
+    clearSatLessonPlan();
+    setRevision((r) => r + 1);
+    onMessage("Imported SAT lesson plan cleared.");
   };
 
   return (
@@ -66,6 +76,14 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
             Draft 2 attempts:{" "}
             <span className="font-medium text-[var(--text-heading)]">{summary.draft2Count}</span>
           </li>
+          {summary.lessonPlanCount > 0 ? (
+            <li>
+              Cursor lesson plan:{" "}
+              <span className="font-medium text-[var(--text-heading)]">
+                {summary.lessonPlanCount} items
+              </span>
+            </li>
+          ) : null}
         </ul>
       ) : (
         <p className="text-sm text-[var(--text-muted)]">No diagnostic attempts saved yet.</p>
@@ -80,6 +98,14 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
         <Button
           variant="secondary"
           className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
+          onClick={handleClearLessonPlan}
+          disabled={summary.lessonPlanCount === 0}
+        >
+          Clear lesson plan
+        </Button>
+        <Button
+          variant="secondary"
+          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
           onClick={() => setResetOpen(true)}
           disabled={!summary.hasData}
         >
@@ -90,7 +116,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       <ConfirmDialog
         open={resetOpen}
         title="Clear SAT diagnostic data?"
-        message="Removes Draft 1 and Draft 2 attempts, responses, and scores on this device. Study progress and the mistake log are not affected."
+        message="Removes Draft 1 and Draft 2 attempts, responses, scores, and the imported lesson plan on this device. Study progress and the mistake log are not affected."
         confirmLabel="Clear"
         danger
         onConfirm={handleResetConfirm}
