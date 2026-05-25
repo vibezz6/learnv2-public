@@ -57,6 +57,27 @@ Phase 2: Export JSON and copyable Markdown on the completion screen (`buildSatPr
 `formatSatPretestMarkdown`, copy/download actions). Draft 2 import, transcript integration, AI
 review, command palette shortcuts, and new SAT lesson batches remain later phases.
 
+## Cursor analysis handoff (Draft 1 → Draft 2 + lesson plan)
+
+After Draft 1 completes, export JSON/Markdown from `/sat/pretest` or use **Copy Cursor prompt** on the
+results screen. Paste into a Cursor session with the export attached.
+
+### Expected Cursor response shape
+
+Import via **Validate Cursor import** on the Draft 2 tab (`parseSatPretestCursorImportJson`):
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `schemaVersion` | optional | `1` |
+| `questions` | yes | Array of `SatPretestQuestion` with `draftId: "draft-2"` |
+| `lessonPlan` | optional | `{ nodeId, reason, priority? }[]` — existing `st*` ids or proposed new ids |
+| `notes` | optional | Free text for the student or a later authoring batch |
+
+Example template: [`docs/sat-pretest-cursor-template.json`](sat-pretest-cursor-template.json).
+
+Lesson plan entries persist under `learnv2_sat_lesson_plan_v1` (included in `learnv2_*` backup).
+Recommended lessons prefer the imported plan over raw `recommendedNodeIds` when present.
+
 ## Test Plan
 
 - Unit-test `satPretest` storage, validation, resume, completion, scoring, and corrupt-data

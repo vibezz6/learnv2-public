@@ -24,8 +24,10 @@ import {
   buildDraft2FromGaps,
   compareDraftScores,
   completeSatPretestAttempt,
+  copyCursorAnalysisPromptToClipboard,
   copySatPretestMarkdownToClipboard,
   downloadSatPretestJson,
+  getSatPretestCursorResponseTemplate,
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
   parseSatPretestDraft2ImportJson,
@@ -546,6 +548,7 @@ function ResultsCard({
   showDraft2Cta: boolean;
 }) {
   const [copied, setCopied] = useState(false);
+  const [cursorCopied, setCursorCopied] = useState(false);
   const summary = attempt.scoreSummary;
   const isDraft2 = attempt.draftId === SAT_PRETEST_DRAFT_2_ID;
   const comparisons =
@@ -565,6 +568,25 @@ function ResultsCard({
 
   const handleDownload = () => {
     downloadSatPretestJson(attempt, questions, APP_VERSION);
+  };
+
+  const handleCopyCursorPrompt = async () => {
+    const ok = await copyCursorAnalysisPromptToClipboard(attempt, questions, APP_VERSION);
+    if (ok) {
+      setCursorCopied(true);
+      setTimeout(() => setCursorCopied(false), 2000);
+    }
+  };
+
+  const handleDownloadCursorTemplate = () => {
+    const json = JSON.stringify(getSatPretestCursorResponseTemplate(), null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "sat-pretest-cursor-template.json";
+    anchor.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!summary) {
@@ -659,20 +681,41 @@ function ResultsCard({
         </section>
       ) : null}
 
-      <section className="space-y-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 p-4">
+      <section className="space-y-3 rounded-[var(--radius)] border border-[var(--accent-2)]/25 bg-[var(--accent-bg)]/40 p-4">
         <h3 className="text-sm font-semibold text-[var(--text-heading)]">Export for Cursor</h3>
         <p className="text-sm text-[var(--text-muted)]">
-          Copy Markdown or download JSON for Cursor gap analysis.
+          {isDraft2
+            ? "Copy Markdown or download JSON for your records."
+            : "Copy the full Cursor prompt (export + response template), or download artifacts separately."}
         </p>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          {!isDraft2 ? (
+            <Button
+              onClick={handleCopyCursorPrompt}
+              className="min-h-11 w-full sm:w-auto"
+            >
+              {cursorCopied ? <Check size={16} /> : <Copy size={16} />}
+              {cursorCopied ? "Copied!" : "Copy Cursor prompt"}
+            </Button>
+          ) : null}
           <Button variant="secondary" onClick={handleCopy} className="min-h-11 w-full sm:w-auto">
             {copied ? <Check size={16} /> : <Copy size={16} />}
-            {copied ? "Copied!" : isDraft2 ? "Copy Draft 2 summary" : "Copy Draft 1 summary"}
+            {copied ? "Copied!" : isDraft2 ? "Copy Draft 2 summary" : "Copy export Markdown"}
           </Button>
           <Button variant="secondary" onClick={handleDownload} className="min-h-11 w-full sm:w-auto">
             <Download size={16} />
-            Download JSON
+            Download export JSON
           </Button>
+          {!isDraft2 ? (
+            <Button
+              variant="secondary"
+              onClick={handleDownloadCursorTemplate}
+              className="min-h-11 w-full sm:w-auto"
+            >
+              <Download size={16} />
+              Download response template
+            </Button>
+          ) : null}
         </div>
       </section>
 

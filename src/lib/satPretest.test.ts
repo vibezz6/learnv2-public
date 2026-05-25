@@ -6,7 +6,9 @@ import {
   buildSatPretestScoreSummary,
   compareDraftScores,
   completeSatPretestAttempt,
+  buildCursorAnalysisPrompt,
   formatSatPretestMarkdown,
+  getSatPretestCursorResponseTemplate,
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
   listSatPretestAttempts,
@@ -257,6 +259,13 @@ describe("satPretest", () => {
     expect(markdown).toContain("# Learn v2 — SAT Pretest Draft 1 Export");
     expect(markdown).toContain("## Requested Cursor task");
     expect(markdown).toContain("Sentence boundaries");
+    expect(markdown).toContain("sat-pretest-cursor-template.json");
+
+    const prompt = buildCursorAnalysisPrompt(completed, questions, "2.0.30");
+    expect(prompt).toContain("Cursor task");
+    expect(prompt).toContain("lessonPlan");
+    expect(prompt).toContain("Sentence boundaries");
+    expect(getSatPretestCursorResponseTemplate().schemaVersion).toBe(1);
   });
 
   it("returns null export for incomplete attempts", () => {

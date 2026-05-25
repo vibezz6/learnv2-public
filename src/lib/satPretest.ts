@@ -648,15 +648,116 @@ export function formatSatPretestMarkdown(
     lines.push(`- ${step}`);
   }
 
+  if (payload.scoring.recommendedNodeIds.length > 0) {
+    lines.push("", "## Related lesson nodes (from misses)", "");
+    for (const nodeId of payload.scoring.recommendedNodeIds) {
+      lines.push(`- ${nodeId}`);
+    }
+    lines.push("");
+  }
+
   lines.push(
-    "",
     "## Requested Cursor task",
     "",
-    "Analyze this Draft 1 export. Propose a targeted Draft 2 question set, flag rationale gaps, and recommend SAT lesson/drill updates in Learn v2.",
+    "Analyze this Draft 1 export. Return JSON matching Learn v2 Cursor import schema:",
+    "- `questions`: Draft 2 items (`draftId: \"draft-2\"`) targeting weak skills",
+    "- `lessonPlan`: optional `{ nodeId, reason, priority? }[]` for existing or proposed st* lessons",
+    "",
+    "See docs/sat-pretest-cursor-template.json in the learnv2 repo for the response shape.",
     "",
   );
 
   return lines.join("\n");
+}
+
+export const SAT_PRETEST_CURSOR_IMPORT_SCHEMA_VERSION = 1;
+
+/** Example JSON Cursor should return after reviewing a Draft 1 export. */
+export function getSatPretestCursorResponseTemplate(): Record<string, unknown> {
+  return {
+    schemaVersion: SAT_PRETEST_CURSOR_IMPORT_SCHEMA_VERSION,
+    questions: [
+      {
+        id: "draft2-cursor-math-1",
+        draftId: "draft-2",
+        section: "math",
+        domain: "Algebra",
+        skill: "Linear equations",
+        difficulty: "medium",
+        prompt: "New stem targeting the same skill as the Draft 1 miss.",
+        choices: [
+          { id: "a", text: "Option A" },
+          { id: "b", text: "Option B" },
+          { id: "c", text: "Option C" },
+          { id: "d", text: "Option D" },
+        ],
+        correctChoiceId: "b",
+        explanation: "Why the answer is correct.",
+        relatedNodeIds: ["st4"],
+      },
+    ],
+    lessonPlan: [
+      {
+        nodeId: "st4",
+        reason: "Retarget existing linear equations lesson after Draft 1 gap.",
+        priority: 1,
+      },
+    ],
+    notes: "Optional analysis notes for the student.",
+  };
+}
+
+/** Clipboard-ready instructions plus export markdown for a Cursor analysis session. */
+export function buildCursorAnalysisPrompt(
+  attempt: SatPretestAttempt,
+  questions: SatPretestQuestion[],
+  appVersion: string,
+): string | null {
+  const exportMd = formatSatPretestMarkdown(attempt, questions, appVersion);
+  if (!exportMd) return null;
+
+  const templateJson = JSON.stringify(getSatPretestCursorResponseTemplate(), null, 2);
+
+  return [
+    "# Cursor task — Learn v2 SAT Draft 1 analysis",
+    "",
+    "You are reviewing a **local Learn v2 diagnostic** (not an official SAT score).",
+    "",
+    "## Your deliverable",
+    "",
+    "Return **one JSON object** the student can paste into Learn v2 → SAT diagnostic → Draft 2 → Validate Cursor import.",
+    "",
+    "### Required shape",
+    "",
+    "```json",
+    templateJson,
+    "```",
+    "",
+    "Rules:",
+    "- Every `questions[]` item must use `draftId: \"draft-2\"` and pass the same validation as Draft 2 import.",
+    "- `lessonPlan[]` may reference existing `st*` node ids or propose new ids (authoring batch adds nodes later).",
+    "- Target weak skills from the export below; do not copy copyrighted official SAT items.",
+    "",
+    "---",
+    "",
+    exportMd,
+  ].join("\n");
+}
+
+export async function copyCursorAnalysisPromptToClipboard(
+  attempt: SatPretestAttempt,
+  questions: SatPretestQuestion[],
+  appVersion: string,
+  writeText: (text: string) => Promise<void> = (text) => navigator.clipboard.writeText(text),
+): Promise<boolean> {
+  const prompt = buildCursorAnalysisPrompt(attempt, questions, appVersion);
+  if (!prompt) return false;
+  try {
+    await writeText(prompt);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function copySatPretestMarkdownToClipboard(
