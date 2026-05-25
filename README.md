@@ -2,7 +2,7 @@
 
 Personal learning OS — Neural Utopia redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.0.43 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.0.44 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -179,6 +179,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 37 Study-first dashboard copy (58) | ✅ **v2.0.41** — optional diagnostic wording on SAT today, tomorrow tasks, daily study command |
 | 38 Study-first SAT hub copy (59) | ✅ **v2.0.42** — optional baseline wording on recommended lessons and official resources cards |
 | 39 Study-first command palette copy (60) | ✅ **v2.0.43** — optional baseline wording on SAT pretest and recommended-lessons shortcuts |
+| 40 Study-first pretest + settings copy (61) | ✅ **v2.0.44** — optional baseline on pretest page header/StartCard; diagnostic backup in Settings |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

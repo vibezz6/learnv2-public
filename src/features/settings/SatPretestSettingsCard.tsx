@@ -77,7 +77,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
   return (
     <Card id="sat-pretest-backup" className="min-w-0 scroll-mt-24 space-y-4">
       <div>
-        <h2 className="break-words font-semibold text-[var(--text-heading)]">SAT diagnostic</h2>
+        <h2 className="break-words font-semibold text-[var(--text-heading)]">SAT diagnostic backup</h2>
         <p className="mt-1 break-words text-sm text-[var(--text-muted)]">
           Draft 1–3 attempts, rationales, and exports live in localStorage on this device.
         </p>
@@ -146,7 +146,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
         <Link to="/sat/pretest" className="min-w-0 min-[481px]:flex-1">
           <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-            Open SAT diagnostic
+            Open diagnostic tool
           </Button>
         </Link>
         <Button

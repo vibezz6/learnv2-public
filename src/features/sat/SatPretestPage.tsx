@@ -282,7 +282,7 @@ export function SatPretestPage() {
 
       <header className="space-y-3">
         <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--accent-2)]">
-          SAT diagnostic
+          SAT optional baseline
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-heading)]">
           {draftLabel} pretest
@@ -307,8 +307,8 @@ export function SatPretestPage() {
           })}
         </div>
         <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-muted)]">
-          This is a local Learn v2 diagnostic, not an official score predictor. The goal is to
-          capture your answer and your reasoning before feedback so Draft 2 can target real gaps.
+          Optional local baseline—not an official score. Daily SAT work is the lesson track, mistake
+          log, and official practice; Draft 2 can target gaps when you want a follow-up.
         </p>
       </header>
 
@@ -496,7 +496,7 @@ function StartCard({
         disabled={(isGapDraft || isRetest) && !draft1Done}
         className="min-h-11 w-full sm:w-auto"
       >
-        {isGapDraft ? "Start targeted Draft 2" : isRetest ? "Start Draft 3 retest" : "Start diagnostic"}
+        {isGapDraft ? "Start targeted Draft 2" : isRetest ? "Start Draft 3 retest" : "Start baseline"}
         <ArrowRight size={16} />
       </Button>
     </Card>
