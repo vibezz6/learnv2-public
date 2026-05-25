@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import {
   Check,
   CheckCircle2,
@@ -13,7 +12,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader, Section } from "@/components/ui";
+import { Button, Card, EmptyState, PageContainer, PageHeader, Section } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -159,15 +158,14 @@ export function StatsPage() {
       />
 
       {!stats || stats.completedNodes === 0 ? (
-        <Card className="stagger-item min-w-0 py-14 text-center">
-          <Trophy className="mx-auto mb-4 text-[var(--accent)]" size={40} />
-          <p className="break-words font-medium text-[var(--text-heading)]">Start your journey</p>
-          <p className="mx-auto mt-2 max-w-sm break-words text-sm text-[var(--text-muted)]">
-            Complete your first lesson and your level, streak, and achievements will show up here.
-          </p>
-          <Link to="/subjects" className="mt-6 inline-block w-full min-[481px]:w-auto">
-            <Button className="min-h-11 w-full touch-manipulation min-[481px]:w-auto">Pick a subject</Button>
-          </Link>
+        <Card variant="quiet" className="stagger-item min-w-0">
+          <EmptyState
+            icon={<Trophy size={32} className="text-[var(--accent)]" />}
+            title="Start your journey"
+            description="Complete your first lesson and your level, streak, and achievements will show up here."
+            actionLabel="Pick a subject"
+            actionTo="/subjects"
+          />
         </Card>
       ) : (
         <>

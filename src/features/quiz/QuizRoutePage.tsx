@@ -63,6 +63,7 @@ export function QuizRoutePage() {
             backLabel={node.name}
             onExitFocus={toggleFocusMode}
             accentColor={accentColor}
+            subjectName={subject.name}
           />
         ) : (
           <PageHeader

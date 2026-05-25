@@ -289,6 +289,7 @@ export function SatPretestPage() {
             backTo="/subjects/sat-prep"
             backLabel="SAT Prep"
             onExitFocus={toggleFocusMode}
+            subjectName="SAT Prep"
           />
         ) : (
           <PageHeader

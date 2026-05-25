@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { RoutePageTransition } from "@/app/RoutePageTransition";
 import {
   Brain,
   BookOpen,
@@ -26,6 +27,7 @@ import { useEffect, useState, type ComponentType } from "react";
 type NavItem = {
   to: string;
   label: string;
+  hint: string;
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
   end?: boolean;
 };
@@ -34,28 +36,28 @@ const navSections: { label: string; items: NavItem[] }[] = [
   {
     label: "Learn",
     items: [
-      { to: "/", label: "Today", icon: Home, end: true },
-      { to: "/subjects", label: "Subjects", icon: BookOpen },
-      { to: "/tracks", label: "Tracks", icon: Route },
-      { to: "/campus", label: "Campus", icon: LayoutGrid },
-      { to: "/bookmarks", label: "Saved", icon: Star },
+      { to: "/", label: "Today", hint: "Continue, week plan, and daily challenge", icon: Home, end: true },
+      { to: "/subjects", label: "Subjects", hint: "Skill trees and lessons", icon: BookOpen },
+      { to: "/tracks", label: "Tracks", hint: "Guided paths across subjects", icon: Route },
+      { to: "/campus", label: "Campus", hint: "College tools and labs", icon: LayoutGrid },
+      { to: "/bookmarks", label: "Saved", hint: "Bookmarked lessons and resources", icon: Star },
     ],
   },
   {
     label: "Productivity",
     items: [
-      { to: "/review", label: "Review", icon: Brain },
-      { to: "/timer", label: "Timer", icon: Timer },
-      { to: "/stats", label: "Stats", icon: BarChart3 },
+      { to: "/review", label: "Review", hint: "Spaced repetition queue", icon: Brain },
+      { to: "/timer", label: "Timer", hint: "Timed study sessions", icon: Timer },
+      { to: "/stats", label: "Stats", hint: "Progress proof and activity", icon: BarChart3 },
     ],
   },
   {
     label: "System",
-    items: [{ to: "/settings", label: "Settings", icon: Settings }],
+    items: [{ to: "/settings", label: "Settings", hint: "Backup, theme, and keys", icon: Settings }],
   },
 ];
 
-const mobileNav: NavItem[] = [
+const mobileNav: Omit<NavItem, "hint">[] = [
   { to: "/", label: "Today", icon: Home, end: true },
   { to: "/review", label: "Review", icon: Brain },
   { to: "/timer", label: "Timer", icon: Timer },
@@ -116,11 +118,13 @@ export function AppShell() {
                 {section.label}
               </p>
               <div className="flex flex-col gap-0.5">
-                {section.items.map(({ to, label, icon: Icon, end }) => (
+                {section.items.map(({ to, label, hint, icon: Icon, end }) => (
                   <NavLink
                     key={to}
                     to={to}
                     end={end}
+                    title={hint}
+                    aria-label={`${label} — ${hint}`}
                     className={({ isActive }) =>
                       cn(
                         "relative flex items-center gap-3 rounded-[var(--radius)] px-3 py-2 text-sm transition-colors",
@@ -183,7 +187,7 @@ export function AppShell() {
         </header>
 
         <main className="flex-1 pb-[var(--mobile-nav-height)] md:pb-0">
-          <Outlet />
+          <RoutePageTransition />
         </main>
 
         <nav

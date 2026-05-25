@@ -176,7 +176,8 @@ Operational map for the [52-batch roadmap](file:///Users/clawbot/.cursor/plans/l
 | 4 | ✅ v2.3.24 — batches 76–80 |
 | 5–6 | ✅ v2.3.34 — batches 81–90 (81/86/87 deferred or pre-existing) |
 | 7 | ✅ v2.3.39 — batches 91–95 (Stats delight + subject chrome) |
-| 8–11 | Not started (Wave 9 mobile deferred — desktop daily driver) |
+| 8 | ✅ v2.3.44 — batches 96–100 (motion, EmptyState, sidebar hints, ⌘K actions, focus bar) |
+| 9–11 | Not started (Wave 9 mobile deferred — desktop daily driver) |
 
 ## Related
 

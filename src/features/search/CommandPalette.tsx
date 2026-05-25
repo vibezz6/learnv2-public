@@ -30,6 +30,10 @@ import { useProgress } from "@/stores/progress";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
+  addRecentCommandAction,
+  getRecentCommandActions,
+} from "@/features/search/recentCommandActions";
+import {
   addRecentSearch,
   getRecentSearches,
   fuzzyMatch,
@@ -49,6 +53,7 @@ interface CommandItem {
   section: "Recent" | "Navigate" | "Campus" | "SAT" | "Subjects" | "Lessons" | "Actions" | "Theme";
   groupKey?: string;
   subjectColor?: string;
+  recentPath?: string;
   icon: React.ComponentType<{ size?: number }>;
   action: () => void;
 }
@@ -68,6 +73,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const [selected, setSelected] = useState(0);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [recentActions, setRecentActions] = useState(() => getRecentCommandActions());
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -76,6 +82,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     if (open) {
       loadAllSubjects().then(setSubjects);
       setRecentSearches(getRecentSearches());
+      setRecentActions(getRecentCommandActions());
     } else {
       setQuery("");
       setSelected(0);
@@ -83,7 +90,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   }, [open]);
 
   const go = useCallback(
-    (path: string) => {
+    (path: string, record?: { id: string; label: string }) => {
+      if (record) addRecentCommandAction(record.id, record.label, path);
       navigate(path);
       onClose();
     },
@@ -117,7 +125,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             groupKey: sub.name,
             subjectColor: sub.color,
             icon: GraduationCap,
-            action: () => go(`/subjects/${sub.id}/${node.id}`),
+            recentPath: `/subjects/${sub.id}/${node.id}`,
+            action: () =>
+              go(`/subjects/${sub.id}/${node.id}`, {
+                id: `lesson-${sub.id}-${node.id}`,
+                label: node.name,
+              }),
           },
         });
       }
@@ -144,22 +157,36 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       }
       if (picks.length === 0) return;
       const pick = picks[Math.floor(Math.random() * picks.length)];
-      go(`/subjects/${pick.subId}/${pick.nodeId}`);
+      const path = `/subjects/${pick.subId}/${pick.nodeId}`;
+      go(path, { id: "surprise", label: "Random lesson" });
     };
 
-    const activityRecent: CommandItem[] = listActivities(5).map((event) => ({
-      id: `activity-${event.id}`,
-      label: formatActivityLabel(event),
-      description: event.date,
-      section: "Actions",
-      icon: Sparkles,
-      action: () => {
-        if (event.nodeId) {
-          const sub = subjects.find((s) => s.nodes.some((n) => n.id === event.nodeId));
-          if (sub) go(`/subjects/${sub.id}/${event.nodeId}`);
-          else go("/");
-        } else go("/");
-      },
+    const activityRecent: CommandItem[] = listActivities(5).map((event) => {
+      const path = event.nodeId
+        ? (() => {
+            const sub = subjects.find((s) => s.nodes.some((n) => n.id === event.nodeId));
+            return sub ? `/subjects/${sub.id}/${event.nodeId}` : "/";
+          })()
+        : "/";
+      const label = formatActivityLabel(event);
+      return {
+        id: `activity-${event.id}`,
+        label,
+        description: event.date,
+        section: "Actions" as const,
+        icon: Sparkles,
+        recentPath: path,
+        action: () => go(path, { id: `activity-${event.id}`, label }),
+      };
+    });
+
+    const recentActionItems: CommandItem[] = recentActions.map((item) => ({
+      id: `recent-action-${item.id}`,
+      label: item.label,
+      description: "Recent action",
+      section: "Recent" as const,
+      icon: Clock,
+      action: () => go(item.path, { id: item.id, label: item.label }),
     }));
 
     const recent: CommandItem[] = recentSearches.map((term, i) => ({
@@ -172,13 +199,13 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     }));
 
     const navigateItems: CommandItem[] = [
-      { id: "home", label: "Today", section: "Navigate", icon: Home, action: () => go("/") },
-      { id: "bookmarks", label: "Saved", section: "Navigate", icon: Star, action: () => go("/bookmarks") },
-      { id: "subjects", label: "Subjects", section: "Navigate", icon: BookOpen, action: () => go("/subjects") },
-      { id: "review", label: "Review queue", section: "Navigate", icon: Brain, action: () => go("/review") },
-      { id: "stats", label: "Stats & transcript", section: "Navigate", icon: BarChart3, action: () => go("/stats") },
-      { id: "timer", label: "Timer", section: "Navigate", icon: Timer, action: () => go("/timer") },
-      { id: "settings", label: "Settings", section: "Navigate", icon: Settings, action: () => go("/settings") },
+      { id: "home", label: "Today", section: "Navigate", icon: Home, recentPath: "/", action: () => go("/", { id: "home", label: "Today" }) },
+      { id: "bookmarks", label: "Saved", section: "Navigate", icon: Star, recentPath: "/bookmarks", action: () => go("/bookmarks", { id: "bookmarks", label: "Saved" }) },
+      { id: "subjects", label: "Subjects", section: "Navigate", icon: BookOpen, recentPath: "/subjects", action: () => go("/subjects", { id: "subjects", label: "Subjects" }) },
+      { id: "review", label: "Review queue", section: "Navigate", icon: Brain, recentPath: "/review", action: () => go("/review", { id: "review", label: "Review queue" }) },
+      { id: "stats", label: "Stats & transcript", section: "Navigate", icon: BarChart3, recentPath: "/stats", action: () => go("/stats", { id: "stats", label: "Stats & transcript" }) },
+      { id: "timer", label: "Timer", section: "Navigate", icon: Timer, recentPath: "/timer", action: () => go("/timer", { id: "timer", label: "Timer" }) },
+      { id: "settings", label: "Settings", section: "Navigate", icon: Settings, recentPath: "/settings", action: () => go("/settings", { id: "settings", label: "Settings" }) },
     ];
 
     const campusItems: CommandItem[] = [
@@ -187,7 +214,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         label: "Campus services",
         section: "Campus",
         icon: LayoutGrid,
-        action: () => go("/campus"),
+        recentPath: "/campus",
+        action: () => go("/campus", { id: "campus", label: "Campus services" }),
       },
       {
         id: "college-checklist",
@@ -195,7 +223,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "FAFSA, essays, deadlines",
         section: "Campus",
         icon: ClipboardList,
-        action: () => go("/campus/college-checklist"),
+        recentPath: "/campus/college-checklist",
+        action: () =>
+          go("/campus/college-checklist", { id: "college-checklist", label: "College checklist" }),
       },
       {
         id: "college-deadlines",
@@ -206,7 +236,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             : "Checklist and essay due dates",
         section: "Campus",
         icon: CalendarClock,
-        action: () => go(urgentDeadlines[0]?.href ?? "/campus/college-checklist"),
+        recentPath: urgentDeadlines[0]?.href ?? "/campus/college-checklist",
+        action: () => {
+          const path = urgentDeadlines[0]?.href ?? "/campus/college-checklist";
+          go(path, { id: "college-deadlines", label: "College deadlines" });
+        },
       },
       {
         id: "essay-tracker",
@@ -214,7 +248,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "Draft status and due dates",
         section: "Campus",
         icon: FileText,
-        action: () => go("/campus/essay-tracker"),
+        recentPath: "/campus/essay-tracker",
+        action: () => go("/campus/essay-tracker", { id: "essay-tracker", label: "Essay tracker" }),
       },
       {
         id: "campus-focus",
@@ -222,14 +257,16 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "SAT, foundations, or explore",
         section: "Campus",
         icon: GraduationCap,
-        action: () => go("/settings#campus-focus"),
+        recentPath: "/settings",
+        action: () => go("/settings#campus-focus", { id: "campus-focus", label: "Change campus focus" }),
       },
       {
         id: "trading-lab",
         label: "Trading Lab",
         section: "Campus",
         icon: FlaskConical,
-        action: () => go("/lab/trading"),
+        recentPath: "/lab/trading",
+        action: () => go("/lab/trading", { id: "trading-lab", label: "Trading Lab" }),
       },
       {
         id: "sat-pretest",
@@ -237,7 +274,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "In-app diagnostic · also under SAT Prep",
         section: "SAT",
         icon: GraduationCap,
-        action: () => go("/sat/pretest"),
+        recentPath: "/sat/pretest",
+        action: () => go("/sat/pretest", { id: "sat-pretest", label: "SAT optional baseline (Draft 1)" }),
       },
       {
         id: "sat-recommended",
@@ -249,8 +287,17 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         icon: Sparkles,
         action: () => {
           const lesson = satRecommended.lessons[0];
-          if (lesson) go(`/subjects/${lesson.subjectId}/${lesson.nodeId}`);
-          else go("/subjects/sat-prep#recommended");
+          if (lesson) {
+            go(`/subjects/${lesson.subjectId}/${lesson.nodeId}`, {
+              id: "sat-recommended",
+              label: "SAT recommended lessons",
+            });
+          } else {
+            go("/subjects/sat-prep#recommended", {
+              id: "sat-recommended",
+              label: "SAT recommended lessons",
+            });
+          }
         },
       },
       {
@@ -259,7 +306,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "Log misses after Bluebook or Khan",
         section: "SAT",
         icon: ClipboardList,
-        action: () => go("/subjects/sat-prep#mistakes"),
+        recentPath: "/subjects/sat-prep#mistakes",
+        action: () => go("/subjects/sat-prep#mistakes", { id: "sat-mistake-log", label: "SAT mistake log" }),
       },
       {
         id: "sat-prep",
@@ -267,7 +315,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "75-lesson August track",
         section: "SAT",
         icon: BookOpen,
-        action: () => go("/subjects/sat-prep"),
+        recentPath: "/subjects/sat-prep",
+        action: () => go("/subjects/sat-prep", { id: "sat-prep", label: "SAT Prep subject" }),
       },
     ];
 
@@ -278,8 +327,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       section: "Subjects",
       groupKey: sub.name,
       subjectColor: sub.color,
+      recentPath: `/subjects/${sub.id}`,
       icon: BookOpen,
-      action: () => go(`/subjects/${sub.id}`),
+      action: () => go(`/subjects/${sub.id}`, { id: `sub-${sub.id}`, label: sub.name }),
     }));
 
     const actionItems: CommandItem[] = [
@@ -292,6 +342,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     ];
 
     return [
+      ...recentActionItems,
       ...recent,
       ...activityRecent,
       ...navigateItems,
@@ -300,7 +351,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...actionItems,
       ...themeItems,
     ];
-  }, [subjects, go, setTheme, onClose, recentSearches, fillQuery, satRecommended, urgentDeadlines]);
+  }, [subjects, go, setTheme, onClose, recentSearches, recentActions, fillQuery, satRecommended, urgentDeadlines]);
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -444,7 +495,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         )}
 
         <ul ref={listRef} className="max-h-96 overflow-y-auto py-2">
-          {!q && recentSearches.length === 0 && (
+          {!q && recentSearches.length === 0 && recentActions.length === 0 && (
             <li className="border-b border-[var(--border)] px-6 py-4 text-center">
               <Search className="mx-auto mb-2 text-[var(--accent)]" size={22} />
               <p className="text-sm font-medium text-[var(--text-heading)]">

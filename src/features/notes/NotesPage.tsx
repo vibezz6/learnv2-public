@@ -147,6 +147,8 @@ export function NotesPage() {
             backTo={lessonPath}
             backLabel={node.name}
             onExitFocus={toggleFocusMode}
+            accentColor={subject.color}
+            subjectName={subject.name}
           />
         ) : (
           <PageHeader
