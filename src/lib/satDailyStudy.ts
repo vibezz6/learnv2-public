@@ -2,6 +2,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
 import { getSatNextLesson, type NodeStatus } from "@/lib/campusHome";
+import type { PlacementGoal } from "@/lib/placement";
 import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { getTodayReadinessEntry } from "@/lib/satReadiness";
@@ -165,4 +166,24 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
     intensity,
     diagnosticNote,
   };
+}
+
+/** True when the dashboard SAT today card should render (Campus home hides duplicate SAT block). */
+export function shouldShowSatTodayCard(
+  placementGoal: PlacementGoal | null | undefined,
+  subjects: Subject[],
+  getNodeStatus: (node: SkillNode) => NodeStatus,
+  storage: Storage = localStorage,
+): boolean {
+  const satNext = getSatNextLesson(subjects, getNodeStatus);
+  const draft1Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID, storage);
+  const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID, storage);
+  const draft2Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_2_ID, storage);
+  return (
+    placementGoal === "sat" ||
+    !!satNext ||
+    !!draft1Active ||
+    !!draft1Done ||
+    !!draft2Active
+  );
 }

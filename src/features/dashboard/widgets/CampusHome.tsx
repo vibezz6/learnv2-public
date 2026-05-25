@@ -18,6 +18,7 @@ import {
 } from "@/lib/campusHome";
 import { cn } from "@/lib/cn";
 import { labelForPlacement } from "@/lib/placement";
+import { shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { CampusAdmissionsNudges } from "./CampusAdmissionsNudges";
@@ -43,6 +44,7 @@ export function CampusHome({ subjects }: Props) {
 
   const progress = getTrackProgress(track, subjects, getNodeStatus);
   const satNext = getSatNextLesson(subjects, getNodeStatus);
+  const showSatToday = shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
 
   return (
     <Card variant="default" hover className="min-w-0 p-6">
@@ -133,7 +135,7 @@ export function CampusHome({ subjects }: Props) {
         </div>
       </div>
 
-      {satNext && (
+      {satNext && !showSatToday && (
         <div className="mt-6 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <div className="flex items-start gap-3">
             <GraduationCap size={16} className="mt-0.5 shrink-0 text-[var(--accent-2)]" aria-hidden />

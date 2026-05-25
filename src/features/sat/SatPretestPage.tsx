@@ -27,6 +27,10 @@ import {
   isSatPretestFollowUpDraft,
 } from "@/data/satPretestDrafts";
 import {
+  loadImportedDraft2Questions,
+  saveImportedDraft2Questions,
+} from "@/lib/satPretestDraft2Pool";
+import {
   advanceSatPretestAttempt,
   buildDraft2FromGaps,
   compareDraftScores,
@@ -100,7 +104,13 @@ function loadAttemptForDraft(draftId: string): SatPretestAttempt | null {
 
 export function SatPretestPage() {
   const [viewDraftId, setViewDraftId] = useState(SAT_PRETEST_DRAFT_1_ID);
-  const [importedDraft2, setImportedDraft2] = useState<SatPretestQuestion[]>([]);
+  const [importedDraft2, setImportedDraft2] = useState<SatPretestQuestion[]>(() =>
+    loadImportedDraft2Questions(),
+  );
+  const persistImportedDraft2 = useCallback((questions: SatPretestQuestion[]) => {
+    setImportedDraft2(questions);
+    saveImportedDraft2Questions(questions);
+  }, []);
   const [attempt, setAttempt] = useState<SatPretestAttempt | null>(() =>
     loadAttemptForDraft(SAT_PRETEST_DRAFT_1_ID),
   );
@@ -315,7 +325,7 @@ export function SatPretestPage() {
           draftKind={viewDraftConfig?.kind ?? "baseline"}
           draft1Done={!!draft1Completed}
           onStart={startViewDraft}
-          onImportDraft2={setImportedDraft2}
+          onImportDraft2={persistImportedDraft2}
         />
       ) : completedAttempt ? (
         <ResultsCard

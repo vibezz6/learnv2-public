@@ -5,6 +5,7 @@ import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
 import { SAT_PRETEST_DRAFT_3_ID } from "@/data/satPretestDrafts";
 import { clearSatLessonPlan, loadSatLessonPlan } from "@/lib/satLessonPlan";
+import { clearImportedDraft2Questions } from "@/lib/satPretestDraft2Pool";
 import {
   clearAllSatPretestData,
   getLatestCompletedSatPretestAttempt,
@@ -43,6 +44,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
 
   const handleResetConfirm = () => {
     clearAllSatPretestData();
+    clearImportedDraft2Questions();
     clearSatLessonPlan();
     setResetOpen(false);
     setRevision((r) => r + 1);
@@ -168,7 +170,7 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
       <ConfirmDialog
         open={resetOpen}
         title="Clear SAT diagnostic data?"
-        message="Removes Draft 1–3 attempts, responses, scores, and the imported lesson plan on this device. Study progress and the mistake log are not affected."
+        message="Removes Draft 1–3 attempts, responses, scores, imported Draft 2 questions, and the imported lesson plan on this device. Study progress and the mistake log are not affected."
         confirmLabel="Clear"
         danger
         onConfirm={handleResetConfirm}

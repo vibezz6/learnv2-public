@@ -2,16 +2,9 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ClipboardList, GraduationCap, Moon } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
-import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
+import { getSatDailyStudyCommand, shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
 import { getReadinessNudge, getTodayReadinessEntry } from "@/lib/satReadiness";
-import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
-import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
-import { getSatNextLesson } from "@/lib/campusHome";
-import {
-  getActiveSatPretestAttempt,
-  getLatestCompletedSatPretestAttempt,
-} from "@/lib/satPretest";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
@@ -22,18 +15,12 @@ interface Props {
 export function SatTodayCard({ subjects }: Props) {
   const placementGoal = usePreferences((s) => s.placementGoal);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
-  const satNext = getSatNextLesson(subjects, getNodeStatus);
-  const draft1Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
-  const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
-  const draft2Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_2_ID);
   const study = getSatDailyStudyCommand({ subjects, getNodeStatus });
   const topMistakes = getTopMistakeCategories(3);
   const readinessNudge = getReadinessNudge();
   const todayReadiness = getTodayReadinessEntry();
 
-  const showSatFocus =
-    placementGoal === "sat" || !!satNext || !!draft1Active || !!draft1Done || !!draft2Active;
-  if (!showSatFocus) return null;
+  if (!shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus)) return null;
 
   const showDiagnosticLink =
     study.kind === "start_draft1" ||

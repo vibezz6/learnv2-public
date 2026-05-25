@@ -3,7 +3,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
 import { SAT_READINESS_STORAGE_KEY } from "@/lib/satReadiness";
-import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
+import { getSatDailyStudyCommand, shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 
 function mockLocalStorage(): Storage {
   const map = new Map<string, string>();
@@ -131,4 +131,11 @@ describe("satDailyStudy", () => {
     expect(command.intensity).toBe("minimum");
     expect(command.href).toContain("mistakes");
   });
+
+  it("shouldShowSatTodayCard is true for SAT placement", () => {
+    expect(
+      shouldShowSatTodayCard("sat", subjects, () => "available", storage),
+    ).toBe(true);
+  });
+
 });
