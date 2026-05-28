@@ -54,7 +54,7 @@ export function StudyBlockCard({ subjects }: Props) {
 
   return (
     <Card variant="default" density="normal" className="min-w-0">
-      <div className="flex flex-col gap-3 border-b border-[var(--rule)] pb-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 border-b border-[var(--rule)] pb-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <TimerReset size={14} aria-hidden className="text-[var(--text-muted)]" />
@@ -63,21 +63,21 @@ export function StudyBlockCard({ subjects }: Props) {
           <h3 className="mt-2 text-base font-semibold tracking-tight text-[var(--text-heading)]">
             {plan.title}
           </h3>
-          <p className="mt-1 max-w-prose text-sm leading-relaxed text-[var(--text-muted)]">
+          <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
             {plan.rationale}
           </p>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Link to={plan.primaryHref} className="shrink-0">
-            <Button size="md" className="w-full sm:w-auto">
-              {plan.primaryLabel}
-              <ArrowRight size={14} aria-hidden />
+        <div className="flex flex-wrap items-center gap-2">
+          <Link to={plan.primaryHref} className="min-w-0 flex-1 sm:flex-none">
+            <Button size="sm" className="w-full sm:w-auto">
+              <span className="truncate">{plan.primaryLabel}</span>
+              <ArrowRight size={13} aria-hidden className="shrink-0" />
             </Button>
           </Link>
           {!session || session.completedAt ? (
             <Button
               variant="secondary"
-              size="md"
+              size="sm"
               onClick={() => setSession(startStudySession(plan))}
             >
               Start guided

@@ -19,7 +19,6 @@ import {
   Button,
   Card,
   EmptyState,
-  KeyHint,
   Meter,
   PageContainer,
   PageHeader,
@@ -563,11 +562,10 @@ function SatTodayPrimary({
         ) : null}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Link to={study.href}>
-          <Button>
-            {study.buttonLabel}
-            <ArrowRight size={14} aria-hidden />
-            <KeyHint size="sm">↵</KeyHint>
+        <Link to={study.href} className="min-w-0">
+          <Button className="max-w-full">
+            <span className="truncate">{study.buttonLabel}</span>
+            <ArrowRight size={14} aria-hidden className="shrink-0" />
           </Button>
         </Link>
       </div>

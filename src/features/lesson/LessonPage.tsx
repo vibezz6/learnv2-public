@@ -342,14 +342,14 @@ export function LessonPage() {
 
               <div className="flex flex-col gap-2">
                 {quizCount > 0 && !isLocked ? (
-                  <Link to={`/subjects/${subject.id}/${node.id}/quiz`}>
+                  <Link to={`/subjects/${subject.id}/${node.id}/quiz`} className="block">
                     <Button className="w-full">
                       Take quiz
                       <ArrowRight size={14} aria-hidden />
                     </Button>
                   </Link>
                 ) : null}
-                <Link to={`/subjects/${subject.id}/${node.id}/notes`}>
+                <Link to={`/subjects/${subject.id}/${node.id}/notes`} className="block">
                   <Button variant="secondary" className="w-full">
                     <FileText size={14} aria-hidden />
                     Office hours

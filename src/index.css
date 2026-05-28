@@ -1,72 +1,72 @@
 @import "tailwindcss";
 
-/* Learn v2 — serious study workspace, terracotta accent reserved for state */
+/* Learn v2 — serious study workspace · cool slate + indigo accent */
 :root {
-  /* ----- Surfaces (IDE-style layering) ----- */
-  --bg: #131110;
-  --bg-app: #131110;
-  --bg-rail: #16140f;
-  --bg-canvas: #131110;
-  --bg-panel: #1c1a16;
-  --bg-elevated: #1c1a18;
-  --bg-sunken: #0f0d0b;
-  --bg-glass: rgba(28, 26, 24, 0.92);
-  --bg-secondary: #23201d;
-  --bg-hover: rgba(255, 248, 240, 0.04);
-  --bg-active: rgba(255, 248, 240, 0.07);
+  /* ----- Surfaces (cool slate IDE layering) ----- */
+  --bg: #0e1016;
+  --bg-app: #0e1016;
+  --bg-rail: #11141b;
+  --bg-canvas: #0e1016;
+  --bg-panel: #161a23;
+  --bg-elevated: #1a1e28;
+  --bg-sunken: #0a0c12;
+  --bg-glass: rgba(20, 23, 30, 0.92);
+  --bg-secondary: #1e2230;
+  --bg-hover: rgba(255, 255, 255, 0.04);
+  --bg-active: rgba(255, 255, 255, 0.07);
   --bg-input: var(--bg-sunken);
   --bg-card: var(--bg-panel);
 
-  /* ----- Text ----- */
-  --text: #ebe7e2;
-  --text-muted: #968e85;
-  --text-subtle: #6e655d;
-  --text-heading: #f6f3ef;
+  /* ----- Text (cool neutral) ----- */
+  --text: #d6d9e0;
+  --text-muted: #8a92a0;
+  --text-subtle: #5b6373;
+  --text-heading: #e8eaef;
   --text-h: var(--text-heading);
 
-  /* ----- Accent (terracotta — reserved for state) ----- */
-  --accent: #d97757;
-  --accent-rgb: 217, 119, 87;
-  --accent-fg: #1c120e;
-  --accent-2: #e8b48a;
-  --accent-bg: rgba(217, 119, 87, 0.1);
-  --accent-bg-strong: rgba(217, 119, 87, 0.18);
-  --accent-border: rgba(217, 119, 87, 0.3);
-  --accent-glow: 0 0 0 1px rgba(217, 119, 87, 0.18);
+  /* ----- Accent (refined indigo — IDE blue, not Halloween orange) ----- */
+  --accent: #7a93f4;
+  --accent-rgb: 122, 147, 244;
+  --accent-fg: #0a0d18;
+  --accent-2: #a3b4f8;
+  --accent-bg: rgba(122, 147, 244, 0.1);
+  --accent-bg-strong: rgba(122, 147, 244, 0.18);
+  --accent-border: rgba(122, 147, 244, 0.34);
+  --accent-glow: 0 0 0 1px rgba(122, 147, 244, 0.2);
 
-  /* ----- Hairlines / rules ----- */
-  --rule: rgba(255, 248, 240, 0.07);
-  --rule-strong: rgba(255, 248, 240, 0.13);
+  /* ----- Hairlines / rules (cool neutral) ----- */
+  --rule: rgba(255, 255, 255, 0.07);
+  --rule-strong: rgba(255, 255, 255, 0.13);
   --border: var(--rule);
   --border-strong: var(--rule-strong);
   --border-light: var(--rule);
   --border-dark: var(--rule-strong);
-  --grid-line: rgba(255, 235, 220, 0.025);
+  --grid-line: rgba(255, 255, 255, 0.022);
 
-  /* ----- Status (fg + bg + border triplets) ----- */
-  --success: #6dad8a;
-  --success-fg: #b3dabf;
-  --success-rgb: 109, 173, 138;
-  --success-bg: rgba(109, 173, 138, 0.1);
-  --success-border: rgba(109, 173, 138, 0.32);
-  --warning: #e5b567;
-  --warning-fg: #f0c98a;
-  --warning-rgb: 229, 181, 103;
-  --warning-bg: rgba(229, 181, 103, 0.1);
-  --warning-border: rgba(229, 181, 103, 0.32);
-  --danger: #e07a6f;
-  --danger-fg: #ec9b92;
-  --danger-rgb: 224, 122, 111;
-  --danger-bg: rgba(224, 122, 111, 0.1);
-  --danger-border: rgba(224, 122, 111, 0.32);
-  --info: #8ab4d9;
-  --info-fg: #a8c8e3;
-  --info-bg: rgba(138, 180, 217, 0.1);
-  --info-border: rgba(138, 180, 217, 0.32);
+  /* ----- Status (fg + bg + border triplets — cool, calmer) ----- */
+  --success: #5bbb8d;
+  --success-fg: #95d8b3;
+  --success-rgb: 91, 187, 141;
+  --success-bg: rgba(91, 187, 141, 0.1);
+  --success-border: rgba(91, 187, 141, 0.32);
+  --warning: #e0b75d;
+  --warning-fg: #ecca85;
+  --warning-rgb: 224, 183, 93;
+  --warning-bg: rgba(224, 183, 93, 0.1);
+  --warning-border: rgba(224, 183, 93, 0.32);
+  --danger: #e07581;
+  --danger-fg: #ec98a1;
+  --danger-rgb: 224, 117, 129;
+  --danger-bg: rgba(224, 117, 129, 0.1);
+  --danger-border: rgba(224, 117, 129, 0.32);
+  --info: #7ab5e8;
+  --info-fg: #a3c8ec;
+  --info-bg: rgba(122, 181, 232, 0.1);
+  --info-border: rgba(122, 181, 232, 0.32);
 
-  /* ----- Code syntax (kept) ----- */
-  --code-bg: #100f0e;
-  --code-header-bg: #1a1816;
+  /* ----- Code syntax (refined for cool slate) ----- */
+  --code-bg: #0a0c12;
+  --code-header-bg: #161a23;
   --code-line-numbers: #6e6862;
   --code-text: var(--text);
   --code-keyword: #d4a574;
@@ -122,91 +122,91 @@
   --sans: var(--font-sans);
   --mono: var(--font-mono);
 
-  /* ----- Study calendar heatmap ----- */
-  --cal-empty: rgba(255, 248, 240, 0.04);
-  --cal-l1: rgba(217, 119, 87, 0.22);
-  --cal-l2: rgba(217, 119, 87, 0.42);
-  --cal-l3: rgba(217, 119, 87, 0.62);
-  --cal-l4: rgba(217, 119, 87, 0.88);
+  /* ----- Study calendar heatmap (matches indigo accent) ----- */
+  --cal-empty: rgba(255, 255, 255, 0.04);
+  --cal-l1: rgba(122, 147, 244, 0.22);
+  --cal-l2: rgba(122, 147, 244, 0.42);
+  --cal-l3: rgba(122, 147, 244, 0.62);
+  --cal-l4: rgba(122, 147, 244, 0.88);
 }
 
 [data-theme="light"] {
-  /* surfaces */
-  --bg: #f7f4ee;
-  --bg-app: #f7f4ee;
-  --bg-rail: #f0ece4;
-  --bg-canvas: #fbf8f3;
+  /* surfaces — cool off-white */
+  --bg: #f6f7f9;
+  --bg-app: #f6f7f9;
+  --bg-rail: #eef0f4;
+  --bg-canvas: #fafbfd;
   --bg-panel: #ffffff;
   --bg-elevated: #ffffff;
-  --bg-sunken: #efeae1;
-  --bg-glass: rgba(255, 252, 248, 0.92);
-  --bg-secondary: #ebe5dc;
-  --bg-hover: rgba(28, 22, 16, 0.04);
-  --bg-active: rgba(28, 22, 16, 0.07);
+  --bg-sunken: #eef0f4;
+  --bg-glass: rgba(255, 255, 255, 0.92);
+  --bg-secondary: #e6e9ee;
+  --bg-hover: rgba(20, 23, 30, 0.04);
+  --bg-active: rgba(20, 23, 30, 0.07);
   --bg-input: var(--bg-panel);
   --bg-card: var(--bg-panel);
 
   /* text */
-  --text: #1f1b17;
-  --text-muted: #6f6760;
-  --text-subtle: #9a8f84;
-  --text-heading: #14100c;
+  --text: #1c2230;
+  --text-muted: #5a6373;
+  --text-subtle: #8a92a0;
+  --text-heading: #0e1320;
 
-  /* accent */
-  --accent: #c96f4a;
-  --accent-rgb: 201, 111, 74;
-  --accent-fg: #fffaf6;
-  --accent-2: #d4926a;
-  --accent-bg: rgba(201, 111, 74, 0.1);
-  --accent-bg-strong: rgba(201, 111, 74, 0.18);
-  --accent-border: rgba(201, 111, 74, 0.32);
-  --accent-glow: 0 0 0 1px rgba(201, 111, 74, 0.18);
+  /* accent (refined indigo, slightly darker for light bg contrast) */
+  --accent: #4d6cd9;
+  --accent-rgb: 77, 108, 217;
+  --accent-fg: #ffffff;
+  --accent-2: #6d87e3;
+  --accent-bg: rgba(77, 108, 217, 0.1);
+  --accent-bg-strong: rgba(77, 108, 217, 0.18);
+  --accent-border: rgba(77, 108, 217, 0.32);
+  --accent-glow: 0 0 0 1px rgba(77, 108, 217, 0.18);
 
   /* rules */
-  --rule: rgba(28, 22, 16, 0.08);
-  --rule-strong: rgba(28, 22, 16, 0.16);
+  --rule: rgba(20, 23, 30, 0.08);
+  --rule-strong: rgba(20, 23, 30, 0.16);
   --border: var(--rule);
   --border-strong: var(--rule-strong);
   --border-light: var(--rule);
   --border-dark: var(--rule-strong);
-  --grid-line: rgba(28, 22, 16, 0.04);
+  --grid-line: rgba(20, 23, 30, 0.04);
 
-  /* status (slightly stronger on light) */
+  /* status (stronger on light) */
   --success: #2f8a5b;
   --success-fg: #2f8a5b;
-  --success-bg: rgba(47, 138, 91, 0.12);
+  --success-bg: rgba(47, 138, 91, 0.1);
   --success-border: rgba(47, 138, 91, 0.32);
   --warning: #b97a1f;
   --warning-fg: #b97a1f;
-  --warning-bg: rgba(185, 122, 31, 0.12);
+  --warning-bg: rgba(185, 122, 31, 0.1);
   --warning-border: rgba(185, 122, 31, 0.32);
   --danger: #c2453a;
   --danger-fg: #c2453a;
-  --danger-bg: rgba(194, 69, 58, 0.12);
+  --danger-bg: rgba(194, 69, 58, 0.1);
   --danger-border: rgba(194, 69, 58, 0.32);
   --info: #2f6da6;
   --info-fg: #2f6da6;
-  --info-bg: rgba(47, 109, 166, 0.12);
+  --info-bg: rgba(47, 109, 166, 0.1);
   --info-border: rgba(47, 109, 166, 0.32);
 
   /* code */
-  --code-bg: #ebe5dc;
-  --code-header-bg: #e0d9d0;
+  --code-bg: #eef0f4;
+  --code-header-bg: #e6e9ee;
 
   /* shadows (light) */
   --shadow-sm: 0 1px 0 var(--rule);
   --shadow: 0 0 0 1px var(--rule);
   --shadow-card: 0 1px 0 var(--rule);
-  --shadow-md: 0 6px 22px rgba(28, 22, 16, 0.08);
-  --shadow-overlay: 0 16px 48px rgba(28, 22, 16, 0.16), 0 0 0 1px var(--rule-strong);
+  --shadow-md: 0 6px 22px rgba(20, 23, 30, 0.08);
+  --shadow-overlay: 0 16px 48px rgba(20, 23, 30, 0.16), 0 0 0 1px var(--rule-strong);
   --focus-ring: 0 0 0 2px var(--accent-border);
 
   /* heatmap (light) */
-  --cal-empty: rgba(28, 22, 16, 0.05);
-  --cal-l1: rgba(201, 111, 74, 0.22);
-  --cal-l2: rgba(201, 111, 74, 0.42);
-  --cal-l3: rgba(201, 111, 74, 0.62);
-  --cal-l4: rgba(201, 111, 74, 0.88);
+  --cal-empty: rgba(20, 23, 30, 0.05);
+  --cal-l1: rgba(77, 108, 217, 0.22);
+  --cal-l2: rgba(77, 108, 217, 0.42);
+  --cal-l3: rgba(77, 108, 217, 0.62);
+  --cal-l4: rgba(77, 108, 217, 0.88);
 }
 
 @theme inline {

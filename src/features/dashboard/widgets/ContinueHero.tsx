@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Clock } from "lucide-react";
-import { Button, Card, Meter, Tag, KeyHint } from "@/components/ui";
+import { Button, Card, Meter, Tag } from "@/components/ui";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import {
   CONTINUE_KIND_LABELS,
@@ -87,12 +87,11 @@ export function ContinueHero({ subject, node }: Props) {
         </div>
         <Link
           to={continueHref(subject.id, node.id, kind)}
-          className="w-full shrink-0 lg:w-auto"
+          className="w-full shrink-0 sm:w-auto lg:w-auto"
         >
-          <Button size="lg" className="w-full touch-manipulation lg:w-auto">
+          <Button className="w-full touch-manipulation sm:w-auto">
             {ctaLabel(kind, started, completed)}
             <ArrowRight size={14} aria-hidden />
-            <KeyHint size="sm">↵</KeyHint>
           </Button>
         </Link>
       </div>
