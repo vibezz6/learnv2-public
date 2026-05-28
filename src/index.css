@@ -1,54 +1,70 @@
 @import "tailwindcss";
 
-/* Learn v2 — warm dark, terracotta accent */
+/* Learn v2 — serious study workspace, terracotta accent reserved for state */
 :root {
+  /* ----- Surfaces (IDE-style layering) ----- */
   --bg: #131110;
+  --bg-app: #131110;
+  --bg-rail: #16140f;
+  --bg-canvas: #131110;
+  --bg-panel: #1c1a16;
   --bg-elevated: #1c1a18;
-  --bg-glass: rgba(28, 26, 24, 0.88);
+  --bg-sunken: #0f0d0b;
+  --bg-glass: rgba(28, 26, 24, 0.92);
+  --bg-secondary: #23201d;
+  --bg-hover: rgba(255, 248, 240, 0.04);
+  --bg-active: rgba(255, 248, 240, 0.07);
+  --bg-input: var(--bg-sunken);
+  --bg-card: var(--bg-panel);
+
+  /* ----- Text ----- */
   --text: #ebe7e2;
-  --text-muted: #9a938b;
+  --text-muted: #968e85;
+  --text-subtle: #6e655d;
   --text-heading: #f6f3ef;
+  --text-h: var(--text-heading);
+
+  /* ----- Accent (terracotta — reserved for state) ----- */
   --accent: #d97757;
   --accent-rgb: 217, 119, 87;
   --accent-fg: #1c120e;
   --accent-2: #e8b48a;
-  --accent-glow: 0 0 22px rgba(217, 119, 87, 0.14);
-  --border: rgba(255, 248, 240, 0.07);
-  --border-strong: rgba(255, 248, 240, 0.13);
-  --grid-line: rgba(255, 235, 220, 0.035);
-  --success: #6dad8a;
-  --warning: #e5b567;
-  --danger: #e07a6f;
-  --radius: 8px;
-  --radius-lg: 12px;
-  --motion-fast: 150ms;
-  --motion-normal: 250ms;
-  --motion-slow: 350ms;
-  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --sidebar-width: 240px;
-  --topbar-height: 52px;
-  --mobile-nav-height: 56px;
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-
-  /* Semantic colors for ported v1 components */
-  --text-h: var(--text-heading);
-  --bg-card: var(--bg-elevated);
-  --bg-secondary: #23201d;
-  --bg-hover: rgba(255, 248, 240, 0.05);
-  --bg-input: var(--bg-elevated);
-  --border-light: var(--border);
-  --border-dark: var(--border-strong);
   --accent-bg: rgba(217, 119, 87, 0.1);
-  --accent-border: rgba(217, 119, 87, 0.28);
+  --accent-bg-strong: rgba(217, 119, 87, 0.18);
+  --accent-border: rgba(217, 119, 87, 0.3);
+  --accent-glow: 0 0 0 1px rgba(217, 119, 87, 0.18);
+
+  /* ----- Hairlines / rules ----- */
+  --rule: rgba(255, 248, 240, 0.07);
+  --rule-strong: rgba(255, 248, 240, 0.13);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --border-light: var(--rule);
+  --border-dark: var(--rule-strong);
+  --grid-line: rgba(255, 235, 220, 0.025);
+
+  /* ----- Status (fg + bg + border triplets) ----- */
+  --success: #6dad8a;
+  --success-fg: #b3dabf;
   --success-rgb: 109, 173, 138;
   --success-bg: rgba(109, 173, 138, 0.1);
+  --success-border: rgba(109, 173, 138, 0.32);
+  --warning: #e5b567;
+  --warning-fg: #f0c98a;
   --warning-rgb: 229, 181, 103;
   --warning-bg: rgba(229, 181, 103, 0.1);
+  --warning-border: rgba(229, 181, 103, 0.32);
+  --danger: #e07a6f;
+  --danger-fg: #ec9b92;
   --danger-rgb: 224, 122, 111;
   --danger-bg: rgba(224, 122, 111, 0.1);
+  --danger-border: rgba(224, 122, 111, 0.32);
   --info: #8ab4d9;
+  --info-fg: #a8c8e3;
   --info-bg: rgba(138, 180, 217, 0.1);
+  --info-border: rgba(138, 180, 217, 0.32);
+
+  /* ----- Code syntax (kept) ----- */
   --code-bg: #100f0e;
   --code-header-bg: #1a1816;
   --code-line-numbers: #6e6862;
@@ -59,15 +75,54 @@
   --code-function: #9eb8e8;
   --code-number: #e8a87c;
   --code-decorator: #e5c07b;
-  --mono: var(--font-mono);
-  --sans: var(--font-sans);
-  --radius-sm: 4px;
-  --shadow-sm: none;
-  --shadow: 0 0 0 1px rgba(255, 248, 240, 0.04);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.16);
-  --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.28);
 
-  /* Study calendar heatmap */
+  /* ----- Radius (sharp IDE geometry) ----- */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* ----- Shadows (flat) ----- */
+  --shadow-sm: 0 1px 0 var(--rule);
+  --shadow: 0 0 0 1px var(--rule);
+  --shadow-card: 0 1px 0 var(--rule);
+  --shadow-md: 0 6px 22px rgba(0, 0, 0, 0.22);
+  --shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--rule-strong);
+  --focus-ring: 0 0 0 2px var(--accent-border);
+
+  /* ----- Spacing scale ----- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-page-x: clamp(1rem, 3vw, 2.5rem);
+  --space-page-y: clamp(1.25rem, 3vw, 2.25rem);
+  --measure-prose: 68ch;
+
+  /* ----- Motion ----- */
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 350ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ----- Chrome dimensions ----- */
+  --rail-width: 56px;
+  --sidebar-width: 240px;
+  --sidebar-expanded-width: 240px;
+  --topbar-height: 48px;
+  --mobile-nav-height: 56px;
+  --statusbar-height: 28px;
+
+  /* ----- Typography ----- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
+
+  /* ----- Study calendar heatmap ----- */
   --cal-empty: rgba(255, 248, 240, 0.04);
   --cal-l1: rgba(217, 119, 87, 0.22);
   --cal-l2: rgba(217, 119, 87, 0.42);
@@ -76,35 +131,99 @@
 }
 
 [data-theme="light"] {
-  --bg: #f5f1eb;
-  --bg-elevated: #fffcf8;
-  --bg-glass: rgba(255, 252, 248, 0.9);
+  /* surfaces */
+  --bg: #f7f4ee;
+  --bg-app: #f7f4ee;
+  --bg-rail: #f0ece4;
+  --bg-canvas: #fbf8f3;
+  --bg-panel: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #efeae1;
+  --bg-glass: rgba(255, 252, 248, 0.92);
   --bg-secondary: #ebe5dc;
-  --bg-hover: rgba(28, 22, 16, 0.05);
+  --bg-hover: rgba(28, 22, 16, 0.04);
+  --bg-active: rgba(28, 22, 16, 0.07);
+  --bg-input: var(--bg-panel);
+  --bg-card: var(--bg-panel);
+
+  /* text */
   --text: #1f1b17;
   --text-muted: #6f6760;
+  --text-subtle: #9a8f84;
   --text-heading: #14100c;
-  --border: rgba(28, 22, 16, 0.09);
-  --border-strong: rgba(28, 22, 16, 0.14);
-  --grid-line: rgba(28, 22, 16, 0.05);
+
+  /* accent */
   --accent: #c96f4a;
   --accent-rgb: 201, 111, 74;
   --accent-fg: #fffaf6;
   --accent-2: #d4926a;
-  --accent-glow: 0 0 28px rgba(201, 111, 74, 0.14);
   --accent-bg: rgba(201, 111, 74, 0.1);
+  --accent-bg-strong: rgba(201, 111, 74, 0.18);
   --accent-border: rgba(201, 111, 74, 0.32);
+  --accent-glow: 0 0 0 1px rgba(201, 111, 74, 0.18);
+
+  /* rules */
+  --rule: rgba(28, 22, 16, 0.08);
+  --rule-strong: rgba(28, 22, 16, 0.16);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --border-light: var(--rule);
+  --border-dark: var(--rule-strong);
+  --grid-line: rgba(28, 22, 16, 0.04);
+
+  /* status (slightly stronger on light) */
+  --success: #2f8a5b;
+  --success-fg: #2f8a5b;
+  --success-bg: rgba(47, 138, 91, 0.12);
+  --success-border: rgba(47, 138, 91, 0.32);
+  --warning: #b97a1f;
+  --warning-fg: #b97a1f;
+  --warning-bg: rgba(185, 122, 31, 0.12);
+  --warning-border: rgba(185, 122, 31, 0.32);
+  --danger: #c2453a;
+  --danger-fg: #c2453a;
+  --danger-bg: rgba(194, 69, 58, 0.12);
+  --danger-border: rgba(194, 69, 58, 0.32);
+  --info: #2f6da6;
+  --info-fg: #2f6da6;
+  --info-bg: rgba(47, 109, 166, 0.12);
+  --info-border: rgba(47, 109, 166, 0.32);
+
+  /* code */
   --code-bg: #ebe5dc;
   --code-header-bg: #e0d9d0;
+
+  /* shadows (light) */
+  --shadow-sm: 0 1px 0 var(--rule);
+  --shadow: 0 0 0 1px var(--rule);
+  --shadow-card: 0 1px 0 var(--rule);
+  --shadow-md: 0 6px 22px rgba(28, 22, 16, 0.08);
+  --shadow-overlay: 0 16px 48px rgba(28, 22, 16, 0.16), 0 0 0 1px var(--rule-strong);
+  --focus-ring: 0 0 0 2px var(--accent-border);
+
+  /* heatmap (light) */
+  --cal-empty: rgba(28, 22, 16, 0.05);
+  --cal-l1: rgba(201, 111, 74, 0.22);
+  --cal-l2: rgba(201, 111, 74, 0.42);
+  --cal-l3: rgba(201, 111, 74, 0.62);
+  --cal-l4: rgba(201, 111, 74, 0.88);
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-elevated: var(--bg-elevated);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-rail: var(--bg-rail);
+  --color-bg-canvas: var(--bg-canvas);
+  --color-bg-sunken: var(--bg-sunken);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+  --color-text-heading: var(--text-heading);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }
@@ -123,7 +242,7 @@ body {
   margin: 0;
   font-family: var(--font-sans);
   color: var(--text);
-  background: var(--bg);
+  background: var(--bg-app);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -138,13 +257,49 @@ body::before {
     linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 90% 70% at 50% -10%, black, transparent 72%);
-  opacity: 0.2;
+  opacity: 0.12;
   z-index: 0;
 }
 
 #root {
   position: relative;
   z-index: 1;
+}
+
+/* IDE-style mono eyebrow used by Section, Tag mono, status footer */
+.eyebrow-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+/* Native focus ring for all interactive elements */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
+}
+
+/* Scrollbar — quiet, IDE-feel */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
+  background-clip: content-box;
+  border: 2px solid transparent;
 }
 
 @keyframes stagger-in {

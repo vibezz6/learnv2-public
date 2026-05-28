@@ -482,54 +482,52 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 pt-[15vh] backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/55 p-4 pt-[12vh] backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="Command palette"
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-card)] shadow-xl"
+        className="w-full max-w-xl overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-panel)] shadow-[var(--shadow-overlay)]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3">
-          <Command size={18} className="shrink-0 text-[var(--text-muted)]" />
+        <div className="flex items-center gap-3 border-b border-[var(--rule)] px-4 py-3">
+          <Command size={16} className="shrink-0 text-[var(--text-muted)]" aria-hidden />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search lessons, campus, commands…"
+            placeholder="Quick open — type to search lessons, campus, commands"
             aria-label="Search lessons, campus, and commands"
-            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)]"
+            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-subtle)]"
           />
-          <kbd className="rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
+          <kbd className="rounded-[var(--radius-sm)] border border-[var(--rule-strong)] bg-[var(--bg-sunken)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
             esc
           </kbd>
         </div>
 
         {q && (
-          <div className="border-b border-[var(--border)] px-4 py-1.5 text-[11px] text-[var(--text-muted)]">
+          <div className="border-b border-[var(--rule)] px-4 py-1.5 font-mono text-[11px] tabular-nums text-[var(--text-muted)]">
             {flatItems.length} result{flatItems.length === 1 ? "" : "s"}
             {lessonCount > 0 && ` · ${lessonCount} lesson${lessonCount === 1 ? "" : "s"}`}
           </div>
         )}
 
-        <ul ref={listRef} className="max-h-96 overflow-y-auto py-2">
+        <ul ref={listRef} className="max-h-[min(60vh,28rem)] overflow-y-auto py-2">
           {!q && recentSearches.length === 0 && recentActions.length === 0 && (
-            <li className="border-b border-[var(--border)] px-6 py-4 text-center">
-              <Search className="mx-auto mb-2 text-[var(--accent)]" size={22} />
+            <li className="border-b border-[var(--rule)] px-6 py-4 text-center">
+              <Search className="mx-auto mb-2 text-[var(--text-muted)]" size={20} aria-hidden />
               <p className="text-sm font-medium text-[var(--text-heading)]">
                 Type to search subjects and lessons
               </p>
-              <p className="mt-1 text-xs text-[var(--text-muted)]">
-                Or pick a shortcut below
-              </p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">Or pick a shortcut below</p>
             </li>
           )}
 
           {q && flatItems.length === 0 && (
             <li className="px-6 py-10 text-center">
-              <SearchX className="mx-auto mb-3 opacity-50" size={28} />
+              <SearchX className="mx-auto mb-3 text-[var(--text-subtle)]" size={24} aria-hidden />
               <p className="text-sm font-medium text-[var(--text-heading)]">No results for &ldquo;{q}&rdquo;</p>
               <p className="mt-1 text-xs text-[var(--text-muted)]">
                 Try a lesson name, &ldquo;essay&rdquo;, &ldquo;checklist&rdquo;, or &ldquo;timer&rdquo;.
@@ -539,16 +537,15 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
           {displayBlocks.map((block) => (
             <li key={block.key}>
-              <div className="flex items-center gap-2 px-4 py-1.5">
+              <div className="flex items-center gap-2 px-4 pt-3 pb-1">
                 {block.subjectColor && (
                   <span
+                    aria-hidden
                     className="size-2 shrink-0 rounded-full"
                     style={{ backgroundColor: block.subjectColor }}
                   />
                 )}
-                <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-                  {block.title}
-                </span>
+                <span className="eyebrow-mono">{block.title}</span>
               </div>
               {block.items.map((cmd) => {
                 flatIndex++;
@@ -567,14 +564,17 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                     aria-selected={isSelected}
                     onClick={() => execute(cmd)}
                     onMouseEnter={() => setSelected(idx)}
-                    className={`flex w-full items-center gap-3 border-l-2 py-2.5 pr-4 pl-3 text-left text-sm transition ${
+                    className={`flex w-full items-center gap-3 border-l-2 py-2 pr-4 pl-3 text-left text-sm transition ${
                       isSelected
-                        ? "border-[var(--accent)] bg-[var(--accent)]/12 text-[var(--text)]"
-                        : "border-transparent text-[var(--text)] hover:bg-white/5"
+                        ? "border-[var(--accent)] bg-[var(--bg-hover)] text-[var(--text-heading)]"
+                        : "border-transparent text-[var(--text)] hover:bg-[var(--bg-hover)]"
                     }`}
                   >
-                    <span className={isSelected ? "text-[var(--accent)]" : "text-[var(--text-muted)]"}>
-                      <Icon size={16} />
+                    <span
+                      className={isSelected ? "text-[var(--accent)]" : "text-[var(--text-muted)]"}
+                      aria-hidden
+                    >
+                      <Icon size={15} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="truncate font-medium">{cmd.label}</div>
@@ -583,7 +583,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                       )}
                     </div>
                     {isSelected && (
-                      <kbd className="shrink-0 rounded border border-[var(--border)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
+                      <kbd className="shrink-0 rounded-[var(--radius-sm)] border border-[var(--rule-strong)] bg-[var(--bg-sunken)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
                         ↵
                       </kbd>
                     )}
@@ -594,7 +594,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           ))}
         </ul>
 
-        <div className="flex gap-4 border-t border-[var(--border)] px-4 py-2 text-[10px] text-[var(--text-muted)]">
+        <div className="flex flex-wrap gap-4 border-t border-[var(--rule)] px-4 py-2 font-mono text-[10px] text-[var(--text-subtle)]">
           <span>↑↓ navigate</span>
           <span>↵ select</span>
           <span>⌘K toggle</span>

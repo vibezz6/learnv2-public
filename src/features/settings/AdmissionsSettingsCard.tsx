@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, ConfirmDialog } from "@/components/ui";
+import { Download, Upload } from "lucide-react";
+import { Button, Card, ConfirmDialog, Stat, Toolbar } from "@/components/ui";
 import { buildAdmissionsExportPayload, buildAdmissionsSummary } from "@/lib/admissionsSummary";
 import {
   applyAdmissionsImport,
@@ -73,30 +74,25 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
   };
 
   return (
-    <Card id="admissions-backup" className="min-w-0 scroll-mt-24 space-y-4">
-      <div>
-        <h2 className="break-words font-semibold text-[var(--text-heading)]">College applications</h2>
-        <p className="mt-1 break-words text-sm text-[var(--text-muted)]">
+    <Card id="admissions-backup" variant="default" density="normal" className="min-w-0 scroll-mt-24 space-y-4">
+      <div className="border-b border-[var(--rule)] pb-3">
+        <p className="eyebrow-mono">College applications</p>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">
           Checklist, essay tracker, and dashboard reminders live in localStorage on this device.
         </p>
       </div>
 
       {summary.hasActivity ? (
-        <ul className="space-y-1 text-sm text-[var(--text-muted)]">
-          <li>
-            Checklist:{" "}
-            <span className="font-medium text-[var(--text-heading)]">
-              {summary.checklistDone}/{summary.checklistTotal}
-            </span>{" "}
-            ({summary.checklistPct}%)
-          </li>
-          <li>
-            Essays:{" "}
-            <span className="font-medium text-[var(--text-heading)]">
-              {summary.essaysTracked} tracked · {summary.essaysFinal} final
-            </span>
-          </li>
-        </ul>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <Stat
+            label="Checklist"
+            value={`${summary.checklistDone}/${summary.checklistTotal}`}
+            sub={`${summary.checklistPct}% complete`}
+            size="sm"
+          />
+          <Stat label="Essays tracked" value={summary.essaysTracked} size="sm" />
+          <Stat label="Essays final" value={summary.essaysFinal} size="sm" />
+        </div>
       ) : (
         <p className="text-sm text-[var(--text-muted)]">
           No checklist or essay data yet. Start on{" "}
@@ -107,27 +103,27 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
         </p>
       )}
 
-      <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
-        <Link to="/campus/college-checklist" className="min-[481px]:flex-1">
-          <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
+      <Toolbar density="tight" className="border-t border-[var(--rule)] pt-3">
+        <Link to="/campus/college-checklist">
+          <Button variant="secondary" size="sm">
             College checklist
           </Button>
         </Link>
-        <Link to="/campus/essay-tracker" className="min-[481px]:flex-1">
-          <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
+        <Link to="/campus/essay-tracker">
+          <Button variant="secondary" size="sm">
             Essay tracker
           </Button>
         </Link>
-      </div>
+      </Toolbar>
 
-      <div className="space-y-2 border-t border-[var(--border)] pt-4">
-        <h3 className="text-sm font-medium text-[var(--text-heading)]">Dashboard reminders</h3>
+      <div className="space-y-2 border-t border-[var(--rule)] pt-3">
+        <p className="eyebrow-mono">Dashboard reminders</p>
         {activeSnoozes.length === 0 ? (
           <p className="text-sm text-[var(--text-muted)]">No dismissed reminders right now.</p>
         ) : (
-          <ul className="max-h-32 space-y-1 overflow-y-auto text-xs text-[var(--text-muted)]">
+          <ul className="max-h-32 space-y-1 overflow-y-auto font-mono text-[11px] text-[var(--text-muted)]">
             {activeSnoozes.map((s) => (
-              <li key={s.id} className="break-all font-mono">
+              <li key={s.id} className="break-all">
                 {s.id} · returns in {s.daysLeft} day{s.daysLeft === 1 ? "" : "s"}
               </li>
             ))}
@@ -135,7 +131,7 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
         )}
         <Button
           variant="secondary"
-          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
+          size="sm"
           disabled={activeSnoozes.length === 0}
           onClick={handleClearSnoozes}
         >
@@ -146,25 +142,25 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
         </p>
       </div>
 
-      <div className="space-y-2 border-t border-[var(--border)] pt-4">
-        <h3 className="text-sm font-medium text-[var(--text-heading)]">Backup on this device</h3>
+      <div className="space-y-2 border-t border-[var(--rule)] pt-3">
+        <p className="eyebrow-mono">Backup on this device</p>
         <p className="text-xs text-[var(--text-muted)]">
-          Export saves checklist and essays. Import replaces both (same format as export). Full progress
-          backup in the section below also includes all <code className="font-mono">learnv2_</code> keys.
+          Export saves checklist and essays. Import replaces both (same format as export). Full
+          progress backup in the section below also includes all{" "}
+          <code className="font-mono text-[11px]">learnv2_</code> keys.
         </p>
-        <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
-          <Button
-            className="min-h-11 w-full touch-manipulation min-[481px]:flex-1"
-            onClick={handleExport}
-          >
-            Export admissions JSON
+        <Toolbar density="tight">
+          <Button size="sm" onClick={handleExport}>
+            <Download size={13} aria-hidden />
+            Export
           </Button>
           <Button
             variant="secondary"
-            className="min-h-11 w-full touch-manipulation min-[481px]:flex-1"
+            size="sm"
             onClick={() => importInputRef.current?.click()}
           >
-            Import admissions JSON
+            <Upload size={13} aria-hidden />
+            Import
           </Button>
           <input
             ref={importInputRef}
@@ -177,14 +173,10 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
               e.target.value = "";
             }}
           />
-        </div>
-        <Button
-          variant="secondary"
-          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-          onClick={() => setResetOpen(true)}
-        >
-          Clear all admissions data
-        </Button>
+          <Button variant="ghost" tone="danger" size="sm" onClick={() => setResetOpen(true)}>
+            Clear all admissions
+          </Button>
+        </Toolbar>
       </div>
 
       <ConfirmDialog

@@ -1,22 +1,23 @@
-import { useState, useEffect, useCallback, useRef, memo, type ReactNode } from 'react';
-import { ChevronDown, ChevronUp, ChevronRight, Eye, EyeOff, Lightbulb, BookOpen, RotateCcw } from 'lucide-react';
-import { cn } from '@/lib/cn';
-import { Badge, Card } from '@/components/ui';
-
-const touchTarget =
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius)] px-4 text-sm font-medium transition touch-manipulation';
-
-const btnStyles = {
-  primary: cn(
-    touchTarget,
-    'bg-[var(--accent)] text-[var(--accent-fg)] hover:brightness-110',
-  ),
-  secondary: cn(
-    touchTarget,
-    'border border-[var(--border-strong)] bg-[var(--bg-elevated)] text-[var(--text)] hover:border-[var(--accent)]',
-  ),
-  ghost: cn(touchTarget, 'text-[var(--text-muted)] hover:bg-white/5 hover:text-[var(--text)]'),
-};
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  memo,
+  type ReactNode,
+} from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  Lightbulb,
+  BookOpen,
+  RotateCcw,
+} from "lucide-react";
+import { cn } from "@/lib/cn";
+import { Button, Card, Tag } from "@/components/ui";
 
 /* ───────── CollapsibleSection ───────── */
 interface CollapsibleSectionProps {
@@ -42,29 +43,27 @@ const CollapsibleSection = memo(function CollapsibleSection({
   const [isOpen, setIsOpen] = useState<boolean>(() => {
     try {
       const stored = localStorage.getItem(storageKey);
-      if (stored !== null) {
-        // stored='true' means collapsed, stored='false' means open
-        return stored !== 'true';
-      }
+      if (stored !== null) return stored !== "true";
       const legacyStored = localStorage.getItem(legacyStorageKey);
       if (legacyStored !== null) {
         localStorage.setItem(storageKey, legacyStored);
         localStorage.removeItem(legacyStorageKey);
-        return legacyStored !== 'true';
+        return legacyStored !== "true";
       }
-      // stored='true' means collapsed, stored='false' or null means open
       return defaultOpen;
     } catch {
       return defaultOpen;
     }
   });
   const contentRef = useRef<HTMLDivElement>(null);
-  const [maxHeight, setMaxHeight] = useState<string>(isOpen ? '2000px' : '0px');
+  const [maxHeight, setMaxHeight] = useState<string>(isOpen ? "2000px" : "0px");
 
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, isOpen ? 'false' : 'true');
-    } catch {}
+      localStorage.setItem(storageKey, isOpen ? "false" : "true");
+    } catch {
+      /* ignore */
+    }
   }, [isOpen, storageKey]);
 
   useEffect(() => {
@@ -72,70 +71,62 @@ const CollapsibleSection = memo(function CollapsibleSection({
     if (!isOpen) {
       if (el) {
         setMaxHeight(`${el.scrollHeight}px`);
-        requestAnimationFrame(() => {
-          setMaxHeight('0px');
-        });
+        requestAnimationFrame(() => setMaxHeight("0px"));
       } else {
-        setMaxHeight('0px');
+        setMaxHeight("0px");
       }
       return;
     }
-
     if (!el) {
-      setMaxHeight('9999px');
+      setMaxHeight("9999px");
       return;
     }
-
-    const syncHeight = () => {
-      setMaxHeight(`${el.scrollHeight}px`);
-    };
-
+    const syncHeight = () => setMaxHeight(`${el.scrollHeight}px`);
     syncHeight();
     const timeout = setTimeout(syncHeight, 300);
     const observer = new ResizeObserver(syncHeight);
     observer.observe(el);
-
     return () => {
       clearTimeout(timeout);
       observer.disconnect();
     };
   }, [isOpen]);
 
-  const toggle = useCallback(() => setIsOpen(prev => !prev), []);
+  const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
   return (
-    <Card className="mb-3 min-w-0 overflow-hidden p-0">
+    <Card variant="default" density="normal" className="min-w-0 overflow-hidden p-0">
       <div
         id={`section-header-${id}`}
         onClick={toggle}
         className={cn(
-          'flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-6 py-4 transition-colors hover:bg-[var(--bg-hover)]',
-          isOpen && 'border-b border-[var(--border)]',
+          "flex min-h-11 cursor-pointer touch-manipulation select-none items-center gap-3 px-4 py-3 transition-colors hover:bg-[var(--bg-hover)] sm:px-5",
+          isOpen && "border-b border-[var(--rule)]",
         )}
         role="button"
         tabIndex={0}
         aria-expanded={isOpen}
         aria-controls={`section-content-${id}`}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             toggle();
           }
         }}
       >
-        <span className="flex shrink-0 items-center text-[var(--text-muted)]">
+        <span aria-hidden className="flex shrink-0 items-center text-[var(--text-muted)]">
           {icon}
         </span>
-        <span className="min-w-0 flex-1 break-words font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
-          {title}
-        </span>
-        {count !== undefined && count > 0 && (
-          <Badge className="shrink-0">{count}</Badge>
-        )}
+        <span className="eyebrow-mono min-w-0 flex-1 break-words">{title}</span>
+        {count !== undefined && count > 0 ? (
+          <Tag tone="mono" size="sm" className="shrink-0">
+            {count}
+          </Tag>
+        ) : null}
         {isOpen ? (
-          <ChevronUp size={18} className="shrink-0 text-[var(--text-muted)]" />
+          <ChevronUp size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
         ) : (
-          <ChevronDown size={18} className="shrink-0 text-[var(--text-muted)]" />
+          <ChevronDown size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
         )}
       </div>
       <div
@@ -145,11 +136,11 @@ const CollapsibleSection = memo(function CollapsibleSection({
         ref={contentRef}
         className="min-w-0 overflow-hidden"
         style={{
-          maxHeight: maxHeight,
-          transition: 'max-height 0.3s ease-in-out',
+          maxHeight,
+          transition: "max-height 0.3s ease-in-out",
         }}
       >
-        <div className="min-w-0 break-words px-5 pb-5 sm:px-6 sm:pb-6">{children}</div>
+        <div className="min-w-0 break-words px-4 pb-5 sm:px-5 sm:pb-6">{children}</div>
       </div>
     </Card>
   );
@@ -165,51 +156,42 @@ interface SectionHeaderProps {
   onClick?: () => void;
 }
 
-const SectionHeader = memo(function SectionHeader({ icon, title, badge, onClick }: SectionHeaderProps) {
+const SectionHeader = memo(function SectionHeader({
+  icon,
+  title,
+  badge,
+  onClick,
+}: SectionHeaderProps) {
   const clickable = !!onClick;
   return (
     <div
       onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        borderRadius: 'var(--radius-sm)',
-        cursor: clickable ? 'pointer' : 'default',
-        transition: 'background 0.15s ease',
-      }}
-      onMouseEnter={(e) => {
-        if (clickable) e.currentTarget.style.background = 'var(--bg-hover)';
-      }}
-      onMouseLeave={(e) => {
-        if (clickable) e.currentTarget.style.background = 'transparent';
-      }}
-      role={clickable ? 'button' : undefined}
+      className={cn(
+        "flex items-center gap-2 rounded-[var(--radius-sm)] px-3 py-2 transition-colors",
+        clickable && "cursor-pointer hover:bg-[var(--bg-hover)]",
+      )}
+      role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
     >
-      <span style={{ display: 'flex', alignItems: 'center', color: 'var(--accent)' }}>{icon}</span>
-      <span className="font-bold" style={{ color: 'var(--text-h)' }}>{title}</span>
-      {badge && (
-        <span
-          className="text-xs badge"
-          style={{
-            background: 'var(--accent-bg)',
-            color: 'var(--accent)',
-            border: '1px solid var(--accent-border)',
-          }}
-        >
+      <span className="flex items-center text-[var(--accent)]" aria-hidden>
+        {icon}
+      </span>
+      <span className="font-semibold text-[var(--text-heading)]">{title}</span>
+      {badge ? (
+        <Tag tone="accent" size="sm" mono>
           {badge}
-        </span>
-      )}
-      {clickable && <ChevronRight size={16} style={{ marginLeft: 'auto', color: 'var(--text-muted)' }} />}
+        </Tag>
+      ) : null}
+      {clickable ? (
+        <ChevronRight size={14} className="ml-auto text-[var(--text-subtle)]" aria-hidden />
+      ) : null}
     </div>
   );
 });
 
 export { SectionHeader };
 
-/* ───────── WorkedExampleCard (v3 — SVG Progress Ring + nodeId fix) ───────── */
+/* ───────── WorkedExampleCard — teaching block with mono numbered steps ───────── */
 interface WorkedExampleCardProps {
   problem: string;
   solution: string;
@@ -220,7 +202,7 @@ interface WorkedExampleCardProps {
 }
 
 interface RevealState {
-  phase: 'thinking' | 'solving' | 'complete';
+  phase: "thinking" | "solving" | "complete";
   stepsRevealed: number;
   explanationOpen: boolean;
 }
@@ -239,35 +221,44 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
       const stored = localStorage.getItem(storageKey);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed.phase && typeof parsed.stepsRevealed === 'number' && typeof parsed.explanationOpen === 'boolean') {
+        if (
+          parsed.phase &&
+          typeof parsed.stepsRevealed === "number" &&
+          typeof parsed.explanationOpen === "boolean"
+        ) {
           return parsed;
         }
       }
-    } catch {}
-    return { phase: 'thinking', stepsRevealed: 0, explanationOpen: false };
+    } catch {
+      /* ignore */
+    }
+    return { phase: "thinking", stepsRevealed: 0, explanationOpen: false };
   });
   const [thinkSeconds, setThinkSeconds] = useState(0);
   const thinkTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Parse solution into steps (split by double newline or single newline)
-  const steps = solution.split(/\n+/).filter((s: string) => s.trim().length > 0);
+  const steps = solution.split(/\n+/).filter((s) => s.trim().length > 0);
   const totalSteps = steps.length;
   const allStepsRevealed = state.stepsRevealed >= totalSteps;
 
-  // Persist state
   useEffect(() => {
-    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch {}
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch {
+      /* ignore */
+    }
   }, [state, storageKey]);
 
-  // Thinking timer
   useEffect(() => {
-    if (state.phase === 'thinking') {
+    if (state.phase === "thinking") {
       thinkTimerRef.current = setInterval(() => {
-        setThinkSeconds(prev => prev + 1);
+        setThinkSeconds((prev) => prev + 1);
       }, 1000);
-      return () => { if (thinkTimerRef.current) clearInterval(thinkTimerRef.current); };
-    } else {
-      if (thinkTimerRef.current) clearInterval(thinkTimerRef.current);
+      return () => {
+        if (thinkTimerRef.current) clearInterval(thinkTimerRef.current);
+      };
+    } else if (thinkTimerRef.current) {
+      clearInterval(thinkTimerRef.current);
     }
   }, [state.phase]);
 
@@ -278,290 +269,172 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
   };
 
   const startSolving = useCallback(() => {
-    setState(prev => ({ ...prev, phase: 'solving' }));
+    setState((prev) => ({ ...prev, phase: "solving" }));
   }, []);
 
   const revealNextStep = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       stepsRevealed: Math.min(prev.stepsRevealed + 1, totalSteps),
-      phase: prev.stepsRevealed + 1 >= totalSteps ? 'complete' : 'solving',
+      phase: prev.stepsRevealed + 1 >= totalSteps ? "complete" : "solving",
     }));
   }, [totalSteps]);
 
   const revealAllSteps = useCallback(() => {
-    setState(prev => ({ ...prev, stepsRevealed: totalSteps, phase: 'complete' }));
+    setState((prev) => ({ ...prev, stepsRevealed: totalSteps, phase: "complete" }));
   }, [totalSteps]);
 
   const resetExercise = useCallback(() => {
-    setState({ phase: 'thinking', stepsRevealed: 0, explanationOpen: false });
+    setState({ phase: "thinking", stepsRevealed: 0, explanationOpen: false });
     setThinkSeconds(0);
   }, []);
 
   const toggleExplanation = useCallback(() => {
-    setState(prev => ({ ...prev, explanationOpen: !prev.explanationOpen }));
+    setState((prev) => ({ ...prev, explanationOpen: !prev.explanationOpen }));
   }, []);
 
-  const accent = accentColor || 'var(--warning)';
-  const progressPct = totalSteps > 0 ? (state.stepsRevealed / totalSteps) * 100 : 0;
-
-  // SVG progress ring
-  const ringRadius = 18;
-  const ringCircumference = 2 * Math.PI * ringRadius;
-  const ringOffset = ringCircumference - (progressPct / 100) * ringCircumference;
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, callback: () => void) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      callback();
-    }
-  }, []);
+  const accent = accentColor || "var(--accent)";
+  const exampleNumber = String(index + 1).padStart(2, "0");
 
   return (
-    <div
-      className="mb-3 min-w-0 overflow-hidden rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--bg-elevated)] transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-[var(--shadow-md)]"
+    <article
+      className="min-w-0 overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)]"
+      aria-label={`Worked example ${index + 1}`}
     >
-      {/* Problem header — always visible */}
-      <div
-        className="min-w-0 break-words px-3 py-3 sm:px-4 sm:py-3.5"
-        style={{
-          borderLeft: `4px solid ${accent}`,
-          background: 'var(--warning-bg)',
-        }}
-      >
-        <div className="mb-2 flex min-w-0 flex-wrap items-center gap-2">
-          <BookOpen size={16} style={{ color: accent, flexShrink: 0 }} />
-          <span className="text-sm font-semibold" style={{ color: 'var(--text-h)' }}>
-            Problem {index + 1}
-          </span>
-          {state.phase !== 'thinking' && (
-            <span
-              className="ml-auto shrink-0 rounded px-2 py-0.5 text-xs font-semibold"
-              style={{
-                background: allStepsRevealed ? 'var(--success-bg)' : 'var(--accent-bg)',
-                color: allStepsRevealed ? 'var(--success)' : 'var(--accent)',
-                border: `1px solid ${allStepsRevealed ? 'var(--success)' : 'var(--accent-border)'}`,
-              }}
-            >
-              {allStepsRevealed ? 'Complete' : `${state.stepsRevealed}/${totalSteps} steps`}
-            </span>
-          )}
-        </div>
+      <div className="border-b border-[var(--rule)] bg-[var(--bg-canvas)]">
         <div
-          className="break-words whitespace-pre-wrap leading-[160%]"
-          style={{ color: 'var(--text)', fontSize: 'var(--fs-base, 1rem)' }}
+          className="flex items-center gap-3 border-l-2 px-4 py-3 sm:px-5"
+          style={{ borderLeftColor: accent }}
         >
-          {problem}
+          <BookOpen size={14} className="shrink-0 text-[var(--text-muted)]" aria-hidden />
+          <span className="eyebrow-mono">Example {exampleNumber}</span>
+          {state.phase !== "thinking" ? (
+            <Tag tone={allStepsRevealed ? "success" : "accent"} size="sm" mono className="ml-auto">
+              {allStepsRevealed ? "Complete" : `${state.stepsRevealed}/${totalSteps} steps`}
+            </Tag>
+          ) : null}
+        </div>
+        <div className="px-4 pb-4 pt-1 text-[15px] leading-relaxed text-[var(--text)] sm:px-5">
+          <p className="whitespace-pre-wrap break-words">{problem}</p>
         </div>
       </div>
 
-      {/* Phase: Thinking — "Try it yourself" prompt */}
-      {state.phase === 'thinking' && (
-        <div className="px-3 py-4 sm:px-4">
-          <div
-            className="mb-3 flex min-w-0 flex-col gap-3 rounded-[var(--radius-sm)] border border-[var(--accent-border)] bg-[var(--accent-bg)] p-3 sm:flex-row sm:items-center sm:p-4"
-          >
-            <Lightbulb size={20} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+      {state.phase === "thinking" ? (
+        <div className="space-y-3 px-4 py-4 sm:px-5">
+          <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-[var(--accent-border)] bg-[var(--accent-bg)] p-3 sm:flex-row sm:items-center">
+            <Lightbulb size={18} className="shrink-0 text-[var(--accent)]" aria-hidden />
             <div className="min-w-0 flex-1">
-              <div className="mb-1 text-sm font-semibold" style={{ color: 'var(--text-h)' }}>
+              <div className="text-sm font-semibold text-[var(--text-heading)]">
                 Try it yourself first
               </div>
-              <div className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                Think about how you would solve this before revealing the answer.
+              <div className="text-xs text-[var(--text-muted)]">
+                Sketch your approach before revealing the solution.
               </div>
             </div>
-            <div
-              className="self-start rounded-[var(--radius-sm)] border border-[var(--border)] bg-[var(--bg)] px-2.5 py-1 font-mono text-xs sm:self-center"
-              style={{ color: 'var(--accent)' }}
-            >
+            <Tag tone="mono" size="sm" className="shrink-0 self-start sm:self-center">
               {formatTime(thinkSeconds)}
-            </div>
+            </Tag>
           </div>
-          <button
-            className={cn(btnStyles.primary, 'w-full')}
-            onClick={startSolving}
-            tabIndex={0}
-            onKeyDown={(e) => handleKeyDown(e, startSolving)}
-            aria-label="Start solving - show solution steps"
-          >
-            <Eye size={16} />
-            I'm ready — show me the solution
-          </button>
+          <Button onClick={startSolving} className="w-full">
+            <Eye size={14} aria-hidden />
+            Show me the solution
+          </Button>
         </div>
-      )}
+      ) : null}
 
-      {/* Phase: Solving / Complete — Step-by-step reveal with SVG progress ring */}
-      {(state.phase === 'solving' || state.phase === 'complete') && (
-        <div className="min-w-0 px-3 pb-4 sm:px-4">
-          {/* SVG Progress ring + step counter */}
-          <div className="mb-5 flex min-w-0 items-center gap-3 py-2 sm:gap-3.5">
-            <svg
-              viewBox="0 0 44 44"
-              style={{ width: 44, height: 44, flexShrink: 0 }}
-              aria-label={`Progress: ${state.stepsRevealed} of ${totalSteps} steps revealed`}
-            >
-              <circle
-                cx="22" cy="22" r={ringRadius}
-                fill="none" stroke="var(--border)" strokeWidth="3"
-              />
-              <circle
-                cx="22" cy="22" r={ringRadius}
-                fill="none"
-                stroke={allStepsRevealed ? 'var(--success)' : accent}
-                strokeWidth="3"
-                strokeDasharray={ringCircumference}
-                strokeDashoffset={ringOffset}
-                strokeLinecap="round"
-                transform="rotate(-90 22 22)"
-                style={{ transition: 'stroke-dashoffset 0.5s ease, stroke 0.3s ease' }}
-              />
-              <text
-                x="22" y="22"
-                textAnchor="middle" dominantBaseline="central"
-                fill="var(--text)" fontSize="11" fontWeight="700" fontFamily="var(--mono)"
-              >
-                {state.stepsRevealed}/{totalSteps}
-              </text>
-            </svg>
-            <div className="min-w-0">
-              <div className="text-sm font-semibold" style={{ color: 'var(--text-h)' }}>
-                {allStepsRevealed ? 'All steps revealed' : `Step ${state.stepsRevealed} of ${totalSteps}`}
-              </div>
-              {thinkSeconds > 0 && (
-                <div className="text-xs" style={{ color: 'var(--text-muted)', fontFamily: 'var(--mono)' }}>
-                  Thought for {formatTime(thinkSeconds)}
-                </div>
-              )}
-            </div>
+      {(state.phase === "solving" || state.phase === "complete") && (
+        <div className="space-y-4 px-4 pb-5 pt-4 sm:px-5">
+          <div className="flex items-center gap-3">
+            <Tag tone={allStepsRevealed ? "success" : "accent"} size="sm" mono>
+              Step {state.stepsRevealed}/{totalSteps}
+            </Tag>
+            {thinkSeconds > 0 ? (
+              <span className="font-mono text-[11px] text-[var(--text-muted)]">
+                Thought for {formatTime(thinkSeconds)}
+              </span>
+            ) : null}
           </div>
 
-          {/* Revealed steps */}
-          <div className="flex flex-col gap-2">
-            {steps.slice(0, state.stepsRevealed).map((step: string, i: number) => (
-              <div
-                key={i}
-                className="flex min-w-0 gap-2.5 rounded-[var(--radius-sm)] px-3 py-2.5 sm:gap-2.5 sm:px-3.5"
-                style={{
-                  background: 'var(--success-bg)',
-                  borderLeft: `3px solid ${allStepsRevealed ? 'var(--success)' : accent}`,
-                }}
-              >
-                <div
-                  style={{
-                    width: 24,
-                    height: 24,
-                    minWidth: 24,
-                    borderRadius: '50%',
-                    background: allStepsRevealed ? 'var(--success)' : accent,
-                    color: '#fff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 11,
-                    fontWeight: 700,
-                    flexShrink: 0,
-                    fontFamily: 'var(--mono)',
-                  }}
+          <ol className="relative ml-2 space-y-3 border-l border-[var(--rule)] pl-5">
+            {steps.slice(0, state.stepsRevealed).map((step, i) => (
+              <li key={i} className="relative">
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute -left-[26px] top-0 inline-flex h-6 w-6 items-center justify-center rounded-[var(--radius-sm)] border font-mono text-[10px] font-medium tabular-nums",
+                    allStepsRevealed
+                      ? "border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success-fg)]"
+                      : "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]",
+                  )}
                 >
-                  {i + 1}
-                </div>
-                <div
-                  className="min-w-0 flex-1 break-words whitespace-pre-wrap text-sm leading-[160%]"
-                  style={{ color: 'var(--text)', fontSize: 'var(--fs-sm, 0.875rem)' }}
-                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="whitespace-pre-wrap break-words text-sm leading-[1.65] text-[var(--text)]">
                   {step}
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
 
-          {/* Step reveal controls */}
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            {!allStepsRevealed && (
+          <div className="flex flex-wrap gap-2">
+            {!allStepsRevealed ? (
               <>
-                <button
-                  className={cn(btnStyles.primary, 'w-full sm:min-w-[9rem] sm:flex-1')}
-                  onClick={revealNextStep}
-                  tabIndex={0}
-                  onKeyDown={(e) => handleKeyDown(e, revealNextStep)}
-                  aria-label="Reveal next step"
-                >
-                  <ChevronRight size={16} />
-                  Next Step
-                </button>
-                <button
-                  className={cn(btnStyles.secondary, 'w-full sm:w-auto')}
-                  onClick={revealAllSteps}
-                  tabIndex={0}
-                  onKeyDown={(e) => handleKeyDown(e, revealAllSteps)}
-                  aria-label="Reveal all steps at once"
-                >
-                  <Eye size={16} />
-                  Show All
-                </button>
+                <Button onClick={revealNextStep} size="sm">
+                  Next step
+                  <ChevronRight size={14} aria-hidden />
+                </Button>
+                <Button variant="secondary" size="sm" onClick={revealAllSteps}>
+                  <Eye size={14} aria-hidden />
+                  Show all
+                </Button>
               </>
-            )}
-            {allStepsRevealed && (
-              <button
-                className={cn(btnStyles.ghost, 'w-full sm:w-auto')}
-                onClick={resetExercise}
-                tabIndex={0}
-                onKeyDown={(e) => handleKeyDown(e, resetExercise)}
-                aria-label="Reset worked example"
-              >
-                <EyeOff size={16} />
+            ) : (
+              <Button variant="ghost" size="sm" onClick={resetExercise}>
+                <EyeOff size={14} aria-hidden />
                 Reset
-              </button>
+              </Button>
             )}
           </div>
 
-          {/* Explanation toggle — only when all steps revealed */}
-          {allStepsRevealed && explanation && (
-            <div className="mt-3">
-              <button
-                className={cn(btnStyles.secondary, 'w-full')}
-                onClick={toggleExplanation}
-                tabIndex={0}
-                onKeyDown={(e) => handleKeyDown(e, toggleExplanation)}
-                aria-label={state.explanationOpen ? 'Hide explanation' : 'Show explanation'}
-                aria-expanded={state.explanationOpen}
+          {allStepsRevealed && explanation ? (
+            <details
+              open={state.explanationOpen}
+              onToggle={(e) =>
+                setState((prev) => ({
+                  ...prev,
+                  explanationOpen: (e.currentTarget as HTMLDetailsElement).open,
+                }))
+              }
+              className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-sunken)]"
+            >
+              <summary
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleExplanation();
+                }}
+                className="flex min-h-10 cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--text-heading)]"
               >
-                <Lightbulb size={16} />
-                {state.explanationOpen ? 'Hide Explanation' : 'Why it works'}
+                <Lightbulb size={14} aria-hidden className="text-[var(--text-muted)]" />
+                <span>{state.explanationOpen ? "Hide why it works" : "Why it works"}</span>
                 <ChevronRight
-                  size={16}
-                  style={{
-                    transition: 'transform 0.2s ease',
-                    transform: state.explanationOpen ? 'rotate(90deg)' : 'rotate(0deg)',
-                  }}
+                  size={14}
+                  aria-hidden
+                  className={cn(
+                    "ml-auto text-[var(--text-subtle)] transition-transform",
+                    state.explanationOpen && "rotate-90",
+                  )}
                 />
-              </button>
-
-              {/* Explanation content */}
-              {state.explanationOpen && (
-                <div
-                  className="mt-2 break-words rounded-[var(--radius-sm)] px-3 py-3 sm:px-3.5"
-                  style={{
-                    borderLeft: '3px solid var(--info)',
-                    background: 'var(--info-bg)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                    <BookOpen size={16} style={{ color: 'var(--info)' }} />
-                    <span className="font-semibold text-sm" style={{ color: 'var(--text-h)' }}>
-                      Explanation
-                    </span>
-                  </div>
-                  <div className="break-words text-sm leading-[160%] whitespace-pre-wrap" style={{ color: 'var(--text)' }}>
-                    {explanation}
-                  </div>
+              </summary>
+              {state.explanationOpen ? (
+                <div className="border-t border-[var(--rule)] px-3 py-3 text-sm leading-[1.65] text-[var(--text-muted)]">
+                  <p className="whitespace-pre-wrap break-words">{explanation}</p>
                 </div>
-              )}
-            </div>
-          )}
+              ) : null}
+            </details>
+          ) : null}
         </div>
       )}
-    </div>
+    </article>
   );
 });
 
@@ -582,70 +455,24 @@ const WorkedExampleControls = memo(function WorkedExampleControls({
   onResetAll,
 }: WorkedExampleControlsProps) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        marginBottom: 12,
-        borderRadius: 'var(--radius-sm)',
-        background: 'var(--bg)',
-        border: '1px solid var(--border-light)',
-      }}
-    >
-      <span
-        className="text-xs"
-        style={{
-          color: 'var(--text-muted)',
-          fontFamily: 'var(--mono)',
-          marginRight: 'auto',
-        }}
-      >
+    <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-canvas)] px-3 py-2">
+      <span className="font-mono text-xs text-[var(--text-muted)] tabular-nums">
         {completed}/{total} complete
       </span>
-      <button
-        className={cn(btnStyles.ghost, 'min-h-0 px-2.5 py-1 text-xs')}
-        onClick={onExpandAll}
-        aria-label="Expand all worked examples"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-          minHeight: 'auto',
-        }}
-      >
-        <ChevronDown size={12} />
-        Expand All
-      </button>
-      <button
-        className={cn(btnStyles.ghost, 'min-h-0 px-2.5 py-1 text-xs')}
-        onClick={onCollapseAll}
-        aria-label="Collapse all worked examples"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-          minHeight: 'auto',
-        }}
-      >
-        <ChevronUp size={12} />
-        Collapse All
-      </button>
-      <button
-        className={cn(btnStyles.ghost, 'min-h-0 px-2.5 py-1 text-xs')}
-        onClick={onResetAll}
-        aria-label="Reset all worked examples"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-          minHeight: 'auto',
-        }}
-      >
-        <RotateCcw size={12} />
-        Reset All
-      </button>
+      <div className="ml-auto flex items-center gap-1">
+        <Button variant="ghost" size="sm" onClick={onExpandAll}>
+          <ChevronDown size={12} aria-hidden />
+          Expand all
+        </Button>
+        <Button variant="ghost" size="sm" onClick={onCollapseAll}>
+          <ChevronUp size={12} aria-hidden />
+          Collapse all
+        </Button>
+        <Button variant="ghost" size="sm" onClick={onResetAll}>
+          <RotateCcw size={12} aria-hidden />
+          Reset
+        </Button>
+      </div>
     </div>
   );
 });

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { cn } from "@/lib/cn";
 import {
   getStudyIntentSubtitle,
   loadStudyIntent,
@@ -22,24 +23,30 @@ export function StudyIntentStrip() {
 
   return (
     <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
-      <div className="flex flex-wrap gap-1.5">
-        {OPTIONS.map((option) => (
-          <button
-            key={option}
-            type="button"
-            onClick={() => {
-              setStudyIntent(option);
-              setFocus(option);
-            }}
-            className={`min-h-9 rounded-full border px-3 text-xs font-medium transition-colors touch-manipulation ${
-              focus === option
-                ? "border-[var(--accent)] bg-[var(--accent-bg)] text-[var(--accent)]"
-                : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)]"
-            }`}
-          >
-            {STUDY_INTENT_LABELS[option]}
-          </button>
-        ))}
+      <div role="tablist" aria-label="Study intent" className="flex flex-wrap gap-1.5">
+        {OPTIONS.map((option) => {
+          const isActive = focus === option;
+          return (
+            <button
+              key={option}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => {
+                setStudyIntent(option);
+                setFocus(option);
+              }}
+              className={cn(
+                "min-h-8 rounded-[var(--radius-sm)] border px-3 text-xs font-medium transition-colors touch-manipulation",
+                isActive
+                  ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]"
+                  : "border-[var(--rule)] bg-transparent text-[var(--text-muted)] hover:border-[var(--rule-strong)] hover:text-[var(--text)]",
+              )}
+            >
+              {STUDY_INTENT_LABELS[option]}
+            </button>
+          );
+        })}
       </div>
       {subtitle && (
         <p className="text-xs text-[var(--text-muted)] min-[481px]:max-w-[50%]">{subtitle}</p>

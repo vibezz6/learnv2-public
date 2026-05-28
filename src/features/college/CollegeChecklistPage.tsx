@@ -1,7 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, Check, ExternalLink, Plus, Trash2 } from "lucide-react";
-import { Button, Card, PageContainer, PageHeader, Section } from "@/components/ui";
+import {
+  Button,
+  Card,
+  Field,
+  Input,
+  Meter,
+  PageContainer,
+  PageHeader,
+  Section,
+  Tag,
+} from "@/components/ui";
 import {
   addCustomItem,
   getChecklistProgress,
@@ -35,7 +45,7 @@ export function CollegeChecklistPage() {
   };
 
   return (
-    <PageContainer size="md" className="space-y-6">
+    <PageContainer size="md" className="space-y-7">
       <PageHeader
         backTo={{ to: "/campus", label: "Campus" }}
         eyebrow="Applications"
@@ -43,26 +53,18 @@ export function CollegeChecklistPage() {
         subtitle="Real college steps outside Learn — FAFSA, counselor, SAT scores, essays. Check items off as you go; add your own deadlines."
       />
 
-      <Section eyebrow="Progress" title="Checklist completion">
-      <Card variant="quiet" className="space-y-3 p-5">
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-sm font-medium text-[var(--text-heading)]">Overall</span>
-          <span className="font-mono text-sm tabular-nums text-[var(--accent)]">
-            {progress.done}/{progress.total} · {progress.pct}%
-          </span>
-        </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
-          <div
-            className="h-full rounded-full bg-[var(--accent-2)] transition-all"
-            style={{ width: `${progress.pct}%` }}
-          />
-        </div>
+      <Card variant="default" density="normal" className="min-w-0 space-y-3">
+        <Meter
+          value={progress.pct}
+          label="Overall progress"
+          hint={`${progress.done}/${progress.total} · ${progress.pct}%`}
+          size="md"
+        />
         <p className="text-xs text-[var(--text-muted)]">
           Learn teaches and tracks study; this list tracks admissions paperwork. Not legal or
           financial advice.
         </p>
       </Card>
-      </Section>
 
       {[...grouped.entries()].map(([category, items]) => (
         <Section key={category} eyebrow={category}>
@@ -71,27 +73,24 @@ export function CollegeChecklistPage() {
               const done = !!state.completed[item.id];
               return (
                 <li key={item.id}>
-                  <Card
-                    variant="default"
+                  <div
                     className={cn(
-                      "flex gap-3 p-4 transition",
-                      done && "opacity-75",
+                      "flex min-h-12 gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)] px-4 py-3 transition",
+                      done && "opacity-70",
                     )}
                   >
                     <button
                       type="button"
                       aria-label={done ? "Mark incomplete" : "Mark complete"}
-                      onClick={() =>
-                        persist(toggleBuiltInItem(state, item.id, !done))
-                      }
+                      onClick={() => persist(toggleBuiltInItem(state, item.id, !done))}
                       className={cn(
-                        "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition touch-manipulation",
+                        "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border transition touch-manipulation",
                         done
-                          ? "border-[var(--accent)] bg-[var(--accent-bg)] text-[var(--accent)]"
-                          : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-strong)]",
+                          ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]"
+                          : "border-[var(--rule-strong)] text-transparent hover:border-[var(--accent-border)]",
                       )}
                     >
-                      {done && <Check size={16} />}
+                      <Check size={13} />
                     </button>
                     <div className="min-w-0 flex-1 space-y-1">
                       <p
@@ -102,12 +101,12 @@ export function CollegeChecklistPage() {
                       >
                         {item.title}
                       </p>
-                      {item.hint && (
+                      {item.hint ? (
                         <p className="text-xs leading-relaxed text-[var(--text-muted)]">
                           {item.hint}
                         </p>
-                      )}
-                      {item.link && (
+                      ) : null}
+                      {item.link ? (
                         <a
                           href={item.link}
                           target="_blank"
@@ -115,11 +114,11 @@ export function CollegeChecklistPage() {
                           className="inline-flex items-center gap-1 text-xs font-medium text-[var(--accent)] hover:underline"
                         >
                           {item.linkLabel ?? "Open link"}
-                          <ExternalLink size={12} />
+                          <ExternalLink size={11} aria-hidden />
                         </a>
-                      )}
+                      ) : null}
                     </div>
-                  </Card>
+                  </div>
                 </li>
               );
             })}
@@ -134,21 +133,19 @@ export function CollegeChecklistPage() {
           <ul className="space-y-2">
             {state.customItems.map((item) => (
               <li key={item.id}>
-                <Card variant="default" className="flex gap-3 p-4">
+                <div className="flex min-h-12 items-start gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)] px-4 py-3">
                   <button
                     type="button"
                     aria-label={item.completed ? "Mark incomplete" : "Mark complete"}
-                    onClick={() =>
-                      persist(toggleCustomItem(state, item.id, !item.completed))
-                    }
+                    onClick={() => persist(toggleCustomItem(state, item.id, !item.completed))}
                     className={cn(
-                      "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition touch-manipulation",
+                      "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border transition touch-manipulation",
                       item.completed
-                        ? "border-[var(--accent)] bg-[var(--accent-bg)] text-[var(--accent)]"
-                        : "border-[var(--border)] text-[var(--text-muted)]",
+                        ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--accent)]"
+                        : "border-[var(--rule-strong)] text-transparent hover:border-[var(--accent-border)]",
                     )}
                   >
-                    {item.completed && <Check size={16} />}
+                    <Check size={13} />
                   </button>
                   <div className="min-w-0 flex-1">
                     <p
@@ -159,55 +156,62 @@ export function CollegeChecklistPage() {
                     >
                       {item.title}
                     </p>
-                    {item.dueDate && (
-                      <p className="mt-1 flex items-center gap-1 text-xs text-[var(--text-muted)]">
-                        <Calendar size={12} />
+                    {item.dueDate ? (
+                      <Tag tone="mono" size="sm" className="mt-1.5 gap-1">
+                        <Calendar size={11} aria-hidden />
                         Due {item.dueDate}
-                      </p>
-                    )}
+                      </Tag>
+                    ) : null}
                   </div>
                   <button
                     type="button"
                     aria-label="Remove"
                     onClick={() => persist(removeCustomItem(state, item.id))}
-                    className="shrink-0 p-2 text-[var(--text-muted)] hover:text-[var(--danger)]"
+                    className="shrink-0 rounded-[var(--radius-sm)] p-2 text-[var(--text-subtle)] hover:bg-[var(--danger-bg)] hover:text-[var(--danger-fg)]"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={14} />
                   </button>
-                </Card>
+                </div>
               </li>
             ))}
           </ul>
         )}
 
-        <Card variant="quiet" className="space-y-3 p-4">
-          <p className="text-sm font-medium text-[var(--text-heading)]">Add a step</p>
-          <input
-            type="text"
-            value={customTitle}
-            onChange={(e) => setCustomTitle(e.target.value)}
-            placeholder="e.g. Submit Common App to State U"
-            className="w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2.5 text-sm text-[var(--text)]"
-          />
-          <input
-            type="date"
-            value={customDue}
-            onChange={(e) => setCustomDue(e.target.value)}
-            className="w-full rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text)]"
-          />
+        <Card variant="quiet" density="normal" className="mt-3 space-y-3">
+          <p className="eyebrow-mono">Add a step</p>
+          <Field label="Title">
+            {(id) => (
+              <Input
+                id={id}
+                type="text"
+                value={customTitle}
+                onChange={(e) => setCustomTitle(e.target.value)}
+                placeholder="e.g. Submit Common App to State U"
+              />
+            )}
+          </Field>
+          <Field label="Due date" hint="Optional — used to surface in week plan and Today.">
+            {(id) => (
+              <Input
+                id={id}
+                type="date"
+                value={customDue}
+                onChange={(e) => setCustomDue(e.target.value)}
+              />
+            )}
+          </Field>
           <Button
-            variant="secondary"
-            className="min-h-11 w-full touch-manipulation"
             onClick={handleAddCustom}
             disabled={!customTitle.trim()}
+            className="w-full sm:w-auto"
           >
-            <Plus size={16} />
+            <Plus size={14} aria-hidden />
             Add to checklist
           </Button>
         </Card>
       </Section>
 
-      <p className="text-xs text-[var(--text-muted)]">
+      <p className="border-t border-[var(--rule)] pt-4 text-xs text-[var(--text-muted)]">
         Pair with{" "}
         <Link to="/campus/essay-tracker" className="font-medium text-[var(--accent)] hover:underline">
           essay tracker

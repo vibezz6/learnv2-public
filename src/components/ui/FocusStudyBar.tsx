@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./Button";
+import { KeyHint } from "./KeyHint";
 
 interface FocusStudyBarProps {
   backTo: string;
@@ -39,27 +40,29 @@ export function FocusStudyBar({
 
   return (
     <div
-      className="flex flex-wrap items-center justify-between gap-3 border-b pb-4"
+      className="flex flex-wrap items-center justify-between gap-3 border-b pb-3"
       style={{
-        borderColor: accentColor ? `${accentColor}40` : "var(--border)",
+        borderColor: accentColor ? `${accentColor}40` : "var(--rule)",
       }}
     >
       <Link
         to={backTo}
-        className="min-w-0 text-sm text-[var(--text-muted)] hover:text-[var(--text-heading)]"
+        className="inline-flex min-w-0 items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-heading)]"
       >
-        ← <span className="truncate">{backLabel}</span>
+        <span aria-hidden>←</span>
+        <span className="truncate">{backLabel}</span>
       </Link>
-      <div className="flex shrink-0 flex-wrap items-center gap-2">
+      <div className="flex shrink-0 flex-wrap items-center gap-3">
         {(subjectName || elapsedLabel) && (
-          <span className="font-mono text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
+          <span className="eyebrow-mono">
             {subjectName}
             {subjectName && elapsedLabel ? " · " : ""}
             {elapsedLabel} elapsed
           </span>
         )}
-        <Button variant="ghost" onClick={onExitFocus}>
+        <Button variant="ghost" size="sm" onClick={onExitFocus}>
           Exit focus
+          <KeyHint size="sm">F</KeyHint>
         </Button>
       </div>
     </div>

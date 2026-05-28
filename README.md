@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.58 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.4.0 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -254,6 +254,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | Post-roadmap polish | ✅ **v2.3.56** — Today live refresh, ⌘K recents split, mobile header, `npm start` |
 | 20-minute study block | ✅ **v2.3.57** — Today card for a short SAT-first session plus urgent college micro-step |
 | AI lesson pipeline | ✅ **v2.3.58** — authoring rules/docs, draft workspace, stronger lint, guided sessions, SAT micro-drills, Stats recommendations |
+| Serious learning UI redesign (alt) | ✅ **v2.4.0** — IDE-style workspace rail with two-tier sidebar + status footer + `[` toggle, breadcrumb top bar, two-column Today, document-style lessons with mono-numbered worked examples and right-rail actions, SAT command center (today + mistakes side by side, demoted diagnostic & official resources, collapsible skill map), workflow college pages on shared `Field`/`Row`/`Meter`/`Tag`, proof-first Stats with collapsed deeper analytics, Settings grouped into Workspace / AI / Admissions / Drafts / Local data / Backup / Danger zone — alternate redesign on `cursor/redesign-claude-opus`. |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

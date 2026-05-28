@@ -11,7 +11,7 @@ test.describe("Learn v2 smoke", () => {
     await page.goto("/stats");
     await expect(page.getByRole("heading", { name: "Stats" })).toBeVisible();
     const empty = page.getByText("Start your journey");
-    const active = page.getByText("Study calendar");
+    const active = page.getByText("At a glance");
     await expect(empty.or(active)).toBeVisible();
   });
 });

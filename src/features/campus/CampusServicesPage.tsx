@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import {
-  ChevronRight,
+  ArrowRight,
   ClipboardList,
   FileText,
   FlaskConical,
@@ -8,59 +8,55 @@ import {
   Wrench,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Card, PageContainer, PageHeader, Section } from "@/components/ui";
+import {
+  PageContainer,
+  PageHeader,
+  Row,
+  Section,
+} from "@/components/ui";
 import { getManifestEntry } from "@/curriculum";
 import { CampusAdmissionsHub } from "@/features/campus/CampusAdmissionsHub";
 
-type ServiceCard = {
+interface ServiceCard {
   to: string;
   title: string;
   description: string;
   icon: LucideIcon;
-  tone: string;
-};
+}
 
 const coreServices: ServiceCard[] = [
   {
     to: "/campus/college-checklist",
     title: "College checklist",
-    description:
-      "FAFSA, counselor, SAT score send, essays, and custom deadlines — admissions paperwork in one place.",
+    description: "FAFSA, counselor, SAT score send, essays, and custom deadlines.",
     icon: ClipboardList,
-    tone: "text-[var(--accent-2)]",
   },
   {
     to: "/campus/essay-tracker",
     title: "Essay tracker",
-    description:
-      "Common App and supplement prompts, draft status (outline → final), and per-college deadlines.",
+    description: "Common App and supplement prompts, draft status, and deadlines.",
     icon: FileText,
-    tone: "text-[var(--accent)]",
   },
   {
     to: "/campus/calculators",
     title: "Calculators",
-    description: "Expected value and compound interest — standalone tools from the curriculum.",
+    description: "Expected value and compound interest — standalone tools.",
     icon: Wrench,
-    tone: "text-[var(--success)]",
   },
 ];
 
 function buildStudyCards(): ServiceCard[] {
   const cards: ServiceCard[] = [];
-
   const satPrep = getManifestEntry("sat-prep");
   if (satPrep) {
     cards.push({
       to: `/subjects/${satPrep.id}`,
       title: satPrep.name,
       description:
-        "August track, mistake log, official practice links, and optional in-app baseline — start here for SAT study.",
+        "August track, mistake log, official practice links, and optional in-app baseline.",
       icon: GraduationCap,
-      tone: "text-[var(--accent-2)]",
     });
   }
-
   const algoLab = getManifestEntry("algo-lab");
   if (algoLab) {
     cards.push({
@@ -68,63 +64,65 @@ function buildStudyCards(): ServiceCard[] {
       title: algoLab.name,
       description: algoLab.description,
       icon: FlaskConical,
-      tone: "text-[#6366f1]",
     });
   }
-
+  cards.push({
+    to: "/lab/trading",
+    title: "Trading Lab",
+    description: "Paper trade, replay scenarios, and experiment without real capital.",
+    icon: FlaskConical,
+  });
   return cards;
-}
-
-function ServiceCardLink({ to, title, description, icon: Icon, tone }: ServiceCard) {
-  return (
-    <Link to={to} className="block">
-      <Card className="transition hover:border-[var(--accent-border)]">
-        <div className="flex items-start gap-3">
-          <Icon size={20} className={tone} />
-          <div className="min-w-0 space-y-1">
-            <div className="font-semibold text-[var(--text-heading)]">{title}</div>
-            <p className="text-sm text-[var(--text-muted)]">{description}</p>
-          </div>
-          <ChevronRight size={16} className="ml-auto shrink-0 text-[var(--text-muted)]" />
-        </div>
-      </Card>
-    </Link>
-  );
 }
 
 export function CampusServicesPage() {
   const studyCards = buildStudyCards();
 
   return (
-    <PageContainer size="sm" className="space-y-8">
+    <PageContainer size="lg" className="space-y-7">
       <PageHeader
         title="Campus"
-        subtitle="College deadlines, calculators, and subject labs — outside your daily Today loop."
+        subtitle="College deadlines, calculators, and subject labs — outside the daily Today loop."
       />
 
-      <Section eyebrow="Applications" title="College">
-        <CampusAdmissionsHub />
-        <div className="space-y-3">
-          {coreServices.map((card) => (
-            <ServiceCardLink key={card.to} {...card} />
-          ))}
-        </div>
-      </Section>
+      <CampusAdmissionsHub />
 
-      <Section eyebrow="Study" title="Subjects & labs">
-        <div className="space-y-3">
-          {studyCards.map((card) => (
-            <ServiceCardLink key={card.to} {...card} />
-          ))}
-          <ServiceCardLink
-            to="/lab/trading"
-            title="Trading Lab"
-            description="Paper trade, replay scenarios, and experiment with strategies without risking real capital."
-            icon={FlaskConical}
-            tone="text-[var(--accent)]"
-          />
-        </div>
-      </Section>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Section eyebrow="College" title="Admissions workflow">
+          <div className="space-y-2">
+            {coreServices.map((card) => (
+              <Row
+                key={card.to}
+                to={card.to}
+                icon={<card.icon size={16} />}
+                title={card.title}
+                detail={card.description}
+              />
+            ))}
+          </div>
+          <Link
+            to="/campus/college-checklist"
+            className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+          >
+            Open checklist
+            <ArrowRight size={13} aria-hidden />
+          </Link>
+        </Section>
+
+        <Section eyebrow="Study" title="Subjects & labs">
+          <div className="space-y-2">
+            {studyCards.map((card) => (
+              <Row
+                key={card.to}
+                to={card.to}
+                icon={<card.icon size={16} />}
+                title={card.title}
+                detail={card.description}
+              />
+            ))}
+          </div>
+        </Section>
+      </div>
     </PageContainer>
   );
 }

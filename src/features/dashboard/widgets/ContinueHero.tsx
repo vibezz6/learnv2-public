@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Clock, Target } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { ArrowRight, Clock } from "lucide-react";
+import { Button, Card, Meter, Tag, KeyHint } from "@/components/ui";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import {
   CONTINUE_KIND_LABELS,
@@ -15,6 +15,13 @@ interface Props {
   node: SkillNode;
 }
 
+function ctaLabel(kind: ContinueKind, started: boolean, completed: boolean): string {
+  if (kind === "quiz") return "Resume quiz";
+  if (kind === "notes") return "Continue notes";
+  if (started && !completed) return "Resume lesson";
+  return "Start lesson";
+}
+
 export function ContinueHero({ subject, node }: Props) {
   const kind: ContinueKind = resolveContinueKind(node.id);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
@@ -23,78 +30,69 @@ export function ContinueHero({ subject, node }: Props) {
   const completedInSubject = subject.nodes.filter(
     (n) => getNodeStatus(n) === "completed",
   ).length;
+  const totalInSubject = subject.nodes.length;
   const subjectPct =
-    subject.nodes.length > 0
-      ? Math.round((completedInSubject / subject.nodes.length) * 100)
-      : 0;
+    totalInSubject > 0 ? Math.round((completedInSubject / totalInSubject) * 100) : 0;
   const lessonIndex = subject.nodes.findIndex((n) => n.id === node.id) + 1;
   const started = Boolean(getNodeProgress(node.id).startedAt);
   const status = getNodeStatus(node);
+  const completed = status === "completed";
 
   return (
-    <Card variant="primary">
-      <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-[var(--text-muted)]">
-        <Target size={12} aria-hidden />
-        <span>Today&apos;s focus</span>
-        <span className="normal-case tracking-normal text-[var(--accent)]">
-          · {CONTINUE_KIND_LABELS[kind]}
-        </span>
+    <Card variant="primary" density="roomy" className="min-w-0">
+      <div className="flex flex-col gap-2 border-b border-[var(--rule)] pb-4">
+        <div className="flex items-center gap-2 text-[12px] font-mono text-[var(--text-muted)]">
+          <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: subject.color }} />
+          <span>{subject.name}</span>
+          <span aria-hidden className="text-[var(--text-subtle)]">/</span>
+          <span className="tabular-nums text-[var(--text-subtle)]">
+            lesson {lessonIndex}/{totalInSubject}
+          </span>
+        </div>
+        <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold leading-tight tracking-tight text-[var(--text-heading)]">
+          {node.name}
+        </h2>
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <Tag tone="accent" mono size="sm">
+            {CONTINUE_KIND_LABELS[kind]}
+          </Tag>
+          {completed ? (
+            <Tag tone="success" mono size="sm">
+              Completed
+            </Tag>
+          ) : started ? (
+            <Tag tone="info" mono size="sm">
+              In progress
+            </Tag>
+          ) : null}
+          {node.estimatedMinutes > 0 && (
+            <Tag tone="mono" size="sm" className="gap-1">
+              <Clock size={10} aria-hidden />
+              {node.estimatedMinutes}m
+            </Tag>
+          )}
+          <Tag tone="mono" size="sm">
+            +{node.xpValue} XP
+          </Tag>
+        </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div className="min-w-0 flex-1 space-y-4">
-          <div>
-            <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold leading-tight tracking-tight text-[var(--text-heading)]">
-              {node.name}
-            </h2>
-            <p className="mt-2 text-sm text-[var(--text-muted)]">{subject.name}</p>
-            <p className="mt-3 font-mono text-lg font-medium tabular-nums text-[var(--text-heading)]">
-              +{node.xpValue} XP
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--text-muted)]">
-            <span className="font-mono tabular-nums">
-              Lesson {lessonIndex} of {subject.nodes.length}
-            </span>
-            {node.estimatedMinutes > 0 && (
-              <span className="inline-flex items-center gap-1.5">
-                <Clock size={12} aria-hidden />
-                ~{node.estimatedMinutes} min
-              </span>
-            )}
-            {started && status !== "completed" && (
-              <span className="text-[var(--text-muted)]">In progress</span>
-            )}
-          </div>
-
-          <div className="max-w-md space-y-2">
-            <div className="flex items-baseline justify-between text-[11px] text-[var(--text-muted)]">
-              <span>{subject.name}</span>
-              <span className="font-mono tabular-nums">{subjectPct}%</span>
-            </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-[var(--border)]">
-              <div
-                className="h-full rounded-full transition-[width]"
-                style={{ width: `${subjectPct}%`, background: subject.color }}
-              />
-            </div>
-          </div>
+      <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <Meter
+            value={subjectPct}
+            label={`${subject.name} progress`}
+            hint={`${completedInSubject}/${totalInSubject} · ${subjectPct}%`}
+          />
         </div>
-
         <Link
           to={continueHref(subject.id, node.id, kind)}
           className="w-full shrink-0 lg:w-auto"
         >
-          <Button variant="secondary" className="min-h-11 w-full touch-manipulation lg:w-auto">
-            {kind === "quiz"
-              ? "Resume quiz"
-              : kind === "notes"
-                ? "Continue notes"
-                : started && status !== "completed"
-                  ? "Resume"
-                  : "Start lesson"}
-            <ArrowRight size={14} />
+          <Button size="lg" className="w-full touch-manipulation lg:w-auto">
+            {ctaLabel(kind, started, completed)}
+            <ArrowRight size={14} aria-hidden />
+            <KeyHint size="sm">↵</KeyHint>
           </Button>
         </Link>
       </div>

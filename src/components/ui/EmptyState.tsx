@@ -25,26 +25,26 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center px-8 py-16 text-center",
+        "flex flex-col items-center justify-center rounded-[var(--radius-md)] border border-dashed border-[var(--rule-strong)] bg-[var(--bg-canvas)] px-8 py-14 text-center",
         className,
       )}
     >
-      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] text-2xl">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-sunken)] text-xl text-[var(--text-muted)]">
         {icon ?? <span aria-hidden>◇</span>}
       </div>
-      <h3 className="max-w-sm text-xl font-medium tracking-tight text-[var(--text-heading)]">
+      <h3 className="max-w-sm text-base font-semibold tracking-tight text-[var(--text-heading)]">
         {title}
       </h3>
-      <p className="mt-2 max-w-xs text-[15px] leading-relaxed text-[var(--text-muted)]">
+      <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--text-muted)]">
         {description}
       </p>
       {actionLabel && actionTo && (
-        <Link to={actionTo} className="mt-8">
+        <Link to={actionTo} className="mt-6">
           <Button>{actionLabel}</Button>
         </Link>
       )}
       {actionLabel && onAction && !actionTo && (
-        <Button className="mt-8" onClick={onAction}>
+        <Button className="mt-6" onClick={onAction}>
           {actionLabel}
         </Button>
       )}

@@ -18,7 +18,7 @@ export function FocusShell({ active, chrome, children, className, ...props }: Fo
           className="pointer-events-none fixed inset-0 z-0"
           style={{
             background:
-              "radial-gradient(ellipse 55% 40% at 50% 0%, rgba(0,212,170,0.05) 0%, transparent 70%)",
+              "radial-gradient(ellipse 55% 40% at 50% 0%, var(--accent-bg) 0%, transparent 70%)",
           }}
         />
       )}
@@ -26,7 +26,7 @@ export function FocusShell({ active, chrome, children, className, ...props }: Fo
       <div
         className={cn(
           "relative z-10 mx-auto w-full transition-all duration-300",
-          active ? "max-w-[74ch] px-8 py-10" : "max-w-6xl px-6 py-6",
+          active ? "max-w-[var(--measure-prose)] px-6 py-10 md:px-8" : "max-w-6xl px-6 py-6",
         )}
       >
         {children}

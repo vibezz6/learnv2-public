@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, Tag } from "@/components/ui";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
 import {
@@ -31,18 +31,23 @@ export function SatDiagnosticSection() {
   }
 
   return (
-    <Card id="diagnostic" variant="quiet" className="scroll-mt-6 space-y-4 p-5">
-      <div className="flex items-start gap-3">
-        <BookOpen size={18} className="mt-0.5 shrink-0 text-[var(--accent-2)]" aria-hidden />
+    <Card id="diagnostic" variant="quiet" density="normal" className="scroll-mt-6 min-w-0 space-y-3">
+      <div className="flex items-start gap-3 border-b border-[var(--rule)] pb-3">
+        <BookOpen size={14} className="mt-0.5 shrink-0 text-[var(--text-muted)]" aria-hidden />
         <div className="min-w-0 space-y-1">
-          <h2 className="text-sm font-semibold text-[var(--text-heading)]">Optional diagnostic</h2>
-          <p className="text-sm text-[var(--text-muted)]">{detail}</p>
+          <div className="flex items-center gap-2">
+            <p className="eyebrow-mono">Optional diagnostic</p>
+            <Tag tone="muted" size="sm" mono>
+              Optional baseline
+            </Tag>
+          </div>
+          <p className="text-sm leading-relaxed text-[var(--text-muted)]">{detail}</p>
         </div>
       </div>
       <Link to="/sat/pretest" className="inline-block">
-        <Button className="min-h-11 w-full touch-manipulation sm:w-auto">
+        <Button variant="secondary" size="sm">
           {buttonLabel}
-          <ArrowRight size={14} />
+          <ArrowRight size={13} aria-hidden />
         </Button>
       </Link>
     </Card>
