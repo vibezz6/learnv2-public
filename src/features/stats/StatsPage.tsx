@@ -28,6 +28,8 @@ import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
 import { WeekInReviewStrip } from "@/features/stats/widgets/WeekInReviewStrip";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
+import { buildStudyRecommendations } from "@/lib/studyRecommendations";
+import { Link } from "react-router-dom";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
   const json = JSON.stringify(summary, null, 2);
@@ -98,6 +100,7 @@ export function StatsPage() {
   const getStats = useProgress((s) => s.getStats);
   const getNodeProgress = useProgress((s) => s.getNodeProgress);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
   const getReviewStats = useProgress((s) => s.getReviewStats);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [copiedTranscript, setCopiedTranscript] = useState(false);
@@ -116,6 +119,7 @@ export function StatsPage() {
   }, []);
 
   const stats = subjects.length ? getStats(subjects) : null;
+  const reviewDueCount = subjects.length ? getNodesNeedingReview(subjects).length : 0;
   const reviewStats = getReviewStats();
   const transcript = useMemo(() => {
     void admissionsRevision;
@@ -137,6 +141,15 @@ export function StatsPage() {
   const maxWeek = Math.max(...weeklyTrend.map((w) => w.totalMinutes), 1);
   const xpProgress = stats ? ((500 - stats.xpToNext) / 500) * 100 : 0;
   const unlockedCount = ALL_ACHIEVEMENTS.filter((a) => hasSeen(a)).length;
+  const recommendations = useMemo(() => {
+    void admissionsRevision;
+    if (!subjects.length) return [];
+    return buildStudyRecommendations({
+      subjects,
+      getNodeStatus,
+      reviewDueCount,
+    });
+  }, [subjects, getNodeStatus, reviewDueCount, admissionsRevision]);
 
   const xpBySubject = subjects
     .map((subject) => ({
@@ -169,6 +182,27 @@ export function StatsPage() {
       ) : (
         <>
           <Section eyebrow="Progress" title="At a glance">
+          {recommendations.length > 0 && (
+            <Card className="stagger-item min-w-0 border-l-2 border-l-[var(--accent-2)]">
+              <div className="mb-3 flex items-center gap-2">
+                <Sparkles size={16} className="text-[var(--accent-2)]" />
+                <span className="font-semibold text-[var(--text-heading)]">Recommended next actions</span>
+              </div>
+              <div className="grid gap-2 md:grid-cols-3">
+                {recommendations.map((rec) => (
+                  <Link
+                    key={rec.id}
+                    to={rec.href}
+                    className="rounded-[var(--radius)] border border-[var(--border)] p-3 transition hover:border-[var(--accent-2)]"
+                  >
+                    <p className="text-sm font-medium text-[var(--text-heading)]">{rec.title}</p>
+                    <p className="mt-1 text-xs text-[var(--text-muted)]">{rec.reason}</p>
+                    <p className="mt-2 text-xs font-medium text-[var(--accent-2)]">{rec.label}</p>
+                  </Link>
+                ))}
+              </div>
+            </Card>
+          )}
           {transcript && (
             <Card className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
               <div className="mb-4 flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between">

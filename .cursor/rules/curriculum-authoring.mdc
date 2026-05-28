@@ -1,0 +1,18 @@
+---
+description: Guardrails for AI-authored curriculum lessons
+globs: src/curriculum/data/*.json,scripts/curriculum-lint.mts,docs/lesson-authoring.md
+alwaysApply: false
+---
+
+# Curriculum Authoring
+
+When editing lessons, act like a careful junior curriculum writer, not a freeform tutor.
+
+- Read 2-3 nearby lessons in the same subject before writing or changing a node.
+- Preserve the `SkillNode` shape from `src/curriculum/types.ts`; do not add ad hoc fields.
+- Prefer direct teaching: concrete explanation, worked examples, practice problems, common mistakes, and 2-4 quiz questions.
+- Do not invent fake citations, fake official resources, or unsupported score claims. External links must be real `https://` URLs; internal links start with `/`.
+- SAT content should align with Digital SAT/Khan/Bluebook style and stay study-first, not diagnostic-first.
+- Keep lesson text concise enough for a focused session; avoid giant walls of motivation.
+- Generated content is a draft until reviewed by a stronger model or human.
+- After curriculum changes, run `npm run curriculum:lint`, `npm test`, and `npm run build`.

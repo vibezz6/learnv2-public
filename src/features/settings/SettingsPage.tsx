@@ -13,6 +13,7 @@ import { ActivityLogPanel } from "@/features/settings/widgets/ActivityLogPanel";
 import { StorageHealthPanel } from "@/features/settings/widgets/StorageHealthPanel";
 import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
+import { LessonDraftWorkspace } from "@/features/settings/LessonDraftWorkspace";
 import { OPENROUTER_KEY } from "@/services/llmReview";
 
 const LEGACY_OPENROUTER_KEY = "learnapp_openrouter_key";
@@ -151,6 +152,8 @@ export function SettingsPage() {
       <AdmissionsSettingsCard onMessage={setMessage} />
 
       <SatPretestSettingsCard onMessage={setMessage} />
+
+      <LessonDraftWorkspace onMessage={setMessage} />
 
       <ActivityLogPanel />
 

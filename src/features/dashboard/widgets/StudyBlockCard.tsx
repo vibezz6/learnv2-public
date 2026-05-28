@@ -5,6 +5,12 @@ import { Button, Card } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import { buildStudyBlockPlan } from "@/lib/studyBlockPlan";
+import {
+  completeStudySessionStep,
+  loadStudySession,
+  startStudySession,
+  type StudySessionState,
+} from "@/lib/studySession";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
@@ -16,6 +22,7 @@ export function StudyBlockCard({ subjects }: Props) {
   const placementGoal = usePreferences((s) => s.placementGoal);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const [revision, setRevision] = useState(0);
+  const [session, setSession] = useState<StudySessionState | null>(() => loadStudySession());
 
   useEffect(() => {
     const bump = () => setRevision((r) => r + 1);
@@ -53,7 +60,43 @@ export function StudyBlockCard({ subjects }: Props) {
                 <ArrowRight size={14} />
               </Button>
             </Link>
+            <Button
+              variant="secondary"
+              className="min-h-10 w-full touch-manipulation min-[720px]:w-auto"
+              onClick={() => setSession(startStudySession(plan))}
+            >
+              Start guided block
+            </Button>
           </div>
+          {session && !session.completedAt ? (
+            <div className="rounded-[var(--radius)] border border-[var(--accent-border)] bg-[var(--accent-bg)] p-3">
+              <p className="text-xs font-medium uppercase tracking-widest text-[var(--accent)]">
+                Guided session active
+              </p>
+              <div className="mt-2 space-y-2">
+                {session.steps.map((step) => (
+                  <div key={step.id} className="flex items-center justify-between gap-3 text-sm">
+                    <span className={step.completedAt ? "text-[var(--text-muted)] line-through" : "text-[var(--text-heading)]"}>
+                      {step.title} · {step.minutes}m
+                    </span>
+                    {!step.completedAt && (
+                      <Button
+                        variant={session.activeStepId === step.id ? "primary" : "secondary"}
+                        className="min-h-8 px-3 text-xs"
+                        onClick={() => setSession(completeStudySessionStep(step.id))}
+                      >
+                        Mark done
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : session?.completedAt ? (
+            <p className="rounded-[var(--radius)] border border-[var(--success)]/30 bg-[var(--success)]/10 p-3 text-sm text-[var(--text-heading)]">
+              Guided block complete. Nice. The minutes were added to local activity.
+            </p>
+          ) : null}
           <ol className="grid gap-2 min-[720px]:grid-cols-2">
             {plan.steps.map((step, index) => (
               <li

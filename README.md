@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.57 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.3.58 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -253,6 +253,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | 111 DAG examples (127) | ✅ **v2.3.55** — `examples/learnv2-wave1.json` + Pages deploy |
 | Post-roadmap polish | ✅ **v2.3.56** — Today live refresh, ⌘K recents split, mobile header, `npm start` |
 | 20-minute study block | ✅ **v2.3.57** — Today card for a short SAT-first session plus urgent college micro-step |
+| AI lesson pipeline | ✅ **v2.3.58** — authoring rules/docs, draft workspace, stronger lint, guided sessions, SAT micro-drills, Stats recommendations |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 
