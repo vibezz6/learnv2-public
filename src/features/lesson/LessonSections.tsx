@@ -399,12 +399,6 @@ const WorkedExampleCard = memo(function WorkedExampleCard({
           {allStepsRevealed && explanation ? (
             <details
               open={state.explanationOpen}
-              onToggle={(e) =>
-                setState((prev) => ({
-                  ...prev,
-                  explanationOpen: (e.currentTarget as HTMLDetailsElement).open,
-                }))
-              }
               className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-sunken)]"
             >
               <summary
