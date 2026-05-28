@@ -21,13 +21,14 @@ import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
 import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
 import { SatTodayCard } from "./widgets/SatTodayCard";
-import { RecentStudyStrip } from "./widgets/RecentStudyStrip";
 import { DayNarrativeStrip } from "./widgets/DayNarrativeStrip";
 import { StudyIntentStrip } from "./widgets/StudyIntentStrip";
 import { EssayDueToday } from "./widgets/EssayDueToday";
 import { TodayEmptyFocus } from "./widgets/TodayEmptyFocus";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
+import { StudyBlockCard } from "./widgets/StudyBlockCard";
 import { getStudyIntentSubtitle, loadStudyIntent } from "@/lib/studyIntent";
+import { ROUTES } from "@/app/navigation";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -70,7 +71,7 @@ export function DashboardPage() {
   const intentSubtitle = getStudyIntentSubtitle(loadStudyIntent().focus);
   const pageSubtitle =
     intentSubtitle ??
-    "Your next lesson, this week&apos;s plan, and college deadlines.";
+    "Start the next session, then jump out to SAT, College, Review, or Stats.";
 
   if (loadingSubjects) {
     return <PageLoading />;
@@ -87,10 +88,9 @@ export function DashboardPage() {
         <StudyIntentStrip />
         <DayNarrativeStrip />
         {stats && <DailyGoalStrip stats={stats} />}
-        {subjects.length > 0 && <RecentStudyStrip subjects={subjects} />}
       </div>
 
-      <Section eyebrow="Today's focus">
+      <Section eyebrow="Now" title="Do this first">
         {target ? (
           <ContinueHero subject={target.subject} node={target.node} />
         ) : showSatFocus ? (
@@ -100,11 +100,17 @@ export function DashboardPage() {
         )}
       </Section>
 
-      <EssayDueToday />
+      <Section eyebrow="Next 20 minutes" title="Short session plan">
+        <StudyBlockCard subjects={subjects} />
+      </Section>
+
+      <Section eyebrow="Due soon">
+        <EssayDueToday />
+      </Section>
 
       <Section
-        eyebrow="This week"
-        title="Track, deadlines, and SAT follow-ups"
+        eyebrow="Later"
+        title="This week, review, and challenge"
       >
         <WeekPlanCard subjects={subjects} embedded />
       </Section>
@@ -152,7 +158,15 @@ export function DashboardPage() {
       <p className="text-[11px] text-[var(--text-muted)]">
         <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">F</kbd> focus ·{" "}
         <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">⌘K</kbd> search ·{" "}
-        <Link to="/stats" className="text-[var(--accent-2)] hover:underline">
+        <Link to={ROUTES.sat} className="text-[var(--accent-2)] hover:underline">
+          SAT
+        </Link>
+        {" · "}
+        <Link to={ROUTES.college} className="text-[var(--accent-2)] hover:underline">
+          College
+        </Link>
+        {" · "}
+        <Link to={ROUTES.stats} className="text-[var(--accent-2)] hover:underline">
           <BarChart3 size={12} className="mr-0.5 inline" aria-hidden />
           Stats
         </Link>

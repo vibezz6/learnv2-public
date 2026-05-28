@@ -1,4 +1,5 @@
 import { recordStudyActivity } from "@/lib/studyActivity";
+import { readJsonArray, writeJson } from "@/lib/storageJson";
 
 export const SAT_MISTAKE_LOG_KEY = "learnv2_sat_mistakes_v1";
 
@@ -34,23 +35,11 @@ function generateId(): string {
 }
 
 function loadRaw(storage: Storage = localStorage): SatMistakeEntry[] {
-  try {
-    const raw = storage.getItem(SAT_MISTAKE_LOG_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isValidEntry);
-  } catch {
-    return [];
-  }
+  return readJsonArray(storage, SAT_MISTAKE_LOG_KEY, isValidEntry);
 }
 
 function saveRaw(entries: SatMistakeEntry[], storage: Storage = localStorage): void {
-  try {
-    storage.setItem(SAT_MISTAKE_LOG_KEY, JSON.stringify(entries));
-  } catch {
-    // Storage full or unavailable — fail silently
-  }
+  writeJson(storage, SAT_MISTAKE_LOG_KEY, entries);
 }
 
 function isValidEntry(value: unknown): value is SatMistakeEntry {

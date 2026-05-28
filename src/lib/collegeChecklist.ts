@@ -1,4 +1,5 @@
 import { notifyAdmissionsUpdated } from "./admissionsSync";
+import { readJson, writeJson } from "@/lib/storageJson";
 
 export const COLLEGE_CHECKLIST_KEY = "learnv2_college_checklist_v1";
 
@@ -105,31 +106,21 @@ function isValidState(value: unknown): value is CollegeChecklistState {
 }
 
 export function loadCollegeChecklist(storage: Storage = localStorage): CollegeChecklistState {
-  try {
-    const raw = storage.getItem(COLLEGE_CHECKLIST_KEY);
-    if (!raw) return emptyState();
-    const parsed: unknown = JSON.parse(raw);
-    if (!isValidState(parsed)) return emptyState();
-    return {
-      completed: { ...parsed.completed },
-      customItems: parsed.customItems.filter(
-        (c) => typeof c.id === "string" && typeof c.title === "string",
-      ),
-    };
-  } catch {
-    return emptyState();
-  }
+  const parsed = readJson(storage, COLLEGE_CHECKLIST_KEY, emptyState(), isValidState);
+  return {
+    completed: { ...parsed.completed },
+    customItems: parsed.customItems.filter(
+      (c) => typeof c.id === "string" && typeof c.title === "string",
+    ),
+  };
 }
 
 export function saveCollegeChecklist(
   state: CollegeChecklistState,
   storage: Storage = localStorage,
 ): void {
-  try {
-    storage.setItem(COLLEGE_CHECKLIST_KEY, JSON.stringify(state));
+  if (writeJson(storage, COLLEGE_CHECKLIST_KEY, state)) {
     notifyAdmissionsUpdated();
-  } catch {
-    // ignore quota errors
   }
 }
 

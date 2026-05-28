@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  BarChart3,
   BookOpen,
-  Brain,
   CalendarClock,
   ClipboardList,
   Clock,
@@ -11,17 +9,13 @@ import {
   FileText,
   FlaskConical,
   GraduationCap,
-  Home,
   LayoutGrid,
   Moon,
   Search,
   SearchX,
-  Settings,
   Shuffle,
   Sparkles,
-  Star,
   Sun,
-  Timer,
 } from "lucide-react";
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
@@ -29,6 +23,7 @@ import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { useProgress } from "@/stores/progress";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
+import { getCommandNavItems, ROUTES } from "@/app/navigation";
 import {
   addRecentCommandAction,
   getRecentCommandActions,
@@ -207,24 +202,27 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       action: () => fillQuery(term),
     }));
 
-    const navigateItems: CommandItem[] = [
-      { id: "home", label: "Today", section: "Navigate", icon: Home, recentPath: "/", action: () => go("/", { id: "home", label: "Today" }) },
-      { id: "bookmarks", label: "Saved", section: "Navigate", icon: Star, recentPath: "/bookmarks", action: () => go("/bookmarks", { id: "bookmarks", label: "Saved" }) },
-      { id: "subjects", label: "Subjects", section: "Navigate", icon: BookOpen, recentPath: "/subjects", action: () => go("/subjects", { id: "subjects", label: "Subjects" }) },
-      { id: "review", label: "Review queue", section: "Navigate", icon: Brain, recentPath: "/review", action: () => go("/review", { id: "review", label: "Review queue" }) },
-      { id: "stats", label: "Stats & transcript", section: "Navigate", icon: BarChart3, recentPath: "/stats", action: () => go("/stats", { id: "stats", label: "Stats & transcript" }) },
-      { id: "timer", label: "Timer", section: "Navigate", icon: Timer, recentPath: "/timer", action: () => go("/timer", { id: "timer", label: "Timer" }) },
-      { id: "settings", label: "Settings", section: "Navigate", icon: Settings, recentPath: "/settings", action: () => go("/settings", { id: "settings", label: "Settings" }) },
-    ];
+    const navigateItems: CommandItem[] = getCommandNavItems().map((item) => {
+      const label = item.commandLabel ?? item.label;
+      return {
+        id: item.id,
+        label,
+        description: item.hint,
+        section: "Navigate" as const,
+        icon: item.icon,
+        recentPath: item.to,
+        action: () => go(item.to, { id: item.id, label }),
+      };
+    });
 
     const campusItems: CommandItem[] = [
       {
         id: "campus",
-        label: "Campus services",
+        label: "College hub",
         section: "Campus",
         icon: LayoutGrid,
-        recentPath: "/campus",
-        action: () => go("/campus", { id: "campus", label: "Campus services" }),
+        recentPath: ROUTES.college,
+        action: () => go(ROUTES.college, { id: "campus", label: "College hub" }),
       },
       {
         id: "college-checklist",
@@ -232,9 +230,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "FAFSA, essays, deadlines",
         section: "Campus",
         icon: ClipboardList,
-        recentPath: "/campus/college-checklist",
+        recentPath: ROUTES.collegeChecklist,
         action: () =>
-          go("/campus/college-checklist", { id: "college-checklist", label: "College checklist" }),
+          go(ROUTES.collegeChecklist, { id: "college-checklist", label: "College checklist" }),
       },
       {
         id: "college-deadlines",
@@ -245,9 +243,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             : "Checklist and essay due dates",
         section: "Campus",
         icon: CalendarClock,
-        recentPath: urgentDeadlines[0]?.href ?? "/campus/college-checklist",
+        recentPath: urgentDeadlines[0]?.href ?? ROUTES.collegeChecklist,
         action: () => {
-          const path = urgentDeadlines[0]?.href ?? "/campus/college-checklist";
+          const path = urgentDeadlines[0]?.href ?? ROUTES.collegeChecklist;
           go(path, { id: "college-deadlines", label: "College deadlines" });
         },
       },
@@ -257,8 +255,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "Draft status and due dates",
         section: "Campus",
         icon: FileText,
-        recentPath: "/campus/essay-tracker",
-        action: () => go("/campus/essay-tracker", { id: "essay-tracker", label: "Essay tracker" }),
+        recentPath: ROUTES.essayTracker,
+        action: () => go(ROUTES.essayTracker, { id: "essay-tracker", label: "Essay tracker" }),
       },
       {
         id: "campus-focus",
@@ -266,16 +264,16 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "SAT, foundations, or explore",
         section: "Campus",
         icon: GraduationCap,
-        recentPath: "/settings",
-        action: () => go("/settings#campus-focus", { id: "campus-focus", label: "Change campus focus" }),
+        recentPath: ROUTES.settings,
+        action: () => go(`${ROUTES.settings}#campus-focus`, { id: "campus-focus", label: "Change campus focus" }),
       },
       {
         id: "trading-lab",
         label: "Trading Lab",
         section: "Campus",
         icon: FlaskConical,
-        recentPath: "/lab/trading",
-        action: () => go("/lab/trading", { id: "trading-lab", label: "Trading Lab" }),
+        recentPath: ROUTES.tradingLab,
+        action: () => go(ROUTES.tradingLab, { id: "trading-lab", label: "Trading Lab" }),
       },
       {
         id: "sat-pretest",
@@ -283,8 +281,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "In-app diagnostic · also under SAT Prep",
         section: "SAT",
         icon: GraduationCap,
-        recentPath: "/sat/pretest",
-        action: () => go("/sat/pretest", { id: "sat-pretest", label: "SAT optional baseline (Draft 1)" }),
+        recentPath: ROUTES.satPretest,
+        action: () => go(ROUTES.satPretest, { id: "sat-pretest", label: "SAT optional baseline (Draft 1)" }),
       },
       {
         id: "sat-recommended",
@@ -302,7 +300,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               label: "SAT recommended lessons",
             });
           } else {
-            go("/subjects/sat-prep#recommended", {
+            go(ROUTES.satRecommended, {
               id: "sat-recommended",
               label: "SAT recommended lessons",
             });
@@ -315,17 +313,17 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         description: "Log misses after Bluebook or Khan",
         section: "SAT",
         icon: ClipboardList,
-        recentPath: "/subjects/sat-prep#mistakes",
-        action: () => go("/subjects/sat-prep#mistakes", { id: "sat-mistake-log", label: "SAT mistake log" }),
+        recentPath: ROUTES.satMistakes,
+        action: () => go(ROUTES.satMistakes, { id: "sat-mistake-log", label: "SAT mistake log" }),
       },
       {
         id: "sat-prep",
-        label: "SAT Prep subject",
+        label: "SAT Prep",
         description: "75-lesson August track",
         section: "SAT",
         icon: BookOpen,
-        recentPath: "/subjects/sat-prep",
-        action: () => go("/subjects/sat-prep", { id: "sat-prep", label: "SAT Prep subject" }),
+        recentPath: ROUTES.sat,
+        action: () => go(ROUTES.sat, { id: "sat-prep", label: "SAT Prep" }),
       },
     ];
 

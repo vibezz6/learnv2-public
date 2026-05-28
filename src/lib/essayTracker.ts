@@ -1,4 +1,5 @@
 import { notifyAdmissionsUpdated } from "./admissionsSync";
+import { readJson, writeJson } from "@/lib/storageJson";
 
 export const ESSAY_TRACKER_KEY = "learnv2_essay_tracker_v1";
 
@@ -133,24 +134,14 @@ function newId(): string {
 }
 
 export function loadEssayTracker(storage: Storage = localStorage): EssayTrackerState {
-  try {
-    const raw = storage.getItem(ESSAY_TRACKER_KEY);
-    if (!raw) return emptyState();
-    const parsed: unknown = JSON.parse(raw);
-    if (!isValidState(parsed)) return emptyState();
-    const essays = parsed.essays.map(normalizeEntry).filter((e): e is EssayEntry => e !== null);
-    return { essays };
-  } catch {
-    return emptyState();
-  }
+  const parsed = readJson(storage, ESSAY_TRACKER_KEY, emptyState(), isValidState);
+  const essays = parsed.essays.map(normalizeEntry).filter((e): e is EssayEntry => e !== null);
+  return { essays };
 }
 
 export function saveEssayTracker(state: EssayTrackerState, storage: Storage = localStorage): void {
-  try {
-    storage.setItem(ESSAY_TRACKER_KEY, JSON.stringify(state));
+  if (writeJson(storage, ESSAY_TRACKER_KEY, state)) {
     notifyAdmissionsUpdated();
-  } catch {
-    // ignore quota errors
   }
 }
 

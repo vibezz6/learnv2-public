@@ -3,8 +3,19 @@ import { persist } from "zustand/middleware";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import { findLatestInProgressQuizNodeId } from "@/features/quiz/quizProgress";
-import { type BackupImportReport, parseBackupKeys } from "@/lib/backupFormat";
+import {
+  type BackupImportReport,
+  clearManagedStorage,
+  exportManagedStorage,
+  restoreManagedStorageBackup,
+} from "@/lib/backupFormat";
 import { notifyDataUpdated } from "@/lib/dataSync";
+import {
+  BACKUP_EXCLUDED_OPENROUTER_KEYS,
+  BACKUP_STORAGE_PREFIXES,
+  V1_STORAGE_KEY,
+  V2_STORAGE_KEY,
+} from "@/lib/storageRegistry";
 import { getLastActivity, recordStudyActivity } from "@/lib/studyActivity";
 import { canAccessReview, getSession } from "@/stores/noteSessions";
 import {
@@ -21,8 +32,7 @@ import {
 
 export const SPACED_REPETITION_INTERVALS = [1, 3, 7, 14, 30, 60, 120, 240] as const;
 export const DEFAULT_DAILY_GOAL = 60;
-export const V1_STORAGE_KEY = "learnapp_progress_v1";
-export const V2_STORAGE_KEY = "learnv2_progress";
+export { BACKUP_EXCLUDED_OPENROUTER_KEYS, BACKUP_STORAGE_PREFIXES, V1_STORAGE_KEY, V2_STORAGE_KEY };
 
 export interface QuizAttempt {
   score: number;
@@ -225,27 +235,6 @@ function mergeProgressData(current: ProgressData, incoming: ProgressData): Progr
   };
   pruneDailyMaps(merged);
   return merged;
-}
-
-export const BACKUP_STORAGE_PREFIXES = ["learnv2_", "learnapp_"] as const;
-
-export const BACKUP_EXCLUDED_OPENROUTER_KEYS = [
-  "learnapp_openrouter_key",
-  "learnv2_openrouter_key",
-  "learnapp_openrouter_model",
-  "learnv2_openrouter_model",
-] as const;
-
-export function isOpenRouterStorageKey(key: string): boolean {
-  return key.endsWith("_openrouter_key") || key.endsWith("_openrouter_model");
-}
-
-function isBackupKeyAllowed(key: string): boolean {
-  return BACKUP_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix)) && !isOpenRouterStorageKey(key);
-}
-
-function isManagedStorageKey(key: string): boolean {
-  return key.startsWith("learnv2_") || key.startsWith("learnapp_");
 }
 
 function toDateString(date: Date): string {
@@ -745,50 +734,15 @@ export const useProgress = create<ProgressState>()(
         }),
 
       exportData: () => {
-        const keys: Record<string, string | null> = {};
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && isBackupKeyAllowed(key)) {
-            keys[key] = localStorage.getItem(key);
-          }
-        }
-        return JSON.stringify({ version: 3, keys }, null, 2);
+        return exportManagedStorage(localStorage);
       },
 
       importData: (json) => {
+        const result = restoreManagedStorageBackup(json, localStorage);
+        if (!result.success) return { success: false, error: result.error };
         try {
-          const parsed = JSON.parse(json) as { version?: number; keys?: Record<string, unknown> };
-          const keysResult = parseBackupKeys(parsed);
-          if ("error" in keysResult) return { success: false, error: keysResult.error };
-          const report: BackupImportReport = {
-            restored: [],
-            skipped: [],
-            removed: [],
-            formatVersion: keysResult.version,
-          };
-          for (const [key] of Object.entries(keysResult.keys)) {
-            if (!isManagedStorageKey(key)) {
-              return { success: false, error: `Unsupported storage key: ${key}` };
-            }
-          }
-          for (const [key] of Object.entries(keysResult.keys)) {
-            if (!isBackupKeyAllowed(key)) {
-              report.skipped.push(key);
-            }
-          }
-          for (const [key, value] of Object.entries(keysResult.keys)) {
-            if (!isBackupKeyAllowed(key)) continue;
-            if (value === null) {
-              localStorage.removeItem(key);
-              report.removed.push(key);
-            } else {
-              localStorage.setItem(key, value);
-              report.restored.push(key);
-            }
-          }
-          const raw = localStorage.getItem(V2_STORAGE_KEY);
-          if (raw) {
-            const data = JSON.parse(raw) as { state?: { data?: ProgressData } };
+          if (result.progressRaw) {
+            const data = JSON.parse(result.progressRaw) as { state?: { data?: ProgressData } };
             if (data.state?.data) {
               const imported = { ...defaultProgress(), ...data.state.data };
               pruneDailyMaps(imported);
@@ -796,7 +750,7 @@ export const useProgress = create<ProgressState>()(
             }
           }
           notifyDataUpdated();
-          return { success: true, reloadRequired: true, importReport: report };
+          return { success: true, reloadRequired: true, importReport: result.importReport };
         } catch {
           return { success: false, error: "Failed to parse import file." };
         }
@@ -804,12 +758,7 @@ export const useProgress = create<ProgressState>()(
 
       resetProgress: () => {
         if (typeof localStorage !== "undefined") {
-          const keysToRemove: string[] = [];
-          for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && isManagedStorageKey(key)) keysToRemove.push(key);
-          }
-          for (const key of keysToRemove) localStorage.removeItem(key);
+          clearManagedStorage(localStorage);
         }
         set({ data: defaultProgress() });
       },

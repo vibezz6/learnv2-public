@@ -1,4 +1,3 @@
-import { notifyDataUpdated } from "@/lib/dataSync";
 import { getToday } from "@/stores/progress";
 
 export const STUDY_ACTIVITY_STORAGE_KEY = "learnv2_activity_v1";
@@ -125,7 +124,6 @@ export function recordStudyActivity(
   const next = pruneEvents([event, ...loadStudyActivities(storage)], at);
   saveStudyActivities(next, storage);
   notifyActivityUpdated();
-  notifyDataUpdated();
   return event;
 }
 

@@ -2,17 +2,9 @@ import { NavLink } from "react-router-dom";
 import { RoutePageTransition } from "@/app/RoutePageTransition";
 import {
   Brain,
-  BookOpen,
-  Home,
   Moon,
   Search,
-  Settings,
-  Star,
   Sun,
-  Timer,
-  BarChart3,
-  Route,
-  LayoutGrid,
 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { CommandPalette } from "@/features/search/CommandPalette";
@@ -22,47 +14,8 @@ import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
 import { formatAppVersion } from "@/lib/version";
-import { useEffect, useState, type ComponentType } from "react";
-
-type NavItem = {
-  to: string;
-  label: string;
-  hint: string;
-  icon: ComponentType<{ size?: number; strokeWidth?: number }>;
-  end?: boolean;
-};
-
-const navSections: { label: string; items: NavItem[] }[] = [
-  {
-    label: "Learn",
-    items: [
-      { to: "/", label: "Today", hint: "Continue, week plan, and daily challenge", icon: Home, end: true },
-      { to: "/subjects", label: "Subjects", hint: "Skill trees and lessons", icon: BookOpen },
-      { to: "/tracks", label: "Tracks", hint: "Guided paths across subjects", icon: Route },
-      { to: "/campus", label: "Campus", hint: "College tools and labs", icon: LayoutGrid },
-      { to: "/bookmarks", label: "Saved", hint: "Bookmarked lessons and resources", icon: Star },
-    ],
-  },
-  {
-    label: "Productivity",
-    items: [
-      { to: "/review", label: "Review", hint: "Spaced repetition queue", icon: Brain },
-      { to: "/timer", label: "Timer", hint: "Timed study sessions", icon: Timer },
-      { to: "/stats", label: "Stats", hint: "Progress proof and activity", icon: BarChart3 },
-    ],
-  },
-  {
-    label: "System",
-    items: [{ to: "/settings", label: "Settings", hint: "Backup, theme, and keys", icon: Settings }],
-  },
-];
-
-const mobileNav: Omit<NavItem, "hint">[] = [
-  { to: "/", label: "Today", icon: Home, end: true },
-  { to: "/review", label: "Review", icon: Brain },
-  { to: "/timer", label: "Timer", icon: Timer },
-  { to: "/stats", label: "Stats", icon: BarChart3 },
-];
+import { useEffect, useState } from "react";
+import { getMobileNavItems, getNavSections, ROUTES } from "@/app/navigation";
 
 export function AppShell() {
   const { theme, setTheme, focusMode, toggleFocusMode } = usePreferences();
@@ -72,6 +25,8 @@ export function AppShell() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const reviewCount = subjects.length ? getNodesNeedingReview(subjects).length : 0;
   const stats = subjects.length ? getStats(subjects) : null;
+  const navSections = getNavSections();
+  const mobileNav = getMobileNavItems();
 
   useEffect(() => {
     loadAllSubjects().then(setSubjects);
@@ -138,7 +93,7 @@ export function AppShell() {
                       <>
                         <Icon size={16} strokeWidth={isActive ? 2.25 : 1.75} />
                         {label}
-                        {to === "/review" && reviewCount > 0 && (
+                        {to === ROUTES.review && reviewCount > 0 && (
                           <span className="ml-auto rounded-full bg-[var(--accent)]/15 px-2 py-0.5 font-mono text-[10px] tabular-nums text-[var(--accent)]">
                             {reviewCount}
                           </span>
@@ -219,7 +174,7 @@ export function AppShell() {
                 <>
                   <span className="relative">
                     <Icon size={18} strokeWidth={isActive ? 2.25 : 1.75} />
-                    {to === "/review" && reviewCount > 0 && (
+                    {to === ROUTES.review && reviewCount > 0 && (
                       <span className="absolute -right-2 -top-1.5 rounded-full bg-[var(--accent)]/15 px-1 font-mono text-[9px] tabular-nums leading-none text-[var(--accent)]">
                         {reviewCount}
                       </span>

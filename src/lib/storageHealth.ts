@@ -1,7 +1,11 @@
 import { loadCollegeChecklist } from "@/lib/collegeChecklist";
 import { loadEssayTracker } from "@/lib/essayTracker";
-import { loadStudyActivities, STUDY_ACTIVITY_STORAGE_KEY } from "@/lib/studyActivity";
-import { V2_STORAGE_KEY } from "@/stores/progress";
+import { loadStudyActivities } from "@/lib/studyActivity";
+import {
+  V2_NOTE_SESSIONS_KEY,
+  V2_STORAGE_KEY,
+  STORAGE_KEYS,
+} from "@/lib/storageRegistry";
 
 export interface StorageHealthRow {
   id: string;
@@ -38,7 +42,7 @@ export function collectStorageHealth(storage: Storage = localStorage): StorageHe
     detail: progressDetail,
   });
 
-  const notesRaw = storage.getItem("learnapp_note_sessions_v2");
+  const notesRaw = storage.getItem(V2_NOTE_SESSIONS_KEY);
   let notesDetail = "empty";
   if (notesRaw) {
     try {
@@ -51,7 +55,7 @@ export function collectStorageHealth(storage: Storage = localStorage): StorageHe
   rows.push({
     id: "notes",
     label: "Office hours",
-    key: "learnapp_note_sessions_v2",
+    key: V2_NOTE_SESSIONS_KEY,
     bytes: byteLength(notesRaw),
     detail: notesDetail,
   });
@@ -60,8 +64,8 @@ export function collectStorageHealth(storage: Storage = localStorage): StorageHe
   rows.push({
     id: "activity",
     label: "Study activity",
-    key: STUDY_ACTIVITY_STORAGE_KEY,
-    bytes: byteLength(storage.getItem(STUDY_ACTIVITY_STORAGE_KEY)),
+    key: "learnv2_activity_v1",
+    bytes: byteLength(storage.getItem("learnv2_activity_v1")),
     detail: `${activityCount} event${activityCount === 1 ? "" : "s"}`,
   });
 
@@ -81,6 +85,19 @@ export function collectStorageHealth(storage: Storage = localStorage): StorageHe
     bytes: byteLength(storage.getItem("learnv2_essay_tracker_v1")),
     detail: `${essays.essays.length} essay${essays.essays.length === 1 ? "" : "s"}`,
   });
+
+  for (const entry of STORAGE_KEYS) {
+    if (!entry.backup || entry.dynamicPrefix || rows.some((row) => row.key === entry.key)) continue;
+    const raw = storage.getItem(entry.key);
+    if (!raw) continue;
+    rows.push({
+      id: entry.key,
+      label: entry.label,
+      key: entry.key,
+      bytes: byteLength(raw),
+      detail: entry.note ?? entry.domain,
+    });
+  }
 
   return rows;
 }

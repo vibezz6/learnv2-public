@@ -2,11 +2,11 @@ import { useRef, useState } from "react";
 import { Button, Card, PageContainer, PageHeader } from "@/components/ui";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { usePreferences } from "@/stores/preferences";
+import { useProgress } from "@/stores/progress";
 import {
   BACKUP_EXCLUDED_OPENROUTER_KEYS,
   BACKUP_STORAGE_PREFIXES,
-  useProgress,
-} from "@/stores/progress";
+} from "@/lib/storageRegistry";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
 import { ActivityLogPanel } from "@/features/settings/widgets/ActivityLogPanel";

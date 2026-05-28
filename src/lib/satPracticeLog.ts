@@ -1,4 +1,5 @@
 import { recordStudyActivity } from "@/lib/studyActivity";
+import { readJsonArray, writeJson } from "@/lib/storageJson";
 
 export const SAT_PRACTICE_LOG_KEY = "learnv2_sat_practice_v1";
 
@@ -37,23 +38,11 @@ function generateId(): string {
 }
 
 function loadRaw(storage: Storage = localStorage): SatPracticeSession[] {
-  try {
-    const raw = storage.getItem(SAT_PRACTICE_LOG_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isValidSession);
-  } catch {
-    return [];
-  }
+  return readJsonArray(storage, SAT_PRACTICE_LOG_KEY, isValidSession);
 }
 
 function saveRaw(sessions: SatPracticeSession[], storage: Storage = localStorage): void {
-  try {
-    storage.setItem(SAT_PRACTICE_LOG_KEY, JSON.stringify(sessions));
-  } catch {
-    // ignore quota errors
-  }
+  writeJson(storage, SAT_PRACTICE_LOG_KEY, sessions);
 }
 
 function isValidSession(value: unknown): value is SatPracticeSession {

@@ -1,6 +1,6 @@
 import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
+import { QUIZ_PROGRESS_PREFIX } from "@/lib/storageRegistry";
 
-const QUIZ_PREFIX = "learnapp_quiz_progress_v1_";
 const STALE_PRETEST_MS = 7 * 86_400_000;
 
 export interface StoragePruneReport {
@@ -17,8 +17,8 @@ export function runStoragePrune(storage: Storage = localStorage): StoragePruneRe
   const keysToRemove: string[] = [];
   for (let i = 0; i < storage.length; i++) {
     const key = storage.key(i);
-    if (!key?.startsWith(QUIZ_PREFIX)) continue;
-    const nodeId = key.slice(QUIZ_PREFIX.length);
+    if (!key?.startsWith(QUIZ_PROGRESS_PREFIX)) continue;
+    const nodeId = key.slice(QUIZ_PROGRESS_PREFIX.length);
     if (!nodeId.trim()) keysToRemove.push(key);
   }
   for (const key of keysToRemove) {

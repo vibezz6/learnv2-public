@@ -11,6 +11,7 @@ import {
   subscribeActivityUpdated,
   STUDY_ACTIVITY_STORAGE_KEY,
 } from "@/lib/studyActivity";
+import { DATA_UPDATED_EVENT, wireDataSyncEvents } from "@/lib/dataSync";
 
 function mockStorage() {
   const map = new Map<string, string>();
@@ -90,6 +91,15 @@ describe("studyActivity", () => {
     recordStudyActivity({ type: "review_done", nodeId: "x" }, storage);
     expect(handler).toHaveBeenCalled();
     window.removeEventListener(ACTIVITY_UPDATED_EVENT, handler);
+  });
+
+  it("bridges activity updates into one aggregate data event", () => {
+    const handler = vi.fn();
+    wireDataSyncEvents();
+    window.addEventListener(DATA_UPDATED_EVENT, handler);
+    recordStudyActivity({ type: "review_done", nodeId: "x" }, storage);
+    expect(handler).toHaveBeenCalledTimes(1);
+    window.removeEventListener(DATA_UPDATED_EVENT, handler);
   });
 
   it("stores under learnv2_activity_v1", () => {
