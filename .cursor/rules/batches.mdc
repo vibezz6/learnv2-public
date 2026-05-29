@@ -1,0 +1,25 @@
+---
+description: How to run improvement-batch work sessions on Learn v2
+globs:
+alwaysApply: false
+---
+
+# Improvement Batches
+
+When the user asks to "work on batches", "do the next batches", "continue the batches",
+or names batch ids (e.g. "do B11-B20"), treat [BATCHES.md](mdc:BATCHES.md) as the source
+of truth and follow its session protocol.
+
+- Open `BATCHES.md` and read it top-to-bottom first.
+- Run the Health check (`npm install`, `npm run lint`, `npm test`, `npm run build`, and a
+  `npm run dev` smoke). Fix or log failures before starting new work.
+- Find the first batch not marked `[x]` Done and work forward (≈10 per session unless told
+  otherwise). Respect the priority order: reliability/data-safety first, then ops, testing,
+  UI, then features.
+- For each batch: do the Steps, then run its Verify line; only mark `[x]` when it passes.
+- Keep `npm run lint`, `npm test`, and `npm run build` green between every batch.
+- After working: update each batch status, update the "Current position" pointer, append a
+  "Session log" entry, and add anything new to "Known issues".
+- Durability is local-only (browser localStorage) — never add a server or accounts unless
+  the user explicitly asks. Never delete or reset user progress data.
+- Commit per session (e.g. `batches: B01-B05 ...`); only push when the user asks.

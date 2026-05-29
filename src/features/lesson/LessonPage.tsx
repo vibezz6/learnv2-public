@@ -122,7 +122,7 @@ export function LessonPage() {
   const lessonIndex = subject.nodes.findIndex((n) => n.id === node.id) + 1;
 
   const handleComplete = () => {
-    completeNode(node.id, node.xpValue);
+    completeNode(node.id, node.xpValue, subject.id);
   };
 
   const quizCount = node.quiz?.length ?? 0;

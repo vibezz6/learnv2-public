@@ -67,6 +67,7 @@ export function SatDrillPage() {
           nodeId={`sat-drill-${getToday()}`}
           subjectId="sat-prep"
           accentColor="var(--accent)"
+          persistAttempt={false}
           onComplete={(score, total) => setDone({ score, total })}
         />
       )}

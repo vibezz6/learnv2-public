@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { PlacementGoal } from "@/lib/placement";
 import { trackIdForPlacement } from "@/lib/placement";
+import { createSafeStorage } from "@/lib/storageSafety";
 
 export type ThemeMode = "dark" | "light" | "system";
 
@@ -105,6 +106,7 @@ export const usePreferences = create<PreferencesState>()(
     }),
     {
       name: "learnv2_preferences",
+      storage: createJSONStorage(() => createSafeStorage()),
       partialize: (s) => ({
         theme: s.theme,
         focusMode: s.focusMode,

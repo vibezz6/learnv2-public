@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button, KeyHint } from "@/components/ui";
 import { StatusBar } from "@/components/StatusBar";
+import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
 import { CommandPalette } from "@/features/search/CommandPalette";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
@@ -327,7 +328,9 @@ export function AppShell() {
         </header>
 
         <main className="flex-1 pb-[var(--mobile-nav-height)] md:pb-[var(--statusbar-height)]">
-          <RoutePageTransition />
+          <ComponentErrorBoundary scope="page">
+            <RoutePageTransition />
+          </ComponentErrorBoundary>
         </main>
 
         <nav

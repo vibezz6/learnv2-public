@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { createSafeStorage } from "@/lib/storageSafety";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import { findLatestInProgressQuizNodeId } from "@/features/quiz/quizProgress";
 import {
@@ -105,6 +106,13 @@ export interface Stats {
   dailyMinutes: Record<string, number>;
 }
 
+/**
+ * The app's canonical "day" key is UTC (YYYY-MM-DD). Streaks, the daily minimum,
+ * daily minutes/reviews, and the activity ledger all key off this so they stay
+ * internally consistent. Reminders run on local wall-clock time and use a 12h
+ * recent-activity guard (see reminders.ts) so a UTC midnight rollover near the
+ * user's evening doesn't trigger a false "you didn't study" nudge.
+ */
 export function getToday(): string {
   const d = new Date();
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
@@ -139,6 +147,47 @@ function defaultProgress(): ProgressData {
 
 function isEmptyProgress(data: ProgressData): boolean {
   return Object.keys(data.nodes).length === 0 && data.totalXp === 0;
+}
+
+/** Node ids the daily-quiz / drill features create but should never persist (B06). */
+const SYNTHETIC_NODE_PREFIXES = ["sat-daily-", "sat-drill-"] as const;
+
+function stripSyntheticNodes(
+  nodes: Record<string, NodeProgress>,
+): Record<string, NodeProgress> {
+  const out: Record<string, NodeProgress> = {};
+  for (const [id, prog] of Object.entries(nodes)) {
+    if (SYNTHETIC_NODE_PREFIXES.some((prefix) => id.startsWith(prefix))) continue;
+    out[id] = prog;
+  }
+  return out;
+}
+
+/**
+ * Rehydrate merge (B02/B06): fill any fields missing from an older persisted
+ * shape with current defaults so a partial blob can't crash the app, and strip
+ * synthetic quiz nodes. No `version` bump is used, so existing data is never
+ * discarded.
+ */
+function mergeRehydratedProgress(persisted: unknown, current: ProgressState): ProgressState {
+  const p = persisted as { data?: Partial<ProgressData> } | undefined;
+  if (!p || typeof p !== "object" || !p.data) return current;
+  const base = defaultProgress();
+  const d = p.data;
+  const data: ProgressData = {
+    ...base,
+    ...d,
+    nodes: stripSyntheticNodes(d.nodes ?? {}),
+    spacedRepetition: d.spacedRepetition ?? {},
+    streaks: { ...base.streaks, ...(d.streaks ?? {}) },
+    reviewStreak: { ...base.reviewStreak, ...(d.reviewStreak ?? {}) },
+    dailyMinutes: d.dailyMinutes ?? {},
+    dailyReviews: d.dailyReviews ?? {},
+    dailyChallenges: d.dailyChallenges ?? {},
+    recentlyVisited: Array.isArray(d.recentlyVisited) ? d.recentlyVisited : [],
+    dailyGoal: typeof d.dailyGoal === "number" && d.dailyGoal > 0 ? d.dailyGoal : base.dailyGoal,
+  };
+  return { ...current, data };
 }
 
 /**
@@ -361,8 +410,8 @@ interface ProgressState {
   getNodeStatus: (node: SkillNode) => "locked" | "available" | "completed";
   startNode: (nodeId: string) => void;
   trackVisit: (nodeId: string) => void;
-  completeNode: (nodeId: string, xpValue: number) => void;
-  saveQuizAttempt: (nodeId: string, attempt: QuizAttempt) => void;
+  completeNode: (nodeId: string, xpValue: number, subjectId?: string) => void;
+  saveQuizAttempt: (nodeId: string, attempt: QuizAttempt, subjectId?: string) => void;
   getStats: (subjects: Subject[]) => Stats;
   getContinueTarget: (
     subjects: Subject[],
@@ -432,7 +481,7 @@ export const useProgress = create<ProgressState>()(
           return { data };
         }),
 
-      completeNode: (nodeId, xpValue) =>
+      completeNode: (nodeId, xpValue, subjectId) =>
         set((state) => {
           const data = structuredClone(state.data);
           if (!data.nodes[nodeId]) data.nodes[nodeId] = emptyNodeProgress();
@@ -448,13 +497,14 @@ export const useProgress = create<ProgressState>()(
             recordStudyActivity({
               type: "lesson_completed",
               nodeId,
+              ...(subjectId ? { subjectId } : {}),
               meta: { xp: xpValue },
             });
           }
           return { data };
         }),
 
-      saveQuizAttempt: (nodeId, attempt) =>
+      saveQuizAttempt: (nodeId, attempt, subjectId) =>
         set((state) => {
           const data = structuredClone(state.data);
           if (!data.nodes[nodeId]) data.nodes[nodeId] = emptyNodeProgress();
@@ -467,6 +517,7 @@ export const useProgress = create<ProgressState>()(
           recordStudyActivity({
             type: "quiz_completed",
             nodeId,
+            ...(subjectId ? { subjectId } : {}),
             meta: {
               score: attempt.score,
               correct: attempt.correctAnswers,
@@ -887,6 +938,11 @@ export const useProgress = create<ProgressState>()(
         };
       },
     }),
-    { name: V2_STORAGE_KEY },
+    {
+      name: V2_STORAGE_KEY,
+      storage: createJSONStorage(() => createSafeStorage()),
+      merge: (persisted, current) =>
+        mergeRehydratedProgress(persisted, current as ProgressState),
+    },
   ),
 );

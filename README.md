@@ -93,6 +93,57 @@ Audited 2026-05-23 via `node ~/cursor/scripts/audit-curriculum.mjs`:
 
 Re-sync from v1: `npm run curriculum:split` (reads `Learn-v1/src/data/curriculums.ts`, writes `src/curriculum/data/*.json`). SAT Prep lives in `src/curriculum/data/sat-prep.json` only (not synced from v1).
 
+## Run it yourself (no Cursor needed)
+
+You never need Cursor or any AI tool to run Learn v2 — it is a plain Vite + React app.
+
+**Prerequisites:** [Node.js](https://nodejs.org) 20 or newer (Node 22 LTS recommended). Check with `node -v`.
+
+**Start it:**
+
+```bash
+cd ~/liqui/projects/learnv2
+npm install      # first time, and after pulling new changes
+npm run dev      # then open http://127.0.0.1:8080
+```
+
+The port (8080) is fixed in `vite.config.ts` — just open the URL; don't append a port on the command line.
+
+**Production build, run locally:**
+
+```bash
+npm run build
+npm run preview
+```
+
+**Update to the latest version:**
+
+```bash
+git pull            # get the newest code
+npm install         # pick up any new dependencies
+npm run dev
+```
+
+Your progress is stored in the browser, not the repo, so pulling/updating never touches it. Export a backup first if you want to be extra safe.
+
+**Troubleshooting:**
+
+- Blank page or "can't connect": nothing is listening on 8080 — make sure `npm run dev` is running in this folder.
+- `command not found: npm`: install Node.js (link above), then reopen the terminal.
+- Errors after pulling changes: re-run `npm install`.
+
+## Back up your data (so you never lose progress)
+
+Progress lives in your browser's localStorage for the exact origin you use (`http://127.0.0.1:8080` locally, or the GitHub Pages URL — these are separate stores). Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
+
+1. In the app: **Settings → Backup → Export progress** — downloads `learnv2-backup-YYYY-MM-DD.json`.
+2. Save that file somewhere safe (a cloud drive). Export weekly, or whenever the app nudges you.
+3. To restore on any browser or machine: **Settings → Import from file** and choose the JSON.
+
+Backups include every `learnv2_*` and `learnapp_*` key; OpenRouter API keys are never included.
+
+Ongoing improvements are tracked in [BATCHES.md](BATCHES.md) — open it to see status and pick up the next batch.
+
 ## Dev
 
 ```bash

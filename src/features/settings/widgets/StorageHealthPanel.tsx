@@ -1,21 +1,47 @@
 import { useCallback, useEffect, useState } from "react";
+import { TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui";
 import { collectStorageHealth, type StorageHealthRow } from "@/lib/storageHealth";
+import {
+  getStorageStatus,
+  probeStorageWritable,
+  subscribeStorageStatus,
+  type StorageStatus,
+} from "@/lib/storageSafety";
 import { DATA_UPDATED_EVENT } from "@/lib/dataSync";
 
 export function StorageHealthPanel() {
   const [rows, setRows] = useState<StorageHealthRow[]>(() => collectStorageHealth());
+  const [status, setStatus] = useState<StorageStatus>(() => getStorageStatus());
 
   const refresh = useCallback(() => setRows(collectStorageHealth()), []);
 
   useEffect(() => {
     refresh();
+    // A write probe catches quota/private-mode problems on open.
+    probeStorageWritable();
+    setStatus(getStorageStatus());
+    const onStatus = () => setStatus(getStorageStatus());
     window.addEventListener(DATA_UPDATED_EVENT, refresh);
-    return () => window.removeEventListener(DATA_UPDATED_EVENT, refresh);
+    const unsub = subscribeStorageStatus(onStatus);
+    return () => {
+      window.removeEventListener(DATA_UPDATED_EVENT, refresh);
+      unsub();
+    };
   }, [refresh]);
 
   return (
     <Card variant="default" density="normal" className="min-w-0">
+      {!status.ok ? (
+        <div className="mb-3 flex items-start gap-2 rounded-[var(--radius)] border border-[var(--danger-border)] bg-[var(--danger-bg)] px-3 py-2 text-sm text-[var(--text)]">
+          <TriangleAlert size={15} className="mt-0.5 shrink-0 text-[var(--danger)]" aria-hidden />
+          <span>
+            This browser is having trouble saving data
+            {status.kind === "write" ? " (storage may be full or blocked)" : ""}. Export a backup
+            now (above) so you don't lose progress, then free up space or allow site storage.
+          </span>
+        </div>
+      ) : null}
       <details>
         <summary className="flex min-h-9 cursor-pointer items-center gap-2 list-none">
           <span className="eyebrow-mono">Storage health (local)</span>

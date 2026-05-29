@@ -96,4 +96,22 @@ describe("reminders", () => {
     expect(shown).toHaveLength(0);
     expect(storage.getItem(REMINDER_PREFS_KEY)).toContain("16:00");
   });
+
+  it("suppresses the nudge if real study happened within the last 12h (cross-midnight UTC guard)", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-29T00:30:00.000Z")); // just past UTC midnight
+    saveReminderPrefs(
+      { enabled: true, dailyTime: "00:00", eveningSave: false, eveningTime: "23:59" },
+      storage,
+    );
+    // Studied 45 min ago — but that lands on the *previous* UTC date.
+    recordStudyActivity(
+      { type: "lesson_completed", nodeId: "st1", at: Date.parse("2026-05-28T23:45:00.000Z") },
+      storage,
+    );
+    return runReminderCheck(new Date("2026-05-29T00:30:00"), storage).then(() => {
+      expect(shown).toHaveLength(0);
+      vi.useRealTimers();
+    });
+  });
 });

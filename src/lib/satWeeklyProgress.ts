@@ -11,6 +11,8 @@ export interface SatWeeklyProgress {
   practiceSessions: number;
   /** Daily-5 warm-ups completed in the last 7 days. */
   dailyQuizzes: number;
+  /** SAT lessons completed in the last 7 days (by subject tag). */
+  satLessons: number;
   /** Distinct days with any SAT signal in the last 7 days. */
   activeDays: number;
   hasAnySignal: boolean;
@@ -31,6 +33,7 @@ export function getSatWeeklyProgress(
   let mistakesLogged = 0;
   let practiceSessions = 0;
   let dailyQuizzes = 0;
+  let satLessons = 0;
 
   for (const event of loadStudyActivities(storage)) {
     if (event.at < cutoff) continue;
@@ -42,6 +45,9 @@ export function getSatWeeklyProgress(
       days.add(event.date);
     } else if (event.type === "quiz_completed" && event.nodeId?.startsWith("sat-daily")) {
       dailyQuizzes++;
+      days.add(event.date);
+    } else if (event.type === "lesson_completed" && event.subjectId === "sat-prep") {
+      satLessons++;
       days.add(event.date);
     }
   }
@@ -57,11 +63,13 @@ export function getSatWeeklyProgress(
     mistakesLogged,
     practiceSessions,
     dailyQuizzes,
+    satLessons,
     activeDays: days.size,
     hasAnySignal:
       mistakesLogged > 0 ||
       practiceSessions > 0 ||
       dailyQuizzes > 0 ||
+      satLessons > 0 ||
       baselinePct != null ||
       topCategories.length > 0,
     baselinePct,

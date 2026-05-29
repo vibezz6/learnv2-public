@@ -1,3 +1,5 @@
+import { recordStorageFailure } from "@/lib/storageSafety";
+
 export function readJson<T>(
   storage: Storage,
   key: string,
@@ -29,6 +31,7 @@ export function writeJson(storage: Storage, key: string, value: unknown): boolea
     storage.setItem(key, JSON.stringify(value));
     return true;
   } catch {
+    recordStorageFailure(key, "write");
     return false;
   }
 }

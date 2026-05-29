@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { Button, Card, Field, Input, Tag } from "@/components/ui";
 import {
+  getLastReminderDate,
   getNotificationPermission,
   loadReminderPrefs,
   notificationsSupported,
   requestNotificationPermission,
   saveReminderPrefs,
+  sendTestNotification,
   type ReminderPrefs,
 } from "@/lib/reminders";
 import { usePreferences, type AccountabilityLevel } from "@/stores/preferences";
@@ -27,6 +29,7 @@ export function RemindersSettingsCard({ onMessage }: Props) {
   const [prefs, setPrefs] = useState<ReminderPrefs>(() => loadReminderPrefs());
   const [permission, setPermission] = useState(() => getNotificationPermission());
   const supported = notificationsSupported();
+  const lastReminderDate = getLastReminderDate();
 
   const update = (next: Partial<ReminderPrefs>) => {
     const merged = { ...prefs, ...next };
@@ -132,6 +135,24 @@ export function RemindersSettingsCard({ onMessage }: Props) {
                 </div>
               )}
             </Field>
+          </div>
+          <div className="border-t border-[var(--rule)] pt-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-[var(--text-muted)]">
+                Reminders fire only while a Learn v2 tab is open.
+                {lastReminderDate ? ` Last fired ${lastReminderDate}.` : " None fired yet."}
+              </p>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={async () => {
+                  const ok = await sendTestNotification();
+                  onMessage(ok ? "Test notification sent." : "Couldn't send — check notification permission.");
+                }}
+              >
+                Send test
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}

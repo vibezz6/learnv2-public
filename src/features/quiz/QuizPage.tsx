@@ -5,6 +5,7 @@ import type { QuizQuestion } from "@/curriculum/types";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useProgress } from "@/stores/progress";
+import { recordStudyActivity } from "@/lib/studyActivity";
 import { clearQuizProgress, restoreQuizSession, saveQuizProgress } from "@/features/quiz/quizProgress";
 
 interface QuizProps {
@@ -13,6 +14,12 @@ interface QuizProps {
   subjectId?: string;
   accentColor?: string;
   contextLine?: string;
+  /**
+   * Persist the attempt to the node's progress (default true). Set false for
+   * synthetic quizzes (Daily 5, drills) so they don't create junk node records;
+   * a `quiz_completed` activity is still recorded so the streak/minimum count.
+   */
+  persistAttempt?: boolean;
   onComplete: (score: number, total: number) => void;
 }
 
@@ -26,6 +33,7 @@ export function Quiz({
   subjectId,
   accentColor = "var(--accent)",
   contextLine,
+  persistAttempt = true,
   onComplete,
 }: QuizProps) {
   const saveQuizAttempt = useProgress((s) => s.saveQuizAttempt);
@@ -88,13 +96,27 @@ export function Quiz({
       setShowResults(true);
       clearQuizProgress(nodeId);
       const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
-      saveQuizAttempt(nodeId, {
-        score: pct,
-        totalQuestions: questions.length,
-        correctAnswers: score,
-        date: new Date().toISOString(),
-        timeTakenSeconds: Math.round((Date.now() - startTime) / 1000),
-      });
+      if (persistAttempt) {
+        saveQuizAttempt(
+          nodeId,
+          {
+            score: pct,
+            totalQuestions: questions.length,
+            correctAnswers: score,
+            date: new Date().toISOString(),
+            timeTakenSeconds: Math.round((Date.now() - startTime) / 1000),
+          },
+          subjectId,
+        );
+      } else {
+        // Synthetic quiz (Daily 5 / drill): credit the day without a node record.
+        recordStudyActivity({
+          type: "quiz_completed",
+          nodeId,
+          ...(subjectId ? { subjectId } : {}),
+          meta: { score: pct, correct: score, total: questions.length },
+        });
+      }
       onComplete(score, questions.length);
     }
   }, [
@@ -102,11 +124,13 @@ export function Quiz({
     current,
     nodeId,
     onComplete,
+    persistAttempt,
     persistProgress,
     questions.length,
     saveQuizAttempt,
     score,
     startTime,
+    subjectId,
   ]);
 
   useEffect(() => {

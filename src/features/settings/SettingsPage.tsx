@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Download, Upload } from "lucide-react";
+import { Download, TriangleAlert, Upload } from "lucide-react";
 import {
   Button,
   Card,
@@ -29,6 +29,7 @@ import { RemindersSettingsCard } from "@/features/settings/RemindersSettingsCard
 import { LessonDraftWorkspace } from "@/features/settings/LessonDraftWorkspace";
 import { OPENROUTER_KEY } from "@/services/llmReview";
 import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
+import { getDaysSinceBackup, isBackupOverdue, markBackupDone } from "@/lib/backupReminder";
 import { cn } from "@/lib/cn";
 
 const LEGACY_OPENROUTER_KEY = "learnapp_openrouter_key";
@@ -46,8 +47,15 @@ export function SettingsPage() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
   const [goalInput, setGoalInput] = useState(String(dailyGoal));
+  const [backupTick, setBackupTick] = useState(0);
+  const hasProgress = useProgress(
+    (s) => s.data.totalXp > 0 || Object.keys(s.data.nodes).length > 0,
+  );
   const fileRef = useRef<HTMLInputElement>(null);
   const satCountdown = getSatCountdown(satTestDate);
+  void backupTick; // recompute backup status after an export
+  const daysSinceBackup = getDaysSinceBackup();
+  const backupOverdue = hasProgress && isBackupOverdue();
   const [apiKey, setApiKey] = useState(() => {
     try {
       return (
@@ -68,7 +76,9 @@ export function SettingsPage() {
     a.download = `learnv2-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setMessage("Progress exported.");
+    markBackupDone();
+    setBackupTick((t) => t + 1);
+    setMessage("Progress exported. Keep the file somewhere safe.");
   };
 
   const handleImportFile = (file: File) => {
@@ -325,6 +335,21 @@ export function SettingsPage() {
       {/* ─────────────── Backup ─────────────── */}
       <Section eyebrow="Backup" title="Export, import, migrate" divider>
         <Card variant="default" density="normal" className="min-w-0 space-y-4">
+          {backupOverdue ? (
+            <div className="flex items-start gap-2 rounded-[var(--radius)] border border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2 text-sm text-[var(--text)]">
+              <TriangleAlert size={15} className="mt-0.5 shrink-0 text-[var(--warning)]" aria-hidden />
+              <span>
+                {daysSinceBackup == null
+                  ? "You haven't backed up yet."
+                  : `Your last backup was ${daysSinceBackup} day${daysSinceBackup === 1 ? "" : "s"} ago.`}{" "}
+                Export now so a cleared browser can't wipe your progress.
+              </span>
+            </div>
+          ) : daysSinceBackup != null ? (
+            <p className="text-xs text-[var(--text-subtle)]">
+              Last backup: {daysSinceBackup === 0 ? "today" : `${daysSinceBackup} day${daysSinceBackup === 1 ? "" : "s"} ago`}.
+            </p>
+          ) : null}
           <p className="text-sm text-[var(--text-muted)]">
             Backup every localStorage key whose name starts with{" "}
             {BACKUP_STORAGE_PREFIXES.map((prefix, index) => (

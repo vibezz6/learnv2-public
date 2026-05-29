@@ -12,11 +12,12 @@ export function SatWeeklyProgressCard() {
   return (
     <Section eyebrow="SAT this week" title="Weekly review" divider>
       <Card variant="default" density="normal" className="min-w-0 space-y-4">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         <Stat label="Active days" value={`${p.activeDays}/7`} size="sm" />
+        <Stat label="SAT lessons" value={p.satLessons} size="sm" />
         <Stat label="Daily 5s" value={p.dailyQuizzes} size="sm" />
-        <Stat label="Mistakes logged" value={p.mistakesLogged} size="sm" />
-        <Stat label="Practice sets" value={p.practiceSessions} size="sm" />
+        <Stat label="Mistakes" value={p.mistakesLogged} size="sm" />
+        <Stat label="Practice" value={p.practiceSessions} size="sm" />
       </div>
 
       {p.baselinePct != null ? (

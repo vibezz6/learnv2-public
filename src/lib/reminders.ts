@@ -1,5 +1,6 @@
 import { isMinimumMet } from "@/lib/dailyMinimum";
 import { getSatCountdown } from "@/lib/satCountdown";
+import { hasActivitySince, REAL_STUDY_ACTIVITY_TYPES } from "@/lib/studyActivity";
 import { resolveCurrentStudyStreak, useProgress } from "@/stores/progress";
 import { usePreferences } from "@/stores/preferences";
 
@@ -139,11 +140,40 @@ function streakLine(): string {
   return parts.join(" · ");
 }
 
+export function getReminderFiredState(storage: Storage = localStorage): {
+  daily: string | null;
+  evening: string | null;
+} {
+  return loadFired(storage);
+}
+
+/** Most recent reminder fire date (YYYY-MM-DD) across types, or null. */
+export function getLastReminderDate(storage: Storage = localStorage): string | null {
+  const fired = loadFired(storage);
+  const dates = [fired.daily, fired.evening].filter((d): d is string => !!d);
+  return dates.length ? dates.sort().at(-1)! : null;
+}
+
+/** Fire a one-off notification so the user can confirm reminders work. */
+export async function sendTestNotification(): Promise<boolean> {
+  if (getNotificationPermission() !== "granted") return false;
+  await showStudyNotification(
+    "Reminders are on",
+    "This is a test nudge. Real ones fire while a Learn v2 tab is open.",
+  );
+  return true;
+}
+
 /** Run a single reminder check. Exported for tests; called on an interval. */
 export async function runReminderCheck(now: Date = new Date(), storage: Storage = localStorage): Promise<void> {
   const prefs = loadReminderPrefs(storage);
   if (!prefs.enabled || getNotificationPermission() !== "granted") return;
   if (isMinimumMet(undefined, storage)) return; // nothing to nudge once today is done
+  // Cross-midnight guard: storage days are UTC but reminders run on local time, so
+  // if real study happened in the last 12h, don't nag even if the UTC day rolled over.
+  if (hasActivitySince(REAL_STUDY_ACTIVITY_TYPES, now.getTime() - 12 * 60 * 60 * 1000, storage)) {
+    return;
+  }
 
   const today = localDateKey(now);
   const fired = loadFired(storage);

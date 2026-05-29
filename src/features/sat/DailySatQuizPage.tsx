@@ -81,6 +81,7 @@ export function DailySatQuizPage() {
             nodeId={quiz.id}
             subjectId="sat-prep"
             accentColor="var(--accent)"
+            persistAttempt={false}
             onComplete={(score, total) => {
               markDailySatQuizDone({ date: today, score, total });
               setDone(true);
