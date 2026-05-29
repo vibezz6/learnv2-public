@@ -34,7 +34,7 @@ export function TodayMinimumStrip({ stats }: Props) {
           {minimum.met ? (
             <CheckCircle2 size={18} className="shrink-0 text-[var(--success)]" aria-hidden />
           ) : (
-            <Circle size={18} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
+            <Circle size={18} className="shrink-0 text-[var(--warning)]" aria-hidden />
           )}
           <div className="min-w-0">
             <p className="text-sm font-medium text-[var(--text-heading)]">

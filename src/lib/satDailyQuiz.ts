@@ -1,4 +1,5 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
+import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
 import { getToday } from "@/stores/progress";
 
 export const SAT_DAILY_QUIZ_SIZE = 5;
@@ -37,42 +38,63 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-function seededShuffle<T>(items: T[], seed: number): T[] {
-  const rand = mulberry32(seed);
-  const out = [...items];
-  for (let i = out.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [out[i], out[j]] = [out[j], out[i]];
-  }
-  return out;
+function tokenize(value: string): Set<string> {
+  return new Set(
+    value
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((token) => token.length >= 4),
+  );
 }
 
-/** Build today's deterministic 5-question SAT warm-up from the SAT-prep quizzes. */
+/**
+ * Build today's 5-question SAT warm-up. Deterministic per day, but weighted
+ * toward your weakest logged-mistake categories (so the warm-up drills what you
+ * keep missing) with a day-stable tiebreak for variety. With no mistakes logged
+ * it degrades to a plain deterministic daily shuffle.
+ */
 export function getDailySatQuiz(
   subjects: Subject[],
   date: string = getToday(),
   size: number = SAT_DAILY_QUIZ_SIZE,
+  storage: Storage = localStorage,
 ): DailySatQuiz {
   const sat = subjects.find((s) => s.id === "sat-prep");
-  const pool: QuizQuestion[] = [];
+
+  const weakTokens = new Set<string>();
+  for (const cat of getTopMistakeCategories(3, storage)) {
+    for (const token of tokenize(cat.category)) weakTokens.add(token);
+  }
+
+  interface Candidate {
+    q: QuizQuestion;
+    weakScore: number;
+    tiebreak: number;
+  }
+  const candidates: Candidate[] = [];
+  const seen = new Set<string>();
   if (sat) {
     for (const node of sat.nodes) {
       if (!node.quiz) continue;
+      const nodeTokens = tokenize(
+        [node.name, node.description, ...(node.keyConcepts ?? [])].join(" "),
+      );
       for (const q of node.quiz) {
-        if ((q.type ?? "multiple-choice") === "multiple-choice" && q.options.length > 1) {
-          pool.push(q);
+        if ((q.type ?? "multiple-choice") !== "multiple-choice" || q.options.length < 2) continue;
+        if (seen.has(q.id)) continue;
+        seen.add(q.id);
+        let weakScore = 0;
+        if (weakTokens.size) {
+          const text = new Set([...nodeTokens, ...tokenize(q.question)]);
+          for (const token of text) if (weakTokens.has(token)) weakScore++;
         }
+        candidates.push({ q, weakScore, tiebreak: mulberry32(hashString(`${date}:${q.id}`))() });
       }
     }
   }
-  // De-dupe by question id (defensive — ids should be unique across the bank).
-  const seen = new Set<string>();
-  const unique = pool.filter((q) => {
-    if (seen.has(q.id)) return false;
-    seen.add(q.id);
-    return true;
-  });
-  const questions = seededShuffle(unique, hashString(date)).slice(0, Math.min(size, unique.length));
+
+  candidates.sort((a, b) => b.weakScore - a.weakScore || a.tiebreak - b.tiebreak);
+  const questions = candidates.slice(0, Math.min(size, candidates.length)).map((c) => c.q);
   return { id: `sat-daily-${date}`, date, questions };
 }
 

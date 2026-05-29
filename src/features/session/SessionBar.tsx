@@ -30,7 +30,7 @@ export function SessionBar() {
   if (!active) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pointer-events-none">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--mobile-nav-height)+0.5rem)] z-40 flex justify-center px-3 md:bottom-[calc(var(--statusbar-height)+0.5rem)]">
       <div className="pointer-events-auto flex w-full max-w-3xl items-center gap-3 rounded-[var(--radius-md)] border border-[var(--accent-border)] bg-[var(--bg-glass)] px-4 py-2.5 shadow-[var(--shadow-overlay)] backdrop-blur">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent)]">
           <Timer size={15} aria-hidden />
@@ -52,7 +52,7 @@ export function SessionBar() {
           size="sm"
           onClick={cancelSession}
           aria-label="Cancel session without logging"
-          className="shrink-0"
+          className="min-h-11 min-w-11 shrink-0"
         >
           <X size={14} aria-hidden />
         </Button>

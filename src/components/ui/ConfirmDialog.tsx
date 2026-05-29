@@ -1,4 +1,5 @@
 import { Button } from "./Button";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -21,6 +22,8 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  useEscapeKey(onCancel, open);
+
   if (!open) return null;
 
   return (
@@ -29,14 +32,17 @@ export function ConfirmDialog({
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCancel();
+      }}
     >
-      <div className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-overlay)]">
+      <div className="modal-in w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-overlay)]">
         <h2 id="confirm-title" className="text-lg font-semibold text-[var(--text-heading)]">
           {title}
         </h2>
         <p className="mt-2 text-sm text-[var(--text-muted)]">{message}</p>
         <div className="mt-6 flex justify-end gap-2">
-          <Button variant="secondary" onClick={onCancel}>
+          <Button autoFocus variant="secondary" onClick={onCancel}>
             {cancelLabel}
           </Button>
           <Button

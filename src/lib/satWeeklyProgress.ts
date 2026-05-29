@@ -1,6 +1,8 @@
 import { loadStudyActivities } from "@/lib/studyActivity";
 import { getTopMistakeCategories, type MistakeCategorySummary } from "@/lib/satMistakeTriage";
 import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
+import { getSatCountdown } from "@/lib/satCountdown";
+import { getDueDrillCount } from "@/lib/satDrillSchedule";
 import { SAT_PRETEST_DRAFT_3_ID } from "@/data/satPretestDrafts";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 
@@ -76,5 +78,65 @@ export function getSatWeeklyProgress(
     retestPct,
     deltaPct,
     topCategories,
+  };
+}
+
+export type SatReadinessTone = "crunch" | "strong" | "on-track" | "building";
+
+export interface SatReadinessSignal {
+  tone: SatReadinessTone;
+  label: string;
+  detail: string;
+}
+
+/**
+ * An honest, qualitative readiness signal (NOT a predicted score — the in-app
+ * diagnostics are short samplers). Combines weekly consistency, the diagnostic
+ * trend, due re-drills, and the countdown.
+ */
+export function getSatReadinessSignal(
+  satTestDate: string | null | undefined,
+  storage: Storage = localStorage,
+  now: number = Date.now(),
+): SatReadinessSignal {
+  const p = getSatWeeklyProgress(storage, now);
+  const countdown = getSatCountdown(satTestDate);
+  const due = getDueDrillCount(storage, now);
+  const days = countdown && !countdown.past ? countdown.daysUntil : null;
+  const trendUp = p.deltaPct != null && p.deltaPct > 0;
+
+  if (days != null && days <= 7) {
+    return {
+      tone: "crunch",
+      label: "Test week",
+      detail:
+        due > 0
+          ? `Prioritize review — ${due} categor${due === 1 ? "y" : "ies"} due to re-drill. Protect sleep.`
+          : "Light timed review and Bluebook practice. Protect your sleep.",
+    };
+  }
+  if (p.activeDays >= 6) {
+    return {
+      tone: "strong",
+      label: "Strong rhythm",
+      detail: trendUp
+        ? `${p.activeDays}/7 active days and your retest is up ${p.deltaPct} pts.`
+        : `${p.activeDays}/7 active days this week — keep the chain going.`,
+    };
+  }
+  if (p.activeDays >= 3) {
+    return {
+      tone: "on-track",
+      label: "On track",
+      detail:
+        due > 0
+          ? `${p.activeDays}/7 active days. ${due} categor${due === 1 ? "y" : "ies"} ready to re-drill.`
+          : `${p.activeDays}/7 active days — one more session pushes you ahead.`,
+    };
+  }
+  return {
+    tone: "building",
+    label: "Building the habit",
+    detail: "Aim for a short SAT session most days — consistency is what moves the score.",
   };
 }

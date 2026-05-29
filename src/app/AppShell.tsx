@@ -156,7 +156,11 @@ export function AppShell() {
                       to={to}
                       end={end}
                       title={hint}
-                      aria-label={`${label} — ${hint}`}
+                      aria-label={
+                        to === ROUTES.review && reviewCount > 0
+                          ? `${label} — ${hint}, ${reviewCount} due`
+                          : `${label} — ${hint}`
+                      }
                       className={({ isActive }) =>
                         cn(
                           "group relative flex min-h-9 items-center gap-2.5 rounded-[var(--radius)] text-[13px] transition-colors",
@@ -327,7 +331,14 @@ export function AppShell() {
           </div>
         </header>
 
-        <main className="flex-1 pb-[var(--mobile-nav-height)] md:pb-[var(--statusbar-height)]">
+        <main
+          className={cn(
+            "flex-1",
+            focusMode
+              ? "pb-6"
+              : "pb-[var(--mobile-nav-height)] md:pb-[var(--statusbar-height)]",
+          )}
+        >
           <ComponentErrorBoundary scope="page">
             <RoutePageTransition />
           </ComponentErrorBoundary>

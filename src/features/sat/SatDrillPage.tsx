@@ -6,10 +6,14 @@ import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { Quiz } from "@/features/quiz/QuizPage";
 import { buildSatMicroDrill } from "@/lib/satMicroDrills";
+import { getNextDrillCategory, markCategoryDrilled } from "@/lib/satDrillSchedule";
 import { getToday } from "@/stores/progress";
 import { ROUTES } from "@/app/navigation";
 
-/** Plays a 5-question micro-drill targeted at your top logged mistake category. */
+/**
+ * Plays a 5-question micro-drill targeted at the next mistake category due for
+ * re-drill (spaced), marking it drilled on completion so the rotation advances.
+ */
 export function SatDrillPage() {
   const [subjects, setSubjects] = useState<Subject[] | null>(null);
   const [done, setDone] = useState<{ score: number; total: number } | null>(null);
@@ -18,7 +22,11 @@ export function SatDrillPage() {
     loadAllSubjects().then(setSubjects);
   }, []);
 
-  const drill = useMemo(() => (subjects ? buildSatMicroDrill(subjects) : null), [subjects]);
+  const target = useMemo(() => getNextDrillCategory(), []);
+  const drill = useMemo(
+    () => (subjects ? buildSatMicroDrill(subjects, localStorage, 5, target) : null),
+    [subjects, target],
+  );
 
   if (!subjects || !drill) return <PageLoading size="md" />;
 
@@ -68,7 +76,10 @@ export function SatDrillPage() {
           subjectId="sat-prep"
           accentColor="var(--accent)"
           persistAttempt={false}
-          onComplete={(score, total) => setDone({ score, total })}
+          onComplete={(score, total) => {
+            if (target) markCategoryDrilled(target.category);
+            setDone({ score, total });
+          }}
         />
       )}
     </PageContainer>

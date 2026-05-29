@@ -98,7 +98,7 @@ export function RightNowHero({ subjects, resume }: Props) {
           ) : null}
 
           {study.diagnosticNote ? (
-            <p className="text-xs text-[var(--text-subtle)]">{study.diagnosticNote}</p>
+            <p className="text-xs text-[var(--text-muted)]">{study.diagnosticNote}</p>
           ) : null}
 
           {resume && resumeKind ? (

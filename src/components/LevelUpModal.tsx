@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useProgress } from "@/stores/progress";
 import { playLevelUpSound } from "@/stores/sound";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 const XP_PER_LEVEL = 500;
 
@@ -14,6 +15,8 @@ export function LevelUpModal() {
   useEffect(() => {
     if (levelUpPending) playLevelUpSound();
   }, [levelUpPending]);
+
+  useEscapeKey(clearLevelUpPending, levelUpPending != null);
 
   if (!levelUpPending) return null;
 
@@ -27,7 +30,7 @@ export function LevelUpModal() {
       aria-modal="true"
       aria-labelledby="level-up-title"
     >
-      <div className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--accent-border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-md)]">
+      <div className="modal-in w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--accent-border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-overlay)]">
         <div className="mb-3 flex items-center gap-2 text-[var(--accent)]">
           <Sparkles size={20} />
           <span className="text-xs font-semibold uppercase tracking-widest">Level up</span>

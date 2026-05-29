@@ -1,17 +1,37 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Target, TrendingDown, TrendingUp } from "lucide-react";
 import { Button, Card, Section, Stat, Tag } from "@/components/ui";
-import { getSatWeeklyProgress } from "@/lib/satWeeklyProgress";
+import {
+  getSatReadinessSignal,
+  getSatWeeklyProgress,
+  type SatReadinessTone,
+} from "@/lib/satWeeklyProgress";
+import { usePreferences } from "@/stores/preferences";
 import { ROUTES } from "@/app/navigation";
 
-/** Weekly SAT review: effort signals, diagnostic trend, and a one-click drill. */
+const READINESS_TONE: Record<SatReadinessTone, "warning" | "success" | "accent" | "muted"> = {
+  crunch: "warning",
+  strong: "success",
+  "on-track": "accent",
+  building: "muted",
+};
+
+/** Weekly SAT review: readiness signal, effort, diagnostic trend, and a drill. */
 export function SatWeeklyProgressCard() {
+  const satTestDate = usePreferences((s) => s.satTestDate);
   const p = getSatWeeklyProgress();
   if (!p.hasAnySignal) return null;
+  const readiness = getSatReadinessSignal(satTestDate);
 
   return (
     <Section eyebrow="SAT this week" title="Weekly review" divider>
       <Card variant="default" density="normal" className="min-w-0 space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <Tag tone={READINESS_TONE[readiness.tone]} size="sm" mono>
+            {readiness.label}
+          </Tag>
+          <span className="text-sm text-[var(--text-muted)]">{readiness.detail}</span>
+        </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         <Stat label="Active days" value={`${p.activeDays}/7`} size="sm" />
         <Stat label="SAT lessons" value={p.satLessons} size="sm" />

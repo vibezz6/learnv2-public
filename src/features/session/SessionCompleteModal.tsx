@@ -4,6 +4,7 @@ import { Button, Tag } from "@/components/ui";
 import { useFocusSession } from "@/stores/focusSession";
 import { useProgress } from "@/stores/progress";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 /** Reward + reinforce screen shown right after a focus session is logged. */
 export function SessionCompleteModal() {
@@ -11,6 +12,8 @@ export function SessionCompleteModal() {
   const dismissSummary = useFocusSession((s) => s.dismissSummary);
   const streak = useProgress((s) => s.data.streaks.current);
   const navigate = useNavigate();
+
+  useEscapeKey(dismissSummary, summary != null);
 
   if (!summary) return null;
 

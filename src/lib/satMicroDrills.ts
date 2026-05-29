@@ -1,5 +1,5 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
-import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
+import { getPrimaryMistakeCategory, type MistakeCategorySummary } from "@/lib/satMistakeTriage";
 
 export interface SatMicroDrillQuestion {
   subjectId: string;
@@ -23,9 +23,11 @@ export function buildSatMicroDrill(
   subjects: Subject[],
   storage: Storage = localStorage,
   limit = 5,
+  /** Override the category to drill (e.g. from the spaced re-drill schedule). */
+  target?: MistakeCategorySummary | null,
 ): SatMicroDrill {
   const sat = subjects.find((subject) => subject.id === "sat-prep");
-  const topMistake = getPrimaryMistakeCategory(storage);
+  const topMistake = target ?? getPrimaryMistakeCategory(storage);
   const tokens = new Set(normalize(topMistake?.category ?? ""));
   const candidates: SatMicroDrillQuestion[] = [];
 

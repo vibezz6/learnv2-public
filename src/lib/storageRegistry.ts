@@ -62,6 +62,7 @@ export const STORAGE_KEYS: StorageKeyEntry[] = [
   { key: "learnv2_nudge_snooze_v1", label: "Nudge snoozes", domain: "college", backup: true, reset: true },
   { key: "learnv2_reminders_v1", label: "Study reminders", domain: "core", backup: true, reset: true },
   { key: "learnv2_sat_daily_quiz_v1", label: "SAT Daily 5 status", domain: "sat", backup: true, reset: true },
+  { key: "learnv2_sat_drill_log_v1", label: "SAT drill schedule", domain: "sat", backup: true, reset: true },
   { key: "learnv2_last_backup_v1", label: "Last backup time", domain: "ui", backup: false, reset: true, note: "Backup metadata; not itself backed up." },
   {
     key: "learnv2_reminders_fired_v1",

@@ -156,7 +156,7 @@ export function DashboardPage() {
         </aside>
       </div>
 
-      <footer className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[var(--rule)] pt-4 font-mono text-[11px] text-[var(--text-subtle)]">
+      <footer className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[var(--rule)] pt-4 font-mono text-[11px] text-[var(--text-muted)]">
         <span className="inline-flex items-center gap-1.5">
           <KeyHint size="sm">F</KeyHint> focus
         </span>

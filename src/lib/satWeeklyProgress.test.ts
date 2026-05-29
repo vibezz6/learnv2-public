@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { recordStudyActivity } from "@/lib/studyActivity";
-import { getSatWeeklyProgress } from "@/lib/satWeeklyProgress";
+import { getSatReadinessSignal, getSatWeeklyProgress } from "@/lib/satWeeklyProgress";
 
 function mapStorage(): Storage {
   const map = new Map<string, string>();
@@ -55,5 +55,33 @@ describe("satWeeklyProgress", () => {
       storage,
     );
     expect(getSatWeeklyProgress(storage).mistakesLogged).toBe(0);
+  });
+
+  describe("getSatReadinessSignal", () => {
+    it("flags test week when the SAT is within 7 days", () => {
+      const signal = getSatReadinessSignal("2026-06-03", storage); // 5 days out
+      expect(signal.tone).toBe("crunch");
+      expect(signal.label).toBe("Test week");
+    });
+
+    it("is 'building' with little recent activity and no imminent test", () => {
+      const signal = getSatReadinessSignal(null, storage);
+      expect(signal.tone).toBe("building");
+    });
+
+    it("reports a strong rhythm with many active days", () => {
+      // 6 distinct active days in the last 7
+      for (let d = 0; d < 6; d++) {
+        recordStudyActivity(
+          {
+            type: "sat_practice_logged",
+            at: Date.parse("2026-05-29T12:00:00.000Z") - d * 86_400_000,
+          },
+          storage,
+        );
+      }
+      const signal = getSatReadinessSignal("2099-01-01", storage);
+      expect(signal.tone).toBe("strong");
+    });
   });
 });

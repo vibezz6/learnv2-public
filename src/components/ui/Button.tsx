@@ -53,7 +53,7 @@ export function Button({
       disabled={disabled || loading}
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-[var(--radius)] font-medium transition",
-        "focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none",
+        "focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] disabled:opacity-50 disabled:pointer-events-none",
         sizeClass[size],
         tone === "danger" ? dangerOverrides[variant] : variantBase[variant],
         className,

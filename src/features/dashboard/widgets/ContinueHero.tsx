@@ -46,7 +46,7 @@ export function ContinueHero({ subject, node }: Props) {
           <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: getSubjectAccent(subject.id) }} />
           <span>{subject.name}</span>
           <span aria-hidden className="text-[var(--text-subtle)]">/</span>
-          <span className="tabular-nums text-[var(--text-subtle)]">
+          <span className="tabular-nums text-[var(--text-muted)]">
             lesson {lessonIndex}/{totalInSubject}
           </span>
         </div>

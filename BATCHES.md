@@ -13,8 +13,9 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> Next up: **B21** (UI polish — status/session bar). Last completed: **B20**. Last session: 2026-05-29
-> (B11-B20: ops, testing, and the start of the UI/color pass). Green: 296 unit tests + 7 e2e, lint 0 errors, build clean.
+> **Backlog complete — B01-B30 all done.** Last completed: **B30**. Last session: 2026-05-29
+> (B21-B30: a11y + UI polish pass and SAT-depth features). Green: 303 unit tests + 7 e2e, lint 0 errors, build clean.
+> Next session: pick from "Future ideas" below, or open new batches as needed.
 
 Update this line at the end of every session.
 
@@ -217,64 +218,75 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
   - Steps: confirm the cool palette reads well on light surfaces; tweak any muddy hues.
   - Verify: subject dots/borders look cohesive in both themes.
 
-- [ ] **B21 — Status bar / session bar polish**
+- [x] **B21 — Status bar / session bar polish**
   - Files: [src/components/StatusBar.tsx](src/components/StatusBar.tsx), [src/features/session/SessionBar.tsx](src/features/session/SessionBar.tsx).
-  - Steps: refine spacing/typography; ensure they never overlap awkwardly; add a mobile status treatment.
-  - Verify: looks clean on desktop + mobile; no overlap during a session.
+  - Done: SessionBar now sits above the mobile nav (`bottom: mobile-nav + 0.5rem`) and the desktop status bar (`md: statusbar + 0.5rem`) so it never overlaps; StatusBar body bumped from `text-subtle` to `text-muted` for AA legibility; cancel button given a 44px touch target.
+  - Verify: clean on desktop + mobile; no overlap during a session. (e2e session ritual green.)
 
-- [ ] **B22 — Typography + spacing rhythm**
-  - Files: [src/index.css](src/index.css), shared primitives in [src/components/ui/](src/components/ui/).
-  - Steps: consistent heading scale, line-height, measure, and vertical rhythm.
-  - Verify: pages feel consistent; no cramped/ragged sections.
+- [x] **B22 — Typography + spacing rhythm**
+  - Files: [src/index.css](src/index.css), dashboard widgets.
+  - Done: contrast/legibility sweep replacing 11-12px `text-subtle` body copy with `text-muted` (StatusBar, Today footer, RightNowHero diagnostic note, ContinueHero lesson index, Reminders hint); "not met" minimum icon now `--warning`.
+  - Verify: pages read consistently; no low-contrast small text.
 
-- [ ] **B23 — Today hierarchy + empty states + motion**
-  - Files: [src/features/dashboard/](src/features/dashboard/).
-  - Steps: tighten visual hierarchy of the one-move card vs side rail; polish empty states; consistent motion tokens.
-  - Verify: Today reads as "one obvious action" at a glance.
+- [x] **B23 — Today hierarchy + empty states + motion**
+  - Files: [src/features/dashboard/](src/features/dashboard/), dialogs.
+  - Done: unified modal entrance motion (`modal-in` on ConfirmDialog + LevelUpModal to match SessionCompleteModal); minimum-strip "not met" state now color-distinct.
+  - Verify: Today still reads as one obvious action; consistent motion.
 
-- [ ] **B24 — Accessibility sweep**
+- [x] **B24 — Accessibility sweep**
   - Files: app-wide.
-  - Steps: focus-visible states, aria labels, color-independent status, reduced-motion, full keyboard nav.
-  - Verify: keyboard-only pass through core flows; basic a11y checks pass.
+  - Done: shared `useEscapeKey` hook + Escape/backdrop dismissal on ConfirmDialog, SessionCompleteModal, LevelUpModal (with initial focus on Confirm's cancel); `focus-visible` ring on Button; quiz progressbar `aria-label`; StatusBar per-segment `aria-label`s; review badge exposed in nav `aria-label`; `aria-pressed` on reminder/accountability toggles; robust `prefers-reduced-motion` reset (incl. `.app-chrome` + global belt).
+  - Verify: keyboard-only pass works; reduced-motion honored; tests green.
 
-- [ ] **B25 — Mobile (480px) polish for new surfaces**
-  - Files: new Phase 2-5 components.
-  - Steps: verify hero, status bar, session bar, Daily 5, Settings cards at 480px.
-  - Verify: no overflow/clipping at 480px.
+- [x] **B25 — Mobile (480px) polish for new surfaces**
+  - Files: [src/app/AppShell.tsx](src/app/AppShell.tsx), SessionBar.
+  - Done: SessionBar offset clears the 56px mobile nav; main content drops its nav-height bottom padding in focus mode (no wasted space); icon touch targets >= 44px.
+  - Verify: no overflow/overlap at 480px or during a session.
 
 ### E. Features / SAT depth (after the above)
 
-- [ ] **B26 — SAT score projection / readiness model**
-  - Files: [src/lib/satReadiness.ts](src/lib/satReadiness.ts), [src/features/sat/](src/features/sat/).
-  - Steps: turn diagnostics + activity into a simple projected-score / readiness signal with honest caveats.
-  - Verify: projection updates sensibly as you log work; tested.
+- [x] **B26 — SAT readiness signal (honest, not a fake score)**
+  - Files: [src/lib/satWeeklyProgress.ts](src/lib/satWeeklyProgress.ts), [src/features/stats/widgets/SatWeeklyProgressCard.tsx](src/features/stats/widgets/SatWeeklyProgressCard.tsx).
+  - Done: `getSatReadinessSignal()` combines weekly consistency, diagnostic trend, due re-drills, and the countdown into a qualitative band (crunch / strong / on-track / building) — deliberately NOT a predicted score, since the in-app diagnostics are short samplers. Surfaced as a tag + line on the weekly card.
+  - Verify: signal shifts sensibly (test-week, strong rhythm, building); 3 unit tests.
 
-- [ ] **B27 — Weak-skill weighting for Daily 5 + diagnostics**
-  - Files: [src/lib/satDailyQuiz.ts](src/lib/satDailyQuiz.ts), [src/lib/satMistakeTriage.ts](src/lib/satMistakeTriage.ts).
-  - Steps: bias daily/diagnostic question selection toward logged weak categories.
-  - Verify: questions skew to weak areas; determinism per day preserved; tested.
+- [x] **B27 — Weak-skill weighting for Daily 5**
+  - Files: [src/lib/satDailyQuiz.ts](src/lib/satDailyQuiz.ts).
+  - Done: the Daily 5 now ranks SAT questions by overlap with your top logged-mistake categories (token match on node name/concepts + question), with a day-stable tiebreak for variety; degrades to a plain deterministic daily shuffle when no mistakes are logged. (Draft 2 diagnostic already builds from gaps.)
+  - Verify: weak-category questions float to the top; determinism per day preserved; unit test added.
 
-- [ ] **B28 — Stronger mistake -> spaced re-drill loop**
-  - Files: [src/lib/satMicroDrills.ts](src/lib/satMicroDrills.ts), [src/features/sat/SatDrillPage.tsx](src/features/sat/SatDrillPage.tsx).
-  - Steps: re-surface missed categories on a spaced schedule until cleared.
-  - Verify: a logged miss reappears as a drill on schedule; tested.
+- [x] **B28 — Mistake -> spaced re-drill loop**
+  - Files: new [src/lib/satDrillSchedule.ts](src/lib/satDrillSchedule.ts), [src/lib/satMicroDrills.ts](src/lib/satMicroDrills.ts), [src/features/sat/SatDrillPage.tsx](src/features/sat/SatDrillPage.tsx).
+  - Done: drill page now targets the next category *due* for re-drill (most-missed, not drilled within ~2 days) and marks it drilled on completion so the rotation advances; due count feeds the readiness signal. New key `learnv2_sat_drill_log_v1` registered for backup.
+  - Verify: top miss drills first, rotates after drilling, returns as due after the interval; 3 unit tests.
 
-- [ ] **B29 — Resolve dead LessonContent + exotic quiz types**
-  - Files: [src/features/lesson/LessonContent.tsx](src/features/lesson/LessonContent.tsx), [src/curriculum/types.ts](src/curriculum/types.ts), [src/features/quiz/QuizPage.tsx](src/features/quiz/QuizPage.tsx).
-  - Steps: either wire `LessonContent` + `code-completion`/`drag-and-drop` quiz types into the UI, or remove them from the schema to cut dead code.
-  - Verify: no unused/declared-but-unrendered fields remain; build + lint green.
+- [x] **B29 — Resolve dead LessonContent + exotic quiz types**
+  - Files: removed `src/features/lesson/LessonContent.tsx`; [src/curriculum/types.ts](src/curriculum/types.ts).
+  - Done: deleted the unused `LessonContent` component (was imported nowhere) and trimmed the never-used `code-completion`/`drag-and-drop` quiz schema (no data uses them; lint script doesn't reference them) down to the implemented multiple-choice shape.
+  - Verify: build + lint + tsc green; no declared-but-unrendered fields remain.
 
-- [ ] **B30 — Targeted college/essay depth (SAT-first, low priority)**
-  - Files: [src/features/college/](src/features/college/).
-  - Steps: small, high-value additions only (e.g. deadline reminders reusing the reminder system).
-  - Verify: feature works + tested; does not distract from the SAT-first Today.
+- [x] **B30 — Targeted college/essay depth (SAT-first, low priority)**
+  - Files: [src/components/StatusBar.tsx](src/components/StatusBar.tsx) reusing [src/lib/admissionsSummary.ts](src/lib/admissionsSummary.ts).
+  - Done: an urgent college-deadline chip (overdue / due today / due tomorrow) now appears in the always-on desktop status bar, linking straight to the essay tracker / checklist — small, conditional, and only when something is actually urgent so it never competes with the SAT-first Today.
+  - Verify: chip shows only for urgent deadlines and links correctly; no e2e/unit regressions.
 
 ---
+
+## Future ideas (optional — open new batches when you want them)
+
+The B01-B30 backlog is complete. Good candidates if you keep going:
+
+- **B31 — Clear the 4 `react-hooks/exhaustive-deps` warnings** (small cleanup; get lint to 0 warnings).
+- **B32 — Full focus-trap for dialogs** (B24 added Escape + initial focus + backdrop; Tab can still leave the panel — add a trap or a shared `<Modal>` wrapper).
+- **B33 — Retire the unused legacy widgets** (`SatTodayCard`, etc. no longer mounted on Today — delete or repurpose).
+- **B34 — Compact mobile status row** (StatusBar is desktop-only; the Today strip is the phone source of truth — optionally add a slim mobile status line).
+- **B35 — Release/versioning pass** (bump `package.json` to match the SW cache `v2.5.x` and add a CHANGELOG when you cut a real release).
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-29 — B21-B30 — A11y + UI polish pass and SAT-depth features (backlog complete). Ran a read-only Composer 2.5 UI/a11y audit in parallel, then implemented: SessionBar overlap fix (clears mobile nav + desktop status bar) + 44px touch targets; contrast sweep (small `text-subtle` body copy -> `text-muted` across StatusBar/Today/heroes/reminders); shared `useEscapeKey` hook + Escape/backdrop dismissal + initial focus on ConfirmDialog/SessionCompleteModal/LevelUpModal; Button `focus-visible` ring; quiz progressbar + StatusBar segment + nav review-badge `aria-label`s; `aria-pressed` on reminder toggles; robust `prefers-reduced-motion` reset; focus-mode mobile padding. Features: honest SAT readiness signal (B26), weak-category weighting for the Daily 5 (B27), spaced mistake re-drill schedule (B28, new `satDrillSchedule.ts`), removed dead `LessonContent` + trimmed exotic quiz schema (B29), urgent college-deadline chip in the status bar (B30). Result: 303 unit tests + 7 e2e, lint 0 errors, build green.
 - 2026-05-29 — B11-B20 — Ops + testing + start of UI pass. Pinned runtime (engines >=20, .nvmrc 22); `npm run doctor`; fixed PWA under sub-path (relative manifest/icon links, scope-relative SW precache, cool-slate theme colors) and verified the /learnv2/ base build; README "install as app" + "update the app" notes; CI workflow (lint+test+build on PRs); unit tests for focusSession/satCountdown/satWeeklyProgress; render smoke tests for StatusBar/RightNowHero/TodayMinimumStrip/RemindersSettingsCard/SessionBar/SessionCompleteModal; Playwright e2e flows (theme, session ritual, Daily 5, settings goal/date, export) — all 7 green via reducedMotion + onboarding seed; guarded focus-mode DOM access for SSR/tests; contrast bump on --text-subtle (both themes) + deepened the lightest subject accents for light mode. Result: 296 unit tests + 7 e2e, lint 0 errors, build green.
 - 2026-05-29 — B01-B10 — Reliability + data-safety + ops pass. storageSafety.ts (write/quota failure tracking + StorageHealthPanel warning + corrupt-data quarantine on rehydrate via safe persist storage on progress + preferences). Backup hardened (registry entries + ephemeral exclusion + export/round-trip tests). Auto-backup nudge (backupReminder.ts + Settings prompt). Error boundary recovery (export-backup + reload) + route-level boundary. Removed synthetic sat-daily/sat-drill node pollution (Quiz persistAttempt=false + rehydrate strip). Reminder honesty (Settings test button, last-fired, tab-open note) + cross-midnight 12h activity guard. UTC day convention documented. subjectId now tagged on lesson/quiz completion -> accurate SAT weekly stats. README "update the app" note. Result: 278 tests, lint 0 errors, build green.
 - 2026-05-29 — system created — BATCHES.md + `.cursor/rules/batches.mdc` + README quickstart added. Phases 1-5 of the SAT daily-driver shipped in `a6ca7ec`.
@@ -285,6 +297,8 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- `package.json` version is `2.4.0` while the service-worker cache is `learnv2-v2.5.1` (intentional cache-bust); bump the package version when you cut a release.
-- Lint shows ~4 pre-existing `react-hooks/exhaustive-deps` warnings (not errors) — a good candidate for a small cleanup batch.
+- `package.json` version is `2.4.0` while the service-worker cache is `learnv2-v2.5.1` (intentional cache-bust); bump the package version when you cut a release (see B35).
+- Lint shows ~4 pre-existing `react-hooks/exhaustive-deps` warnings (not errors) — see B31.
+- Dialogs now close on Escape/backdrop with initial focus (B24), but do not yet trap Tab inside the panel — see B32.
+- StatusBar is desktop-only (`hidden md:flex`); on phones the Today minimum strip is the accountability surface — see B34.
 - e2e (`npm run test:e2e`) runs against a clean `npm run preview` build with `reducedMotion: reduce`; tests seed `onboardingCompleted` so the first-run modal doesn't block clicks.

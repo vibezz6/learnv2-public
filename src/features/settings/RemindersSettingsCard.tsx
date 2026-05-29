@@ -72,6 +72,7 @@ export function RemindersSettingsCard({ onMessage }: Props) {
               variant={prefs.enabled ? "primary" : "secondary"}
               size="sm"
               disabled={!supported}
+              aria-pressed={prefs.enabled}
               onClick={handleEnable}
             >
               {prefs.enabled ? <Bell size={14} aria-hidden /> : <BellOff size={14} aria-hidden />}
@@ -119,6 +120,7 @@ export function RemindersSettingsCard({ onMessage }: Props) {
                     variant={prefs.eveningSave && accountabilityLevel !== "gentle" ? "primary" : "secondary"}
                     size="sm"
                     disabled={accountabilityLevel === "gentle"}
+                    aria-pressed={prefs.eveningSave && accountabilityLevel !== "gentle"}
                     onClick={() => update({ eveningSave: !prefs.eveningSave })}
                   >
                     {prefs.eveningSave ? "On" : "Off"}
@@ -166,6 +168,7 @@ export function RemindersSettingsCard({ onMessage }: Props) {
                   key={level.id}
                   variant={accountabilityLevel === level.id ? "primary" : "secondary"}
                   size="sm"
+                  aria-pressed={accountabilityLevel === level.id}
                   title={level.hint}
                   onClick={() => {
                     setAccountabilityLevel(level.id);
@@ -178,7 +181,7 @@ export function RemindersSettingsCard({ onMessage }: Props) {
             </div>
           )}
         </Field>
-        <p className="mt-2 text-xs text-[var(--text-subtle)]">
+        <p className="mt-2 text-xs text-[var(--text-muted)]">
           {LEVELS.find((l) => l.id === accountabilityLevel)?.hint}
         </p>
       </div>

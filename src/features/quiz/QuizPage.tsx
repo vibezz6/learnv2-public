@@ -246,6 +246,7 @@ export function Quiz({
       <div
         className="h-1 overflow-hidden rounded-full bg-[var(--border)]"
         role="progressbar"
+        aria-label="Quiz progress"
         aria-valuenow={current + 1}
         aria-valuemin={1}
         aria-valuemax={questions.length}
