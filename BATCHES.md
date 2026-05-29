@@ -13,8 +13,8 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> Next up: **B11** (Run-it-yourself / ops). Last completed: **B10**. Last session: 2026-05-29
-> (B01-B10, the reliability + data-safety pass). Baseline green: 278 tests, lint 0 errors, build clean.
+> Next up: **B21** (UI polish — status/session bar). Last completed: **B20**. Last session: 2026-05-29
+> (B11-B20: ops, testing, and the start of the UI/color pass). Green: 296 unit tests + 7 e2e, lint 0 errors, build clean.
 
 Update this line at the end of every session.
 
@@ -154,25 +154,25 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
   - Steps: expand the "Run it yourself" + "Back up your data" sections (install Node, exact commands, expected output, common failures, deploy + live URL note).
   - Verify: a fresh clone + the documented steps starts the app on 8080.
 
-- [ ] **B11 — Pin the runtime**
+- [x] **B11 — Pin the runtime**
   - Why: it should still build years from now.
   - Files: [package.json](package.json) (`engines`), new `.nvmrc`.
   - Steps: add `"engines": { "node": ">=20" }` and `.nvmrc` (e.g. `22`); note it in README.
   - Verify: `npm install` warns on older Node; build works on the pinned version.
 
-- [ ] **B12 — `npm run doctor` one-shot health command**
+- [x] **B12 — `npm run doctor` one-shot health command**
   - Why: a single command to confirm the app is healthy each session.
   - Files: [package.json](package.json).
   - Steps: add `"doctor": "npm run lint && npm test && npm run build"`; reference it from the Health check above and `npm start`.
   - Verify: `npm run doctor` runs lint + test + build and exits 0.
 
-- [ ] **B13 — PWA / offline + update-flow verification**
+- [x] **B13 — PWA / offline + update-flow verification**
   - Why: installable + offline + clean update banner are part of "always works".
   - Files: [public/sw.js](public/sw.js), [public/manifest.json](public/manifest.json), [src/lib/serviceWorker.ts](src/lib/serviceWorker.ts), [src/components/ServiceWorkerUpdateBanner.tsx](src/components/ServiceWorkerUpdateBanner.tsx).
   - Steps: verify install, offline load, and the SKIP_WAITING update flow on a production build; document install steps.
   - Verify: `npm run build && npm run preview`, install as PWA, go offline, app still loads.
 
-- [ ] **B14 — GitHub Pages deploy verification**
+- [x] **B14 — GitHub Pages deploy verification**
   - Why: a working public URL is a free backup of the running app.
   - Files: [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml), [vite.config.ts](vite.config.ts) (base path).
   - Steps: confirm the workflow builds + deploys; verify base path + asset URLs; document the live URL has separate storage from localhost.
@@ -180,25 +180,25 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ### C. Testing and QA
 
-- [ ] **B15 — Unit tests for new logic**
+- [x] **B15 — Unit tests for new logic**
   - Why: lock in the Phase 1-5 behavior.
   - Files: [src/stores/focusSession.ts](src/stores/focusSession.ts), [src/lib/satCountdown.ts](src/lib/satCountdown.ts), [src/lib/satWeeklyProgress.ts](src/lib/satWeeklyProgress.ts), [src/lib/reminders.ts](src/lib/reminders.ts).
   - Steps: add tests for focus-session start/finish/cancel + minute capping, countdown edge cases, weekly aggregation, reminder edges.
   - Verify: new tests pass; coverage of these modules is meaningful.
 
-- [ ] **B16 — Render/smoke tests for new UI**
+- [x] **B16 — Render/smoke tests for new UI**
   - Why: catch crashes in the new surfaces.
   - Files: SessionBar, SessionCompleteModal, [src/components/StatusBar.tsx](src/components/StatusBar.tsx), RightNowHero, TodayMinimumStrip, RemindersSettingsCard.
   - Steps: minimal render tests (mount with mock state, assert key text/controls).
   - Verify: tests pass headless.
 
-- [ ] **B17 — Playwright e2e flows**
+- [x] **B17 — Playwright e2e flows**
   - Why: prove the core loops work end-to-end.
   - Files: [e2e/](e2e/), [playwright.config.ts](playwright.config.ts).
   - Steps: cover start-session ritual, Daily 5 completion, Settings goal/SAT date, theme toggle, export/import round-trip.
   - Verify: `npm run test:e2e` green locally.
 
-- [ ] **B18 — CI gate on PRs**
+- [x] **B18 — CI gate on PRs**
   - Why: stop regressions from merging.
   - Files: new `.github/workflows/ci.yml`.
   - Steps: run lint + test + build on pull requests and pushes.
@@ -206,13 +206,13 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ### D. UI / color (the "almost there" pass)
 
-- [ ] **B19 — Palette refinement + contrast**
+- [x] **B19 — Palette refinement + contrast**
   - Why: the look is close but the color/feel needs a final tune (your call-out).
   - Files: [src/index.css](src/index.css).
   - Steps: audit text/accent contrast to WCAG AA in dark + light; refine accent + surfaces + shadows + grid overlay; document the final tokens.
   - Verify: spot-check key screens in both themes; no low-contrast text.
 
-- [ ] **B20 — Finalize subject-accent harmony (incl. light mode)**
+- [x] **B20 — Finalize subject-accent harmony (incl. light mode)**
   - Files: [src/lib/subjectAccent.ts](src/lib/subjectAccent.ts).
   - Steps: confirm the cool palette reads well on light surfaces; tweak any muddy hues.
   - Verify: subject dots/borders look cohesive in both themes.
@@ -275,6 +275,7 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-29 — B11-B20 — Ops + testing + start of UI pass. Pinned runtime (engines >=20, .nvmrc 22); `npm run doctor`; fixed PWA under sub-path (relative manifest/icon links, scope-relative SW precache, cool-slate theme colors) and verified the /learnv2/ base build; README "install as app" + "update the app" notes; CI workflow (lint+test+build on PRs); unit tests for focusSession/satCountdown/satWeeklyProgress; render smoke tests for StatusBar/RightNowHero/TodayMinimumStrip/RemindersSettingsCard/SessionBar/SessionCompleteModal; Playwright e2e flows (theme, session ritual, Daily 5, settings goal/date, export) — all 7 green via reducedMotion + onboarding seed; guarded focus-mode DOM access for SSR/tests; contrast bump on --text-subtle (both themes) + deepened the lightest subject accents for light mode. Result: 296 unit tests + 7 e2e, lint 0 errors, build green.
 - 2026-05-29 — B01-B10 — Reliability + data-safety + ops pass. storageSafety.ts (write/quota failure tracking + StorageHealthPanel warning + corrupt-data quarantine on rehydrate via safe persist storage on progress + preferences). Backup hardened (registry entries + ephemeral exclusion + export/round-trip tests). Auto-backup nudge (backupReminder.ts + Settings prompt). Error boundary recovery (export-backup + reload) + route-level boundary. Removed synthetic sat-daily/sat-drill node pollution (Quiz persistAttempt=false + rehydrate strip). Reminder honesty (Settings test button, last-fired, tab-open note) + cross-midnight 12h activity guard. UTC day convention documented. subjectId now tagged on lesson/quiz completion -> accurate SAT weekly stats. README "update the app" note. Result: 278 tests, lint 0 errors, build green.
 - 2026-05-29 — system created — BATCHES.md + `.cursor/rules/batches.mdc` + README quickstart added. Phases 1-5 of the SAT daily-driver shipped in `a6ca7ec`.
 
@@ -284,5 +285,6 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- `package.json` version is `2.4.0` while the service-worker cache is `learnv2-v2.5.0` (intentional cache-bust); bump the package version when you cut a release.
+- `package.json` version is `2.4.0` while the service-worker cache is `learnv2-v2.5.1` (intentional cache-bust); bump the package version when you cut a release.
 - Lint shows ~4 pre-existing `react-hooks/exhaustive-deps` warnings (not errors) — a good candidate for a small cleanup batch.
+- e2e (`npm run test:e2e`) runs against a clean `npm run preview` build with `reducedMotion: reduce`; tests seed `onboardingCompleted` so the first-run modal doesn't block clicks.

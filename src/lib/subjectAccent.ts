@@ -7,15 +7,15 @@
 const SUBJECT_ACCENTS: Record<string, string> = {
   "sat-prep": "#7a93f4", // indigo — the daily driver, matches the UI accent
   math: "#9b8cf5", // violet
-  science: "#56c2a6", // teal-green
+  science: "#4cb89a", // teal-green (deepened so it reads on light too)
   cs: "#6aa6f2", // blue
-  programming: "#46c5c0", // teal
+  programming: "#3bb8b3", // teal (deepened)
   probability: "#b98cf0", // lilac
   ai: "#7e9bf0", // periwinkle
-  finance: "#5bb892", // emerald
+  finance: "#52b08a", // emerald
   trading: "#5fb3e6", // sky
-  engineering: "#90a2bd", // slate
-  "algo-lab": "#6cccb8", // aqua
+  engineering: "#8497ad", // slate (slightly deeper)
+  "algo-lab": "#4fc1ad", // aqua (deepened)
 };
 
 export function getSubjectAccent(subjectId: string | undefined | null): string {

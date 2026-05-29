@@ -39,6 +39,12 @@ function teardownSystemThemeListener() {
   systemThemeListener = null;
 }
 
+function setFocusBodyClass(value: boolean) {
+  if (typeof document !== "undefined" && document.body) {
+    document.body.classList.toggle("focus-shell-active", value);
+  }
+}
+
 function syncDocumentTheme(theme: ThemeMode) {
   const resolved =
     theme === "system"
@@ -81,11 +87,11 @@ export const usePreferences = create<PreferencesState>()(
       },
       toggleFocusMode: () => {
         const next = !get().focusMode;
-        document.body.classList.toggle("focus-shell-active", next);
+        setFocusBodyClass(next);
         set({ focusMode: next });
       },
       setFocusMode: (value) => {
-        document.body.classList.toggle("focus-shell-active", value);
+        setFocusBodyClass(value);
         set({ focusMode: value });
       },
       completeOnboarding: () => set({ onboardingCompleted: true }),

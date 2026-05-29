@@ -17,10 +17,12 @@
   --bg-input: var(--bg-sunken);
   --bg-card: var(--bg-panel);
 
-  /* ----- Text (cool neutral) ----- */
+  /* ----- Text (cool neutral) -----
+     Contrast targets on --bg (#0e1016): --text / --text-heading clear AA for body,
+     --text-muted ~5.7:1 (AA), --text-subtle is small mono/meta only (~4:1, AA-large/UI). */
   --text: #d6d9e0;
   --text-muted: #8a92a0;
-  --text-subtle: #5b6373;
+  --text-subtle: #6b7488;
   --text-heading: #e8eaef;
   --text-h: var(--text-heading);
 
@@ -149,7 +151,7 @@
   /* text */
   --text: #1c2230;
   --text-muted: #5a6373;
-  --text-subtle: #8a92a0;
+  --text-subtle: #6b7484;
   --text-heading: #0e1320;
 
   /* accent (refined indigo, slightly darker for light bg contrast) */

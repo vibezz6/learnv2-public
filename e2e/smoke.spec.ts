@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Learn v2 smoke", () => {
   test("Today dashboard loads", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Today" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Today", exact: true })).toBeVisible();
     await expect(page.getByText("Track, deadlines, and SAT follow-ups")).toBeVisible();
   });
 

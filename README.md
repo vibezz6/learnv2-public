@@ -126,6 +126,8 @@ npm run dev
 
 Your progress is stored in the browser, not the repo, so pulling/updating never touches it. Export a backup first if you want to be extra safe.
 
+**Install it as an app (optional):** Learn v2 is a PWA. In Chrome/Edge, open the running site and use the install icon in the address bar (or browser menu → "Install Learn v2") to get a standalone window. Once installed it also loads offline. When a new build is deployed you'll see a small "update" banner — click it to refresh. Note: an installed copy uses the same browser storage as the tab it was installed from.
+
 **Troubleshooting:**
 
 - Blank page or "can't connect": nothing is listening on 8080 — make sure `npm run dev` is running in this folder.

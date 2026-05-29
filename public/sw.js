@@ -1,5 +1,7 @@
-const CACHE_NAME = "learnv2-v2.5.0";
-const STATIC_ASSETS = ["/", "/index.html", "/manifest.json", "/favicon.svg"];
+const CACHE_NAME = "learnv2-v2.5.1";
+// Scope-relative so the precache works under any base path (localhost or the
+// GitHub Pages "/learnv2/" subpath).
+const STATIC_ASSETS = ["./", "./index.html", "./manifest.json", "./favicon.svg"];
 const ASSET_EXTENSIONS = [".js", ".css", ".woff2", ".svg", ".png", ".json"];
 
 self.addEventListener("message", (event) => {
