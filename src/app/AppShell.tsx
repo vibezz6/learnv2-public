@@ -4,6 +4,7 @@ import {
   Brain,
   ChevronRight,
   Flame,
+  Monitor,
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
@@ -11,6 +12,7 @@ import {
   Sun,
 } from "lucide-react";
 import { Button, KeyHint } from "@/components/ui";
+import { StatusBar } from "@/components/StatusBar";
 import { CommandPalette } from "@/features/search/CommandPalette";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
@@ -307,15 +309,24 @@ export function AppShell() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
+              onClick={() =>
+                setTheme(theme === "dark" ? "light" : theme === "light" ? "system" : "dark")
+              }
+              aria-label={`Theme: ${theme}. Click to change.`}
+              title={`Theme: ${theme}`}
             >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === "dark" ? (
+                <Moon size={16} />
+              ) : theme === "light" ? (
+                <Sun size={16} />
+              ) : (
+                <Monitor size={16} />
+              )}
             </Button>
           </div>
         </header>
 
-        <main className="flex-1 pb-[var(--mobile-nav-height)] md:pb-0">
+        <main className="flex-1 pb-[var(--mobile-nav-height)] md:pb-[var(--statusbar-height)]">
           <RoutePageTransition />
         </main>
 
@@ -358,6 +369,7 @@ export function AppShell() {
         </nav>
       </div>
 
+      <StatusBar reviewCount={reviewCount} collapsed={sidebarCollapsed} />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );

@@ -5,8 +5,6 @@ type Variant = "default" | "primary" | "accent" | "quiet" | "panel" | "sunken";
 type Density = "compact" | "normal" | "roomy";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  /** @deprecated visual glow has been removed in the serious redesign; prop kept for back-compat. */
-  glow?: boolean;
   variant?: Variant;
   hover?: boolean;
   density?: Density;
@@ -34,10 +32,8 @@ export function Card({
   variant = "default",
   hover,
   density = "normal",
-  glow,
   ...props
 }: CardProps) {
-  void glow;
   return (
     <div
       className={cn(

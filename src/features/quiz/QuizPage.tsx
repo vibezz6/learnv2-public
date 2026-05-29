@@ -148,7 +148,7 @@ export function Quiz({
     const lessonPath =
       subjectId ? `/subjects/${subjectId}/${nodeId}` : undefined;
     return (
-      <Card glow className="stagger-item space-y-4">
+      <Card className="stagger-item space-y-4">
         <h2 className="text-xl font-bold text-[var(--text-heading)]">Quiz complete</h2>
         <p className="font-mono text-3xl text-[var(--accent)]">
           {score}/{questions.length} · {pct}%

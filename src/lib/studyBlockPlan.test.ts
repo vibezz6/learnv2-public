@@ -191,6 +191,6 @@ describe("studyBlockPlan", () => {
       minutes: 15,
       href: "/subjects/sat-prep#mistakes",
     });
-    expect(plan.steps[0].detail).toContain("light day");
+    expect(plan.steps[0].detail).toContain("Light day");
   });
 });

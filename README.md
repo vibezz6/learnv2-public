@@ -19,7 +19,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 ## Stack
 
 - React 19 + TypeScript + Vite 8
-- Tailwind CSS v4 · warm dark design tokens
+- Tailwind CSS v4 · cool-slate IDE design tokens (indigo accent)
 - React Router v7 · shareable lesson URLs
 - Zustand + persist · localStorage-first, no accounts
 - KaTeX · PWA (manifest + service worker)

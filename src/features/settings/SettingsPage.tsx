@@ -25,14 +25,18 @@ import { ActivityLogPanel } from "@/features/settings/widgets/ActivityLogPanel";
 import { StorageHealthPanel } from "@/features/settings/widgets/StorageHealthPanel";
 import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
+import { RemindersSettingsCard } from "@/features/settings/RemindersSettingsCard";
 import { LessonDraftWorkspace } from "@/features/settings/LessonDraftWorkspace";
 import { OPENROUTER_KEY } from "@/services/llmReview";
+import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
 import { cn } from "@/lib/cn";
 
 const LEGACY_OPENROUTER_KEY = "learnapp_openrouter_key";
 
 export function SettingsPage() {
-  const { theme, setTheme } = usePreferences();
+  const { theme, setTheme, satTestDate, setSatTestDate } = usePreferences();
+  const dailyGoal = useProgress((s) => s.data.dailyGoal);
+  const setDailyGoal = useProgress((s) => s.setDailyGoal);
   const importFromV1 = useProgress((s) => s.importFromV1);
   const migrateAllFromV1 = useProgress((s) => s.migrateAllFromV1);
   const exportData = useProgress((s) => s.exportData);
@@ -41,7 +45,9 @@ export function SettingsPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
+  const [goalInput, setGoalInput] = useState(String(dailyGoal));
   const fileRef = useRef<HTMLInputElement>(null);
+  const satCountdown = getSatCountdown(satTestDate);
   const [apiKey, setApiKey] = useState(() => {
     try {
       return (
@@ -137,6 +143,91 @@ export function SettingsPage() {
             </Field>
           </div>
         </Card>
+      </Section>
+
+      {/* ─────────────── Study targets ─────────────── */}
+      <Section
+        eyebrow="Study targets"
+        title="Daily goal & SAT date"
+        description="Your daily minute goal drives the Today progress, and the SAT date powers the countdown in the status bar."
+        divider
+      >
+        <Card variant="default" density="normal" className="min-w-0 space-y-4">
+          <Field
+            label="Daily goal"
+            inline
+            hint="Minutes of focused study per day (5–600)."
+          >
+            {(id) => (
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  id={id}
+                  type="number"
+                  min={5}
+                  max={600}
+                  step={5}
+                  value={goalInput}
+                  onChange={(e) => setGoalInput(e.target.value)}
+                  className="w-24"
+                />
+                <span className="text-xs text-[var(--text-muted)]">min/day</span>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const next = Number(goalInput);
+                    if (Number.isFinite(next) && next > 0) {
+                      setDailyGoal(next);
+                      setGoalInput(String(Math.max(5, Math.min(600, Math.round(next)))));
+                      setMessage("Daily goal updated.");
+                    }
+                  }}
+                >
+                  Save goal
+                </Button>
+              </div>
+            )}
+          </Field>
+          <div className="border-t border-[var(--rule)] pt-3">
+            <Field
+              label="SAT date"
+              inline
+              hint="The day you sit the test. Drives the countdown."
+            >
+              {(id) => (
+                <div className="flex flex-wrap items-center gap-2">
+                  <Input
+                    id={id}
+                    type="date"
+                    value={satTestDate ?? ""}
+                    onChange={(e) => {
+                      setSatTestDate(e.target.value || null);
+                      setMessage(e.target.value ? "SAT date saved." : "SAT date cleared.");
+                    }}
+                    className="w-44"
+                  />
+                  <Tag tone={satCountdown && !satCountdown.past ? "accent" : "muted"} size="sm" mono>
+                    {formatCountdownLabel(satCountdown)}
+                  </Tag>
+                  {satTestDate ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSatTestDate(null);
+                        setMessage("SAT date cleared.");
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  ) : null}
+                </div>
+              )}
+            </Field>
+          </div>
+        </Card>
+        <div className="mt-4">
+          <RemindersSettingsCard onMessage={setMessage} />
+        </div>
       </Section>
 
       {/* ─────────────── AI ─────────────── */}

@@ -53,7 +53,14 @@ export function buildSatMicroDrill(
   const sorted = (candidates as Array<SatMicroDrillQuestion & { score: number }>)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map(({ score: _score, ...item }) => item);
+    .map(
+      (item): SatMicroDrillQuestion => ({
+        subjectId: item.subjectId,
+        nodeId: item.nodeId,
+        nodeTitle: item.nodeTitle,
+        question: item.question,
+      }),
+    );
 
   const href = topMistake?.nodeId
     ? `/subjects/sat-prep/${topMistake.nodeId}`

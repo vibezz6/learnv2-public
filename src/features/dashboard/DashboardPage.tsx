@@ -21,14 +21,11 @@ import { shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
-import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
-import { SatTodayCard } from "./widgets/SatTodayCard";
-import { DayNarrativeStrip } from "./widgets/DayNarrativeStrip";
-import { StudyIntentStrip } from "./widgets/StudyIntentStrip";
+import { RightNowHero } from "./widgets/RightNowHero";
+import { TodayMinimumStrip } from "./widgets/TodayMinimumStrip";
 import { EssayDueToday } from "./widgets/EssayDueToday";
 import { TodayEmptyFocus } from "./widgets/TodayEmptyFocus";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
-import { StudyBlockCard } from "./widgets/StudyBlockCard";
 import { getStudyIntentSubtitle, loadStudyIntent } from "@/lib/studyIntent";
 import { ROUTES } from "@/app/navigation";
 
@@ -61,10 +58,10 @@ export function DashboardPage() {
     getTrackChallengeCategory(activeTrackId) ??
     (target ? subjectToChallengeCategory(target.subject.id) : null);
 
+  // SAT is the daily driver: when SAT context applies, the SAT command is the
+  // single dominant action. An in-progress lesson becomes a "resume" shortcut.
   const showSatFocus =
-    !target &&
-    subjects.length > 0 &&
-    shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
+    subjects.length > 0 && shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
 
   const showSpacedReview =
     reviewDue > 0 ||
@@ -72,7 +69,7 @@ export function DashboardPage() {
 
   const intentSubtitle = getStudyIntentSubtitle(loadStudyIntent().focus);
   const pageSubtitle =
-    intentSubtitle ?? "Start the next session, then jump out to SAT, College, Review, or Stats.";
+    intentSubtitle ?? "One move now. Everything else can wait until the minimum is done.";
 
   if (loadingSubjects) {
     return <PageLoading />;
@@ -81,24 +78,18 @@ export function DashboardPage() {
   return (
     <PageContainer size="xl" className="space-y-6">
       <PageHeader title="Today" subtitle={pageSubtitle} divider={false} />
-      <DayNarrativeStrip />
-      <StudyIntentStrip />
-      {stats ? <DailyGoalStrip stats={stats} /> : null}
+      {stats ? <TodayMinimumStrip stats={stats} /> : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
-          <Section eyebrow="Now" title="Do this first">
-            {target ? (
+          <Section eyebrow="Right now" title="Your one move">
+            {showSatFocus ? (
+              <RightNowHero subjects={subjects} resume={target} />
+            ) : target ? (
               <ContinueHero subject={target.subject} node={target.node} />
-            ) : showSatFocus ? (
-              <SatTodayCard subjects={subjects} compact />
             ) : (
               <TodayEmptyFocus />
             )}
-          </Section>
-
-          <Section eyebrow="Next 20 minutes" title="Short session plan">
-            <StudyBlockCard subjects={subjects} />
           </Section>
         </div>
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "learnv2-v2.4.0";
+const CACHE_NAME = "learnv2-v2.5.0";
 const STATIC_ASSETS = ["/", "/index.html", "/manifest.json", "/favicon.svg"];
 const ASSET_EXTENSIONS = [".js", ".css", ".woff2", ".svg", ".png", ".json"];
 
@@ -6,6 +6,23 @@ self.addEventListener("message", (event) => {
   if (event.data?.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    (async () => {
+      const scope = self.registration.scope;
+      const all = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      for (const client of all) {
+        if (client.url.startsWith(scope) && "focus" in client) {
+          await client.focus();
+          return;
+        }
+      }
+      if (self.clients.openWindow) await self.clients.openWindow(scope);
+    })(),
+  );
 });
 
 self.addEventListener("install", (event) => {

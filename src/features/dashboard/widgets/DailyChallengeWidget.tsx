@@ -17,7 +17,6 @@ interface Props {
 }
 
 export function DailyChallengeWidget({ defaultCategory }: Props) {
-  const addStudyTime = useProgress((s) => s.addStudyTime);
   const completeDailyChallenge = useProgress((s) => s.completeDailyChallenge);
   const isDailyChallengeCompleted = useProgress((s) => s.isDailyChallengeCompleted);
 
@@ -67,7 +66,6 @@ export function DailyChallengeWidget({ defaultCategory }: Props) {
     setShowResult(true);
     if (correct && !completed) {
       completeDailyChallenge(challenge.id, challenge.xpReward);
-      addStudyTime(5 * 60);
       setCompleted(true);
     }
   };

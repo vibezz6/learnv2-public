@@ -736,7 +736,7 @@ function ResultsCard({
   }
 
   return (
-    <Card glow className="space-y-5">
+    <Card className="space-y-5">
       <div className="space-y-2">
         <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--accent-2)]">
           {draftTitle} complete

@@ -6,9 +6,11 @@ import {
   CampusServicesPage,
   CollegeChecklistPage,
   CompoundInterestToolPage,
+  DailySatQuizPage,
   EssayTrackerPage,
   ExpectedValueToolPage,
   LessonPage,
+  SatDrillPage,
   NotesPage,
   QuizRoutePage,
   ReviewPage,
@@ -25,6 +27,8 @@ import { LevelUpModal } from "@/components/LevelUpModal";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { ServiceWorkerUpdateBanner } from "@/components/ServiceWorkerUpdateBanner";
 import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
+import { SessionBar } from "@/features/session/SessionBar";
+import { SessionCompleteModal } from "@/features/session/SessionCompleteModal";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
@@ -50,6 +54,8 @@ export function App() {
               <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
               <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
               <Route path="sat/pretest" element={<SatPretestPage />} />
+              <Route path="sat/daily-quiz" element={<DailySatQuizPage />} />
+              <Route path="sat/drill" element={<SatDrillPage />} />
               <Route path="bookmarks" element={<BookmarksPage />} />
               <Route path="review" element={<ReviewPage />} />
               <Route path="stats" element={<StatsPage />} />
@@ -71,6 +77,8 @@ export function App() {
         <LevelUpModal />
         <OnboardingModal />
         <ServiceWorkerUpdateBanner />
+        <SessionBar />
+        <SessionCompleteModal />
       </ComponentErrorBoundary>
     </BrowserRouter>
   );

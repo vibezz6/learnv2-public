@@ -5,12 +5,18 @@ import { trackIdForPlacement } from "@/lib/placement";
 
 export type ThemeMode = "dark" | "light" | "system";
 
+/** How hard the app pushes you: gentle nudges, balanced, or unrelenting. */
+export type AccountabilityLevel = "gentle" | "standard" | "strict";
+
 interface PreferencesState {
   theme: ThemeMode;
   focusMode: boolean;
   onboardingCompleted: boolean;
   enrolledTrackId: string | null;
   placementGoal: PlacementGoal | null;
+  /** ISO date (YYYY-MM-DD) of the target SAT, used for the countdown. */
+  satTestDate: string | null;
+  accountabilityLevel: AccountabilityLevel;
   setTheme: (theme: ThemeMode) => void;
   toggleFocusMode: () => void;
   setFocusMode: (value: boolean) => void;
@@ -18,6 +24,8 @@ interface PreferencesState {
   completeOnboardingWithPlacement: (goal: PlacementGoal) => void;
   setPlacementGoal: (goal: PlacementGoal) => void;
   setEnrolledTrack: (id: string | null) => void;
+  setSatTestDate: (date: string | null) => void;
+  setAccountabilityLevel: (level: AccountabilityLevel) => void;
 }
 
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
@@ -64,6 +72,8 @@ export const usePreferences = create<PreferencesState>()(
       onboardingCompleted: false,
       enrolledTrackId: null,
       placementGoal: null,
+      satTestDate: null,
+      accountabilityLevel: "standard",
       setTheme: (theme) => {
         applyTheme(theme);
         set({ theme });
@@ -90,17 +100,26 @@ export const usePreferences = create<PreferencesState>()(
           enrolledTrackId: trackIdForPlacement(goal),
         }),
       setEnrolledTrack: (id) => set({ enrolledTrackId: id }),
+      setSatTestDate: (date) => set({ satTestDate: date && date.trim() ? date : null }),
+      setAccountabilityLevel: (level) => set({ accountabilityLevel: level }),
     }),
     {
       name: "learnv2_preferences",
       partialize: (s) => ({
         theme: s.theme,
+        focusMode: s.focusMode,
         onboardingCompleted: s.onboardingCompleted,
         enrolledTrackId: s.enrolledTrackId,
         placementGoal: s.placementGoal,
+        satTestDate: s.satTestDate,
+        accountabilityLevel: s.accountabilityLevel,
       }),
       onRehydrateStorage: () => (state) => {
-        if (state) applyTheme(state.theme);
+        if (!state) return;
+        applyTheme(state.theme);
+        if (typeof document !== "undefined") {
+          document.body.classList.toggle("focus-shell-active", state.focusMode);
+        }
       },
     },
   ),

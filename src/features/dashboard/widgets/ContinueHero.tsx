@@ -8,6 +8,7 @@ import {
   resolveContinueKind,
   type ContinueKind,
 } from "@/lib/continuePresentation";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { useProgress } from "@/stores/progress";
 
 interface Props {
@@ -42,7 +43,7 @@ export function ContinueHero({ subject, node }: Props) {
     <Card variant="primary" density="roomy" className="min-w-0">
       <div className="flex flex-col gap-2 border-b border-[var(--rule)] pb-4">
         <div className="flex items-center gap-2 text-[12px] font-mono text-[var(--text-muted)]">
-          <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: subject.color }} />
+          <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: getSubjectAccent(subject.id) }} />
           <span>{subject.name}</span>
           <span aria-hidden className="text-[var(--text-subtle)]">/</span>
           <span className="tabular-nums text-[var(--text-subtle)]">

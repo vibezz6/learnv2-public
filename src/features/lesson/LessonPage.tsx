@@ -11,6 +11,8 @@ import {
   FlaskConical,
   Lightbulb,
   Lock,
+  PencilLine,
+  TriangleAlert,
 } from "lucide-react";
 import {
   Button,
@@ -29,6 +31,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
 import { CollapsibleSection, WorkedExampleCard } from "@/features/lesson/LessonSections";
 import { useSwipeNavigation } from "@/hooks/useSwipeNavigation";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { usePreferences } from "@/stores/preferences";
 import {
   getTakeaways,
@@ -112,6 +115,7 @@ export function LessonPage() {
   const status = getNodeStatus(node);
   const isCompleted = status === "completed";
   const isLocked = status === "locked";
+  const subjectAccent = getSubjectAccent(subject.id);
   const timeSpent = Math.round(getNodeProgress(node.id).timeSpentMinutes);
   const tradingLessonIndex = subject.id === "trading" ? getTradingLessonIndex(node.id) : null;
   const showTradingLabCard = tradingLessonIndex !== null && tradingLessonIndex >= 11;
@@ -151,7 +155,7 @@ export function LessonPage() {
                   <span
                     aria-hidden
                     className="h-1.5 w-1.5 rounded-full"
-                    style={{ backgroundColor: subject.color }}
+                    style={{ backgroundColor: subjectAccent }}
                   />
                   {subject.name}
                 </Link>
@@ -262,7 +266,7 @@ export function LessonPage() {
                 title="Key concepts"
                 icon={<BookOpen size={14} />}
                 count={node.keyConcepts.length}
-                accentColor={subject.color}
+                accentColor={subjectAccent}
               >
                 <ul className="min-w-0 space-y-2 pl-4 [list-style:disc] marker:text-[var(--text-subtle)]">
                   {node.keyConcepts.map((c) => (
@@ -285,9 +289,67 @@ export function LessonPage() {
                 problem={ex.problem}
                 solution={ex.solution}
                 explanation={ex.explanation}
-                accentColor={subject.color}
+                accentColor={subjectAccent}
               />
             ))}
+
+            {node.practiceProblems.length > 0 && (
+              <CollapsibleSection
+                id={`${node.id}-practice`}
+                title="Practice problems"
+                icon={<PencilLine size={14} />}
+                count={node.practiceProblems.length}
+                accentColor={subjectAccent}
+              >
+                <p className="mb-3 text-sm text-[var(--text-muted)]">
+                  Work these on paper before checking your method against the lesson.
+                </p>
+                <ol className="min-w-0 space-y-3">
+                  {node.practiceProblems.map((problem, i) => (
+                    <li key={i} className="relative flex min-w-0 gap-3">
+                      <span
+                        aria-hidden
+                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--accent-border)] bg-[var(--accent-bg)] font-mono text-[10px] font-medium tabular-nums text-[var(--accent)]"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="min-w-0 whitespace-pre-wrap break-words pt-0.5 text-[15px] leading-[1.7] text-[var(--text)]">
+                        {problem}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </CollapsibleSection>
+            )}
+
+            {node.commonMistakes && node.commonMistakes.length > 0 && (
+              <CollapsibleSection
+                id={`${node.id}-mistakes`}
+                title="Common mistakes"
+                icon={<TriangleAlert size={14} />}
+                count={node.commonMistakes.length}
+                accentColor={subjectAccent}
+                defaultOpen={false}
+              >
+                <ul className="min-w-0 space-y-2.5">
+                  {node.commonMistakes.map((mistake, i) => (
+                    <li
+                      key={i}
+                      className="flex min-w-0 gap-2.5 border-l-2 border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2"
+                    >
+                      <TriangleAlert
+                        size={14}
+                        className="mt-0.5 shrink-0 text-[var(--warning)]"
+                        aria-hidden
+                      />
+                      <span className="min-w-0 whitespace-pre-wrap break-words text-sm leading-[1.65] text-[var(--text)]">
+                        {mistake}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CollapsibleSection>
+            )}
 
             {node.resources.length > 0 && (
               <CollapsibleSection
@@ -295,7 +357,7 @@ export function LessonPage() {
                 title="Resources"
                 icon={<BookOpen size={14} />}
                 count={node.resources.length}
-                accentColor={subject.color}
+                accentColor={subjectAccent}
                 defaultOpen={false}
               >
                 <div className="grid min-w-0 gap-4">

@@ -40,6 +40,7 @@ import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsC
 import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
 import { listMistakes } from "@/lib/satMistakeLog";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -470,7 +471,7 @@ function SatHeroBand({ subject, completed }: { subject: Subject; completed: numb
   return (
     <Card variant="primary" density="roomy" className="min-w-0">
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--rule)] pb-3">
-        <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: subject.color }} />
+        <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: getSubjectAccent(subject.id) }} />
         <span className="eyebrow-mono">August SAT command center</span>
         <Tag tone="accent" size="sm" mono className="ml-auto gap-1">
           <Calendar size={11} aria-hidden />
@@ -657,7 +658,7 @@ export function SubjectDetailPage() {
         <TrackDetailHeader
           name={subject.name}
           description={subject.description}
-          color={subject.color}
+          color={getSubjectAccent(subject.id)}
           icon={BookOpen}
           completed={completedCount}
           total={subject.nodes.length}

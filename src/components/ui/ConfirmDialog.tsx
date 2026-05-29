@@ -30,7 +30,7 @@ export function ConfirmDialog({
       aria-modal="true"
       aria-labelledby="confirm-title"
     >
-      <div className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-md)]">
+      <div className="w-full max-w-md rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)] p-6 shadow-[var(--shadow-overlay)]">
         <h2 id="confirm-title" className="text-lg font-semibold text-[var(--text-heading)]">
           {title}
         </h2>
@@ -40,8 +40,8 @@ export function ConfirmDialog({
             {cancelLabel}
           </Button>
           <Button
-            variant={danger ? "primary" : "primary"}
-            className={danger ? "bg-[var(--danger)] text-white hover:brightness-110" : undefined}
+            variant="primary"
+            tone={danger ? "danger" : "default"}
             onClick={onConfirm}
           >
             {confirmLabel}

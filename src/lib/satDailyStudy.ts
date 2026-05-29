@@ -49,9 +49,9 @@ function studyIntensity(storage: Storage): SatDailyStudyIntensity {
 }
 
 function intensityLabel(intensity: SatDailyStudyIntensity): string {
-  if (intensity === "minimum") return "Bad-day minimum (~20 min)";
-  if (intensity === "stretch") return "Good-day stretch";
-  return "Today's focus";
+  if (intensity === "minimum") return "Light day — keep the streak alive";
+  if (intensity === "stretch") return "Good day — push hard";
+  return "Today's SAT focus";
 }
 
 export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStudyCommand {
@@ -66,9 +66,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (draft1Active) {
     return {
       headline: focusPrefix,
-      detail: "Draft 1 in progress — open SAT Prep to resume your optional baseline.",
+      detail: "Finish your in-progress diagnostic — pick up right where you left off.",
       href: "/subjects/sat-prep#diagnostic",
-      buttonLabel: "Open SAT Prep",
+      buttonLabel: "Resume diagnostic",
       kind: "resume_draft1",
       intensity,
     };
@@ -77,9 +77,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (draft2Active) {
     return {
       headline: focusPrefix,
-      detail: "Draft 2 gap follow-up in progress — continue from SAT Prep.",
+      detail: "Finish your Draft 2 gap follow-up — you're mid-attempt.",
       href: "/subjects/sat-prep#diagnostic",
-      buttonLabel: "Open SAT Prep",
+      buttonLabel: "Resume Draft 2",
       kind: "resume_draft2",
       intensity,
     };
@@ -88,12 +88,12 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (!draft1Done) {
     return {
       headline: focusPrefix,
-      detail: "Optional one-time baseline — daily study is track, mistake log, and official practice.",
+      detail: "Run one official-practice set, then log every miss — that's today's win.",
       href: "/subjects/sat-prep#official",
-      buttonLabel: "Official practice",
+      buttonLabel: "Start practice",
       kind: "start_draft1",
       intensity,
-      diagnosticNote: "Optional baseline lives on SAT Prep when you want it.",
+      diagnosticNote: "Want a baseline score? The SAT Prep diagnostic is there when you do.",
     };
   }
 
@@ -110,15 +110,15 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   let diagnosticNote: string | undefined;
   if (draft1Done?.scoreSummary) {
     const score = `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`;
-    diagnosticNote = `Baseline done: ${score} — optional retest on SAT diagnostic when ready.`;
+    diagnosticNote = `Baseline: ${score}. Retest on the SAT diagnostic whenever you want a fresh read.`;
   }
 
   if (intensity === "minimum" && topMistake) {
     return {
       headline: focusPrefix,
-      detail: `Review ${topMistake.category} (${topMistake.count} logged) — light day, skip new material.`,
+      detail: `Light day: clear ${topMistake.category} (${topMistake.count} logged). Skip new material.`,
       href: "/subjects/sat-prep#mistakes",
-      buttonLabel: "Review mistake log",
+      buttonLabel: "Review mistakes",
       kind: "mistake_review",
       intensity,
       diagnosticNote,
@@ -128,11 +128,11 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (recentMistake && !lessonToday && topMistake && intensity === "normal") {
     return {
       headline: focusPrefix,
-      detail: `You logged a mistake recently — review ${topMistake.category} before new lessons.`,
+      detail: `You logged a mistake recently — clear ${topMistake.category} before anything new.`,
       href: topMistake.nodeId
         ? `/subjects/sat-prep/${topMistake.nodeId}`
         : "/subjects/sat-prep#mistakes",
-      buttonLabel: topMistake.nodeId ? "Gap drill lesson" : "Review mistake log",
+      buttonLabel: topMistake.nodeId ? "Drill this gap" : "Review mistakes",
       kind: topMistake.nodeId ? "gap_lesson" : "mistake_review",
       intensity,
       diagnosticNote,
@@ -156,11 +156,11 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (topMistake) {
     return {
       headline: focusPrefix,
-      detail: `Retarget ${topMistake.category} (${topMistake.count} miss${topMistake.count === 1 ? "" : "es"} in log).`,
+      detail: `Retarget ${topMistake.category} — ${topMistake.count} miss${topMistake.count === 1 ? "" : "es"} in the log.`,
       href: topMistake.nodeId
         ? `/subjects/sat-prep/${topMistake.nodeId}`
         : "/subjects/sat-prep#mistakes",
-      buttonLabel: topMistake.nodeId ? "Gap drill lesson" : "Review mistake log",
+      buttonLabel: topMistake.nodeId ? "Drill this gap" : "Review mistakes",
       kind: topMistake.nodeId ? "gap_lesson" : "mistake_review",
       intensity,
       diagnosticNote,
@@ -170,9 +170,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   if (satNext && satNext.status === "available") {
     return {
       headline: focusPrefix,
-      detail: `August track: ${satNext.title}`,
+      detail: `August track — up next: ${satNext.title}`,
       href: `/subjects/${satNext.subjectId}/${satNext.nodeId}`,
-      buttonLabel: "Next track lesson",
+      buttonLabel: "Start lesson",
       kind: "track_lesson",
       intensity,
       diagnosticNote,
@@ -181,9 +181,9 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
 
   return {
     headline: focusPrefix,
-    detail: "Log Bluebook/Khan misses, then pick the next August track lesson.",
+    detail: "Log your latest Bluebook or Khan misses, then take the next track lesson.",
     href: "/subjects/sat-prep#official",
-    buttonLabel: "SAT study hub",
+    buttonLabel: "Open SAT hub",
     kind: "mistake_review",
     intensity,
     diagnosticNote,

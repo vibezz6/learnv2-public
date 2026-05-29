@@ -34,11 +34,13 @@ import { hasSeen, achievementLabel, type Achievement } from "@/stores/achievemen
 import { useProgress } from "@/stores/progress";
 import { AdmissionsTranscriptPreview } from "@/features/stats/AdmissionsTranscriptPreview";
 import { LazyOptionalStats } from "@/features/stats/widgets/LazyOptionalStats";
+import { SatWeeklyProgressCard } from "@/features/stats/widgets/SatWeeklyProgressCard";
 import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
 import { WeekInReviewStrip } from "@/features/stats/widgets/WeekInReviewStrip";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import { buildStudyRecommendations } from "@/lib/studyRecommendations";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/cn";
 
@@ -238,6 +240,8 @@ export function StatsPage() {
               </div>
             </Card>
           </Section>
+
+          <SatWeeklyProgressCard />
 
           {recommendations.length > 0 ? (
             <Section eyebrow="Recommended next" divider>
@@ -460,7 +464,7 @@ export function StatsPage() {
                               <span
                                 aria-hidden
                                 className="inline-block h-1.5 w-1.5 rounded-full"
-                                style={{ background: subject.color }}
+                                style={{ background: getSubjectAccent(subject.id) }}
                               />
                               {subject.name}
                             </span>

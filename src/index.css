@@ -324,6 +324,21 @@ body::before {
   }
 }
 
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-in {
+  animation: modal-in var(--motion-normal) var(--motion-ease) both;
+}
+
 .stagger-item {
   animation: stagger-in var(--motion-slow) var(--motion-ease) both;
 }
@@ -334,7 +349,8 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
   .stagger-item,
-  .route-page {
+  .route-page,
+  .modal-in {
     animation: none;
   }
 }

@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Home,
   LayoutGrid,
+  Route,
   Settings,
   Star,
   Timer,
@@ -29,6 +30,8 @@ export const ROUTES = {
   satOfficial: "/subjects/sat-prep#official",
   satDiagnostic: "/subjects/sat-prep#diagnostic",
   satPretest: "/sat/pretest",
+  satDailyQuiz: "/sat/daily-quiz",
+  satDrill: "/sat/drill",
   tradingLab: "/lab/trading",
 } as const;
 
@@ -85,6 +88,15 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
     section: "Library",
     icon: BookOpen,
     end: true,
+  },
+  {
+    id: "tracks",
+    to: ROUTES.tracks,
+    label: "Tracks",
+    commandLabel: "Tracks",
+    hint: "Guided multi-subject learning paths",
+    section: "Library",
+    icon: Route,
   },
   {
     id: "review",
@@ -219,6 +231,12 @@ export function resolveBreadcrumb(pathname: string): BreadcrumbCrumb[] {
   }
   if (path.startsWith("/sat/pretest")) {
     return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Diagnostic" }];
+  }
+  if (path.startsWith("/sat/daily-quiz")) {
+    return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Daily 5" }];
+  }
+  if (path.startsWith("/sat/drill")) {
+    return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Drill" }];
   }
   return [{ label: "Learn v2" }];
 }

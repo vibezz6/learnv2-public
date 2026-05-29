@@ -20,7 +20,9 @@ import {
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { useProgress } from "@/stores/progress";
+import { KeyHint } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { getCommandNavItems, ROUTES } from "@/app/navigation";
@@ -127,7 +129,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             description: node.description.slice(0, 90) + (node.description.length > 90 ? "…" : ""),
             section: "Lessons",
             groupKey: sub.name,
-            subjectColor: sub.color,
+            subjectColor: getSubjectAccent(sub.id),
             icon: GraduationCap,
             recentPath: `/subjects/${sub.id}/${node.id}`,
             action: () =>
@@ -333,7 +335,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       description: `${sub.nodes.length} lessons`,
       section: "Subjects",
       groupKey: sub.name,
-      subjectColor: sub.color,
+      subjectColor: getSubjectAccent(sub.id),
       recentPath: `/subjects/${sub.id}`,
       icon: BookOpen,
       action: () => go(`/subjects/${sub.id}`, { id: `sub-${sub.id}`, label: sub.name }),
@@ -502,9 +504,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             aria-label="Search lessons, campus, and commands"
             className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-subtle)]"
           />
-          <kbd className="rounded-[var(--radius-sm)] border border-[var(--rule-strong)] bg-[var(--bg-sunken)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
-            esc
-          </kbd>
+          <KeyHint size="sm">esc</KeyHint>
         </div>
 
         {q && (
@@ -583,9 +583,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                       )}
                     </div>
                     {isSelected && (
-                      <kbd className="shrink-0 rounded-[var(--radius-sm)] border border-[var(--rule-strong)] bg-[var(--bg-sunken)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
+                      <KeyHint size="sm" className="shrink-0">
                         ↵
-                      </kbd>
+                      </KeyHint>
                     )}
                   </button>
                 );

@@ -141,10 +141,20 @@ function isEmptyProgress(data: ProgressData): boolean {
   return Object.keys(data.nodes).length === 0 && data.totalXp === 0;
 }
 
-function latestDate(a: string | null, b: string | null): string | null {
-  if (!a) return b;
-  if (!b) return a;
-  return a > b ? a : b;
+/**
+ * Merge two study streaks honestly: keep the `current` that belongs to the more
+ * recent study date (not the larger number), so importing an old backup can't
+ * inflate an unrelated current streak. `longest` is the genuine max of both.
+ */
+function mergeStreak<T extends { current: number; longest: number }>(
+  a: T & { date: string | null },
+  b: T & { date: string | null },
+): { current: number; longest: number; date: string | null } {
+  const longest = Math.max(a.longest, b.longest);
+  if (!a.date) return { current: b.current, longest, date: b.date };
+  if (!b.date) return { current: a.current, longest, date: a.date };
+  const newer = a.date >= b.date ? a : b;
+  return { current: newer.current, longest, date: newer.date };
 }
 
 function uniqueBy<T>(items: T[], getKey: (item: T) => string): T[] {
@@ -213,11 +223,13 @@ function mergeProgressData(current: ProgressData, incoming: ProgressData): Progr
     spacedRepetition,
     totalXp: Math.max(current.totalXp, incoming.totalXp),
     totalStudyMinutes: Math.max(current.totalStudyMinutes, incoming.totalStudyMinutes),
-    streaks: {
-      current: Math.max(current.streaks.current, incoming.streaks.current),
-      longest: Math.max(current.streaks.longest, incoming.streaks.longest),
-      lastStudyDate: latestDate(current.streaks.lastStudyDate, incoming.streaks.lastStudyDate),
-    },
+    streaks: (() => {
+      const merged = mergeStreak(
+        { ...current.streaks, date: current.streaks.lastStudyDate },
+        { ...incoming.streaks, date: incoming.streaks.lastStudyDate },
+      );
+      return { current: merged.current, longest: merged.longest, lastStudyDate: merged.date };
+    })(),
     dailyGoal: current.dailyGoal || incoming.dailyGoal,
     dailyMinutes: mergeNumberRecords(current.dailyMinutes, incoming.dailyMinutes),
     levelUpPending: current.levelUpPending ?? incoming.levelUpPending,
@@ -226,11 +238,13 @@ function mergeProgressData(current: ProgressData, incoming: ProgressData): Progr
       (visit) => visit.nodeId,
     ).slice(0, 10),
     dailyReviews: mergeNumberRecords(current.dailyReviews, incoming.dailyReviews),
-    reviewStreak: {
-      current: Math.max(current.reviewStreak.current, incoming.reviewStreak.current),
-      longest: Math.max(current.reviewStreak.longest, incoming.reviewStreak.longest),
-      lastReviewDate: latestDate(current.reviewStreak.lastReviewDate, incoming.reviewStreak.lastReviewDate),
-    },
+    reviewStreak: (() => {
+      const merged = mergeStreak(
+        { ...current.reviewStreak, date: current.reviewStreak.lastReviewDate },
+        { ...incoming.reviewStreak, date: incoming.reviewStreak.lastReviewDate },
+      );
+      return { current: merged.current, longest: merged.longest, lastReviewDate: merged.date };
+    })(),
     dailyChallenges: { ...incoming.dailyChallenges, ...current.dailyChallenges },
   };
   pruneDailyMaps(merged);
@@ -251,11 +265,32 @@ function yesterdayString(): string {
   return toDateString(addUtcDays(new Date(), -1));
 }
 
-function resolveCurrentStudyStreak(streaks: ProgressData["streaks"]): number {
+export function resolveCurrentStudyStreak(streaks: ProgressData["streaks"]): number {
   if (!streaks.lastStudyDate) return 0;
   const today = getToday();
   if (streaks.lastStudyDate === today || streaks.lastStudyDate === yesterdayString()) return streaks.current;
   return 0;
+}
+
+/**
+ * Advance the daily study streak once per UTC day. Any genuine study action
+ * (lesson, quiz, review, SAT log, timer) should call this — not just the timer.
+ */
+function creditStudyStreak(data: ProgressData, today: string = getToday()): void {
+  if (data.streaks.lastStudyDate === today) return;
+  if (data.streaks.lastStudyDate === yesterdayString()) data.streaks.current += 1;
+  else data.streaks.current = 1;
+  if (data.streaks.current > data.streaks.longest) {
+    data.streaks.longest = data.streaks.current;
+  }
+  data.streaks.lastStudyDate = today;
+}
+
+/** Add honest, measured minutes to today's total. No-op for non-positive values. */
+function creditDailyMinutes(data: ProgressData, minutes: number, today: string = getToday()): void {
+  if (!(minutes > 0)) return;
+  data.totalStudyMinutes += minutes;
+  data.dailyMinutes[today] = (data.dailyMinutes[today] || 0) + minutes;
 }
 
 function pruneDailyMaps(data: ProgressData) {
@@ -342,6 +377,9 @@ interface ProgressState {
   getReviewStats: () => ReviewStats;
   getQuizScoreForNode: (nodeId: string) => number | null;
   addStudyTime: (seconds: number, nodeId?: string) => void;
+  /** Advance the study streak for today (any real study counts) and optionally credit measured minutes. */
+  creditStudyDay: (minutes?: number) => void;
+  setDailyGoal: (goalMinutes: number) => void;
   isDailyChallengeCompleted: (challengeId: string) => boolean;
   completeDailyChallenge: (challengeId: string, xpReward: number) => void;
   exportData: () => string;
@@ -405,6 +443,8 @@ export const useProgress = create<ProgressState>()(
             const newLevel = Math.floor(data.totalXp / 500) + 1;
             if (newLevel > oldLevel) data.levelUpPending = newLevel;
             scheduleReview(data, nodeId, 0);
+            // Real study keeps the chain alive; minutes come from measured time only.
+            creditStudyStreak(data);
             recordStudyActivity({
               type: "lesson_completed",
               nodeId,
@@ -423,6 +463,7 @@ export const useProgress = create<ProgressState>()(
           if (data.nodes[nodeId].completedAt) {
             reschedulePendingReview(data, nodeId, data.spacedRepetition[nodeId]?.currentIntervalIndex ?? 0);
           }
+          creditStudyStreak(data);
           recordStudyActivity({
             type: "quiz_completed",
             nodeId,
@@ -567,6 +608,7 @@ export const useProgress = create<ProgressState>()(
           }
 
           scheduleReviewAtIndex(data, nodeId, nextIntervalIndex);
+          creditStudyStreak(data, todayStr);
           pruneDailyMaps(data);
           recordStudyActivity({ type: "review_done", nodeId, meta: { confidence } });
           return { data };
@@ -683,21 +725,13 @@ export const useProgress = create<ProgressState>()(
         set((state) => {
           const data = structuredClone(state.data);
           const minutes = seconds / 60;
-          data.totalStudyMinutes += minutes;
           const today = getToday();
-          data.dailyMinutes[today] = (data.dailyMinutes[today] || 0) + minutes;
+          creditDailyMinutes(data, minutes, today);
           if (nodeId) {
             if (!data.nodes[nodeId]) data.nodes[nodeId] = emptyNodeProgress();
             data.nodes[nodeId].timeSpentMinutes += minutes;
           }
-          if (data.streaks.lastStudyDate !== today) {
-            if (data.streaks.lastStudyDate === yesterdayString()) data.streaks.current += 1;
-            else data.streaks.current = 1;
-            if (data.streaks.current > data.streaks.longest) {
-              data.streaks.longest = data.streaks.current;
-            }
-            data.streaks.lastStudyDate = today;
-          }
+          creditStudyStreak(data, today);
           if (minutes >= 1) {
             recordStudyActivity({
               type: "timer_minutes",
@@ -706,6 +740,26 @@ export const useProgress = create<ProgressState>()(
             });
           }
           pruneDailyMaps(data);
+          return { data };
+        }),
+
+      creditStudyDay: (minutes = 0) =>
+        set((state) => {
+          const today = getToday();
+          if (state.data.streaks.lastStudyDate === today && !(minutes > 0)) {
+            return { data: state.data };
+          }
+          const data = structuredClone(state.data);
+          creditStudyStreak(data, today);
+          creditDailyMinutes(data, minutes, today);
+          pruneDailyMaps(data);
+          return { data };
+        }),
+
+      setDailyGoal: (goalMinutes) =>
+        set((state) => {
+          const data = structuredClone(state.data);
+          data.dailyGoal = Math.max(5, Math.min(600, Math.round(goalMinutes)));
           return { data };
         }),
 
