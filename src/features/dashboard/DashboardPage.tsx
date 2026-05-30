@@ -19,6 +19,7 @@ import { DEFAULT_TRACK_ID } from "@/lib/campusHome";
 import { getTrackChallengeCategory } from "@/lib/coursework";
 import { shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
+import { formatAppVersion } from "@/lib/version";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
 import { RightNowHero } from "./widgets/RightNowHero";
@@ -178,6 +179,9 @@ export function DashboardPage() {
         <Link to={ROUTES.stats} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
           Stats
         </Link>
+        <span className="ml-auto text-[var(--text-subtle)]" title="App version">
+          {formatAppVersion()}
+        </span>
       </footer>
     </PageContainer>
   );

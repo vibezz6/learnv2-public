@@ -26,6 +26,7 @@ export const ROUTES = {
   stats: "/stats",
   settings: "/settings",
   satMistakes: "/subjects/sat-prep#mistakes",
+  satSkills: "/subjects/sat-prep#skills",
   satRecommended: "/subjects/sat-prep#recommended",
   satOfficial: "/subjects/sat-prep#official",
   satDiagnostic: "/subjects/sat-prep#diagnostic",

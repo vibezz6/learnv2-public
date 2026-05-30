@@ -6,6 +6,7 @@ import { usePreferences } from "@/stores/preferences";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
+import { formatAppVersion } from "@/lib/version";
 import { subscribeActivityUpdated } from "@/lib/studyActivity";
 import { ROUTES } from "@/app/navigation";
 import { cn } from "@/lib/cn";
@@ -103,17 +104,22 @@ export function StatusBar({ reviewCount, collapsed }: Props) {
         ) : null}
       </div>
 
-      <NavLink
-        to={ROUTES.settings}
-        className={cn(
-          "inline-flex items-center gap-1.5 hover:text-[var(--accent)]",
-          countdown && !countdown.past ? "text-[var(--warning-fg)]" : undefined,
-        )}
-        title={countdown ? "Days until your SAT" : "Set your SAT date"}
-      >
-        <GraduationCap size={11} aria-hidden />
-        {formatCountdownLabel(countdown)}
-      </NavLink>
+      <div className="flex items-center gap-3">
+        <NavLink
+          to={ROUTES.settings}
+          className={cn(
+            "inline-flex items-center gap-1.5 hover:text-[var(--accent)]",
+            countdown && !countdown.past ? "text-[var(--warning-fg)]" : undefined,
+          )}
+          title={countdown ? "Days until your SAT" : "Set your SAT date"}
+        >
+          <GraduationCap size={11} aria-hidden />
+          {formatCountdownLabel(countdown)}
+        </NavLink>
+        <span className="text-[var(--text-subtle)]" title="App version">
+          {formatAppVersion()}
+        </span>
+      </div>
     </div>
   );
 }

@@ -20,6 +20,7 @@ import {
   BACKUP_STORAGE_PREFIXES,
 } from "@/lib/storageRegistry";
 import { isSoundEnabled, setSoundEnabled } from "@/stores/sound";
+import { formatAppVersion } from "@/lib/version";
 import { AdmissionsSettingsCard } from "@/features/settings/AdmissionsSettingsCard";
 import { ActivityLogPanel } from "@/features/settings/widgets/ActivityLogPanel";
 import { StorageHealthPanel } from "@/features/settings/widgets/StorageHealthPanel";
@@ -481,6 +482,10 @@ export function SettingsPage() {
         }}
         onCancel={() => setShowResetConfirm(false)}
       />
+
+      <p className="pt-2 text-center font-mono text-[11px] text-[var(--text-subtle)]">
+        Learn {formatAppVersion()} · local-first, your data stays in this browser
+      </p>
     </PageContainer>
   );
 }

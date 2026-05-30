@@ -80,12 +80,19 @@ export function SatWeeklyProgressCard() {
               </Tag>
             ))}
           </div>
-          <Link to={ROUTES.satDrill} className="mt-3 inline-block">
-            <Button size="sm">
-              <Target size={14} aria-hidden />
-              Drill your top miss
-            </Button>
-          </Link>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link to={ROUTES.satDrill}>
+              <Button size="sm">
+                <Target size={14} aria-hidden />
+                Drill your top miss
+              </Button>
+            </Link>
+            <Link to={ROUTES.satSkills}>
+              <Button variant="secondary" size="sm">
+                Skill breakdown
+              </Button>
+            </Link>
+          </div>
         </div>
       ) : null}
       </Card>

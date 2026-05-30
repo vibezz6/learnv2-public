@@ -34,6 +34,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
 import { SatDiagnosticSection } from "@/features/sat/SatDiagnosticSection";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
+import { SatSkillMasterySection } from "@/features/sat/SatSkillMasterySection";
 import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
 import { SatPracticeWeekCard } from "@/features/subjects/widgets/SatPracticeWeekCard";
 import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsCard";
@@ -602,7 +603,13 @@ export function SubjectDetailPage() {
   useEffect(() => {
     if (subjectId !== "sat-prep" || loadState.phase !== "ok") return;
     const hash = location.hash.replace("#", "");
-    if (hash !== "mistakes" && hash !== "official" && hash !== "recommended" && hash !== "diagnostic") {
+    if (
+      hash !== "mistakes" &&
+      hash !== "official" &&
+      hash !== "recommended" &&
+      hash !== "diagnostic" &&
+      hash !== "skills"
+    ) {
       return;
     }
     if (hash === "diagnostic" || hash === "official") {
@@ -684,6 +691,10 @@ export function SubjectDetailPage() {
             <Card variant="default" density="normal" className="min-w-0">
               <SatPracticeWeekCard />
             </Card>
+          </Section>
+
+          <Section eyebrow="Skill mastery" id="skills" divider>
+            <SatSkillMasterySection subject={subject} />
           </Section>
 
           <Section eyebrow="Mistake log" id="mistakes" divider>
