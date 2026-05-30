@@ -42,7 +42,7 @@ function SkillRow({ row }: { row: SatSkillMasteryRow }) {
           due
         </Tag>
       ) : null}
-      {row.questionCount < 5 ? (
+      {row.questionCount > 0 && row.questionCount < 5 ? (
         <span
           className="font-mono text-[11px] text-[var(--text-subtle)]"
           title="Few practice questions for this skill"
@@ -50,14 +50,31 @@ function SkillRow({ row }: { row: SatSkillMasteryRow }) {
           {row.questionCount} Q{row.questionCount === 1 ? "" : "s"}
         </span>
       ) : null}
+      {row.questionCount > 0 ? (
+        <Link to={`${ROUTES.satDrill}?skill=${row.skillId}`}>
+          <Button variant="secondary" size="sm">
+            Drill
+          </Button>
+        </Link>
+      ) : (
+        <span className="font-mono text-[11px] text-[var(--text-subtle)]" title="No practice questions for this skill yet">
+          needs questions
+        </span>
+      )}
     </li>
   );
 }
 
 /** Per-skill "where am I weak / what do I attack" view for the SAT hub. */
-export function SatSkillMasterySection({ subject }: { subject: Subject }) {
+export function SatSkillMasterySection({
+  subject,
+  storage,
+}: {
+  subject: Subject;
+  storage?: Storage;
+}) {
   const [showAll, setShowAll] = useState(false);
-  const rows = useMemo(() => getSatSkillMastery([subject]), [subject]);
+  const rows = useMemo(() => getSatSkillMastery([subject], storage), [subject, storage]);
   const tracked = rows.filter((r) => r.hasSignal);
 
   return (

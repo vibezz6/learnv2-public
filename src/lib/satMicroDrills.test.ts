@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Subject } from "@/curriculum/types";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
-import { buildSatMicroDrill } from "@/lib/satMicroDrills";
+import { buildSatMicroDrill, skillTargetSummary } from "@/lib/satMicroDrills";
 
 function mapStorage(): Storage {
   const map = new Map<string, string>();
@@ -78,6 +78,19 @@ describe("buildSatMicroDrill (skill-based)", () => {
     const drill = buildSatMicroDrill(subjects, storage, 5);
     expect(drill.questions.length).toBeGreaterThan(0);
     expect(drill.thin).toBe(false); // no targeted skill -> not flagged thin
+  });
+
+  it("skillTargetSummary builds a target that drills that skill's questions", () => {
+    const storage = mapStorage();
+    const target = skillTargetSummary("sentence-boundaries");
+    expect(target?.skillId).toBe("sentence-boundaries");
+    const drill = buildSatMicroDrill(subjects, storage, 5, target);
+    expect(drill.questions[0]?.nodeId).toBe("st27");
+  });
+
+  it("skillTargetSummary returns null for non-content (mixed/general) skills", () => {
+    expect(skillTargetSummary("test-strategy")).toBeNull();
+    expect(skillTargetSummary("math-mixed")).toBeNull();
   });
 
   it("dedupes and stays within the limit", () => {

@@ -1,6 +1,23 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
 import { getPrimaryMistakeCategory, type MistakeCategorySummary } from "@/lib/satMistakeTriage";
 import { nodeRelevanceTier, type WeakTarget } from "@/lib/satSkillMatch";
+import { SAT_SKILLS, type SatSkillId } from "@/lib/satSkills";
+
+/**
+ * Build a drill target for a specific skill (e.g. from a "Drill this skill"
+ * link). Returns null for non-content skills (general / strategy buckets).
+ */
+export function skillTargetSummary(skillId: SatSkillId): MistakeCategorySummary | null {
+  const meta = SAT_SKILLS[skillId];
+  if (meta.section === "general" || meta.domain === "Mixed") return null;
+  return {
+    category: meta.label,
+    skillId,
+    count: 0,
+    latestDate: "",
+    latestSection: meta.section,
+  };
+}
 
 export interface SatMicroDrillQuestion {
   subjectId: string;

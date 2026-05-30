@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Target } from "lucide-react";
 import { Button, Card, EmptyState, PageContainer, PageHeader, PageLoading } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { Quiz } from "@/features/quiz/QuizPage";
-import { buildSatMicroDrill } from "@/lib/satMicroDrills";
+import { buildSatMicroDrill, skillTargetSummary } from "@/lib/satMicroDrills";
 import { getDrillKey, getNextDrillCategory, markCategoryDrilled } from "@/lib/satDrillSchedule";
+import { isSatSkillId } from "@/lib/satSkills";
 import { getToday } from "@/stores/progress";
 import { ROUTES } from "@/app/navigation";
 
@@ -22,7 +23,15 @@ export function SatDrillPage() {
     loadAllSubjects().then(setSubjects);
   }, []);
 
-  const target = useMemo(() => getNextDrillCategory(), []);
+  const [searchParams] = useSearchParams();
+  const skillParam = searchParams.get("skill");
+  const target = useMemo(() => {
+    if (skillParam && isSatSkillId(skillParam)) {
+      const skillTarget = skillTargetSummary(skillParam);
+      if (skillTarget) return skillTarget;
+    }
+    return getNextDrillCategory();
+  }, [skillParam]);
   const drill = useMemo(
     () => (subjects ? buildSatMicroDrill(subjects, localStorage, 5, target) : null),
     [subjects, target],

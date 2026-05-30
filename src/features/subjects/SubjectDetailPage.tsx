@@ -42,6 +42,8 @@ import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
 import { listMistakes } from "@/lib/satMistakeLog";
 import { getSubjectAccent } from "@/lib/subjectAccent";
+import { getSatSkillMastery } from "@/lib/satSkillMastery";
+import { ROUTES } from "@/app/navigation";
 import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -469,6 +471,10 @@ function SatHeroBand({ subject, completed }: { subject: Subject; completed: numb
   const total = subject.nodes.length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
   const days = daysUntil(AUGUST_SAT_DATE);
+  const weakest = useMemo(
+    () => getSatSkillMastery([subject]).find((row) => row.hasSignal) ?? null,
+    [subject],
+  );
   return (
     <Card variant="primary" density="roomy" className="min-w-0">
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--rule)] pb-3">
@@ -487,6 +493,18 @@ function SatHeroBand({ subject, completed }: { subject: Subject; completed: numb
       <div className="mt-4">
         <Meter value={pct} ariaLabel="August SAT progress" />
       </div>
+      {weakest ? (
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--rule)] pt-3 text-sm">
+          <span className="text-[var(--text-muted)]">Weakest skill</span>
+          <span className="font-medium text-[var(--text-heading)]">{weakest.label}</span>
+          <Link to={`${ROUTES.satDrill}?skill=${weakest.skillId}`} className="ml-auto">
+            <Button variant="secondary" size="sm">
+              <Target size={14} aria-hidden />
+              Drill it
+            </Button>
+          </Link>
+        </div>
+      ) : null}
     </Card>
   );
 }
