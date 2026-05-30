@@ -76,6 +76,7 @@ export function StreakCalendar({ dailyMinutes, selectedDate, onSelectDate }: Pro
       counts.set(event.date, (counts.get(event.date) ?? 0) + 1);
     }
     return counts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `activityRevision` is the recompute trigger for the non-reactive loadStudyActivities() read
   }, [activityRevision]);
 
   const cellSize = 11;

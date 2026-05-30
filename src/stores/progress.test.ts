@@ -140,6 +140,52 @@ describe("progress", () => {
     expect(data.streaks.current).toBe(1);
   });
 
+  it("completeNode advances the study streak without the timer", () => {
+    expect(useProgress.getState().data.streaks.current).toBe(0);
+    useProgress.getState().completeNode("m1", 50);
+    const data = useProgress.getState().data;
+    expect(data.streaks.current).toBe(1);
+    expect(data.streaks.lastStudyDate).toBe(getToday());
+    // Minutes stay measured-only — completing a lesson does not fabricate minutes.
+    expect(data.dailyMinutes[getToday()] ?? 0).toBe(0);
+  });
+
+  it("a finished quiz advances the study streak", () => {
+    useProgress.getState().saveQuizAttempt("m1", {
+      score: 80,
+      totalQuestions: 5,
+      correctAnswers: 4,
+      date: getToday(),
+      timeTakenSeconds: 120,
+    });
+    expect(useProgress.getState().data.streaks.current).toBe(1);
+  });
+
+  it("completing a review advances the study streak", () => {
+    useProgress.getState().completeNode("m1", 50);
+    useProgress.setState({
+      data: { ...useProgress.getState().data, streaks: { current: 0, longest: 0, lastStudyDate: null } },
+    });
+    useProgress.getState().completeReviewWithConfidence("m1", "normal");
+    expect(useProgress.getState().data.streaks.current).toBe(1);
+  });
+
+  it("creditStudyDay is idempotent for the streak within a day", () => {
+    useProgress.getState().creditStudyDay();
+    useProgress.getState().creditStudyDay();
+    useProgress.getState().creditStudyDay(5);
+    const data = useProgress.getState().data;
+    expect(data.streaks.current).toBe(1);
+    expect(data.dailyMinutes[getToday()]).toBe(5);
+  });
+
+  it("setDailyGoal clamps to a sane range", () => {
+    useProgress.getState().setDailyGoal(9000);
+    expect(useProgress.getState().data.dailyGoal).toBe(600);
+    useProgress.getState().setDailyGoal(2);
+    expect(useProgress.getState().data.dailyGoal).toBe(5);
+  });
+
   it("completeDailyChallenge awards XP once per day", () => {
     useProgress.getState().completeDailyChallenge("dc001", 25);
     useProgress.getState().completeDailyChallenge("dc001", 25);
@@ -574,6 +620,28 @@ describe("progress migrateAllFromV1", () => {
     expect(data.totalXp).toBe(420);
     expect(data.streaks.current).toBe(5);
     expect(data.spacedRepetition.m1.scheduledReviews[0].scheduledDate).toBe("2026-05-22");
+  });
+
+  it("does not inflate the current streak when merging a stale backup", () => {
+    // A real, current streak earned today (completing a node makes progress
+    // non-empty so the genuine merge path runs, not the first-import shortcut).
+    useProgress.getState().completeNode("m1", 50);
+    expect(useProgress.getState().data.streaks.current).toBe(1);
+
+    // A stale backup claiming a 12-day streak from months ago must only raise
+    // `longest` — today's `current` stays honest.
+    localStorage.setItem(
+      V1_STORAGE_KEY,
+      JSON.stringify({
+        totalXp: 999,
+        streaks: { current: 12, longest: 12, lastStudyDate: "2026-01-01" },
+      }),
+    );
+    useProgress.getState().importFromV1();
+
+    const data = useProgress.getState().data;
+    expect(data.streaks.current).toBe(1);
+    expect(data.streaks.longest).toBe(12);
   });
 
   it("merges legacy notes and theme in one migration call", () => {

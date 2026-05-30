@@ -13,11 +13,8 @@ export interface QuizQuestion {
   explanation: string;
   difficulty?: "easy" | "medium" | "hard";
   image?: string;
-  type?: "multiple-choice" | "code-completion" | "drag-and-drop";
-  codeTemplate?: string;
-  correctCode?: string;
-  dragItems?: string[];
-  correctOrder?: number[];
+  /** Only multiple-choice is implemented; the field is kept for forward-compat. */
+  type?: "multiple-choice";
 }
 
 export interface SkillNode {

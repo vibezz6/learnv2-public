@@ -1,14 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { ArrowRight, BookOpen, Lock, CheckCircle2, Circle, Minus, Plus } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Circle,
+  ClipboardList,
+  Lock,
+  Minus,
+  Plus,
+  Sparkles,
+  Target,
+} from "lucide-react";
 import {
   Button,
   Card,
   EmptyState,
+  Meter,
   PageContainer,
   PageHeader,
   PageLoading,
   Section,
+  Stat,
+  Tag,
 } from "@/components/ui";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { loadSubjectResult } from "@/curriculum/loader";
@@ -21,6 +38,9 @@ import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCar
 import { SatPracticeWeekCard } from "@/features/subjects/widgets/SatPracticeWeekCard";
 import { SatRecommendedLessonsCard } from "@/features/sat/SatRecommendedLessonsCard";
 import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
+import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
+import { listMistakes } from "@/lib/satMistakeLog";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { cn } from "@/lib/cn";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -29,6 +49,9 @@ const NODE_W = 184;
 const NODE_H = 76;
 const COL_GAP = 36;
 const ROW_GAP = 24;
+
+/** Approximate August 2026 SAT date for the countdown. */
+const AUGUST_SAT_DATE = "2026-08-22";
 
 interface TreeLayout {
   columns: SkillNode[][];
@@ -104,10 +127,7 @@ function buildTreeLayout(nodes: SkillNode[]): TreeLayout {
   return { columns, orderedNodes, edges, positions, width, height };
 }
 
-function edgePath(
-  from: { x: number; y: number },
-  to: { x: number; y: number },
-): string {
+function edgePath(from: { x: number; y: number }, to: { x: number; y: number }): string {
   const x1 = from.x + NODE_W;
   const y1 = from.y + NODE_H / 2;
   const x2 = to.x;
@@ -123,32 +143,32 @@ function statusMeta(status: NodeStatus) {
         label: "Done",
         icon: CheckCircle2,
         nodeClass:
-          "border-[var(--success)]/50 bg-[var(--success-bg)]/30 transition-colors hover:border-[var(--success)]/70",
+          "border-[var(--success-border)] bg-[var(--bg-panel)] hover:border-[var(--success)]",
         dotClass: "bg-[var(--success)]",
         iconClass: "text-[var(--success)]",
         textClass: "text-[var(--text-heading)]",
-        legendClass: "border-[var(--success)]/40 bg-[var(--success-bg)]/20",
+        tagTone: "success" as const,
       };
     case "available":
       return {
         label: "Open",
         icon: Circle,
         nodeClass:
-          "border-[var(--border-strong)] bg-[var(--bg-elevated)] ring-1 ring-[var(--accent)]/30 transition-colors hover:border-[var(--accent)]/50 hover:ring-[var(--accent)]/45",
+          "border-[var(--accent-border)] bg-[var(--bg-panel)] hover:border-[var(--accent)]",
         dotClass: "bg-[var(--accent)]",
         iconClass: "text-[var(--accent)]",
         textClass: "text-[var(--text-heading)]",
-        legendClass: "border-[var(--accent)]/40 bg-[var(--accent-bg)]/30",
+        tagTone: "accent" as const,
       };
     default:
       return {
         label: "Locked",
         icon: Lock,
-        nodeClass: "border-[var(--border-strong)] bg-[var(--bg-secondary)]/60 opacity-70",
-        dotClass: "border border-[var(--border-strong)] bg-[var(--bg-elevated)]",
-        iconClass: "text-[var(--text-muted)]",
+        nodeClass: "border-[var(--rule)] bg-[var(--bg-sunken)] opacity-70",
+        dotClass: "border border-[var(--rule-strong)] bg-[var(--bg-panel)]",
+        iconClass: "text-[var(--text-subtle)]",
         textClass: "text-[var(--text-muted)]",
-        legendClass: "border-[var(--border-strong)] bg-[var(--bg-secondary)]/60",
+        tagTone: "muted" as const,
       };
   }
 }
@@ -161,21 +181,13 @@ function SkillTreeLegend() {
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
+    <div className="flex flex-wrap items-center gap-1.5">
       {items.map(({ status, label }) => {
         const meta = statusMeta(status);
-        const Icon = meta.icon;
         return (
-          <span
-            key={status}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2 py-1 font-medium",
-              meta.legendClass,
-            )}
-          >
-            <Icon size={12} className={meta.iconClass} aria-hidden />
+          <Tag key={status} tone={meta.tagTone} size="sm" mono>
             {label}
-          </span>
+          </Tag>
         );
       })}
     </div>
@@ -208,11 +220,11 @@ function SkillNodeTooltip({
 
   return (
     <div
-      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-4 text-left opacity-0 shadow-[var(--shadow-md)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-panel)] p-4 text-left opacity-0 shadow-[var(--shadow-md)] transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
       role="tooltip"
     >
       <p className="text-xs font-medium text-[var(--text-heading)]">{node.name}</p>
-      <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+      <p className="mt-1 font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
         {meta.label} · ~{node.estimatedMinutes} min · {node.xpValue} XP
       </p>
       {prereqs.length > 0 && (
@@ -240,42 +252,29 @@ function SkillNodeCard({
 }) {
   const meta = statusMeta(status);
   const Icon = meta.icon;
-  const locked = status === "locked";
 
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-[var(--radius)] border p-3",
+        "flex h-full flex-col rounded-[var(--radius)] border p-3 transition-colors",
         meta.nodeClass,
-        compact ? "min-h-[76px]" : "",
+        compact && "min-h-[76px]",
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span
-          className="truncate font-mono text-[10px] font-medium tabular-nums text-[var(--text-muted)]"
-        >
+        <span className="truncate font-mono text-[10px] font-medium text-[var(--text-subtle)] tabular-nums">
           {node.id}
         </span>
-        <Icon size={compact ? 13 : 15} className={cn("shrink-0", meta.iconClass)} />
+        <Icon size={compact ? 12 : 14} className={cn("shrink-0", meta.iconClass)} aria-hidden />
       </div>
-      <h3
-        className={cn(
-          "mt-1.5 line-clamp-3 text-[12px] font-medium leading-snug",
-          meta.textClass,
-        )}
-      >
+      <h3 className={cn("mt-1.5 line-clamp-3 text-[12px] font-medium leading-snug", meta.textClass)}>
         {node.name}
       </h3>
       {!compact && (
         <p className="mt-1 line-clamp-2 text-xs text-[var(--text-muted)]">{node.description}</p>
       )}
       <div className="mt-auto pt-2">
-        <span
-          className={cn(
-            "font-mono text-[10px] tabular-nums",
-            locked ? "text-[var(--text-muted)]" : "text-[var(--text-muted)]",
-          )}
-        >
+        <span className="font-mono text-[10px] text-[var(--text-subtle)] tabular-nums">
           {node.xpValue} XP
         </span>
       </div>
@@ -306,16 +305,16 @@ function SkillTreeGraph({
   const zoomReset = () => setScale(1);
 
   return (
-    <div className="relative overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--bg-elevated)]">
+    <div className="relative overflow-x-auto rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-canvas)]">
       <div className="absolute right-3 top-3 z-10 flex gap-1">
-        <Button variant="secondary" className="h-8 w-8 p-0" onClick={zoomOut} aria-label="Zoom out">
-          <Minus size={14} />
+        <Button variant="secondary" size="sm" className="h-8 w-8 p-0" onClick={zoomOut} aria-label="Zoom out">
+          <Minus size={13} />
         </Button>
-        <Button variant="secondary" className="h-8 min-w-10 px-2 font-mono text-xs" onClick={zoomReset}>
+        <Button variant="secondary" size="sm" className="h-8 min-w-12 px-2 font-mono" onClick={zoomReset}>
           {Math.round(scale * 100)}%
         </Button>
-        <Button variant="secondary" className="h-8 w-8 p-0" onClick={zoomIn} aria-label="Zoom in">
-          <Plus size={14} />
+        <Button variant="secondary" size="sm" className="h-8 w-8 p-0" onClick={zoomIn} aria-label="Zoom in">
+          <Plus size={13} />
         </Button>
       </div>
       <div
@@ -334,61 +333,58 @@ function SkillTreeGraph({
             minHeight: height + pad * 2,
           }}
         >
-        <svg
-          className="pointer-events-none absolute inset-0 h-full w-full"
-          aria-hidden
-        >
-          {edges.map(({ from, to }) => {
-            const fromPos = positions.get(from);
-            const toPos = positions.get(to);
-            if (!fromPos || !toPos) return null;
-            const parent = nodeById.get(from);
-            const active = parent ? getNodeStatus(parent) === "completed" : false;
+          <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
+            {edges.map(({ from, to }) => {
+              const fromPos = positions.get(from);
+              const toPos = positions.get(to);
+              if (!fromPos || !toPos) return null;
+              const parent = nodeById.get(from);
+              const active = parent ? getNodeStatus(parent) === "completed" : false;
+              return (
+                <path
+                  key={`${from}-${to}`}
+                  d={edgePath(
+                    { x: fromPos.x + pad, y: fromPos.y + pad },
+                    { x: toPos.x + pad, y: toPos.y + pad },
+                  )}
+                  fill="none"
+                  stroke={active ? "var(--accent)" : "var(--rule-strong)"}
+                  strokeWidth={active ? 1.5 : 1}
+                  opacity={active ? 0.7 : 0.45}
+                />
+              );
+            })}
+          </svg>
+
+          {subject.nodes.map((node) => {
+            const pos = positions.get(node.id);
+            if (!pos) return null;
+            const status = getNodeStatus(node);
+            const locked = status === "locked";
+
             return (
-              <path
-                key={`${from}-${to}`}
-                d={edgePath(
-                  { x: fromPos.x + pad, y: fromPos.y + pad },
-                  { x: toPos.x + pad, y: toPos.y + pad },
+              <Link
+                key={node.id}
+                to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
+                className={cn(
+                  "group absolute block",
+                  locked
+                    ? "pointer-events-none cursor-not-allowed"
+                    : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-canvas)]",
                 )}
-                fill="none"
-                stroke={active ? "var(--accent)" : "var(--border-strong)"}
-                strokeWidth={active ? 1.5 : 1}
-                opacity={active ? 0.65 : 0.35}
-              />
+                style={{
+                  left: pos.x + pad,
+                  top: pos.y + pad,
+                  width: NODE_W,
+                  height: NODE_H,
+                }}
+                aria-disabled={locked}
+              >
+                {!locked && <SkillNodeTooltip node={node} status={status} subject={subject} />}
+                <SkillNodeCard node={node} status={status} compact />
+              </Link>
             );
           })}
-        </svg>
-
-        {subject.nodes.map((node) => {
-          const pos = positions.get(node.id);
-          if (!pos) return null;
-          const status = getNodeStatus(node);
-          const locked = status === "locked";
-
-          return (
-            <Link
-              key={node.id}
-              to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
-              className={cn(
-                "group absolute block",
-                locked
-                  ? "pointer-events-none cursor-not-allowed"
-                  : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-elevated)]",
-              )}
-              style={{
-                left: pos.x + pad,
-                top: pos.y + pad,
-                width: NODE_W,
-                height: NODE_H,
-              }}
-              aria-disabled={locked}
-            >
-              {!locked && <SkillNodeTooltip node={node} status={status} subject={subject} />}
-              <SkillNodeCard node={node} status={status} compact />
-            </Link>
-          );
-        })}
         </div>
       </div>
     </div>
@@ -407,7 +403,7 @@ function SkillNodeList({
   return (
     <div className="relative space-y-0">
       <div
-        className="absolute bottom-4 left-[11px] top-4 w-px bg-[var(--border-strong)]"
+        className="absolute bottom-4 left-[11px] top-4 w-px bg-[var(--rule-strong)]"
         aria-hidden
       />
       {nodes.map((node, index) => {
@@ -422,13 +418,13 @@ function SkillNodeList({
             className={cn(
               "relative block pl-8",
               locked ? "pointer-events-none" : "group",
-              index > 0 ? "mt-3" : "",
+              index > 0 && "mt-3",
             )}
             aria-disabled={locked}
           >
             <span
               className={cn(
-                "absolute left-0 top-5 z-[1] h-6 w-6 rounded-full border-2 border-[var(--bg)]",
+                "absolute left-0 top-5 z-[1] h-6 w-6 rounded-full border-2 border-[var(--bg-canvas)]",
                 meta.dotClass,
               )}
               aria-hidden
@@ -457,12 +453,135 @@ function unavailableDescription(reason: Exclude<LoadSubjectResult["status"], "ok
   }
 }
 
+function daysUntil(dateString: string): number {
+  const target = new Date(`${dateString}T12:00:00`);
+  const today = new Date();
+  const start = new Date(
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+      today.getDate(),
+    ).padStart(2, "0")}T12:00:00`,
+  );
+  return Math.max(0, Math.round((target.getTime() - start.getTime()) / 86_400_000));
+}
+
+function SatHeroBand({ subject, completed }: { subject: Subject; completed: number }) {
+  const total = subject.nodes.length;
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const days = daysUntil(AUGUST_SAT_DATE);
+  return (
+    <Card variant="primary" density="roomy" className="min-w-0">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--rule)] pb-3">
+        <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: getSubjectAccent(subject.id) }} />
+        <span className="eyebrow-mono">August SAT command center</span>
+        <Tag tone="accent" size="sm" mono className="ml-auto gap-1">
+          <Calendar size={11} aria-hidden />
+          T-{days} days
+        </Tag>
+      </div>
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <Stat label="Skill tree" value={`${pct}%`} sub={`${completed}/${total} done`} />
+        <Stat label="Days to SAT" value={days} sub="Aug 22, 2026" />
+        <Stat label="Track" value="August" sub="75 lessons" />
+      </div>
+      <div className="mt-4">
+        <Meter value={pct} ariaLabel="August SAT progress" />
+      </div>
+    </Card>
+  );
+}
+
+function SatMistakesPrimary() {
+  const top = useMemo(() => getTopMistakeCategories(3), []);
+  const total = useMemo(() => listMistakes().length, []);
+  return (
+    <Card variant="default" density="normal" className="min-w-0">
+      <div className="flex items-center gap-2 border-b border-[var(--rule)] pb-3">
+        <Target size={14} className="text-[var(--text-muted)]" aria-hidden />
+        <p className="eyebrow-mono">Mistakes to drill</p>
+        <Tag tone="mono" size="sm" className="ml-auto">
+          {total} logged
+        </Tag>
+      </div>
+      <div className="mt-3 space-y-2">
+        {top.length === 0 ? (
+          <p className="text-sm text-[var(--text-muted)]">
+            Log misses below after a Bluebook or Khan session — the top three categories will show
+            up here so retarget drills stay focused.
+          </p>
+        ) : (
+          top.map((row) => (
+            <div
+              key={row.category}
+              className="flex items-baseline justify-between gap-3 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-sunken)] px-3 py-2 text-sm"
+            >
+              <span className="min-w-0 truncate font-medium text-[var(--text)]">{row.category}</span>
+              <Tag tone="warning" size="sm" mono>
+                {row.count} {row.count === 1 ? "miss" : "misses"}
+              </Tag>
+            </div>
+          ))
+        )}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link to="/subjects/sat-prep#mistakes">
+          <Button variant="secondary" size="sm">
+            <ClipboardList size={14} aria-hidden />
+            Open mistake log
+          </Button>
+        </Link>
+        <Link to="/subjects/sat-prep#recommended">
+          <Button variant="ghost" size="sm">
+            Suggestions
+            <ArrowRight size={12} aria-hidden />
+          </Button>
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
+function SatTodayPrimary({
+  subject,
+  getNodeStatus,
+}: {
+  subject: Subject;
+  getNodeStatus: (node: SkillNode) => NodeStatus;
+}) {
+  const study = getSatDailyStudyCommand({ subjects: [subject], getNodeStatus });
+  if (!study) return null;
+  return (
+    <Card variant="primary" density="normal" className="min-w-0">
+      <div className="flex items-center gap-2 border-b border-[var(--rule)] pb-3">
+        <Sparkles size={14} className="text-[var(--accent)]" aria-hidden />
+        <p className="eyebrow-mono">SAT today</p>
+      </div>
+      <div className="mt-3 space-y-2">
+        <h3 className="text-base font-semibold text-[var(--text-heading)]">{study.headline}</h3>
+        <p className="text-sm leading-relaxed text-[var(--text-muted)]">{study.detail}</p>
+        {study.diagnosticNote ? (
+          <p className="text-xs text-[var(--text-subtle)]">{study.diagnosticNote}</p>
+        ) : null}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Link to={study.href} className="min-w-0">
+          <Button className="max-w-full">
+            <span className="truncate">{study.buttonLabel}</span>
+            <ArrowRight size={14} aria-hidden className="shrink-0" />
+          </Button>
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
 export function SubjectDetailPage() {
   const { subjectId = "" } = useParams();
   const location = useLocation();
   const progressNodes = useProgress((s) => s.data.nodes);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const [loadState, setLoadState] = useState<SubjectLoadState>({ phase: "loading" });
+  const [skillTreeOpen, setSkillTreeOpen] = useState(true);
+  const [secondaryOpen, setSecondaryOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -486,6 +605,9 @@ export function SubjectDetailPage() {
     if (hash !== "mistakes" && hash !== "official" && hash !== "recommended" && hash !== "diagnostic") {
       return;
     }
+    if (hash === "diagnostic" || hash === "official") {
+      setSecondaryOpen(true);
+    }
     const target = document.getElementById(hash);
     if (!target) return;
     requestAnimationFrame(() => {
@@ -501,6 +623,7 @@ export function SubjectDetailPage() {
   const completedCount = useMemo(() => {
     if (loadState.phase !== "ok") return 0;
     return loadState.subject.nodes.filter((n) => getNodeStatus(n) === "completed").length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `progressNodes` is the recompute trigger; getNodeStatus is a stable store selector
   }, [loadState, getNodeStatus, progressNodes]);
 
   if (loadState.phase === "loading") {
@@ -511,112 +634,133 @@ export function SubjectDetailPage() {
     return (
       <PageContainer size="wide" className="space-y-6">
         <PageHeader backTo={{ to: "/subjects", label: "Subjects" }} divider={false} />
-        <Card>
-          <EmptyState
-            title="Course not available yet"
-            description={unavailableDescription(loadState.reason)}
-            actionLabel="Browse subjects"
-            actionTo="/subjects"
-          />
-        </Card>
+        <EmptyState
+          title="Course not available yet"
+          description={unavailableDescription(loadState.reason)}
+          actionLabel="Browse subjects"
+          actionTo="/subjects"
+        />
       </PageContainer>
     );
   }
 
-  if (loadState.phase !== "ok") {
-    return null;
-  }
-
-  if (!layout) {
+  if (loadState.phase !== "ok" || !layout) {
     return null;
   }
 
   const { subject } = loadState;
   const isSatPrep = subject.id === "sat-prep";
-  const satStudy = isSatPrep
-    ? getSatDailyStudyCommand({ subjects: [subject], getNodeStatus })
-    : null;
 
   return (
-    <PageContainer size="xl" className="space-y-8">
+    <PageContainer size="xl" className="space-y-7">
       <PageHeader backTo={{ to: "/subjects", label: "Subjects" }} divider={false} />
 
-      <TrackDetailHeader
-        name={subject.name}
-        description={subject.description}
-        color={subject.color}
-        icon={BookOpen}
-        completed={completedCount}
-        total={subject.nodes.length}
-        className="mt-4"
-      />
+      {!isSatPrep ? (
+        <TrackDetailHeader
+          name={subject.name}
+          description={subject.description}
+          color={getSubjectAccent(subject.id)}
+          icon={BookOpen}
+          completed={completedCount}
+          total={subject.nodes.length}
+          className="mt-4"
+        />
+      ) : (
+        <SatHeroBand subject={subject} completed={completedCount} />
+      )}
 
-      {isSatPrep && satStudy ? (
-        <Section eyebrow="SAT today">
-        <Card variant="primary" className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 space-y-1">
-            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
-              {satStudy.headline}
-            </p>
-            <p className="text-sm text-[var(--text-muted)]">{satStudy.detail}</p>
+      {isSatPrep ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2">
+            <SatTodayPrimary subject={subject} getNodeStatus={getNodeStatus} />
+            <SatMistakesPrimary />
           </div>
-          <Link to={satStudy.href} className="shrink-0">
-            <Button className="min-h-11 w-full sm:w-auto">
-              {satStudy.buttonLabel}
-              <ArrowRight size={14} />
-            </Button>
-          </Link>
-        </Card>
-        </Section>
-      ) : null}
 
-      {isSatPrep ? (
-        <Section eyebrow="Recommended">
-          <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
-        </Section>
-      ) : null}
+          <Section eyebrow="Recommended" id="recommended">
+            <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
+          </Section>
 
-      {isSatPrep ? (
-        <Section eyebrow="Optional baseline">
-          <SatDiagnosticSection />
-        </Section>
-      ) : null}
-
-      {isSatPrep ? (
-        <Section eyebrow="Mistake log">
-          <div id="mistakes" className="scroll-mt-6">
-            <SatMistakeLogPanel />
-          </div>
-          <Card variant="quiet" className="mt-4 min-w-0">
-            <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
-              This week
-            </p>
-            <p className="mt-1 text-sm font-medium text-[var(--text-heading)]">Practice rhythm</p>
-            <div className="mt-3">
+          <Section eyebrow="Practice rhythm">
+            <Card variant="default" density="normal" className="min-w-0">
               <SatPracticeWeekCard />
-            </div>
-          </Card>
-        </Section>
+            </Card>
+          </Section>
+
+          <Section eyebrow="Mistake log" id="mistakes" divider>
+            <SatMistakeLogPanel />
+          </Section>
+
+          <section className="space-y-3" aria-label="Optional SAT tools">
+            <button
+              type="button"
+              onClick={() => setSecondaryOpen((v) => !v)}
+              className="flex w-full items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-canvas)] px-4 py-3 text-left transition hover:border-[var(--rule-strong)]"
+              aria-expanded={secondaryOpen}
+            >
+              <div className="min-w-0">
+                <p className="eyebrow-mono">Optional · diagnostic & official</p>
+                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                  In-app baseline (Drafts 1/2/3) and Bluebook/Khan reference links.
+                </p>
+              </div>
+              {secondaryOpen ? (
+                <ChevronUp size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
+              ) : (
+                <ChevronDown size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
+              )}
+            </button>
+            {secondaryOpen ? (
+              <div className="space-y-4">
+                <div id="diagnostic" className="scroll-mt-6">
+                  <SatDiagnosticSection />
+                </div>
+                <SatOfficialResourcesCard id="official" />
+              </div>
+            ) : null}
+          </section>
+        </>
       ) : null}
 
-      <Section eyebrow="Skill tree" actions={<SkillTreeLegend />}>
-        {isSatPrep ? <SatOfficialResourcesCard id="official" /> : null}
-
-        <div className="md:hidden">
-          <SkillNodeList
-            subject={subject}
-            nodes={layout.orderedNodes}
-            getNodeStatus={getNodeStatus}
-          />
-        </div>
-
-        <div className="hidden md:block">
-          <SkillTreeGraph
-            subject={subject}
-            layout={layout}
-            getNodeStatus={getNodeStatus}
-          />
-        </div>
+      <Section
+        eyebrow={isSatPrep ? "Skill map" : "Skill tree"}
+        actions={
+          <div className="flex items-center gap-3">
+            <SkillTreeLegend />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSkillTreeOpen((v) => !v)}
+              aria-expanded={skillTreeOpen}
+            >
+              {skillTreeOpen ? "Collapse" : "Expand"}
+              {skillTreeOpen ? (
+                <ChevronUp size={13} aria-hidden />
+              ) : (
+                <ChevronDown size={13} aria-hidden />
+              )}
+            </Button>
+          </div>
+        }
+        divider
+      >
+        {skillTreeOpen ? (
+          <>
+            <div className="md:hidden">
+              <SkillNodeList
+                subject={subject}
+                nodes={layout.orderedNodes}
+                getNodeStatus={getNodeStatus}
+              />
+            </div>
+            <div className="hidden md:block">
+              <SkillTreeGraph subject={subject} layout={layout} getNodeStatus={getNodeStatus} />
+            </div>
+          </>
+        ) : (
+          <p className="text-sm text-[var(--text-muted)]">
+            {completedCount} of {subject.nodes.length} lessons complete. Expand to see the full tree.
+          </p>
+        )}
       </Section>
     </PageContainer>
   );

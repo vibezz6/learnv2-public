@@ -6,6 +6,7 @@ import { loadSubjectResult } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { Badge, Button, Card, EmptyState, PageContainer, PageHeader } from "@/components/ui";
 import { summarizeSubjectProgress } from "@/lib/subjectProgress";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
 
@@ -49,6 +50,7 @@ export function SubjectsPage() {
       map.set(subject.id, summarizeSubjectProgress(subject, getNodeStatus));
     }
     return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `progressNodes` is the recompute trigger; getNodeStatus is a stable store selector
   }, [subjects, getNodeStatus, progressNodes]);
 
   const filtered = useMemo(() => {
@@ -136,7 +138,7 @@ export function SubjectsPage() {
                   <div className="flex min-w-0 items-center gap-2">
                     <span
                       className="h-2 w-2 shrink-0 rounded-full"
-                      style={{ background: entry.color }}
+                      style={{ background: getSubjectAccent(entry.id) }}
                       aria-hidden
                     />
                     <span className="font-mono text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
@@ -161,7 +163,7 @@ export function SubjectsPage() {
                     <div className="mt-3 h-1 overflow-hidden rounded-full bg-[var(--border)]">
                       <div
                         className="h-full rounded-full"
-                        style={{ width: `${pct}%`, background: entry.color }}
+                        style={{ width: `${pct}%`, background: getSubjectAccent(entry.id) }}
                       />
                     </div>
                     <p className="mt-2 font-mono text-[11px] tabular-nums text-[var(--text-muted)]">

@@ -1,28 +1,37 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
+  ArrowLeft,
   ArrowRight,
   BookOpen,
   CheckCircle2,
+  ChevronRight,
+  Clock,
   FileText,
   FlaskConical,
   Lightbulb,
   Lock,
+  PencilLine,
+  TriangleAlert,
 } from "lucide-react";
 import {
-  Badge,
   Button,
   Card,
+  Field,
   FocusShell,
+  KeyHint,
   PageContainer,
-  PageHeader,
   PageLoading,
+  Stat,
+  Tag,
+  Textarea,
 } from "@/components/ui";
 import { getAdjacentLessonNodes, getNode, loadSubject } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
 import { CollapsibleSection, WorkedExampleCard } from "@/features/lesson/LessonSections";
 import { useSwipeNavigation } from "@/hooks/useSwipeNavigation";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { usePreferences } from "@/stores/preferences";
 import {
   getTakeaways,
@@ -93,10 +102,10 @@ export function LessonPage() {
   if (!subject || !node) {
     return (
       <PageContainer size="narrow">
-        <p>Lesson not found.</p>
+        <p className="text-sm text-[var(--text-muted)]">Lesson not found.</p>
         <Link to="/subjects">
           <Button variant="secondary" className="mt-4">
-            Back
+            Back to subjects
           </Button>
         </Link>
       </PageContainer>
@@ -106,196 +115,324 @@ export function LessonPage() {
   const status = getNodeStatus(node);
   const isCompleted = status === "completed";
   const isLocked = status === "locked";
+  const subjectAccent = getSubjectAccent(subject.id);
   const timeSpent = Math.round(getNodeProgress(node.id).timeSpentMinutes);
   const tradingLessonIndex = subject.id === "trading" ? getTradingLessonIndex(node.id) : null;
   const showTradingLabCard = tradingLessonIndex !== null && tradingLessonIndex >= 11;
+  const lessonIndex = subject.nodes.findIndex((n) => n.id === node.id) + 1;
 
   const handleComplete = () => {
-    completeNode(node.id, node.xpValue);
+    completeNode(node.id, node.xpValue, subject.id);
   };
+
+  const quizCount = node.quiz?.length ?? 0;
 
   return (
     <FocusShell active={focusMode}>
       <PageContainer
-        size="narrow"
-        className={cn("space-y-8 md:space-y-10", focusMode && "pt-2")}
+        size="lg"
+        className={cn("space-y-6 md:space-y-8", focusMode && "pt-2")}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         {!focusMode && (
-          <PageHeader
-            backTo={{ to: `/subjects/${subject.id}`, label: subject.name }}
-            divider={false}
-          />
+          <nav aria-label="Lesson breadcrumb" className="text-[12px]">
+            <ol className="flex flex-wrap items-center gap-1 text-[var(--text-muted)]">
+              <li>
+                <Link to="/subjects" className="hover:text-[var(--text)]">
+                  Subjects
+                </Link>
+              </li>
+              <li aria-hidden>
+                <ChevronRight size={11} className="text-[var(--text-subtle)]" />
+              </li>
+              <li>
+                <Link
+                  to={`/subjects/${subject.id}`}
+                  className="inline-flex items-center gap-1.5 hover:text-[var(--text)]"
+                >
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: subjectAccent }}
+                  />
+                  {subject.name}
+                </Link>
+              </li>
+              <li aria-hidden>
+                <ChevronRight size={11} className="text-[var(--text-subtle)]" />
+              </li>
+              <li className="font-mono text-[var(--text-subtle)] tabular-nums">
+                lesson {lessonIndex}/{subject.nodes.length}
+              </li>
+            </ol>
+          </nav>
         )}
 
-        <header className="stagger-item space-y-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{node.difficulty}</Badge>
-            {isCompleted && (
-              <span className="inline-flex items-center gap-1 text-sm text-[var(--success)]">
-                <CheckCircle2 size={14} /> Completed
-              </span>
-            )}
-            {isLocked && (
-              <span className="inline-flex items-center gap-1 text-sm text-[var(--warning)]">
-                <Lock size={14} /> Locked
-              </span>
-            )}
-          </div>
-          <h1
-            className={cn(
-              "break-words font-bold tracking-tight text-[var(--text-heading)]",
-              focusMode
-                ? "text-[clamp(2rem,4vw,2.75rem)] leading-[1.15]"
-                : "text-[clamp(1.75rem,3.5vw,2.25rem)] leading-[1.2]",
-            )}
-          >
-            {node.name}
-          </h1>
-          <p
-            className={cn(
-              "break-words max-w-[68ch] leading-relaxed text-[var(--text)]",
-              focusMode ? "text-lg text-[var(--text-muted)]" : "text-base text-[var(--text-muted)]",
-            )}
-          >
-            {node.description}
-          </p>
-        </header>
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,16rem)]">
+          <div className="min-w-0 space-y-6 md:space-y-8">
+            <header className="stagger-item space-y-4">
+              <h1
+                className={cn(
+                  "break-words font-semibold tracking-tight text-[var(--text-heading)]",
+                  focusMode
+                    ? "text-[clamp(2rem,4vw,2.625rem)] leading-[1.15]"
+                    : "text-[clamp(1.625rem,3.5vw,2.125rem)] leading-[1.2]",
+                )}
+              >
+                {node.name}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2">
+                <Tag tone="mono" size="sm">
+                  {node.difficulty}
+                </Tag>
+                {isCompleted ? (
+                  <Tag tone="success" size="sm" mono className="gap-1">
+                    <CheckCircle2 size={11} aria-hidden />
+                    Completed
+                  </Tag>
+                ) : isLocked ? (
+                  <Tag tone="warning" size="sm" mono className="gap-1">
+                    <Lock size={11} aria-hidden />
+                    Locked
+                  </Tag>
+                ) : null}
+                {node.estimatedMinutes > 0 ? (
+                  <Tag tone="mono" size="sm" className="gap-1">
+                    <Clock size={11} aria-hidden />
+                    {node.estimatedMinutes}m
+                  </Tag>
+                ) : null}
+                <Tag tone="mono" size="sm">
+                  +{node.xpValue} XP
+                </Tag>
+                {timeSpent > 0 ? (
+                  <Tag tone="muted" size="sm" mono>
+                    {timeSpent}m logged
+                  </Tag>
+                ) : null}
+              </div>
+              <p className="max-w-[var(--measure-prose)] break-words text-[15px] leading-[1.7] text-[var(--text-muted)] md:text-base">
+                {node.description}
+              </p>
+            </header>
 
-        {showTradingLabCard && (
-          <Card variant="quiet" className="stagger-item">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-w-0 items-start gap-3">
-                <FlaskConical size={18} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
-                <div className="min-w-0 space-y-1">
-                  <p className="text-sm font-medium text-[var(--text-heading)]">Open Trading Lab</p>
-                  <p className="text-sm text-[var(--text-muted)]">
-                    Practice in the sandbox or continue with hands-on Algo Lab modules.
-                  </p>
+            {showTradingLabCard ? (
+              <Card
+                variant="quiet"
+                density="normal"
+                className="stagger-item flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="flex min-w-0 items-start gap-3">
+                  <FlaskConical size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-heading)]">Open Trading Lab</p>
+                    <p className="text-sm text-[var(--text-muted)]">
+                      Practice in the sandbox or continue with hands-on Algo Lab modules.
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex shrink-0 flex-wrap gap-2">
-                <Link to="/lab/trading">
-                  <Button variant="secondary">Trading Lab</Button>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Link to="/lab/trading">
+                    <Button variant="secondary" size="sm">
+                      Trading Lab
+                    </Button>
+                  </Link>
+                  <Link to="/subjects/algo-lab">
+                    <Button variant="secondary" size="sm">
+                      Algo Lab
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ) : null}
+
+            {node.whyItMatters ? (
+              <section
+                className="stagger-item max-w-[var(--measure-prose)] border-l-2 border-[var(--accent-border)] bg-[var(--accent-bg)] px-4 py-3"
+                aria-label="Why it matters"
+              >
+                <p className="eyebrow-mono mb-1.5">Why it matters</p>
+                <p className="break-words text-[15px] leading-[1.7] text-[var(--text)]">
+                  {node.whyItMatters}
+                </p>
+              </section>
+            ) : null}
+
+            {node.keyConcepts.length > 0 && (
+              <CollapsibleSection
+                id={`${node.id}-concepts`}
+                title="Key concepts"
+                icon={<BookOpen size={14} />}
+                count={node.keyConcepts.length}
+                accentColor={subjectAccent}
+              >
+                <ul className="min-w-0 space-y-2 pl-4 [list-style:disc] marker:text-[var(--text-subtle)]">
+                  {node.keyConcepts.map((c) => (
+                    <li
+                      key={c}
+                      className="break-words text-[15px] leading-[1.7] text-[var(--text)]"
+                    >
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </CollapsibleSection>
+            )}
+
+            {node.workedExamples?.map((ex, i) => (
+              <WorkedExampleCard
+                key={i}
+                index={i}
+                nodeId={node.id}
+                problem={ex.problem}
+                solution={ex.solution}
+                explanation={ex.explanation}
+                accentColor={subjectAccent}
+              />
+            ))}
+
+            {node.practiceProblems.length > 0 && (
+              <CollapsibleSection
+                id={`${node.id}-practice`}
+                title="Practice problems"
+                icon={<PencilLine size={14} />}
+                count={node.practiceProblems.length}
+                accentColor={subjectAccent}
+              >
+                <p className="mb-3 text-sm text-[var(--text-muted)]">
+                  Work these on paper before checking your method against the lesson.
+                </p>
+                <ol className="min-w-0 space-y-3">
+                  {node.practiceProblems.map((problem, i) => (
+                    <li key={i} className="relative flex min-w-0 gap-3">
+                      <span
+                        aria-hidden
+                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--accent-border)] bg-[var(--accent-bg)] font-mono text-[10px] font-medium tabular-nums text-[var(--accent)]"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="min-w-0 whitespace-pre-wrap break-words pt-0.5 text-[15px] leading-[1.7] text-[var(--text)]">
+                        {problem}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </CollapsibleSection>
+            )}
+
+            {node.commonMistakes && node.commonMistakes.length > 0 && (
+              <CollapsibleSection
+                id={`${node.id}-mistakes`}
+                title="Common mistakes"
+                icon={<TriangleAlert size={14} />}
+                count={node.commonMistakes.length}
+                accentColor={subjectAccent}
+                defaultOpen={false}
+              >
+                <ul className="min-w-0 space-y-2.5">
+                  {node.commonMistakes.map((mistake, i) => (
+                    <li
+                      key={i}
+                      className="flex min-w-0 gap-2.5 border-l-2 border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2"
+                    >
+                      <TriangleAlert
+                        size={14}
+                        className="mt-0.5 shrink-0 text-[var(--warning)]"
+                        aria-hidden
+                      />
+                      <span className="min-w-0 whitespace-pre-wrap break-words text-sm leading-[1.65] text-[var(--text)]">
+                        {mistake}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </CollapsibleSection>
+            )}
+
+            {node.resources.length > 0 && (
+              <CollapsibleSection
+                id={`${node.id}-resources`}
+                title="Resources"
+                icon={<BookOpen size={14} />}
+                count={node.resources.length}
+                accentColor={subjectAccent}
+                defaultOpen={false}
+              >
+                <div className="grid min-w-0 gap-4">
+                  {node.resources.map((r, i) => (
+                    <ResourceCard key={r.url} resource={r} nodeId={node.id} resourceIndex={i} />
+                  ))}
+                </div>
+              </CollapsibleSection>
+            )}
+
+            <LessonTakeaways nodeId={node.id} subjectId={subject.id} disabled={isLocked} />
+
+            {neighbors ? (
+              <div className="flex flex-col gap-2 border-t border-[var(--rule)] pt-4 sm:flex-row sm:justify-between">
+                <Link to={`/subjects/${subject.id}/${neighbors.prev.id}`} className="min-w-0">
+                  <Button variant="ghost" size="sm" className="w-full justify-start sm:w-auto">
+                    <ArrowLeft size={14} aria-hidden />
+                    <span className="truncate">Prev: {neighbors.prev.name}</span>
+                  </Button>
                 </Link>
-                <Link to="/subjects/algo-lab">
-                  <Button variant="secondary">Algo Lab</Button>
+                <Link to={`/subjects/${subject.id}/${neighbors.next.id}`} className="min-w-0">
+                  <Button variant="ghost" size="sm" className="w-full justify-end sm:w-auto">
+                    <span className="truncate">Next: {neighbors.next.name}</span>
+                    <ArrowRight size={14} aria-hidden />
+                  </Button>
                 </Link>
               </div>
-            </div>
-          </Card>
-        )}
-
-        {node.whyItMatters && (
-          <Card variant="quiet" className="stagger-item">
-            <div className="mb-3 flex items-center gap-2 text-[var(--text-muted)]">
-              <span className="font-mono text-[11px] uppercase tracking-widest">Why it matters</span>
-            </div>
-            <p className="break-words text-sm leading-relaxed text-[var(--text)]">{node.whyItMatters}</p>
-          </Card>
-        )}
-
-        {node.keyConcepts.length > 0 && (
-          <CollapsibleSection
-            id={`${node.id}-concepts`}
-            title="Key concepts"
-            icon={<BookOpen size={16} />}
-            count={node.keyConcepts.length}
-            accentColor={subject.color}
-          >
-            <ul className="min-w-0 space-y-2 pl-4">
-              {node.keyConcepts.map((c) => (
-                <li key={c} className="break-words text-sm text-[var(--text)]">
-                  {c}
-                </li>
-              ))}
-            </ul>
-          </CollapsibleSection>
-        )}
-
-        {node.resources.length > 0 && (
-          <CollapsibleSection
-            id={`${node.id}-resources`}
-            title="Resources"
-            icon={<BookOpen size={16} />}
-            count={node.resources.length}
-            accentColor={subject.color}
-            defaultOpen
-          >
-            <div className="grid min-w-0 gap-6">
-              {node.resources.map((r, i) => (
-                <ResourceCard key={r.url} resource={r} nodeId={node.id} resourceIndex={i} />
-              ))}
-            </div>
-          </CollapsibleSection>
-        )}
-
-        {node.workedExamples?.map((ex, i) => (
-          <WorkedExampleCard
-            key={i}
-            index={i}
-            nodeId={node.id}
-            problem={ex.problem}
-            solution={ex.solution}
-            explanation={ex.explanation}
-            accentColor={subject.color}
-          />
-        ))}
-
-        <LessonTakeaways nodeId={node.id} subjectId={subject.id} disabled={isLocked} />
-
-        {/* ── Next step bar ── */}
-        <Card variant="quiet" className="stagger-item">
-          <div className="mb-5 flex items-center justify-between border-b border-[var(--border)] pb-4">
-            <div>
-              <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
-                Next step
-              </p>
-              <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                {(node.quiz?.length ?? 0) > 0
-                  ? `${node.quiz!.length} questions · `
-                  : ""}
-                {node.xpValue} XP on complete
-                {timeSpent > 0 ? ` · ${timeSpent} min logged` : ""}
-              </p>
-            </div>
-            {isCompleted && (
-              <span className="flex items-center gap-1.5 text-sm font-medium text-[var(--success)]">
-                <CheckCircle2 size={15} />
-                Completed
-              </span>
-            )}
+            ) : null}
           </div>
-          <div className="flex flex-wrap gap-2">
-            {(node.quiz?.length ?? 0) > 0 && !isLocked && (
-              <Link to={`/subjects/${subject.id}/${node.id}/quiz`}>
-                <Button className="gap-2">
-                  Take quiz
-                  <ArrowRight size={15} />
-                </Button>
-              </Link>
-            )}
-            <Link to={`/subjects/${subject.id}/${node.id}/notes`}>
-              <Button variant="secondary">
-                <FileText size={15} />
-                Office hours
-              </Button>
-            </Link>
-            {!isLocked && !isCompleted && (
-              <Button variant="secondary" onClick={handleComplete}>
-                <CheckCircle2 size={15} />
-                Mark complete
-              </Button>
-            )}
-            {focusMode && (
-              <Button variant="ghost" onClick={toggleFocusMode} className="ml-auto">
-                Exit focus
-              </Button>
-            )}
-          </div>
-        </Card>
+
+          <aside className="min-w-0 space-y-3 lg:sticky lg:top-[calc(var(--topbar-height)+1rem)] lg:self-start">
+            <Card variant="default" density="normal" className="min-w-0 space-y-4">
+              <div className="border-b border-[var(--rule)] pb-3">
+                <p className="eyebrow-mono">Lesson actions</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Stat label="Minutes" value={timeSpent || "—"} size="sm" />
+                <Stat label="XP" value={`+${node.xpValue}`} size="sm" />
+                {quizCount > 0 ? (
+                  <Stat label="Quiz" value={`${quizCount}q`} size="sm" />
+                ) : null}
+                <Stat label="Status" value={isCompleted ? "Done" : isLocked ? "Locked" : "Open"} size="sm" />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                {quizCount > 0 && !isLocked ? (
+                  <Link to={`/subjects/${subject.id}/${node.id}/quiz`} className="block">
+                    <Button className="w-full">
+                      Take quiz
+                      <ArrowRight size={14} aria-hidden />
+                    </Button>
+                  </Link>
+                ) : null}
+                <Link to={`/subjects/${subject.id}/${node.id}/notes`} className="block">
+                  <Button variant="secondary" className="w-full">
+                    <FileText size={14} aria-hidden />
+                    Office hours
+                  </Button>
+                </Link>
+                {!isLocked && !isCompleted ? (
+                  <Button variant="secondary" onClick={handleComplete} className="w-full">
+                    <CheckCircle2 size={14} aria-hidden />
+                    Mark complete
+                  </Button>
+                ) : null}
+                {focusMode ? (
+                  <Button variant="ghost" onClick={toggleFocusMode} className="w-full">
+                    Exit focus
+                    <KeyHint size="sm">F</KeyHint>
+                  </Button>
+                ) : null}
+              </div>
+            </Card>
+          </aside>
+        </div>
       </PageContainer>
     </FocusShell>
   );
@@ -343,43 +480,44 @@ function LessonTakeaways({
   };
 
   return (
-    <Card className="stagger-item space-y-3">
-      <div className="flex flex-wrap items-center gap-2 text-[var(--text-muted)]">
-        <Lightbulb size={16} />
-        <span className="font-mono text-[11px] uppercase tracking-widest">Key takeaways</span>
-        {bullets.length > 0 && (
-          <Badge>
+    <Card variant="default" density="normal" className="stagger-item space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Lightbulb size={14} className="text-[var(--text-muted)]" aria-hidden />
+        <span className="eyebrow-mono">Key takeaways</span>
+        {bullets.length > 0 ? (
+          <Tag tone="mono" size="sm">
             {bullets.length}/{MAX_TAKEAWAYS}
-          </Badge>
-        )}
+          </Tag>
+        ) : null}
       </div>
-      <p className="text-sm text-[var(--text-muted)]">
-        One insight per line — add 1 to 5 bullets you want to remember.
-      </p>
-      <textarea
-        value={draft}
-        onChange={(e) => {
-          setDraft(e.target.value);
-          setError(null);
-        }}
-        disabled={disabled}
-        rows={5}
-        className="w-full resize-y rounded-[var(--radius)] border border-[var(--border)] bg-transparent p-3 text-sm leading-relaxed text-[var(--text)] outline-none focus:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
-        placeholder={"First takeaway…\nSecond takeaway…"}
-      />
-      {error && <p className="text-sm text-[var(--warning)]">{error}</p>}
+      <Field
+        label="One insight per line"
+        hint={`Add 1–${MAX_TAKEAWAYS} bullets you want to remember.`}
+        error={error ?? undefined}
+      >
+        {(id) => (
+          <Textarea
+            id={id}
+            value={draft}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              setError(null);
+            }}
+            disabled={disabled}
+            rows={5}
+            placeholder={"First takeaway…\nSecond takeaway…"}
+            invalid={Boolean(error)}
+          />
+        )}
+      </Field>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <span className="text-xs text-[var(--text-muted)]">
+        <span className="font-mono text-xs text-[var(--text-muted)] tabular-nums">
           {bullets.length === 0
             ? "No takeaways yet"
             : `${bullets.length} takeaway${bullets.length === 1 ? "" : "s"}`}
           {bullets.length > MAX_TAKEAWAYS && ` · max ${MAX_TAKEAWAYS}`}
         </span>
-        <Button
-          onClick={handleSave}
-          disabled={!canSave}
-          className="min-h-11 w-full sm:w-auto"
-        >
+        <Button onClick={handleSave} disabled={!canSave} className="w-full sm:w-auto">
           {justSaved ? "Saved" : "Save takeaways"}
         </Button>
       </div>

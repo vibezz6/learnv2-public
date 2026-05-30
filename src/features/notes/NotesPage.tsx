@@ -7,6 +7,7 @@ import {
   OFFICE_HOURS_STEPS,
   OFFICE_HOURS_TAGLINE,
 } from "@/lib/notesOfficeHours";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import {
   AlertCircle,
   BookOpen,
@@ -149,7 +150,7 @@ export function NotesPage() {
             backTo={lessonPath}
             backLabel={node.name}
             onExitFocus={toggleFocusMode}
-            accentColor={subject.color}
+            accentColor={getSubjectAccent(subject.id)}
             subjectName={subject.name}
           />
         ) : (

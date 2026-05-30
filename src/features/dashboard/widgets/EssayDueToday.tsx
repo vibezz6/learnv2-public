@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FileText } from "lucide-react";
-import { Card } from "@/components/ui";
+import { Card, Tag } from "@/components/ui";
 import { loadEssayTracker } from "@/lib/essayTracker";
 
 function daysUntil(due: string): number {
@@ -16,29 +16,37 @@ export function EssayDueToday() {
     .map((e) => ({ essay: e, days: daysUntil(e.dueDate!) }))
     .filter((x) => x.days >= 0 && x.days <= 7)
     .sort((a, b) => a.days - b.days)
-    .slice(0, 2);
+    .slice(0, 3);
 
   if (soon.length === 0) return null;
 
   return (
-    <Card variant="quiet" className="min-w-0">
-      <div className="flex items-start gap-3">
-        <FileText size={16} className="mt-0.5 shrink-0 text-[var(--accent-2)]" />
-        <div className="min-w-0 flex-1 space-y-2">
-          <p className="text-sm font-medium text-[var(--text-heading)]">Essays due soon</p>
-          <ul className="space-y-1 text-sm text-[var(--text-muted)]">
-            {soon.map(({ essay, days }) => (
-              <li key={essay.id}>
-                <Link to="/campus/essay-tracker" className="text-[var(--text)] hover:text-[var(--accent)]">
-                  {essay.title}
-                </Link>
-                {" — "}
-                {days === 0 ? "due today" : `due in ${days} day${days === 1 ? "" : "s"}`}
-              </li>
-            ))}
-          </ul>
-        </div>
+    <Card variant="default" density="normal" className="min-w-0">
+      <div className="mb-3 flex items-center gap-2">
+        <FileText size={14} aria-hidden className="text-[var(--text-muted)]" />
+        <p className="eyebrow-mono">Essays due soon</p>
       </div>
+      <ul className="divide-y divide-[var(--rule)] border-y border-[var(--rule)]">
+        {soon.map(({ essay, days }) => {
+          const tone = days === 0 ? "danger" : days <= 2 ? "warning" : "muted";
+          const label = days === 0 ? "Due today" : days === 1 ? "1 day" : `${days} days`;
+          return (
+            <li key={essay.id}>
+              <Link
+                to="/campus/essay-tracker"
+                className="group flex min-h-11 items-center justify-between gap-3 py-2.5"
+              >
+                <span className="min-w-0 truncate text-sm font-medium text-[var(--text-heading)] group-hover:text-[var(--accent)]">
+                  {essay.title}
+                </span>
+                <Tag tone={tone} size="sm" mono>
+                  {label}
+                </Tag>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </Card>
   );
 }

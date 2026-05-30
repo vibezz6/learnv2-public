@@ -1,5 +1,23 @@
 import { describe, expect, it } from "vitest";
-import { parseBackupKeys } from "@/lib/backupFormat";
+import {
+  exportManagedStorage,
+  parseBackupKeys,
+  restoreManagedStorageBackup,
+} from "@/lib/backupFormat";
+
+function mapStorage(seed: Record<string, string> = {}): Storage {
+  const map = new Map<string, string>(Object.entries(seed));
+  return {
+    get length() {
+      return map.size;
+    },
+    clear: () => map.clear(),
+    getItem: (k) => map.get(k) ?? null,
+    key: (i) => [...map.keys()][i] ?? null,
+    removeItem: (k) => map.delete(k),
+    setItem: (k, v) => map.set(k, v),
+  } as Storage;
+}
 
 describe("backupFormat", () => {
   it("accepts version 2 and 3", () => {
@@ -14,5 +32,41 @@ describe("backupFormat", () => {
   it("rejects unknown versions", () => {
     const result = parseBackupKeys({ version: 1, keys: {} });
     expect("error" in result).toBe(true);
+  });
+
+  it("excludes ephemeral and secret keys from export, includes real data", () => {
+    const storage = mapStorage({
+      learnv2_progress: JSON.stringify({ state: { data: { totalXp: 10 } } }),
+      learnv2_reminders_v1: JSON.stringify({ enabled: true }),
+      learnv2_focus_session_v1: JSON.stringify({ active: { id: "x" } }), // ephemeral
+      learnv2_reminders_fired_v1: JSON.stringify({ daily: "2026-05-29" }), // ephemeral
+      learnv2_openrouter_key: "sk-secret", // secret
+    });
+    const exported = JSON.parse(exportManagedStorage(storage)) as {
+      keys: Record<string, string>;
+    };
+    expect(exported.keys.learnv2_progress).toBeTruthy();
+    expect(exported.keys.learnv2_reminders_v1).toBeTruthy();
+    expect(exported.keys.learnv2_focus_session_v1).toBeUndefined();
+    expect(exported.keys.learnv2_reminders_fired_v1).toBeUndefined();
+    expect(exported.keys.learnv2_openrouter_key).toBeUndefined();
+  });
+
+  it("round-trips real data through export -> clear -> import", () => {
+    const source = mapStorage({
+      learnv2_progress: JSON.stringify({ state: { data: { totalXp: 42 } } }),
+      learnv2_sat_mistakes_v1: JSON.stringify([{ id: "m1" }]),
+      learnv2_preferences: JSON.stringify({ state: { satTestDate: "2026-08-22" } }),
+    });
+    const exported = exportManagedStorage(source);
+
+    const target = mapStorage();
+    const result = restoreManagedStorageBackup(exported, target);
+    expect(result.success).toBe(true);
+    expect(target.getItem("learnv2_progress")).toBe(source.getItem("learnv2_progress"));
+    expect(target.getItem("learnv2_sat_mistakes_v1")).toBe(
+      source.getItem("learnv2_sat_mistakes_v1"),
+    );
+    expect(target.getItem("learnv2_preferences")).toBe(source.getItem("learnv2_preferences"));
   });
 });

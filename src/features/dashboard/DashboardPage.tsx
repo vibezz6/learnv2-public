@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BarChart3, Brain } from "lucide-react";
+import { ArrowRight, Brain } from "lucide-react";
 import {
   Button,
   Card,
+  KeyHint,
   PageContainer,
   PageHeader,
   PageLoading,
   Section,
+  Tag,
 } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
@@ -19,14 +21,11 @@ import { shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
-import { DailyGoalStrip } from "./widgets/DailyGoalStrip";
-import { SatTodayCard } from "./widgets/SatTodayCard";
-import { DayNarrativeStrip } from "./widgets/DayNarrativeStrip";
-import { StudyIntentStrip } from "./widgets/StudyIntentStrip";
+import { RightNowHero } from "./widgets/RightNowHero";
+import { TodayMinimumStrip } from "./widgets/TodayMinimumStrip";
 import { EssayDueToday } from "./widgets/EssayDueToday";
 import { TodayEmptyFocus } from "./widgets/TodayEmptyFocus";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
-import { StudyBlockCard } from "./widgets/StudyBlockCard";
 import { getStudyIntentSubtitle, loadStudyIntent } from "@/lib/studyIntent";
 import { ROUTES } from "@/app/navigation";
 
@@ -59,10 +58,10 @@ export function DashboardPage() {
     getTrackChallengeCategory(activeTrackId) ??
     (target ? subjectToChallengeCategory(target.subject.id) : null);
 
+  // SAT is the daily driver: when SAT context applies, the SAT command is the
+  // single dominant action. An in-progress lesson becomes a "resume" shortcut.
   const showSatFocus =
-    !target &&
-    subjects.length > 0 &&
-    shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
+    subjects.length > 0 && shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
 
   const showSpacedReview =
     reviewDue > 0 ||
@@ -70,107 +69,116 @@ export function DashboardPage() {
 
   const intentSubtitle = getStudyIntentSubtitle(loadStudyIntent().focus);
   const pageSubtitle =
-    intentSubtitle ??
-    "Start the next session, then jump out to SAT, College, Review, or Stats.";
+    intentSubtitle ?? "One move now. Everything else can wait until the minimum is done.";
 
   if (loadingSubjects) {
     return <PageLoading />;
   }
 
   return (
-    <PageContainer className="space-y-8">
-      <div className="space-y-4 border-b border-[var(--border)] pb-6">
-        <PageHeader
-          title="Today"
-          subtitle={pageSubtitle}
-          divider={false}
-        />
-        <StudyIntentStrip />
-        <DayNarrativeStrip />
-        {stats && <DailyGoalStrip stats={stats} />}
+    <PageContainer size="xl" className="space-y-6">
+      <PageHeader title="Today" subtitle={pageSubtitle} divider={false} />
+      {stats ? <TodayMinimumStrip stats={stats} /> : null}
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-6">
+          <Section eyebrow="Right now" title="Your one move">
+            {showSatFocus ? (
+              <RightNowHero subjects={subjects} resume={target} />
+            ) : target ? (
+              <ContinueHero subject={target.subject} node={target.node} />
+            ) : (
+              <TodayEmptyFocus />
+            )}
+          </Section>
+        </div>
+
+        <aside className="min-w-0 space-y-6">
+          <Section eyebrow="Due soon">
+            <EssayDueToday />
+          </Section>
+
+          <Section eyebrow="This week">
+            <WeekPlanCard subjects={subjects} embedded />
+          </Section>
+
+          {showSpacedReview ? (
+            <Section eyebrow="Spaced review">
+              <Card variant="quiet" density="compact" className="min-w-0">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <Brain
+                      size={14}
+                      className="mt-0.5 shrink-0 text-[var(--text-muted)]"
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-[var(--text-heading)]">
+                        Spaced review
+                      </p>
+                      {reviewDue > 0 ? (
+                        <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                          <Tag tone="accent" size="sm" mono>
+                            {reviewDue}
+                          </Tag>
+                          <span className="ml-2">
+                            due
+                            {reviewedToday > 0 ? ` · ${reviewedToday} done today` : ""}
+                          </span>
+                        </p>
+                      ) : nextReview ? (
+                        <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                          Next review in{" "}
+                          <span className="font-mono tabular-nums text-[var(--text-heading)]">
+                            {nextReview.daysUntil}
+                          </span>{" "}
+                          {nextReview.daysUntil === 1 ? "day" : "days"}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                  {reviewDue > 0 ? (
+                    <Link to="/review" className="shrink-0">
+                      <Button variant="secondary" size="sm" className="w-full sm:w-auto">
+                        Review
+                        <ArrowRight size={12} aria-hidden />
+                      </Button>
+                    </Link>
+                  ) : null}
+                </div>
+              </Card>
+            </Section>
+          ) : null}
+
+          <Section eyebrow="Daily challenge">
+            <DailyChallengeCompact defaultCategory={challengeCategory} />
+          </Section>
+        </aside>
       </div>
 
-      <Section eyebrow="Now" title="Do this first">
-        {target ? (
-          <ContinueHero subject={target.subject} node={target.node} />
-        ) : showSatFocus ? (
-          <SatTodayCard subjects={subjects} compact />
-        ) : (
-          <TodayEmptyFocus />
-        )}
-      </Section>
-
-      <Section eyebrow="Next 20 minutes" title="Short session plan">
-        <StudyBlockCard subjects={subjects} />
-      </Section>
-
-      <Section eyebrow="Due soon">
-        <EssayDueToday />
-      </Section>
-
-      <Section
-        eyebrow="Later"
-        title="This week, review, and challenge"
-      >
-        <WeekPlanCard subjects={subjects} embedded />
-      </Section>
-
-      {showSpacedReview && (
-        <Section eyebrow="Spaced review">
-        <Card variant="quiet" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <Brain size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" />
-            <div>
-              <p className="text-sm font-medium text-[var(--text-heading)]">Spaced review</p>
-              {reviewDue > 0 ? (
-                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                  <span className="font-mono tabular-nums text-[var(--text-heading)]">{reviewDue}</span>{" "}
-                  due
-                  {reviewedToday > 0 && ` · ${reviewedToday} done today`}
-                </p>
-              ) : nextReview ? (
-                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                  Next review in{" "}
-                  <span className="font-mono tabular-nums text-[var(--text-heading)]">
-                    {nextReview.daysUntil}
-                  </span>{" "}
-                  {nextReview.daysUntil === 1 ? "day" : "days"}
-                </p>
-              ) : null}
-            </div>
-          </div>
-          {reviewDue > 0 && (
-            <Link to="/review" className="shrink-0">
-              <Button variant="secondary" className="min-h-10 w-full sm:w-auto">
-                Review
-                <ArrowRight size={14} />
-              </Button>
-            </Link>
-          )}
-        </Card>
-        </Section>
-      )}
-
-      <Section eyebrow="Daily challenge">
-        <DailyChallengeCompact defaultCategory={challengeCategory} />
-      </Section>
-
-      <p className="text-[11px] text-[var(--text-muted)]">
-        <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">F</kbd> focus ·{" "}
-        <kbd className="rounded border border-[var(--border)] px-1 py-0.5 font-mono">⌘K</kbd> search ·{" "}
-        <Link to={ROUTES.sat} className="text-[var(--accent-2)] hover:underline">
+      <footer className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[var(--rule)] pt-4 font-mono text-[11px] text-[var(--text-muted)]">
+        <span className="inline-flex items-center gap-1.5">
+          <KeyHint size="sm">F</KeyHint> focus
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <KeyHint size="sm">⌘K</KeyHint> quick open
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <KeyHint size="sm">[</KeyHint> sidebar
+        </span>
+        <span aria-hidden className="text-[var(--text-subtle)]">
+          ·
+        </span>
+        <Link to={ROUTES.sat} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
           SAT
         </Link>
-        {" · "}
-        <Link to={ROUTES.college} className="text-[var(--accent-2)] hover:underline">
+        <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
           College
         </Link>
-        {" · "}
-        <Link to={ROUTES.stats} className="text-[var(--accent-2)] hover:underline">
-          <BarChart3 size={12} className="mr-0.5 inline" aria-hidden />
+        <Link to={ROUTES.stats} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
           Stats
         </Link>
-      </p>
+      </footer>
     </PageContainer>
   );
 }

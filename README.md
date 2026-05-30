@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.3.58 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.4.0 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -19,7 +19,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 ## Stack
 
 - React 19 + TypeScript + Vite 8
-- Tailwind CSS v4 · warm dark design tokens
+- Tailwind CSS v4 · cool-slate IDE design tokens (indigo accent)
 - React Router v7 · shareable lesson URLs
 - Zustand + persist · localStorage-first, no accounts
 - KaTeX · PWA (manifest + service worker)
@@ -28,7 +28,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 **Core loop**
 
-- **Today** — daily goal, study intent, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
+- **Today** — your one move (next SAT action), daily minimum + streak, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
 - **SAT Prep** — 80-lesson Digital SAT path (gap drills st76–st80, mistake log, in-app Draft 1/2/3 diagnostic, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
@@ -92,6 +92,59 @@ Audited 2026-05-23 via `node ~/cursor/scripts/audit-curriculum.mjs`:
 | engineering | 5 | 16 | 15 |
 
 Re-sync from v1: `npm run curriculum:split` (reads `Learn-v1/src/data/curriculums.ts`, writes `src/curriculum/data/*.json`). SAT Prep lives in `src/curriculum/data/sat-prep.json` only (not synced from v1).
+
+## Run it yourself (no Cursor needed)
+
+You never need Cursor or any AI tool to run Learn v2 — it is a plain Vite + React app.
+
+**Prerequisites:** [Node.js](https://nodejs.org) 20 or newer (Node 22 LTS recommended). Check with `node -v`.
+
+**Start it:**
+
+```bash
+cd ~/liqui/projects/learnv2
+npm install      # first time, and after pulling new changes
+npm run dev      # then open http://127.0.0.1:8080
+```
+
+The port (8080) is fixed in `vite.config.ts` — just open the URL; don't append a port on the command line.
+
+**Production build, run locally:**
+
+```bash
+npm run build
+npm run preview
+```
+
+**Update to the latest version:**
+
+```bash
+git pull            # get the newest code
+npm install         # pick up any new dependencies
+npm run dev
+```
+
+Your progress is stored in the browser, not the repo, so pulling/updating never touches it. Export a backup first if you want to be extra safe.
+
+**Install it as an app (optional):** Learn v2 is a PWA. In Chrome/Edge, open the running site and use the install icon in the address bar (or browser menu → "Install Learn v2") to get a standalone window. Once installed it also loads offline. When a new build is deployed you'll see a small "update" banner — click it to refresh. Note: an installed copy uses the same browser storage as the tab it was installed from.
+
+**Troubleshooting:**
+
+- Blank page or "can't connect": nothing is listening on 8080 — make sure `npm run dev` is running in this folder.
+- `command not found: npm`: install Node.js (link above), then reopen the terminal.
+- Errors after pulling changes: re-run `npm install`.
+
+## Back up your data (so you never lose progress)
+
+Progress lives in your browser's localStorage for the exact origin you use (`http://127.0.0.1:8080` locally, or the GitHub Pages URL — these are separate stores). Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
+
+1. In the app: **Settings → Backup → Export progress** — downloads `learnv2-backup-YYYY-MM-DD.json`.
+2. Save that file somewhere safe (a cloud drive). Export weekly, or whenever the app nudges you.
+3. To restore on any browser or machine: **Settings → Import from file** and choose the JSON.
+
+Backups include every `learnv2_*` and `learnapp_*` key; OpenRouter API keys are never included.
+
+Ongoing improvements are tracked in [BATCHES.md](BATCHES.md) — open it to see status and pick up the next batch.
 
 ## Dev
 
@@ -254,6 +307,7 @@ After migration, confirm SRS due dates and note sessions look correct before rel
 | Post-roadmap polish | ✅ **v2.3.56** — Today live refresh, ⌘K recents split, mobile header, `npm start` |
 | 20-minute study block | ✅ **v2.3.57** — Today card for a short SAT-first session plus urgent college micro-step |
 | AI lesson pipeline | ✅ **v2.3.58** — authoring rules/docs, draft workspace, stronger lint, guided sessions, SAT micro-drills, Stats recommendations |
+| Serious learning UI redesign (alt) | ✅ **v2.4.0** — IDE-style workspace rail with two-tier sidebar + status footer + `[` toggle, breadcrumb top bar, two-column Today, document-style lessons with mono-numbered worked examples and right-rail actions, SAT command center (today + mistakes side by side, demoted diagnostic & official resources, collapsible skill map), workflow college pages on shared `Field`/`Row`/`Meter`/`Tag`, proof-first Stats with collapsed deeper analytics, Settings grouped into Workspace / AI / Admissions / Drafts / Local data / Backup / Danger zone — alternate redesign on `cursor/redesign-claude-opus`. |
 
 **College admissions arc (batches 24–34):** complete for daily-driver use — checklist, essays, nudges, transcript, settings backup, placement.
 

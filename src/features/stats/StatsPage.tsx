@@ -2,17 +2,27 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Check,
   CheckCircle2,
-  Clock,
+  ChevronDown,
+  ChevronUp,
   Copy,
   Download,
   FileText,
   Flame,
   Sparkles,
-  Target,
   Trophy,
-  Zap,
 } from "lucide-react";
-import { Button, Card, EmptyState, PageContainer, PageHeader, Section } from "@/components/ui";
+import {
+  Button,
+  Card,
+  EmptyState,
+  Meter,
+  PageContainer,
+  PageHeader,
+  Section,
+  Stat,
+  Tag,
+  Toolbar,
+} from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import {
@@ -24,12 +34,15 @@ import { hasSeen, achievementLabel, type Achievement } from "@/stores/achievemen
 import { useProgress } from "@/stores/progress";
 import { AdmissionsTranscriptPreview } from "@/features/stats/AdmissionsTranscriptPreview";
 import { LazyOptionalStats } from "@/features/stats/widgets/LazyOptionalStats";
+import { SatWeeklyProgressCard } from "@/features/stats/widgets/SatWeeklyProgressCard";
 import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
 import { WeekInReviewStrip } from "@/features/stats/widgets/WeekInReviewStrip";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import { buildStudyRecommendations } from "@/lib/studyRecommendations";
+import { getSubjectAccent } from "@/lib/subjectAccent";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/cn";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
   const json = JSON.stringify(summary, null, 2);
@@ -46,13 +59,17 @@ function getLast7Days(dailyMinutes: Record<string, number>) {
   const now = new Date();
   const todayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const days: Array<{ label: string; shortLabel: string; minutes: number; isToday: boolean }> = [];
-
   for (let i = 6; i >= 0; i--) {
     const date = new Date(todayUTC);
     date.setUTCDate(date.getUTCDate() - i);
     const key = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
     days.push({
-      label: date.toLocaleString("default", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" }),
+      label: date.toLocaleString("default", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      }),
       shortLabel: date.toLocaleString("default", { weekday: "narrow", timeZone: "UTC" }),
       minutes: dailyMinutes[key] ?? 0,
       isToday: i === 0,
@@ -68,12 +85,15 @@ function getWeeklyTrend(dailyMinutes: Record<string, number>) {
   const dayOfWeek = mostRecentMonday.getUTCDay();
   const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   mostRecentMonday.setUTCDate(mostRecentMonday.getUTCDate() - diffToMonday);
-
   const weeks: Array<{ weekLabel: string; totalMinutes: number }> = [];
   for (let w = 7; w >= 0; w--) {
     const weekStart = new Date(mostRecentMonday);
     weekStart.setUTCDate(weekStart.getUTCDate() - w * 7);
-    const weekLabel = weekStart.toLocaleString("default", { month: "short", day: "numeric", timeZone: "UTC" });
+    const weekLabel = weekStart.toLocaleString("default", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
     let total = 0;
     for (let d = 0; d < 7; d++) {
       const date = new Date(weekStart);
@@ -106,6 +126,7 @@ export function StatsPage() {
   const [copiedTranscript, setCopiedTranscript] = useState(false);
   const [admissionsRevision, setAdmissionsRevision] = useState(0);
   const [activityFilterDate, setActivityFilterDate] = useState<string | null>(null);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
   const clearActivityFilter = useCallback(() => setActivityFilterDate(null), []);
 
   useEffect(() => {
@@ -135,6 +156,7 @@ export function StatsPage() {
       setTimeout(() => setCopiedTranscript(false), 2000);
     }
   };
+
   const last7Days = stats ? getLast7Days(stats.dailyMinutes) : [];
   const maxDay = Math.max(...last7Days.map((d) => d.minutes), 1);
   const weeklyTrend = stats ? getWeeklyTrend(stats.dailyMinutes) : [];
@@ -144,11 +166,7 @@ export function StatsPage() {
   const recommendations = useMemo(() => {
     void admissionsRevision;
     if (!subjects.length) return [];
-    return buildStudyRecommendations({
-      subjects,
-      getNodeStatus,
-      reviewDueCount,
-    });
+    return buildStudyRecommendations({ subjects, getNodeStatus, reviewDueCount });
   }, [subjects, getNodeStatus, reviewDueCount, admissionsRevision]);
 
   const xpBySubject = subjects
@@ -163,360 +181,321 @@ export function StatsPage() {
     .sort((a, b) => b.xp - a.xp);
 
   return (
-    <PageContainer size="lg" className="space-y-6 md:space-y-8">
+    <PageContainer size="lg" className="space-y-7">
       <PageHeader
         title="Stats"
         subtitle="Progress proof, study time, and optional deep dives — Today stays focused on your next lesson."
       />
 
       {!stats || stats.completedNodes === 0 ? (
-        <Card variant="quiet" className="stagger-item min-w-0">
-          <EmptyState
-            icon={<Trophy size={32} className="text-[var(--accent)]" />}
-            title="Start your journey"
-            description="Complete your first lesson and your level, streak, and achievements will show up here."
-            actionLabel="Pick a subject"
-            actionTo="/subjects"
-          />
-        </Card>
+        <EmptyState
+          icon={<Trophy size={24} className="text-[var(--accent)]" aria-hidden />}
+          title="Start your journey"
+          description="Complete your first lesson and your level, streak, and achievements will show up here."
+          actionLabel="Pick a subject"
+          actionTo="/subjects"
+        />
       ) : (
         <>
-          <Section eyebrow="Progress" title="At a glance">
-          {recommendations.length > 0 && (
-            <Card className="stagger-item min-w-0 border-l-2 border-l-[var(--accent-2)]">
-              <div className="mb-3 flex items-center gap-2">
-                <Sparkles size={16} className="text-[var(--accent-2)]" />
-                <span className="font-semibold text-[var(--text-heading)]">Recommended next actions</span>
+          <Section eyebrow="Proof" title="At a glance">
+            <Card variant="default" density="normal" className="min-w-0">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <Stat
+                  label="Level"
+                  value={stats.level}
+                  sub={`${stats.totalXp.toLocaleString()} XP`}
+                  size="md"
+                />
+                <Stat
+                  label="Streak"
+                  value={`${stats.streakCurrent}d`}
+                  sub={`Best ${stats.streakLongest}d`}
+                  icon={
+                    stats.streakCurrent > 0 ? (
+                      <Flame size={11} className="text-[var(--warning)]" aria-hidden />
+                    ) : undefined
+                  }
+                  size="md"
+                />
+                <Stat
+                  label="Lessons"
+                  value={`${stats.completedNodes}/${stats.totalNodes}`}
+                  sub={`${Math.round((stats.completedNodes / stats.totalNodes) * 100)}% curriculum`}
+                  size="md"
+                />
+                <Stat
+                  label="Today"
+                  value={`${Math.round(stats.todayMinutes)}m`}
+                  sub={`${Math.round(stats.totalStudyMinutes)}m total`}
+                  size="md"
+                />
               </div>
-              <div className="grid gap-2 md:grid-cols-3">
+              <div className="mt-4 border-t border-[var(--rule)] pt-3">
+                <Meter
+                  value={xpProgress}
+                  label={`Progress to level ${stats.level + 1}`}
+                  hint={`${500 - stats.xpToNext} / 500 XP`}
+                  size="sm"
+                />
+              </div>
+            </Card>
+          </Section>
+
+          <SatWeeklyProgressCard />
+
+          {recommendations.length > 0 ? (
+            <Section eyebrow="Recommended next" divider>
+              <div className="grid gap-3 md:grid-cols-3">
                 {recommendations.map((rec) => (
                   <Link
                     key={rec.id}
                     to={rec.href}
-                    className="rounded-[var(--radius)] border border-[var(--border)] p-3 transition hover:border-[var(--accent-2)]"
+                    className="group flex min-h-[5rem] flex-col gap-1.5 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)] px-3 py-3 transition hover:border-[var(--accent-border)] hover:bg-[var(--bg-hover)]"
                   >
-                    <p className="text-sm font-medium text-[var(--text-heading)]">{rec.title}</p>
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">{rec.reason}</p>
-                    <p className="mt-2 text-xs font-medium text-[var(--accent-2)]">{rec.label}</p>
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={13} className="text-[var(--accent)]" aria-hidden />
+                      <p className="truncate text-sm font-medium text-[var(--text-heading)] group-hover:text-[var(--accent)]">
+                        {rec.title}
+                      </p>
+                    </div>
+                    <p className="text-xs leading-relaxed text-[var(--text-muted)]">{rec.reason}</p>
+                    <Tag tone="accent" size="sm" mono className="mt-auto self-start">
+                      {rec.label}
+                    </Tag>
                   </Link>
                 ))}
               </div>
-            </Card>
-          )}
-          {transcript && (
-            <Card className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
-              <div className="mb-4 flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between">
-                <div className="min-w-0">
-                  <div className="mb-1 flex items-center gap-2">
-                    <FileText size={16} className="shrink-0 text-[var(--accent)]" />
-                    <span className="break-words font-semibold text-[var(--text-heading)]">
-                      Study transcript
-                    </span>
-                  </div>
-                  <p className="break-words text-xs text-[var(--text-muted)]">
-                    Human-readable highlights you can copy or download as JSON proof of progress.
-                  </p>
-                </div>
-                <div className="flex w-full shrink-0 flex-col gap-2 min-[481px]:w-auto min-[481px]:flex-row">
-                  <Button
-                    variant="primary"
-                    className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-                    onClick={handleCopyTranscript}
-                  >
-                    {copiedTranscript ? <Check size={16} /> : <Copy size={16} />}
-                    {copiedTranscript ? "Copied!" : "Copy transcript"}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-                    onClick={() => downloadTranscriptJson(transcript)}
-                  >
-                    <Download size={16} />
-                    Download JSON
-                  </Button>
-                </div>
-              </div>
-              <ul className="space-y-2">
-                {transcript.narrativeBullets.map((bullet) => (
-                  <li
-                    key={bullet}
-                    className="flex gap-2 break-words text-sm text-[var(--text-muted)]"
-                  >
-                    <span className="shrink-0 text-[var(--accent)]">•</span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-              <AdmissionsTranscriptPreview admissions={transcript.admissions} />
-            </Card>
-          )}
+            </Section>
+          ) : null}
 
-          <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
-            <Card glow className="stagger-item min-w-0 border-l-2 border-l-[var(--accent)]">
-              <div className="flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between min-[481px]:gap-4">
-                <div className="min-w-0">
-                  <div className="mb-3 flex items-center gap-2">
-                    <Zap size={14} className="shrink-0 text-[var(--accent)]" />
-                    <span className="break-words text-xs font-semibold uppercase tracking-widest text-[var(--accent)]">
-                      Level
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <span className="text-5xl font-extrabold tabular-nums text-[var(--text-heading)]">
-                      {stats.level}
-                    </span>
-                    <span className="break-words text-sm text-[var(--text-muted)]">
-                      {stats.totalXp.toLocaleString()} XP total
-                    </span>
-                  </div>
-                  <div className="mt-5">
-                    <div className="mb-1.5 flex flex-wrap justify-between gap-x-2 gap-y-1 text-xs text-[var(--text-muted)]">
-                      <span className="min-w-0 break-words">Progress to level {stats.level + 1}</span>
-                      <span className="shrink-0 tabular-nums">{500 - stats.xpToNext} / 500 XP</span>
-                    </div>
-                    <div className="h-3 overflow-hidden rounded-full bg-[var(--border)]">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-2)] transition-all duration-700"
-                        style={{
-                          width: `${xpProgress}%`,
-                          boxShadow: "0 0 16px rgba(0,212,170,0.35)",
-                        }}
-                      />
+          {transcript ? (
+            <Section eyebrow="Study transcript" divider>
+              <Card variant="default" density="normal" className="min-w-0 space-y-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <FileText size={16} className="mt-0.5 shrink-0 text-[var(--text-muted)]" aria-hidden />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-[var(--text-heading)]">
+                        Human-readable highlights
+                      </p>
+                      <p className="text-xs text-[var(--text-muted)]">
+                        Copy or download as JSON proof of progress.
+                      </p>
                     </div>
                   </div>
+                  <Toolbar density="tight">
+                    <Button onClick={handleCopyTranscript} size="sm">
+                      {copiedTranscript ? <Check size={13} aria-hidden /> : <Copy size={13} aria-hidden />}
+                      {copiedTranscript ? "Copied" : "Copy"}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => downloadTranscriptJson(transcript)}
+                    >
+                      <Download size={13} aria-hidden />
+                      JSON
+                    </Button>
+                  </Toolbar>
                 </div>
-                <div className="hidden shrink-0 rounded-[var(--radius-lg)] border border-[var(--accent-border)] bg-[var(--accent-bg)] px-4 py-3 text-center md:block">
-                  <Target size={20} className="mx-auto text-[var(--accent)]" />
-                  <div className="mt-1 text-2xl font-bold tabular-nums">{stats.xpToNext}</div>
-                  <div className="text-[0.65rem] uppercase tracking-wide text-[var(--text-muted)]">
-                    XP to go
-                  </div>
-                </div>
-              </div>
-            </Card>
+                <ul className="space-y-2 border-t border-[var(--rule)] pt-3">
+                  {transcript.narrativeBullets.map((bullet) => (
+                    <li
+                      key={bullet}
+                      className="flex gap-2 break-words text-sm leading-relaxed text-[var(--text-muted)]"
+                    >
+                      <span className="mt-1.5 inline-block h-1 w-1 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+                <AdmissionsTranscriptPreview admissions={transcript.admissions} />
+              </Card>
+            </Section>
+          ) : null}
 
-            <Card
-              glow={stats.streakCurrent >= 7}
-              className={`stagger-item min-w-0 ${
-                stats.streakCurrent >= 7
-                  ? "border-l-2 border-l-[var(--warning)]"
-                  : "border-l-2 border-l-[var(--danger)]"
-              }`}
-            >
-              <div className="flex h-full flex-col justify-center">
-                <div className="mb-2 flex items-center gap-2">
-                  <Flame
-                    size={14}
-                    className={`shrink-0 ${stats.streakCurrent > 0 ? "text-[var(--warning)]" : "text-[var(--text-muted)]"}`}
-                  />
-                  <span className="break-words text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
-                    Study streak
-                  </span>
-                </div>
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <span className="text-5xl font-extrabold tabular-nums text-[var(--text-heading)]">
-                    {stats.streakCurrent}
-                  </span>
-                  <span className="text-lg text-[var(--text-muted)]">days</span>
-                </div>
-                <p className="mt-2 break-words text-sm text-[var(--text-muted)]">
-                  Personal best: <span className="font-semibold text-[var(--text-heading)]">{stats.streakLongest} days</span>
-                </p>
-                {stats.streakCurrent === 0 && (
-                  <p className="mt-2 break-words text-xs text-[var(--accent)]">Study today to start a streak.</p>
-                )}
-              </div>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="stagger-item min-w-0">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <Trophy size={16} className="shrink-0 text-[var(--warning)]" /> Lessons
-              </div>
-              <div className="text-2xl font-bold tabular-nums">
-                {stats.completedNodes}
-                <span className="text-base font-normal text-[var(--text-muted)]"> / {stats.totalNodes}</span>
-              </div>
-              <div className="mt-1 text-xs text-[var(--text-muted)]">
-                {Math.round((stats.completedNodes / stats.totalNodes) * 100)}% curriculum
-              </div>
-            </Card>
-            <Card className="stagger-item min-w-0">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <Clock size={16} className="shrink-0 text-[var(--info)]" /> Study time
-              </div>
-              <div className="text-2xl font-bold tabular-nums">{Math.round(stats.totalStudyMinutes)}m</div>
-              <div className="mt-1 text-xs text-[var(--text-muted)]">{Math.round(stats.todayMinutes)}m today</div>
-            </Card>
-            <Card className="stagger-item min-w-0">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <Sparkles size={16} className="shrink-0 text-[var(--success)]" /> Reviews
-              </div>
-              <div className="text-2xl font-bold tabular-nums text-[var(--success)]">{reviewStats.passRate}%</div>
-              <div className="break-words mt-1 text-xs text-[var(--text-muted)]">
-                {reviewStats.totalReviews} total · {reviewStats.passCount} on schedule
-              </div>
-            </Card>
-            <Card className="stagger-item min-w-0">
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-[var(--text-heading)]">
-                <CheckCircle2 size={16} className="shrink-0 text-[var(--accent)]" /> Achievements
-              </div>
-              <div className="text-2xl font-bold tabular-nums">
-                {unlockedCount}
-                <span className="text-base font-normal text-[var(--text-muted)]"> / {ALL_ACHIEVEMENTS.length}</span>
-              </div>
-              <div className="mt-1 text-xs text-[var(--text-muted)]">Unlocked badges</div>
-            </Card>
-          </div>
-          </Section>
-
-          <Section eyebrow="Study activity" title="Time on task">
-          <Card className="stagger-item min-w-0 p-4 md:p-5">
-            <WeekInReviewStrip dailyMinutes={stats.dailyMinutes} />
-          </Card>
-
-          <Card className="stagger-item min-w-0">
-            <StreakCalendar
-              dailyMinutes={stats.dailyMinutes}
-              selectedDate={activityFilterDate}
-              onSelectDate={setActivityFilterDate}
-            />
-          </Card>
-
-          <Card className="stagger-item min-w-0">
-            <div className="mb-4 flex flex-col gap-1 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
-              <div className="break-words font-semibold text-[var(--text-heading)]">Last 7 days</div>
-              <span className="break-words text-xs text-[var(--text-muted)]">Study minutes per day</span>
-            </div>
-            <div className="flex min-w-0 items-end gap-2" style={{ height: 128 }}>
-              {last7Days.map((d) => (
-                <div key={d.label} className="flex flex-1 flex-col items-center gap-1.5">
-                  <span className="text-[0.65rem] tabular-nums text-[var(--text-muted)]">
-                    {d.minutes > 0 ? `${Math.round(d.minutes)}m` : ""}
-                  </span>
-                  <div
-                    className={`w-full rounded-t-[var(--radius-sm)] transition-all ${
-                      d.isToday ? "bg-[var(--accent)]" : "bg-[var(--accent)]/70"
-                    }`}
-                    style={{
-                      height: `${(d.minutes / maxDay) * 100}%`,
-                      minHeight: d.minutes > 0 ? 6 : 2,
-                      boxShadow: d.isToday && d.minutes > 0 ? "0 0 10px rgba(0,212,170,0.4)" : undefined,
-                    }}
-                    title={`${d.label}: ${Math.round(d.minutes)}m`}
-                  />
-                  <span
-                    className={`text-[0.65rem] font-medium ${
-                      d.isToday ? "text-[var(--accent)]" : "text-[var(--text-muted)]"
-                    }`}
-                  >
-                    {d.shortLabel}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="stagger-item min-w-0">
-            <div className="mb-4 break-words font-semibold text-[var(--text-heading)]">Weekly trend</div>
-            <div className="flex min-w-0 items-end gap-2" style={{ height: 100 }}>
-              {weeklyTrend.map((w) => (
-                <div key={w.weekLabel} className="flex flex-1 flex-col items-center gap-1">
-                  <div
-                    className="w-full rounded-t-[var(--radius-sm)] bg-[var(--accent-2)]/80 transition-all"
-                    style={{ height: `${(w.totalMinutes / maxWeek) * 100}%`, minHeight: w.totalMinutes > 0 ? 4 : 0 }}
-                    title={`${w.weekLabel}: ${Math.round(w.totalMinutes)}m`}
-                  />
-                  <span className="text-[9px] text-[var(--text-muted)]">{w.weekLabel}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="stagger-item min-w-0">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <div className="break-words font-semibold text-[var(--text-heading)]">Recent activity</div>
-              {activityFilterDate && (
-                <Button variant="ghost" className="min-h-9 text-xs" onClick={clearActivityFilter}>
-                  Clear filter ({activityFilterDate})
-                </Button>
-              )}
-            </div>
-            <StudyActivityList
-              subjects={subjects}
-              filterDate={activityFilterDate}
-            />
-          </Card>
-          </Section>
-
-          <Section eyebrow="Optional" title="Deeper analytics">
-          {xpBySubject.length > 0 && (
-            <Card className="stagger-item min-w-0">
-              <div className="mb-3 break-words font-semibold text-[var(--text-heading)]">XP by subject</div>
-              <div className="space-y-3">
-                {xpBySubject.map(({ subject, xp }) => (
-                  <div key={subject.id} className="flex min-w-0 items-center gap-3">
-                    <span
-                      className="h-2 w-2 shrink-0 rounded-full"
-                      style={{ background: subject.color }}
-                    />
-                    <span className="min-w-0 basis-24 break-words text-sm min-[481px]:basis-28">{subject.name}</span>
-                    <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--border)]">
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${(xp / stats.totalXp) * 100}%`,
-                          background: subject.color,
-                        }}
-                      />
-                    </div>
-                    <span className="w-12 shrink-0 text-right font-mono text-xs tabular-nums">{xp}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          <Card className="stagger-item min-w-0">
-            <div className="mb-4 flex flex-col gap-1 min-[481px]:flex-row min-[481px]:items-center min-[481px]:justify-between">
-              <div className="break-words font-semibold text-[var(--text-heading)]">Achievements</div>
-              <span className="break-words text-xs text-[var(--text-muted)]">
-                {unlockedCount} of {ALL_ACHIEVEMENTS.length} unlocked
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <Section eyebrow="Achievements" title={`${unlockedCount}/${ALL_ACHIEVEMENTS.length} unlocked`} divider>
+            <div className="flex flex-wrap gap-2">
               {ALL_ACHIEVEMENTS.map((a) => {
                 const unlocked = hasSeen(a);
                 return (
-                  <div
+                  <Tag
                     key={a}
-                    className={`flex min-w-0 items-center gap-3 rounded-[var(--radius)] border px-3 py-3 text-sm transition ${
-                      unlocked
-                        ? "border-[var(--accent-border)] bg-[var(--accent-bg)] text-[var(--text)] shadow-[var(--accent-glow)]"
-                        : "border-[var(--border)] text-[var(--text-muted)] opacity-60"
-                    }`}
+                    tone={unlocked ? "success" : "muted"}
+                    size="md"
+                    className={cn(
+                      "gap-1.5",
+                      unlocked ? "" : "opacity-70",
+                    )}
                   >
                     {unlocked ? (
-                      <CheckCircle2 size={16} className="shrink-0 text-[var(--success)]" />
+                      <CheckCircle2 size={11} aria-hidden />
                     ) : (
-                      <div className="h-4 w-4 shrink-0 rounded-full border border-dashed border-[var(--border)]" />
+                      <span
+                        aria-hidden
+                        className="inline-block h-2 w-2 rounded-full border border-dashed border-[var(--rule-strong)]"
+                      />
                     )}
-                    <span className={`min-w-0 break-words ${unlocked ? "font-medium" : ""}`}>
-                      {achievementLabel(a).split(" — ")[0]}
-                    </span>
-                  </div>
+                    {achievementLabel(a).split(" — ")[0]}
+                  </Tag>
                 );
               })}
             </div>
-          </Card>
-
-          <LazyOptionalStats
-            subjects={subjects}
-            completedNodes={stats.completedNodes}
-            totalNodes={stats.totalNodes}
-          />
+            <Card variant="quiet" density="compact" className="mt-3 flex items-center gap-3">
+              <Sparkles size={14} className="text-[var(--text-muted)]" aria-hidden />
+              <div className="min-w-0 flex-1 text-xs text-[var(--text-muted)]">
+                Reviews on schedule:{" "}
+                <span className="font-mono tabular-nums text-[var(--text-heading)]">
+                  {reviewStats.passRate}%
+                </span>{" "}
+                · {reviewStats.totalReviews} total · {reviewStats.passCount} passed
+              </div>
+            </Card>
           </Section>
+
+          <section className="space-y-3" aria-label="Deeper analytics">
+            <button
+              type="button"
+              onClick={() => setAnalyticsOpen((v) => !v)}
+              className="flex w-full items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-canvas)] px-4 py-3 text-left transition hover:border-[var(--rule-strong)]"
+              aria-expanded={analyticsOpen}
+            >
+              <div className="min-w-0">
+                <p className="eyebrow-mono">Deeper analytics</p>
+                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                  Heatmap, weekly trend, XP by subject, math visualizations.
+                </p>
+              </div>
+              {analyticsOpen ? (
+                <ChevronUp size={16} className="text-[var(--text-subtle)]" aria-hidden />
+              ) : (
+                <ChevronDown size={16} className="text-[var(--text-subtle)]" aria-hidden />
+              )}
+            </button>
+
+            {analyticsOpen ? (
+              <div className="space-y-4">
+                <Card variant="default" density="normal">
+                  <WeekInReviewStrip dailyMinutes={stats.dailyMinutes} />
+                </Card>
+
+                <Card variant="default" density="normal">
+                  <StreakCalendar
+                    dailyMinutes={stats.dailyMinutes}
+                    selectedDate={activityFilterDate}
+                    onSelectDate={setActivityFilterDate}
+                  />
+                </Card>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Card variant="default" density="normal" className="min-w-0">
+                    <div className="mb-3 flex items-baseline justify-between gap-2">
+                      <p className="eyebrow-mono">Last 7 days</p>
+                      <span className="font-mono text-[11px] text-[var(--text-muted)]">minutes</span>
+                    </div>
+                    <div className="flex min-w-0 items-end gap-2" style={{ height: 96 }}>
+                      {last7Days.map((d) => (
+                        <div key={d.label} className="flex flex-1 flex-col items-center gap-1">
+                          <span className="font-mono text-[10px] tabular-nums text-[var(--text-subtle)]">
+                            {d.minutes > 0 ? Math.round(d.minutes) : ""}
+                          </span>
+                          <div
+                            className={cn(
+                              "w-full rounded-t-[var(--radius-sm)] transition-all",
+                              d.isToday ? "bg-[var(--accent)]" : "bg-[var(--accent-bg-strong)]",
+                            )}
+                            style={{
+                              height: `${(d.minutes / maxDay) * 100}%`,
+                              minHeight: d.minutes > 0 ? 4 : 2,
+                            }}
+                            title={`${d.label}: ${Math.round(d.minutes)}m`}
+                          />
+                          <span
+                            className={cn(
+                              "font-mono text-[10px]",
+                              d.isToday ? "text-[var(--accent)]" : "text-[var(--text-subtle)]",
+                            )}
+                          >
+                            {d.shortLabel}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  <Card variant="default" density="normal" className="min-w-0">
+                    <div className="mb-3 flex items-baseline justify-between gap-2">
+                      <p className="eyebrow-mono">Weekly trend</p>
+                      <span className="font-mono text-[11px] text-[var(--text-muted)]">
+                        last 8 weeks
+                      </span>
+                    </div>
+                    <div className="flex min-w-0 items-end gap-2" style={{ height: 96 }}>
+                      {weeklyTrend.map((w) => (
+                        <div key={w.weekLabel} className="flex flex-1 flex-col items-center gap-1">
+                          <div
+                            className="w-full rounded-t-[var(--radius-sm)] bg-[var(--accent-bg-strong)] transition-all"
+                            style={{
+                              height: `${(w.totalMinutes / maxWeek) * 100}%`,
+                              minHeight: w.totalMinutes > 0 ? 3 : 0,
+                            }}
+                            title={`${w.weekLabel}: ${Math.round(w.totalMinutes)}m`}
+                          />
+                          <span className="font-mono text-[9px] text-[var(--text-subtle)]">
+                            {w.weekLabel}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </div>
+
+                {xpBySubject.length > 0 ? (
+                  <Card variant="default" density="normal">
+                    <p className="eyebrow-mono mb-3">XP by subject</p>
+                    <div className="space-y-2.5">
+                      {xpBySubject.map(({ subject, xp }) => (
+                        <Meter
+                          key={subject.id}
+                          value={xp}
+                          max={stats.totalXp}
+                          label={
+                            <span className="inline-flex items-center gap-2">
+                              <span
+                                aria-hidden
+                                className="inline-block h-1.5 w-1.5 rounded-full"
+                                style={{ background: getSubjectAccent(subject.id) }}
+                              />
+                              {subject.name}
+                            </span>
+                          }
+                          hint={`${xp} XP`}
+                        />
+                      ))}
+                    </div>
+                  </Card>
+                ) : null}
+
+                <Card variant="default" density="normal">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <p className="eyebrow-mono">Recent activity</p>
+                    {activityFilterDate ? (
+                      <Button variant="ghost" size="sm" onClick={clearActivityFilter}>
+                        Clear filter ({activityFilterDate})
+                      </Button>
+                    ) : null}
+                  </div>
+                  <StudyActivityList subjects={subjects} filterDate={activityFilterDate} />
+                </Card>
+
+                <LazyOptionalStats
+                  subjects={subjects}
+                  completedNodes={stats.completedNodes}
+                  totalNodes={stats.totalNodes}
+                />
+              </div>
+            ) : null}
+          </section>
         </>
       )}
     </PageContainer>

@@ -26,15 +26,15 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        "space-y-4",
-        divider && "border-b border-[var(--border)] pb-6",
+        "space-y-3",
+        divider && "border-b border-[var(--rule)] pb-5",
         className,
       )}
     >
       {backTo ? (
         <Link
           to={backTo.to}
-          className="inline-flex min-h-11 items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+          className="inline-flex min-h-9 items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
         >
           <ChevronLeft size={16} aria-hidden />
           {backTo.label}
@@ -44,22 +44,18 @@ export function PageHeader({
       <div
         className={cn(
           "space-y-2",
-          actions && "flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-start min-[481px]:justify-between",
+          actions && "flex flex-col gap-4 min-[481px]:flex-row min-[481px]:items-end min-[481px]:justify-between",
         )}
       >
         <div className="min-w-0 space-y-2">
-          {eyebrow ? (
-            <p className="font-mono text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
-              {eyebrow}
-            </p>
-          ) : null}
+          {eyebrow ? <p className="eyebrow-mono">{eyebrow}</p> : null}
           {title ? (
-            <h1 className="text-[clamp(1.75rem,5vw,2.625rem)] font-semibold tracking-tight text-[var(--text-heading)]">
+            <h1 className="text-[clamp(1.625rem,4.5vw,2.375rem)] font-semibold tracking-tight text-[var(--text-heading)]">
               {title}
             </h1>
           ) : null}
           {subtitle ? (
-            <p className="text-sm text-[var(--text-muted)]">{subtitle}</p>
+            <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-muted)]">{subtitle}</p>
           ) : null}
         </div>
         {actions ? <div className="shrink-0">{actions}</div> : null}

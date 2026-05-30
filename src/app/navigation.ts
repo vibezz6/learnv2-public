@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Home,
   LayoutGrid,
+  Route,
   Settings,
   Star,
   Timer,
@@ -29,6 +30,8 @@ export const ROUTES = {
   satOfficial: "/subjects/sat-prep#official",
   satDiagnostic: "/subjects/sat-prep#diagnostic",
   satPretest: "/sat/pretest",
+  satDailyQuiz: "/sat/daily-quiz",
+  satDrill: "/sat/drill",
   tradingLab: "/lab/trading",
 } as const;
 
@@ -85,6 +88,15 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
     section: "Library",
     icon: BookOpen,
     end: true,
+  },
+  {
+    id: "tracks",
+    to: ROUTES.tracks,
+    label: "Tracks",
+    commandLabel: "Tracks",
+    hint: "Guided multi-subject learning paths",
+    section: "Library",
+    icon: Route,
   },
   {
     id: "review",
@@ -156,4 +168,75 @@ export function getMobileNavItems(): AppNavItem[] {
 
 export function getCommandNavItems(): AppNavItem[] {
   return APP_NAV_ITEMS;
+}
+
+interface BreadcrumbCrumb {
+  label: string;
+  to?: string;
+}
+
+/**
+ * Resolves a top-level breadcrumb for the workspace top bar.
+ * Returns ordered crumbs (last is current). Single-crumb paths still return
+ * one entry so the top bar is never blank.
+ */
+export function resolveBreadcrumb(pathname: string): BreadcrumbCrumb[] {
+  const path = pathname.split("?")[0];
+
+  if (path === "/" || path === "") return [{ label: "Today" }];
+  if (path === ROUTES.subjects) return [{ label: "Subjects" }];
+  if (path.startsWith("/subjects/sat-prep/")) {
+    return [
+      { label: "SAT Prep", to: ROUTES.sat },
+      { label: "Lesson" },
+    ];
+  }
+  if (path === ROUTES.sat || path.startsWith("/subjects/sat-prep")) {
+    return [{ label: "SAT Prep" }];
+  }
+  if (path.startsWith("/subjects/")) {
+    const segments = path.split("/").filter(Boolean);
+    const subjectId = segments[1];
+    if (segments.length >= 3) {
+      return [
+        { label: "Subjects", to: ROUTES.subjects },
+        { label: subjectId, to: `/subjects/${subjectId}` },
+        { label: "Lesson" },
+      ];
+    }
+    return [
+      { label: "Subjects", to: ROUTES.subjects },
+      { label: subjectId },
+    ];
+  }
+  if (path === ROUTES.tracks || path.startsWith("/tracks/")) return [{ label: "Tracks" }];
+  if (path === ROUTES.review) return [{ label: "Review" }];
+  if (path === ROUTES.stats) return [{ label: "Stats" }];
+  if (path === ROUTES.settings) return [{ label: "Settings" }];
+  if (path === ROUTES.timer) return [{ label: "Timer" }];
+  if (path === ROUTES.saved) return [{ label: "Saved" }];
+  if (path === ROUTES.college) return [{ label: "College" }];
+  if (path === ROUTES.collegeChecklist) {
+    return [{ label: "College", to: ROUTES.college }, { label: "Checklist" }];
+  }
+  if (path === ROUTES.essayTracker) {
+    return [{ label: "College", to: ROUTES.college }, { label: "Essays" }];
+  }
+  if (path.startsWith("/campus/calculators")) {
+    return [{ label: "Campus", to: ROUTES.college }, { label: "Calculators" }];
+  }
+  if (path.startsWith("/campus")) return [{ label: "Campus" }];
+  if (path.startsWith("/lab/trading")) {
+    return [{ label: "Campus", to: ROUTES.college }, { label: "Trading lab" }];
+  }
+  if (path.startsWith("/sat/pretest")) {
+    return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Diagnostic" }];
+  }
+  if (path.startsWith("/sat/daily-quiz")) {
+    return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Daily 5" }];
+  }
+  if (path.startsWith("/sat/drill")) {
+    return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Drill" }];
+  }
+  return [{ label: "Learn v2" }];
 }

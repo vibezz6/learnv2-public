@@ -60,6 +60,27 @@ export const STORAGE_KEYS: StorageKeyEntry[] = [
   { key: "learnv2_college_checklist_v1", label: "College checklist", domain: "college", backup: true, reset: true },
   { key: "learnv2_essay_tracker_v1", label: "Essays", domain: "college", backup: true, reset: true },
   { key: "learnv2_nudge_snooze_v1", label: "Nudge snoozes", domain: "college", backup: true, reset: true },
+  { key: "learnv2_reminders_v1", label: "Study reminders", domain: "core", backup: true, reset: true },
+  { key: "learnv2_sat_daily_quiz_v1", label: "SAT Daily 5 status", domain: "sat", backup: true, reset: true },
+  { key: "learnv2_sat_drill_log_v1", label: "SAT drill schedule", domain: "sat", backup: true, reset: true },
+  { key: "learnv2_last_backup_v1", label: "Last backup time", domain: "ui", backup: false, reset: true, note: "Backup metadata; not itself backed up." },
+  {
+    key: "learnv2_reminders_fired_v1",
+    label: "Reminder fire log",
+    domain: "ui",
+    backup: false,
+    reset: true,
+    note: "Ephemeral per-day fire tracking; not backed up.",
+  },
+  {
+    key: "learnv2_focus_session_v1",
+    label: "Active focus session",
+    domain: "ui",
+    backup: false,
+    reset: true,
+    note: "Transient in-progress session; not backed up.",
+  },
+  { key: "learnv2_sidebar_collapsed_v1", label: "Sidebar state", domain: "ui", backup: false, reset: false, note: "Device UI preference." },
   {
     key: QUIZ_PROGRESS_PREFIX,
     label: "Quiz progress",
@@ -74,6 +95,23 @@ export const STORAGE_KEYS: StorageKeyEntry[] = [
     label: "Section UI state",
     domain: "ui",
     backup: true,
+    reset: true,
+    dynamicPrefix: true,
+  },
+  {
+    key: "learnapp_we_v2_",
+    label: "Worked-example progress",
+    domain: "ui",
+    backup: false,
+    reset: true,
+    dynamicPrefix: true,
+    legacyNamespace: true,
+  },
+  {
+    key: "learnv2_quiz_intro_dismissed_",
+    label: "Quiz intro dismissals",
+    domain: "ui",
+    backup: false,
     reset: true,
     dynamicPrefix: true,
   },
@@ -100,8 +138,20 @@ export function isKnownStorageKey(key: string): boolean {
   );
 }
 
+/** A registered key explicitly marked `backup: false` (ephemeral/device-only). */
+function isRegistryBackupExcluded(key: string): boolean {
+  return STORAGE_KEYS.some((entry) => {
+    if (entry.backup) return false;
+    return entry.dynamicPrefix ? key.startsWith(entry.key) : key === entry.key;
+  });
+}
+
 export function isBackupKeyAllowed(key: string): boolean {
-  return BACKUP_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix)) && !isOpenRouterStorageKey(key);
+  return (
+    BACKUP_STORAGE_PREFIXES.some((prefix) => key.startsWith(prefix)) &&
+    !isOpenRouterStorageKey(key) &&
+    !isRegistryBackupExcluded(key)
+  );
 }
 
 export function isManagedStorageKey(key: string): boolean {

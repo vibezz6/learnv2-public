@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, ConfirmDialog } from "@/components/ui";
+import { Upload } from "lucide-react";
+import { Button, Card, ConfirmDialog, Stat, Toolbar } from "@/components/ui";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
 import { SAT_PRETEST_DRAFT_3_ID } from "@/data/satPretestDrafts";
@@ -75,96 +76,84 @@ export function SatPretestSettingsCard({ onMessage }: Props) {
   };
 
   return (
-    <Card id="sat-pretest-backup" className="min-w-0 scroll-mt-24 space-y-4">
-      <div>
-        <h2 className="break-words font-semibold text-[var(--text-heading)]">SAT diagnostic backup</h2>
-        <p className="mt-1 break-words text-sm text-[var(--text-muted)]">
+    <Card id="sat-pretest-backup" variant="default" density="normal" className="min-w-0 scroll-mt-24 space-y-4">
+      <div className="border-b border-[var(--rule)] pb-3">
+        <p className="eyebrow-mono">SAT diagnostic backup</p>
+        <p className="mt-1 text-sm text-[var(--text-muted)]">
           Draft 1–3 attempts, rationales, and exports live in localStorage on this device.
         </p>
       </div>
 
       {summary.hasData ? (
-        <ul className="space-y-1 text-sm text-[var(--text-muted)]">
-          <li>
-            Draft 1 attempts:{" "}
-            <span className="font-medium text-[var(--text-heading)]">{summary.draft1Count}</span>
-            {summary.draft1Score ? (
-              <>
-                {" "}
-                · latest score{" "}
-                <span className="font-medium text-[var(--text-heading)]">{summary.draft1Score}</span>
-              </>
-            ) : null}
-          </li>
-          <li>
-            Draft 2 attempts:{" "}
-            <span className="font-medium text-[var(--text-heading)]">{summary.draft2Count}</span>
-          </li>
-          <li>
-            Draft 3 attempts:{" "}
-            <span className="font-medium text-[var(--text-heading)]">{summary.draft3Count}</span>
-          </li>
-          {summary.lessonPlanCount > 0 ? (
-            <li>
-              Cursor lesson plan:{" "}
-              <span className="font-medium text-[var(--text-heading)]">
-                {summary.lessonPlanCount} items
-              </span>
-            </li>
-          ) : null}
-        </ul>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <Stat
+            label="Draft 1"
+            value={summary.draft1Count}
+            sub={summary.draft1Score ?? "no score"}
+            size="sm"
+          />
+          <Stat label="Draft 2" value={summary.draft2Count} size="sm" />
+          <Stat label="Draft 3" value={summary.draft3Count} size="sm" />
+          <Stat label="Plan items" value={summary.lessonPlanCount} size="sm" />
+        </div>
       ) : (
         <p className="text-sm text-[var(--text-muted)]">No diagnostic attempts saved yet.</p>
       )}
 
-      <div className="space-y-2 border-t border-[var(--border)] pt-4">
-        <h3 className="text-sm font-medium text-[var(--text-heading)]">Restore export</h3>
+      <div className="space-y-2 border-t border-[var(--rule)] pt-3">
+        <p className="eyebrow-mono">Restore export</p>
         <p className="text-xs text-[var(--text-muted)]">
           Re-import a JSON file you downloaded from the diagnostic results screen (Draft 1–3). Replaces
           the same attempt id if it already exists on this device.
         </p>
-        <Button
-          variant="secondary"
-          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-          onClick={() => restoreInputRef.current?.click()}
-        >
-          Restore from export JSON
-        </Button>
-        <input
-          ref={restoreInputRef}
-          type="file"
-          accept="application/json,.json"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleRestoreFile(file);
-            e.target.value = "";
-          }}
-        />
+        <Toolbar density="tight">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => restoreInputRef.current?.click()}
+          >
+            <Upload size={13} aria-hidden />
+            Restore from export
+          </Button>
+          <input
+            ref={restoreInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleRestoreFile(file);
+              e.target.value = "";
+            }}
+          />
+          <Link to="/subjects/sat-prep#diagnostic">
+            <Button variant="ghost" size="sm">
+              Open SAT diagnostic
+            </Button>
+          </Link>
+        </Toolbar>
       </div>
 
-      <div className="flex flex-col gap-2 min-[481px]:flex-row min-[481px]:flex-wrap">
-        <Link to="/subjects/sat-prep#diagnostic" className="min-w-0 min-[481px]:flex-1">
-          <Button variant="secondary" className="min-h-11 w-full touch-manipulation">
-            Open SAT Prep diagnostic
+      <div className="border-t border-[var(--rule)] pt-3">
+        <Toolbar density="tight">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearLessonPlan}
+            disabled={summary.lessonPlanCount === 0}
+          >
+            Clear lesson plan
           </Button>
-        </Link>
-        <Button
-          variant="secondary"
-          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-          onClick={handleClearLessonPlan}
-          disabled={summary.lessonPlanCount === 0}
-        >
-          Clear lesson plan
-        </Button>
-        <Button
-          variant="secondary"
-          className="min-h-11 w-full touch-manipulation min-[481px]:w-auto"
-          onClick={() => setResetOpen(true)}
-          disabled={!summary.hasData}
-        >
-          Clear all SAT diagnostic data
-        </Button>
+          <Button
+            variant="ghost"
+            tone="danger"
+            size="sm"
+            onClick={() => setResetOpen(true)}
+            disabled={!summary.hasData}
+          >
+            Clear all diagnostic data
+          </Button>
+        </Toolbar>
       </div>
 
       <ConfirmDialog

@@ -9,6 +9,12 @@ export const QuizRoutePage = lazy(() =>
 export const SatPretestPage = lazy(() =>
   import("@/features/sat/SatPretestPage").then((m) => ({ default: m.SatPretestPage })),
 );
+export const DailySatQuizPage = lazy(() =>
+  import("@/features/sat/DailySatQuizPage").then((m) => ({ default: m.DailySatQuizPage })),
+);
+export const SatDrillPage = lazy(() =>
+  import("@/features/sat/SatDrillPage").then((m) => ({ default: m.SatDrillPage })),
+);
 export const NotesPage = lazy(() =>
   import("@/features/notes/NotesPage").then((m) => ({ default: m.NotesPage })),
 );

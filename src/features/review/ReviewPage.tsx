@@ -163,7 +163,7 @@ export function ReviewPage() {
       />
 
       <Section eyebrow="Daily goal" title="Today's review cap">
-      <Card glow className="stagger-item border-l-2 border-l-[var(--accent)]">
+      <Card className="stagger-item border-l-2 border-l-[var(--accent)]">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0 flex-1">
             <div className="mb-2 flex items-center gap-2">
@@ -248,7 +248,7 @@ export function ReviewPage() {
       )}
 
       {items.length === 0 && dailyCount > 0 && (
-        <Card className="stagger-item py-10 text-center" glow>
+        <Card className="stagger-item py-10 text-center">
           <CheckCircle2 className="mx-auto mb-3 text-[var(--success)]" size={36} />
           <p className="text-lg font-semibold text-[var(--text-heading)]">All caught up for today</p>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
@@ -314,7 +314,6 @@ function ReviewCard({
 
   return (
     <Card
-      glow={spotlight}
       className={`min-w-0 overflow-hidden border-l-[3px] ${spotlight ? "p-6 md:p-8" : "p-4 md:p-5"}`}
       style={{
         borderLeftColor: urgent

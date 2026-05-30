@@ -90,8 +90,14 @@ export function completeStudySessionStep(
   };
   writeJson(storage, STUDY_SESSION_STORAGE_KEY, next);
   if (completed) {
-    const minutes = steps.reduce((sum, step) => sum + step.minutes, 0);
-    recordStudyActivity({ type: "timer_minutes", meta: { minutes, label: session.title } }, storage);
+    // Log honest wall-clock time spent on the block, capped at the planned sum
+    // so an abandoned-then-resumed session can't inflate the daily total.
+    const plannedSum = steps.reduce((sum, step) => sum + step.minutes, 0);
+    const elapsedMinutes = Math.round((now - session.startedAt) / 60_000);
+    const minutes = Math.max(0, Math.min(elapsedMinutes, plannedSum));
+    if (minutes > 0) {
+      recordStudyActivity({ type: "timer_minutes", meta: { minutes, label: session.title } }, storage);
+    }
   }
   return next;
 }

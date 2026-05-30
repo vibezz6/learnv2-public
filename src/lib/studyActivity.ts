@@ -38,6 +38,24 @@ export interface RecordStudyActivityInput {
   meta?: Record<string, string | number>;
 }
 
+/**
+ * Activity types that count as genuine study — enough to keep the daily streak
+ * alive and satisfy the minimum-viable-day. Deliberately excludes `lesson_started`
+ * (just opening a page) and `daily_challenge_done` (a light trivia warm-up).
+ */
+export const REAL_STUDY_ACTIVITY_TYPES: StudyActivityType[] = [
+  "lesson_completed",
+  "quiz_completed",
+  "notes_updated",
+  "notes_review_done",
+  "mentor_completed",
+  "review_done",
+  "timer_minutes",
+  "sat_mistake_logged",
+  "sat_practice_logged",
+  "sat_pretest_completed",
+];
+
 function utcDateFromMs(at: number): string {
   const d = new Date(at);
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;

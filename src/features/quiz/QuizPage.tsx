@@ -5,6 +5,8 @@ import type { QuizQuestion } from "@/curriculum/types";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useProgress } from "@/stores/progress";
+import { useFocusSession } from "@/stores/focusSession";
+import { recordStudyActivity } from "@/lib/studyActivity";
 import { clearQuizProgress, restoreQuizSession, saveQuizProgress } from "@/features/quiz/quizProgress";
 
 interface QuizProps {
@@ -13,6 +15,12 @@ interface QuizProps {
   subjectId?: string;
   accentColor?: string;
   contextLine?: string;
+  /**
+   * Persist the attempt to the node's progress (default true). Set false for
+   * synthetic quizzes (Daily 5, drills) so they don't create junk node records;
+   * a `quiz_completed` activity is still recorded so the streak/minimum count.
+   */
+  persistAttempt?: boolean;
   onComplete: (score: number, total: number) => void;
 }
 
@@ -26,9 +34,11 @@ export function Quiz({
   subjectId,
   accentColor = "var(--accent)",
   contextLine,
+  persistAttempt = true,
   onComplete,
 }: QuizProps) {
   const saveQuizAttempt = useProgress((s) => s.saveQuizAttempt);
+  const sessionActive = useFocusSession((s) => s.active != null);
   const [initial] = useState(() => restoreQuizSession(nodeId, questions.length));
   const [current, setCurrent] = useState(initial.current);
   const [selected, setSelected] = useState<number | null>(initial.selected);
@@ -88,13 +98,27 @@ export function Quiz({
       setShowResults(true);
       clearQuizProgress(nodeId);
       const pct = questions.length ? Math.round((score / questions.length) * 100) : 0;
-      saveQuizAttempt(nodeId, {
-        score: pct,
-        totalQuestions: questions.length,
-        correctAnswers: score,
-        date: new Date().toISOString(),
-        timeTakenSeconds: Math.round((Date.now() - startTime) / 1000),
-      });
+      if (persistAttempt) {
+        saveQuizAttempt(
+          nodeId,
+          {
+            score: pct,
+            totalQuestions: questions.length,
+            correctAnswers: score,
+            date: new Date().toISOString(),
+            timeTakenSeconds: Math.round((Date.now() - startTime) / 1000),
+          },
+          subjectId,
+        );
+      } else {
+        // Synthetic quiz (Daily 5 / drill): credit the day without a node record.
+        recordStudyActivity({
+          type: "quiz_completed",
+          nodeId,
+          ...(subjectId ? { subjectId } : {}),
+          meta: { score: pct, correct: score, total: questions.length },
+        });
+      }
       onComplete(score, questions.length);
     }
   }, [
@@ -102,11 +126,13 @@ export function Quiz({
     current,
     nodeId,
     onComplete,
+    persistAttempt,
     persistProgress,
     questions.length,
     saveQuizAttempt,
     score,
     startTime,
+    subjectId,
   ]);
 
   useEffect(() => {
@@ -148,7 +174,7 @@ export function Quiz({
     const lessonPath =
       subjectId ? `/subjects/${subjectId}/${nodeId}` : undefined;
     return (
-      <Card glow className="stagger-item space-y-4">
+      <Card className="stagger-item space-y-4">
         <h2 className="text-xl font-bold text-[var(--text-heading)]">Quiz complete</h2>
         <p className="font-mono text-3xl text-[var(--accent)]">
           {score}/{questions.length} · {pct}%
@@ -222,6 +248,7 @@ export function Quiz({
       <div
         className="h-1 overflow-hidden rounded-full bg-[var(--border)]"
         role="progressbar"
+        aria-label="Quiz progress"
         aria-valuenow={current + 1}
         aria-valuemin={1}
         aria-valuemax={questions.length}
@@ -265,7 +292,7 @@ export function Quiz({
               disabled={answered}
               onClick={() => handleSelect(i)}
               onFocus={() => setFocusedOption(i)}
-              className="flex min-h-11 w-full min-w-0 touch-manipulation items-center gap-3 rounded-[var(--radius)] border px-4 py-3 text-left text-sm transition hover:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-default"
+              className="flex min-h-11 w-full min-w-0 touch-manipulation items-center gap-3 rounded-[var(--radius)] border px-4 py-3 text-left text-sm transition hover:border-[var(--accent)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] disabled:cursor-default"
               style={{
                 borderColor: border,
                 background: "var(--bg-elevated)",
@@ -303,7 +330,14 @@ export function Quiz({
       )}
       {answered && (
         <>
-          <div className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-10 border-t border-[var(--border)] bg-[var(--bg-glass)] px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-xl sm:hidden">
+          <div
+            className={cn(
+              "fixed inset-x-0 z-[var(--z-action-bar)] border-t border-[var(--border)] bg-[var(--bg-glass)] px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-xl sm:hidden",
+              sessionActive
+                ? "bottom-[calc(env(safe-area-inset-bottom,0px)+var(--sessionbar-height)+1rem)]"
+                : "bottom-[var(--mobile-nav-height)]",
+            )}
+          >
             <div className="flex gap-2">
               <Button onClick={handleNext} className="min-h-11 flex-1">
                 {current < questions.length - 1 ? "Next" : "View results"}

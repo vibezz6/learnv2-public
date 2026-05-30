@@ -13,7 +13,7 @@ export function ServiceWorkerUpdateBanner() {
 
   return (
     <div
-      className="fixed bottom-20 left-3 right-3 z-50 mx-auto flex max-w-lg flex-col gap-2 rounded-[var(--radius-lg)] border border-[var(--accent-border)] bg-[var(--bg-elevated)] p-4 shadow-[var(--shadow-md)] min-[481px]:bottom-6 min-[481px]:left-auto min-[481px]:right-6"
+      className="fixed bottom-[8.5rem] left-3 right-3 z-[var(--z-overlay)] mx-auto flex max-w-lg flex-col gap-2 rounded-[var(--radius-lg)] border border-[var(--accent-border)] bg-[var(--bg-elevated)] p-4 shadow-[var(--shadow-md)] min-[481px]:bottom-[7rem] min-[481px]:left-auto min-[481px]:right-6"
       role="status"
     >
       <p className="text-sm text-[var(--text-heading)]">

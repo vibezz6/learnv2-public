@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ClipboardList, FileText, Settings } from "lucide-react";
-import { Card } from "@/components/ui";
+import { ArrowRight, ClipboardList, FileText, Settings } from "lucide-react";
+import { Button, Card, Stat, Tag, Toolbar } from "@/components/ui";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import {
   buildAdmissionsSummary,
@@ -27,76 +27,130 @@ export function CampusAdmissionsHub() {
     return getBlockingApplicationItem();
   }, [revision]);
 
-  return (
-    <Card className="min-w-0 space-y-3">
-      <div>
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[var(--accent-2)]">
-          College applications
-        </p>
-        {blocking ? (
-          <div className="mt-3 rounded-[var(--radius)] border border-[var(--warning)]/35 bg-[var(--warning-bg)] p-4">
-            <p className="text-sm font-medium text-[var(--text-heading)]">Blocking this week</p>
-            <p className="mt-1 text-sm text-[var(--text-heading)]">{blocking.title}</p>
-            {blocking.detail ? (
-              <p className="mt-0.5 text-xs text-[var(--text-muted)]">{blocking.detail}</p>
-            ) : null}
-            {blocking.nextStep ? (
-              <p className="mt-2 text-sm text-[var(--accent-2)]">Next: {blocking.nextStep}</p>
-            ) : null}
-            <p className="mt-1 text-xs font-medium text-[var(--text-muted)]">
-              {blocking.overdue
-                ? "Overdue"
-                : blocking.daysUntil === 0
-                  ? "Due today"
-                  : `Due in ${blocking.daysUntil} day${blocking.daysUntil === 1 ? "" : "s"}`}
+  if (blocking) {
+    const tone = blocking.overdue ? "danger" : blocking.daysUntil === 0 ? "warning" : "warning";
+    const dueLabel = blocking.overdue
+      ? "Overdue"
+      : blocking.daysUntil === 0
+        ? "Due today"
+        : `Due in ${blocking.daysUntil} day${blocking.daysUntil === 1 ? "" : "s"}`;
+    return (
+      <Card variant="primary" density="normal" className="min-w-0">
+        <div className="flex items-center gap-2 border-b border-[var(--rule)] pb-3">
+          <p className="eyebrow-mono">Blocking this week</p>
+          <Tag tone={tone} size="sm" mono className="ml-auto">
+            {dueLabel}
+          </Tag>
+        </div>
+        <div className="mt-3 space-y-1">
+          <p className="text-base font-semibold text-[var(--text-heading)]">{blocking.title}</p>
+          {blocking.detail ? (
+            <p className="text-sm text-[var(--text-muted)]">{blocking.detail}</p>
+          ) : null}
+          {blocking.nextStep ? (
+            <p className="text-sm text-[var(--text)]">
+              <span className="font-mono text-xs text-[var(--text-muted)]">Next:</span>{" "}
+              {blocking.nextStep}
             </p>
-            <Link
-              to={blocking.href}
-              className="mt-2 inline-flex min-h-10 items-center text-sm font-medium text-[var(--accent)] hover:underline"
-            >
+          ) : null}
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-[var(--rule)] pt-3">
+          <Link to={blocking.href}>
+            <Button>
               Open and update
-            </Link>
-          </div>
-        ) : null}
+              <ArrowRight size={14} aria-hidden />
+            </Button>
+          </Link>
+          <SummaryStats
+            checklistDone={summary.checklistDone}
+            checklistTotal={summary.checklistTotal}
+            checklistPct={summary.checklistPct}
+            essaysTracked={summary.essaysTracked}
+            essaysFinal={summary.essaysFinal}
+            hasActivity={summary.hasActivity}
+          />
+        </div>
+        <FooterToolbar />
+      </Card>
+    );
+  }
+
+  return (
+    <Card variant="default" density="normal" className="min-w-0">
+      <div className="flex items-center gap-2 border-b border-[var(--rule)] pb-3">
+        <p className="eyebrow-mono">College applications</p>
+      </div>
+      <div className="mt-3">
         {summary.hasActivity ? (
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            Checklist{" "}
-            <span className="font-medium text-[var(--text-heading)]">
-              {summary.checklistDone}/{summary.checklistTotal}
-            </span>{" "}
-            ({summary.checklistPct}%) · Essays{" "}
-            <span className="font-medium text-[var(--text-heading)]">
-              {summary.essaysTracked} tracked
-            </span>
-            {summary.essaysFinal > 0 ? ` · ${summary.essaysFinal} final` : null}
-          </p>
+          <SummaryStats
+            checklistDone={summary.checklistDone}
+            checklistTotal={summary.checklistTotal}
+            checklistPct={summary.checklistPct}
+            essaysTracked={summary.essaysTracked}
+            essaysFinal={summary.essaysFinal}
+            hasActivity={summary.hasActivity}
+          />
         ) : (
-          <p className="mt-2 text-sm text-[var(--text-muted)]">
-            Track FAFSA, essays, and deadlines on this device. Export or import from Settings when you
-            switch browsers.
+          <p className="text-sm text-[var(--text-muted)]">
+            Track FAFSA, essays, and deadlines locally. Export or import from Settings when you switch
+            browsers.
           </p>
         )}
       </div>
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-        <Link to="/campus/college-checklist" className="min-w-0 flex-1">
-          <span className="flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius)] border border-[var(--border)] px-3 text-sm font-medium text-[var(--text-heading)] transition hover:border-[var(--accent)] touch-manipulation">
-            <ClipboardList size={16} aria-hidden />
-            Checklist
-          </span>
-        </Link>
-        <Link to="/campus/essay-tracker" className="min-w-0 flex-1">
-          <span className="flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius)] border border-[var(--border)] px-3 text-sm font-medium text-[var(--text-heading)] transition hover:border-[var(--accent)] touch-manipulation">
-            <FileText size={16} aria-hidden />
-            Essays
-          </span>
-        </Link>
-        <Link to="/settings#admissions-backup" className="min-w-0 flex-1">
-          <span className="flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius)] border border-[var(--border)] px-3 text-sm font-medium text-[var(--text-muted)] transition hover:border-[var(--accent)] hover:text-[var(--text-heading)] touch-manipulation">
-            <Settings size={16} aria-hidden />
-            Backup
-          </span>
-        </Link>
-      </div>
+      <FooterToolbar />
     </Card>
+  );
+}
+
+function SummaryStats({
+  checklistDone,
+  checklistTotal,
+  checklistPct,
+  essaysTracked,
+  essaysFinal,
+}: {
+  checklistDone: number;
+  checklistTotal: number;
+  checklistPct: number;
+  essaysTracked: number;
+  essaysFinal: number;
+  hasActivity: boolean;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <Stat
+        label="Checklist"
+        value={`${checklistDone}/${checklistTotal}`}
+        sub={`${checklistPct}% complete`}
+        size="sm"
+      />
+      <Stat label="Essays tracked" value={essaysTracked} size="sm" />
+      <Stat label="Essays final" value={essaysFinal} size="sm" />
+    </div>
+  );
+}
+
+function FooterToolbar() {
+  return (
+    <Toolbar className="mt-4 border-t border-[var(--rule)] pt-3" density="tight">
+      <Link to="/campus/college-checklist">
+        <Button variant="secondary" size="sm">
+          <ClipboardList size={14} aria-hidden />
+          Checklist
+        </Button>
+      </Link>
+      <Link to="/campus/essay-tracker">
+        <Button variant="secondary" size="sm">
+          <FileText size={14} aria-hidden />
+          Essays
+        </Button>
+      </Link>
+      <Link to="/settings#admissions-backup">
+        <Button variant="ghost" size="sm">
+          <Settings size={14} aria-hidden />
+          Backup
+        </Button>
+      </Link>
+    </Toolbar>
   );
 }

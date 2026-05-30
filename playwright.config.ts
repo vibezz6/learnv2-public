@@ -10,6 +10,10 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:8080",
     trace: "on-first-retry",
+    // Disable entrance animations (gated behind prefers-reduced-motion) so
+    // Playwright's actionability "stability" check isn't tripped by transient
+    // mount transitions.
+    reducedMotion: "reduce",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {

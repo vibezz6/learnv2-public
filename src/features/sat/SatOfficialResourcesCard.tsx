@@ -1,7 +1,7 @@
 import { useCallback, useState, type FormEvent } from "react";
 import { Calendar, ExternalLink, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, Field, Input, Row, Select, Tag } from "@/components/ui";
 import {
   addPracticeSession,
   getLatestPracticeSession,
@@ -60,11 +60,11 @@ export function SatOfficialResourcesCard({ id }: Props) {
   };
 
   return (
-    <Card id={id} variant="default" className="space-y-4 p-5">
-      <div className="flex items-start gap-3">
-        <GraduationCap className="mt-0.5 shrink-0 text-[var(--accent-2)]" size={20} aria-hidden />
+    <Card id={id} variant="default" density="normal" className="min-w-0 space-y-4">
+      <div className="flex items-start gap-3 border-b border-[var(--rule)] pb-3">
+        <GraduationCap className="mt-0.5 shrink-0 text-[var(--text-muted)]" size={16} aria-hidden />
         <div className="min-w-0 space-y-1">
-          <h3 className="font-semibold text-[var(--text-heading)]">Official SAT practice</h3>
+          <p className="eyebrow-mono">Official SAT practice</p>
           <p className="text-sm text-[var(--text-muted)]">
             Run timed work in Bluebook or Khan, then log the session here and add misses to your
             mistake log within 24 hours.
@@ -72,67 +72,72 @@ export function SatOfficialResourcesCard({ id }: Props) {
         </div>
       </div>
 
-      <form onSubmit={handleLogSession} className="space-y-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-secondary)]/35 p-4">
-        <p className="text-sm font-medium text-[var(--text-heading)]">Log a practice session</p>
+      <form onSubmit={handleLogSession} className="space-y-3 rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-canvas)] p-3">
+        <p className="eyebrow-mono">Log a practice session</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className="block space-y-1 text-sm">
-            <span className="font-medium text-[var(--text-heading)]">Section</span>
-            <select
-              value={section}
-              onChange={(e) => setSection(e.target.value as SatPracticeSection)}
-              className="min-h-11 w-full touch-manipulation rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
-            >
-              <option value="math">Math module</option>
-              <option value="rw">Reading &amp; Writing</option>
-              <option value="full">Full practice test</option>
-            </select>
-          </label>
-          <label className="block space-y-1 text-sm">
-            <span className="font-medium text-[var(--text-heading)]">Source</span>
-            <select
-              value={source}
-              onChange={(e) => setSource(e.target.value as SatPracticeSource)}
-              className="min-h-11 w-full touch-manipulation rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
-            >
-              <option value="bluebook">Bluebook</option>
-              <option value="khan">Khan Academy</option>
-            </select>
-          </label>
+          <Field label="Section">
+            {(id) => (
+              <Select
+                id={id}
+                value={section}
+                onChange={(e) => setSection(e.target.value as SatPracticeSection)}
+              >
+                <option value="math">Math module</option>
+                <option value="rw">Reading &amp; Writing</option>
+                <option value="full">Full practice test</option>
+              </Select>
+            )}
+          </Field>
+          <Field label="Source">
+            {(id) => (
+              <Select
+                id={id}
+                value={source}
+                onChange={(e) => setSource(e.target.value as SatPracticeSource)}
+              >
+                <option value="bluebook">Bluebook</option>
+                <option value="khan">Khan Academy</option>
+              </Select>
+            )}
+          </Field>
         </div>
-        <label className="block space-y-1 text-sm">
-          <span className="font-medium text-[var(--text-heading)]">Notes (optional)</span>
-          <input
-            type="text"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="e.g. Module 2 — rushed on inference"
-            className="min-h-11 w-full rounded-[var(--radius)] border border-[var(--border-strong)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)]"
-          />
-        </label>
-        <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-[var(--text-muted)]">
+        <Field label="Notes" hint="Optional">
+          {(id) => (
+            <Input
+              id={id}
+              type="text"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Module 2 — rushed on inference"
+            />
+          )}
+        </Field>
+        <label className="flex min-h-9 cursor-pointer items-center gap-2 text-sm text-[var(--text-muted)]">
           <input
             type="checkbox"
             checked={missesLogged}
             onChange={(e) => setMissesLogged(e.target.checked)}
-            className="h-5 w-5 shrink-0"
+            className="h-4 w-4 shrink-0 accent-[var(--accent)]"
           />
           Misses logged in mistake log
         </label>
-        {error ? <p className="text-sm text-[var(--warning)]">{error}</p> : null}
-        <Button type="submit" variant="secondary" className="min-h-11 w-full touch-manipulation sm:w-auto">
+        {error ? (
+          <p className="text-sm text-[var(--danger-fg)]">{error}</p>
+        ) : null}
+        <Button type="submit" variant="secondary" size="sm">
           Save session
         </Button>
       </form>
 
       {latest ? (
         <p className="text-sm text-[var(--text-muted)]">
-          Last session: <span className="font-medium text-[var(--text-heading)]">{latest.label}</span>
+          Last session:{" "}
+          <span className="font-medium text-[var(--text-heading)]">{latest.label}</span>
           {latest.note ? ` — ${latest.note}` : ""}
           {!latest.missesLogged ? (
             <>
-              {" "}
-              ·{" "}
-              <Link to="/subjects/sat-prep#mistakes" className="text-[var(--accent-2)] hover:underline">
+              {" · "}
+              <Link to="/subjects/sat-prep#mistakes" className="text-[var(--accent)] hover:underline">
                 Log misses now
               </Link>
             </>
@@ -141,10 +146,13 @@ export function SatOfficialResourcesCard({ id }: Props) {
       ) : null}
 
       {recent.length > 1 ? (
-        <ul className="space-y-1 text-xs text-[var(--text-muted)]">
+        <ul className="space-y-1 font-mono text-[11px] text-[var(--text-subtle)]">
           {recent.slice(1).map((session) => (
             <li key={session.id}>
-              {session.date}: {session.label}
+              <Tag tone="mono" size="sm" className="mr-1">
+                {session.date}
+              </Tag>
+              {session.label}
             </li>
           ))}
         </ul>
@@ -153,33 +161,20 @@ export function SatOfficialResourcesCard({ id }: Props) {
       <ul className="space-y-2">
         {LINKS.map((link) => (
           <li key={link.url}>
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex min-h-11 touch-manipulation items-start justify-between gap-3 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-3 no-underline transition hover:border-[var(--border-strong)]"
-            >
-              <span className="min-w-0">
-                <span className="block text-sm font-medium text-[var(--text-heading)]">
-                  {link.title}
-                </span>
-                <span className="mt-0.5 block text-xs text-[var(--text-muted)]">
-                  {link.description}
-                </span>
-              </span>
-              <ExternalLink
-                size={14}
-                className="mt-0.5 shrink-0 text-[var(--text-muted)]"
-                aria-hidden
-              />
-            </a>
+            <Row
+              to={link.url}
+              external
+              icon={<ExternalLink size={14} />}
+              title={link.title}
+              detail={link.description}
+            />
           </li>
         ))}
       </ul>
 
-      <div className="flex items-start gap-2 rounded-[var(--radius)] border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-4 py-3">
-        <Calendar size={16} className="mt-0.5 shrink-0 text-[var(--warning)]" aria-hidden />
-        <p className="text-sm text-[var(--text-muted)]">
+      <div className="flex items-start gap-2 rounded-[var(--radius)] border border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2.5">
+        <Calendar size={14} className="mt-0.5 shrink-0 text-[var(--warning-fg)]" aria-hidden />
+        <p className="text-sm leading-relaxed text-[var(--text)]">
           <span className="font-medium text-[var(--text-heading)]">August 2026 test week:</span>{" "}
           sleep beats cramming. Run one full Bluebook practice test, review your mistake log
           categories, and keep study blocks short the two nights before test day.
