@@ -6,7 +6,7 @@ import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { Quiz } from "@/features/quiz/QuizPage";
 import { buildSatMicroDrill } from "@/lib/satMicroDrills";
-import { getNextDrillCategory, markCategoryDrilled } from "@/lib/satDrillSchedule";
+import { getDrillKey, getNextDrillCategory, markCategoryDrilled } from "@/lib/satDrillSchedule";
 import { getToday } from "@/stores/progress";
 import { ROUTES } from "@/app/navigation";
 
@@ -70,17 +70,24 @@ export function SatDrillPage() {
           </div>
         </Card>
       ) : (
-        <Quiz
-          questions={drill.questions.map((q) => q.question)}
-          nodeId={`sat-drill-${getToday()}`}
-          subjectId="sat-prep"
-          accentColor="var(--accent)"
-          persistAttempt={false}
-          onComplete={(score, total) => {
-            if (target) markCategoryDrilled(target.category);
-            setDone({ score, total });
-          }}
-        />
+        <div className="space-y-3">
+          {drill.thin ? (
+            <p className="rounded-[var(--radius)] border border-[var(--rule)] bg-[var(--bg-panel)] px-3 py-2 text-xs text-[var(--text-muted)]">
+              Limited questions for this skill right now — drilling the closest available items.
+            </p>
+          ) : null}
+          <Quiz
+            questions={drill.questions.map((q) => q.question)}
+            nodeId={`sat-drill-${getToday()}`}
+            subjectId="sat-prep"
+            accentColor="var(--accent)"
+            persistAttempt={false}
+            onComplete={(score, total) => {
+              if (target) markCategoryDrilled(getDrillKey(target));
+              setDone({ score, total });
+            }}
+          />
+        </div>
       )}
     </PageContainer>
   );

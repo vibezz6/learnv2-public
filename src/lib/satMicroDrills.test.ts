@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { Subject } from "@/curriculum/types";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
 import { buildSatMicroDrill } from "@/lib/satMicroDrills";
 
-function mockStorage(): Storage {
+function mapStorage(): Storage {
   const map = new Map<string, string>();
   return {
     get length() {
@@ -11,73 +11,89 @@ function mockStorage(): Storage {
     },
     clear: () => map.clear(),
     getItem: (k) => map.get(k) ?? null,
-    setItem: (k, v) => map.set(k, v),
-    removeItem: (k) => map.delete(k),
     key: (i) => [...map.keys()][i] ?? null,
-  };
+    removeItem: (k) => map.delete(k),
+    setItem: (k, v) => map.set(k, v),
+  } as Storage;
 }
 
-const subjects: Subject[] = [
+function q(id: string) {
+  return { id, question: `Q ${id}?`, options: ["a", "b"], correctIndex: 0, explanation: "" };
+}
+function node(id: string, name: string) {
+  return { id, name, description: "", keyConcepts: [], quiz: [q(`${id}-q1`), q(`${id}-q2`)] };
+}
+
+// Real node ids so SAT_NODE_SKILLS applies: st17/st4 = linear-equations, st27 = sentence-boundaries, st1 = general.
+const subjects = [
   {
     id: "sat-prep",
-    name: "SAT Prep",
+    name: "SAT",
     description: "",
     color: "#000",
-    icon: "book",
-    nodes: [
-      {
-        id: "st10",
-        name: "Linear equations",
-        description: "Solve linear equations.",
-        xpValue: 10,
-        parentIds: [],
-        estimatedMinutes: 10,
-        resources: [],
-        keyConcepts: ["linear equations"],
-        whyItMatters: "Useful.",
-        practiceProblems: ["Solve x + 2 = 5."],
-        difficulty: "beginner",
-        quiz: [
-          {
-            id: "q1",
-            question: "Solve a linear equation.",
-            options: ["1", "2"],
-            correctIndex: 0,
-            explanation: "Use inverse operations.",
-          },
-        ],
-      },
-    ],
+    icon: "g",
+    nodes: [node("st17", "Linear"), node("st4", "Algebra"), node("st27", "Punctuation"), node("st1", "Plan")],
   },
-];
+] as unknown as Subject[];
 
-describe("satMicroDrills", () => {
-  let storage: Storage;
+function seed(storage: Storage, entry: Record<string, unknown>) {
+  storage.setItem(SAT_MISTAKE_LOG_KEY, JSON.stringify([entry]));
+}
 
-  beforeEach(() => {
-    storage = mockStorage();
-    vi.stubGlobal("localStorage", storage);
+describe("buildSatMicroDrill (skill-based)", () => {
+  it("targets the logged skill's questions first and flags thin coverage", () => {
+    const storage = mapStorage();
+    seed(storage, {
+      id: "m1",
+      date: "2026-05-29",
+      section: "math",
+      category: "Linear equations",
+      skillId: "linear-equations",
+      note: "x",
+      createdAt: 1,
+    });
+    const drill = buildSatMicroDrill(subjects, storage, 5);
+    const nodeIds = drill.questions.map((x) => x.nodeId);
+    expect(nodeIds[0]).toBe("st17"); // same-skill node ranks first
+    expect(nodeIds).not.toContain("st27"); // R&W node not in the top 5
+    expect(drill.thin).toBe(true); // only 4 linear-equations questions exist (< 5)
   });
 
-  it("builds a drill from the top mistake category", () => {
-    storage.setItem(
-      SAT_MISTAKE_LOG_KEY,
-      JSON.stringify([
-        {
-          id: "m1",
-          date: "2026-05-28",
-          section: "math",
-          category: "Linear equations",
-          nodeId: "st10",
-          note: "sign error",
-          createdAt: 1,
-        },
-      ]),
-    );
+  it("resolves a legacy free-text category to a skill", () => {
+    const storage = mapStorage();
+    seed(storage, {
+      id: "m1",
+      date: "2026-05-29",
+      section: "rw",
+      category: "commas",
+      note: "x",
+      createdAt: 1,
+    });
+    const drill = buildSatMicroDrill(subjects, storage, 5);
+    expect(drill.questions[0]?.nodeId).toBe("st27"); // commas -> sentence-boundaries -> st27
+  });
 
-    const drill = buildSatMicroDrill(subjects, storage);
-    expect(drill.title).toContain("Linear equations");
-    expect(drill.href).toBe("/subjects/sat-prep/st10");
-    expect(drill.questions).toHaveLength(1);
+  it("falls back to a warm-up when no mistakes are logged", () => {
+    const storage = mapStorage();
+    const drill = buildSatMicroDrill(subjects, storage, 5);
+    expect(drill.questions.length).toBeGreaterThan(0);
+    expect(drill.thin).toBe(false); // no targeted skill -> not flagged thin
+  });
+
+  it("dedupes and stays within the limit", () => {
+    const storage = mapStorage();
+    seed(storage, {
+      id: "m1",
+      date: "2026-05-29",
+      section: "math",
+      skillId: "linear-equations",
+      category: "Linear equations",
+      note: "x",
+      createdAt: 1,
+    });
+    const drill = buildSatMicroDrill(subjects, storage, 5);
+    expect(drill.questions.length).toBeLessThanOrEqual(5);
+    const ids = drill.questions.map((x) => x.question.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });

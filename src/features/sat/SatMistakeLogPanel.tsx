@@ -19,10 +19,12 @@ import {
   type SatMistakeSection,
 } from "@/lib/satMistakeLog";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
+import { getPicklistSkills, SAT_SKILLS, type SatSkillId } from "@/lib/satSkills";
 
 interface SatMistakeLogPanelProps {
   defaultNodeId?: string;
   defaultSection?: SatMistakeSection;
+  defaultSkillId?: SatSkillId;
   recentLimit?: number;
 }
 
@@ -40,11 +42,13 @@ function formatEntryDate(date: string): string {
 export function SatMistakeLogPanel({
   defaultNodeId = "",
   defaultSection = "math",
+  defaultSkillId,
   recentLimit = 12,
 }: SatMistakeLogPanelProps) {
   const [entries, setEntries] = useState(() => listMistakes());
   const [section, setSection] = useState<SatMistakeSection>(defaultSection);
-  const [category, setCategory] = useState("");
+  const [skillId, setSkillId] = useState<SatSkillId | "">(defaultSkillId ?? "");
+  const [specifics, setSpecifics] = useState("");
   const [note, setNote] = useState("");
   const [nodeId, setNodeId] = useState(defaultNodeId);
   const [error, setError] = useState("");
@@ -58,20 +62,27 @@ export function SatMistakeLogPanel({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    if (!skillId) {
+      setError("Pick the skill you missed.");
+      return;
+    }
+    const trimmedSpecifics = specifics.trim();
     const created = addMistake({
       section,
-      category,
+      skillId,
+      category: trimmedSpecifics || SAT_SKILLS[skillId].label,
       note,
       nodeId: nodeId.trim() || undefined,
     });
 
     if (!created) {
-      setError("Add a topic category and a short note about what went wrong.");
+      setError("Add a short note about what went wrong.");
       return;
     }
 
     setError("");
-    setCategory("");
+    setSkillId("");
+    setSpecifics("");
     setNote("");
     if (!defaultNodeId) setNodeId("");
     refresh();
@@ -150,7 +161,10 @@ export function SatMistakeLogPanel({
                 <Select
                   id={id}
                   value={section}
-                  onChange={(event) => setSection(event.target.value as SatMistakeSection)}
+                  onChange={(event) => {
+                    setSection(event.target.value as SatMistakeSection);
+                    setSkillId("");
+                  }}
                 >
                   <option value="math">Math</option>
                   <option value="rw">Reading &amp; Writing</option>
@@ -168,14 +182,30 @@ export function SatMistakeLogPanel({
               )}
             </Field>
           </div>
-          <Field label="Topic category" required>
+          <Field label="Skill" required>
+            {(id) => (
+              <Select
+                id={id}
+                value={skillId}
+                onChange={(event) => setSkillId(event.target.value as SatSkillId | "")}
+              >
+                <option value="">Select the skill you missed…</option>
+                {getPicklistSkills(section).map((skill) => (
+                  <option key={skill.id} value={skill.id}>
+                    {skill.label}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Field>
+          <Field label="Specifics" hint="Optional — e.g. comma splices in long sentences">
             {(id) => (
               <Input
                 id={id}
                 type="text"
-                value={category}
-                onChange={(event) => setCategory(event.target.value)}
-                placeholder="comma splices, scatterplots, inference"
+                value={specifics}
+                onChange={(event) => setSpecifics(event.target.value)}
+                placeholder="optional detail"
               />
             )}
           </Field>

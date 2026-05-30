@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
 import {
+  getDrillKey,
   getDueDrillCount,
   getNextDrillCategory,
   markCategoryDrilled,
@@ -49,28 +50,32 @@ describe("satDrillSchedule", () => {
     expect(getDueDrillCount(storage)).toBe(0);
   });
 
-  it("prioritizes the most-missed category, then rotates after drilling", () => {
+  it("prioritizes the most-missed skill, then rotates after drilling", () => {
     const storage = mapStorage();
     const now = Date.parse("2026-05-29T12:00:00Z");
+    // Categories group by resolved skill: "Commas" -> sentence-boundaries.
     seedMistakes(storage, [
       { category: "Linear equations", count: 3 },
       { category: "Commas", count: 1 },
     ]);
 
-    expect(getNextDrillCategory(storage, now)?.category).toBe("Linear equations");
+    const first = getNextDrillCategory(storage, now);
+    expect(first?.skillId).toBe("linear-equations");
     expect(getDueDrillCount(storage, now)).toBe(2);
 
-    // Drill the top one → it's no longer due, so the next category rotates in.
-    markCategoryDrilled("Linear equations", now, storage);
-    expect(getNextDrillCategory(storage, now)?.category).toBe("Commas");
+    // Drill the top skill → it's no longer due, so the next skill rotates in.
+    markCategoryDrilled(getDrillKey(first!), now, storage);
+    const next = getNextDrillCategory(storage, now);
+    expect(next?.skillId).toBe("sentence-boundaries");
     expect(getDueDrillCount(storage, now)).toBe(1);
   });
 
-  it("makes a drilled category due again after the interval", () => {
+  it("makes a drilled skill due again after the interval", () => {
     const storage = mapStorage();
     const now = Date.parse("2026-05-29T12:00:00Z");
     seedMistakes(storage, [{ category: "Linear equations", count: 2 }]);
-    markCategoryDrilled("Linear equations", now, storage);
+    const target = getNextDrillCategory(storage, now);
+    markCategoryDrilled(getDrillKey(target!), now, storage);
     expect(getDueDrillCount(storage, now)).toBe(0);
     const later = now + (RE_DRILL_INTERVAL_DAYS + 0.5) * DAY;
     expect(getDueDrillCount(storage, later)).toBe(1);

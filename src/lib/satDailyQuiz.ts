@@ -1,5 +1,6 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
+import { bestNodeTier, type WeakTarget } from "@/lib/satSkillMatch";
 import { getToday } from "@/stores/progress";
 
 export const SAT_DAILY_QUIZ_SIZE = 5;
@@ -49,9 +50,9 @@ function tokenize(value: string): Set<string> {
 
 /**
  * Build today's 5-question SAT warm-up. Deterministic per day, but weighted
- * toward your weakest logged-mistake categories (so the warm-up drills what you
- * keep missing) with a day-stable tiebreak for variety. With no mistakes logged
- * it degrades to a plain deterministic daily shuffle.
+ * toward your weakest logged skills (exact node > same skill > same domain >
+ * same section), with token overlap and a day-stable seed as tiebreaks for
+ * variety. With no mistakes logged it degrades to a plain deterministic shuffle.
  */
 export function getDailySatQuiz(
   subjects: Subject[],
@@ -61,14 +62,21 @@ export function getDailySatQuiz(
 ): DailySatQuiz {
   const sat = subjects.find((s) => s.id === "sat-prep");
 
+  const tops = getTopMistakeCategories(3, storage);
+  const targets: WeakTarget[] = tops.map((cat) => ({
+    skillId: cat.skillId ?? null,
+    section: cat.latestSection,
+    nodeId: cat.nodeId,
+  }));
   const weakTokens = new Set<string>();
-  for (const cat of getTopMistakeCategories(3, storage)) {
+  for (const cat of tops) {
     for (const token of tokenize(cat.category)) weakTokens.add(token);
   }
 
   interface Candidate {
     q: QuizQuestion;
-    weakScore: number;
+    tier: number;
+    tokenScore: number;
     tiebreak: number;
   }
   const candidates: Candidate[] = [];
@@ -76,6 +84,7 @@ export function getDailySatQuiz(
   if (sat) {
     for (const node of sat.nodes) {
       if (!node.quiz) continue;
+      const tier = targets.length ? bestNodeTier(node.id, targets) : 0;
       const nodeTokens = tokenize(
         [node.name, node.description, ...(node.keyConcepts ?? [])].join(" "),
       );
@@ -83,17 +92,24 @@ export function getDailySatQuiz(
         if ((q.type ?? "multiple-choice") !== "multiple-choice" || q.options.length < 2) continue;
         if (seen.has(q.id)) continue;
         seen.add(q.id);
-        let weakScore = 0;
+        let tokenScore = 0;
         if (weakTokens.size) {
           const text = new Set([...nodeTokens, ...tokenize(q.question)]);
-          for (const token of text) if (weakTokens.has(token)) weakScore++;
+          for (const token of text) if (weakTokens.has(token)) tokenScore++;
         }
-        candidates.push({ q, weakScore, tiebreak: mulberry32(hashString(`${date}:${q.id}`))() });
+        candidates.push({
+          q,
+          tier,
+          tokenScore,
+          tiebreak: mulberry32(hashString(`${date}:${q.id}`))(),
+        });
       }
     }
   }
 
-  candidates.sort((a, b) => b.weakScore - a.weakScore || a.tiebreak - b.tiebreak);
+  candidates.sort(
+    (a, b) => b.tier - a.tier || b.tokenScore - a.tokenScore || a.tiebreak - b.tiebreak,
+  );
   const questions = candidates.slice(0, Math.min(size, candidates.length)).map((c) => c.q);
   return { id: `sat-daily-${date}`, date, questions };
 }

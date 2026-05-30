@@ -35,14 +35,19 @@ function saveLog(log: DrillLog, storage: Storage = localStorage): void {
   }
 }
 
+/** Stable log key for a mistake bucket: its canonical skill, else the raw category. */
+export function getDrillKey(summary: Pick<MistakeCategorySummary, "skillId" | "category">): string {
+  return summary.skillId ?? summary.category;
+}
+
 export function markCategoryDrilled(
-  category: string,
+  key: string,
   at: number = Date.now(),
   storage: Storage = localStorage,
 ): void {
-  if (!category.trim()) return;
+  if (!key.trim()) return;
   const log = loadLog(storage);
-  log[category] = at;
+  log[key] = at;
   saveLog(log, storage);
 }
 
@@ -59,7 +64,8 @@ export function getDrillSchedule(
   const log = loadLog(storage);
   return getTopMistakeCategories(10, storage)
     .map((cat): ScheduledDrillCategory => {
-      const lastDrilledAt = typeof log[cat.category] === "number" ? log[cat.category] : null;
+      const logKey = getDrillKey(cat);
+      const lastDrilledAt = typeof log[logKey] === "number" ? log[logKey] : null;
       const due = lastDrilledAt == null || now - lastDrilledAt >= RE_DRILL_INTERVAL_DAYS * DAY_MS;
       return { ...cat, lastDrilledAt, due };
     })

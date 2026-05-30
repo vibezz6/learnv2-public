@@ -1,5 +1,6 @@
 import { recordStudyActivity } from "@/lib/studyActivity";
 import { readJsonArray, writeJson } from "@/lib/storageJson";
+import { resolveSkillId, type SatSkillId } from "@/lib/satSkills";
 
 export const SAT_MISTAKE_LOG_KEY = "learnv2_sat_mistakes_v1";
 
@@ -10,6 +11,8 @@ export interface SatMistakeEntry {
   date: string;
   section: SatMistakeSection;
   category: string;
+  /** Canonical skill (B-phase). Optional for back-compat; legacy entries resolve via category. */
+  skillId?: SatSkillId;
   nodeId?: string;
   note: string;
   createdAt: number;
@@ -18,9 +21,18 @@ export interface SatMistakeEntry {
 export interface AddMistakeInput {
   section: SatMistakeSection;
   category: string;
+  skillId?: SatSkillId;
   note: string;
   nodeId?: string;
   date?: string;
+}
+
+/** The effective skill of an entry: stored skillId, else resolved from the free-text category. */
+export function getEntrySkillId(entry: {
+  skillId?: SatSkillId;
+  category: string;
+}): SatSkillId | null {
+  return entry.skillId ?? resolveSkillId(entry.category);
 }
 
 function todayDateString(): string {
@@ -52,7 +64,8 @@ function isValidEntry(value: unknown): value is SatMistakeEntry {
     typeof entry.category === "string" &&
     typeof entry.note === "string" &&
     typeof entry.createdAt === "number" &&
-    (entry.nodeId === undefined || typeof entry.nodeId === "string")
+    (entry.nodeId === undefined || typeof entry.nodeId === "string") &&
+    (entry.skillId === undefined || typeof entry.skillId === "string")
   );
 }
 
@@ -64,6 +77,8 @@ export function addMistake(
   const note = input.note.trim();
   if (!category || !note) return null;
 
+  const skillId = input.skillId ?? resolveSkillId(category) ?? undefined;
+
   const entry: SatMistakeEntry = {
     id: generateId(),
     date: input.date?.trim() || todayDateString(),
@@ -73,6 +88,7 @@ export function addMistake(
     createdAt: Date.now(),
   };
 
+  if (skillId) entry.skillId = skillId;
   if (input.nodeId?.trim()) {
     entry.nodeId = input.nodeId.trim();
   }
@@ -84,7 +100,7 @@ export function addMistake(
     {
       type: "sat_mistake_logged",
       nodeId: entry.nodeId,
-      meta: { category, section: input.section },
+      meta: { category, section: input.section, ...(skillId ? { skillId } : {}) },
     },
     storage,
   );
