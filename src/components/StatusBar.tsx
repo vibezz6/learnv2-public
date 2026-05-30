@@ -35,7 +35,7 @@ export function StatusBar({ reviewCount, collapsed }: Props) {
 
   return (
     <div
-      className="app-chrome fixed inset-x-0 bottom-0 z-20 hidden h-[var(--statusbar-height)] items-center justify-between gap-4 border-t border-[var(--rule)] bg-[var(--bg-rail)] px-3 font-mono text-[11px] tabular-nums text-[var(--text-muted)] md:flex"
+      className="app-chrome fixed inset-x-0 bottom-0 z-[var(--z-chrome)] hidden h-[var(--statusbar-height)] items-center justify-between gap-4 border-t border-[var(--rule)] bg-[var(--bg-rail)] px-3 font-mono text-[11px] tabular-nums text-[var(--text-muted)] md:flex"
       style={{ left: collapsed ? "var(--rail-width)" : "var(--sidebar-expanded-width)" }}
       aria-label="Study status"
     >

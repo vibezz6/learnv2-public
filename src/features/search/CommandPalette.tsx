@@ -21,6 +21,7 @@ import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { getSubjectAccent } from "@/lib/subjectAccent";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useProgress } from "@/stores/progress";
 import { KeyHint } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
@@ -83,6 +84,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  // Trap Tab inside the palette (options are tabIndex=-1, so focus stays on the input).
+  const panelRef = useFocusTrap<HTMLDivElement>(open, "none");
 
   useEffect(() => {
     if (open) {
@@ -484,13 +487,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/55 p-4 pt-[12vh] backdrop-blur-sm"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-start justify-center bg-black/55 p-4 pt-[12vh] backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="Command palette"
     >
       <div
+        ref={panelRef}
         className="w-full max-w-xl overflow-hidden rounded-[var(--radius-md)] border border-[var(--rule-strong)] bg-[var(--bg-panel)] shadow-[var(--shadow-overlay)]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -502,7 +506,13 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Quick open — type to search lessons, campus, commands"
             aria-label="Search lessons, campus, and commands"
-            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--text-subtle)]"
+            role="combobox"
+            aria-expanded={flatItems.length > 0}
+            aria-controls="command-palette-listbox"
+            aria-activedescendant={
+              flatItems.length > 0 && selected >= 0 ? `cmd-option-${selected}` : undefined
+            }
+            className="min-w-0 flex-1 rounded-[var(--radius-sm)] bg-transparent text-sm outline-none placeholder:text-[var(--text-subtle)] focus-visible:shadow-[var(--focus-ring)]"
           />
           <KeyHint size="sm">esc</KeyHint>
         </div>
@@ -514,7 +524,13 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           </div>
         )}
 
-        <ul ref={listRef} className="max-h-[min(60vh,28rem)] overflow-y-auto py-2">
+        <ul
+          ref={listRef}
+          id="command-palette-listbox"
+          role="listbox"
+          aria-label="Search results"
+          className="max-h-[min(60vh,28rem)] overflow-y-auto py-2"
+        >
           {!q && recentSearches.length === 0 && recentActions.length === 0 && (
             <li className="border-b border-[var(--rule)] px-6 py-4 text-center">
               <Search className="mx-auto mb-2 text-[var(--text-muted)]" size={20} aria-hidden />
@@ -556,12 +572,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 return (
                   <button
                     key={cmd.id}
+                    id={`cmd-option-${idx}`}
                     ref={(el) => {
                       itemRefs.current[idx] = el;
                     }}
                     type="button"
                     role="option"
                     aria-selected={isSelected}
+                    tabIndex={-1}
                     onClick={() => execute(cmd)}
                     onMouseEnter={() => setSelected(idx)}
                     className={`flex w-full items-center gap-3 border-l-2 py-2 pr-4 pl-3 text-left text-sm transition ${

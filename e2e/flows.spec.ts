@@ -51,4 +51,17 @@ test.describe("Learn v2 core flows", () => {
     ]);
     expect(download.suggestedFilename()).toContain("learnv2-backup");
   });
+
+  test("command palette: opens via keyboard, traps focus, closes on Escape", async ({ page }) => {
+    await page.goto("/");
+    await page.keyboard.press("Control+k");
+    const input = page.getByPlaceholder(/Quick open/i);
+    await expect(input).toBeVisible();
+    await expect(input).toBeFocused();
+    // Options are tabIndex=-1, so Tab keeps focus on the input (trapped in the palette).
+    await page.keyboard.press("Tab");
+    await expect(input).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(input).toHaveCount(0);
+  });
 });

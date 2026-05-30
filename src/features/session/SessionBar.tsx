@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Timer, X } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useFocusSession } from "@/stores/focusSession";
+import { usePreferences } from "@/stores/preferences";
+import { cn } from "@/lib/cn";
 
 function formatElapsed(startedAt: number, now: number): string {
   const total = Math.max(0, Math.floor((now - startedAt) / 1000));
@@ -19,6 +21,7 @@ export function SessionBar() {
   const active = useFocusSession((s) => s.active);
   const finishSession = useFocusSession((s) => s.finishSession);
   const cancelSession = useFocusSession((s) => s.cancelSession);
+  const focusMode = usePreferences((s) => s.focusMode);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -30,7 +33,14 @@ export function SessionBar() {
   if (!active) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--mobile-nav-height)+0.5rem)] z-40 flex justify-center px-3 md:bottom-[calc(var(--statusbar-height)+0.5rem)]">
+    <div
+      className={cn(
+        "pointer-events-none fixed inset-x-0 z-[var(--z-action-bar)] flex justify-center px-3",
+        focusMode
+          ? "bottom-[calc(env(safe-area-inset-bottom,0px)+0.5rem)]"
+          : "bottom-[calc(var(--mobile-nav-height)+0.5rem)] md:bottom-[calc(var(--statusbar-height)+0.5rem)]",
+      )}
+    >
       <div className="pointer-events-auto flex w-full max-w-3xl items-center gap-3 rounded-[var(--radius-md)] border border-[var(--accent-border)] bg-[var(--bg-glass)] px-4 py-2.5 shadow-[var(--shadow-overlay)] backdrop-blur">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-sm)] bg-[var(--accent-bg)] text-[var(--accent)]">
           <Timer size={15} aria-hidden />

@@ -27,7 +27,7 @@ Generated for batched implementation (Runs B–E). Do not ship as one release.
 | `satDailyStudy.ts` | 89–91 | `Start Draft 1` / baseline copy | `Optional: Draft 1 baseline` / `Start baseline (optional)` | high |
 | `satDailyStudy.ts` | 105 | `retest later from SAT diagnostic when ready` | `retest optional from SAT diagnostic when ready` | med |
 
-**Files to touch:** `TomorrowTasks.tsx`, `SatTodayCard.tsx`, `satDailyStudy.ts` (and tests in `satDailyStudy.test.ts` if assertions match strings).
+**Files to touch:** `TomorrowTasks.tsx`, `satDailyStudy.ts` (and tests in `satDailyStudy.test.ts` if assertions match strings). Note: `SatTodayCard.tsx` was removed — the SAT "today" surface is now `RightNowHero.tsx` (copy already de-hedged in `satDailyStudy.ts`).
 
 ---
 

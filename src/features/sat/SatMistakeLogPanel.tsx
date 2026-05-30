@@ -53,6 +53,7 @@ export function SatMistakeLogPanel({
     setEntries(listMistakes());
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `entries` is the recompute trigger; getTopMistakeCategories reads the same store imperatively
   const topCategories = useMemo(() => getTopMistakeCategories(3), [entries]);
 
   const handleSubmit = (event: FormEvent) => {

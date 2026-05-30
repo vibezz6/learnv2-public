@@ -346,7 +346,7 @@ export function AppShell() {
 
         <nav
           className={cn(
-            "app-chrome fixed inset-x-0 bottom-0 z-20 flex h-[var(--mobile-nav-height)] items-stretch border-t border-[var(--rule)] bg-[var(--bg-rail)] md:hidden",
+            "app-chrome fixed inset-x-0 bottom-0 z-[var(--z-chrome)] flex h-[var(--mobile-nav-height)] items-stretch border-t border-[var(--rule)] bg-[var(--bg-rail)] md:hidden",
             focusMode && "hidden",
           )}
           aria-label="Mobile navigation"

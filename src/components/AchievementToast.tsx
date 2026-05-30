@@ -80,17 +80,17 @@ export function AchievementToast() {
   const Icon = current.variant === "milestone" ? Sparkles : Trophy;
 
   return (
-    <div className="fixed bottom-20 right-4 z-50 max-w-sm animate-[stagger-in_0.35s_ease-out] md:bottom-6">
+    <div className="fixed bottom-20 right-4 z-[var(--z-overlay)] max-w-sm animate-[stagger-in_0.35s_ease-out] md:bottom-6">
       <div className="flex items-start gap-3 rounded-[var(--radius-lg)] border border-[var(--accent-border)] bg-[var(--bg-elevated)] p-4 shadow-[var(--shadow-md)]">
         <Icon className="shrink-0 text-[var(--warning)]" size={20} />
         <div className="flex-1 text-sm text-[var(--text)]">{current.message}</div>
         <button
           type="button"
-          className="text-[var(--text-muted)] hover:text-[var(--text)]"
+          className="-m-1 inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-[var(--text-muted)] hover:text-[var(--text)]"
           aria-label="Dismiss"
           onClick={() => setQueue((q) => q.slice(1))}
         >
-          <X size={16} />
+          <X size={16} aria-hidden />
         </button>
       </div>
     </div>

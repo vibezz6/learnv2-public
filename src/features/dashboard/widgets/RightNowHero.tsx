@@ -55,7 +55,7 @@ export function RightNowHero({ subjects, resume }: Props) {
         <div className="min-w-0 flex-1 space-y-3">
           <div>
             <p className="eyebrow-mono text-[var(--accent)]">{study.headline}</p>
-            <h2 className="mt-1 text-[clamp(1.15rem,2.4vw,1.4rem)] font-semibold leading-snug tracking-tight text-[var(--text-heading)]">
+            <h2 className="mt-1 text-[length:var(--text-hero)] font-semibold leading-snug tracking-tight text-[var(--text-heading)]">
               {study.detail}
             </h2>
           </div>

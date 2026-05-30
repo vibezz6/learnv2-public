@@ -117,12 +117,24 @@
   --topbar-height: 48px;
   --mobile-nav-height: 56px;
   --statusbar-height: 28px;
+  --sessionbar-height: 3.5rem;
+
+  /* ----- Bottom-stack z-index policy (low -> high) -----
+     chrome (nav/status) < action bars (quiz/session) < overlays (toasts/banners)
+     < modals (dialogs/palette) < top modal (level-up). Keep fixed elements on these. */
+  --z-chrome: 20;
+  --z-action-bar: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-modal-top: 60;
 
   /* ----- Typography ----- */
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --sans: var(--font-sans);
   --mono: var(--font-mono);
+  /* Shared "Today" hero title scale (one-move / continue) for a consistent rhythm. */
+  --text-hero: clamp(1.2rem, 2.4vw, 1.5rem);
 
   /* ----- Study calendar heatmap (matches indigo accent) ----- */
   --cal-empty: rgba(255, 255, 255, 0.04);

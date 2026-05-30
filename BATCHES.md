@@ -13,8 +13,8 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **Backlog complete — B01-B30 all done.** Last completed: **B30**. Last session: 2026-05-29
-> (B21-B30: a11y + UI polish pass and SAT-depth features). Green: 303 unit tests + 7 e2e, lint 0 errors, build clean.
+> **B01-B38 all done** (B31-B38 = finish pass: cleanup, accessibility, UI polish). Last completed: **B38**. Last session: 2026-05-30
+> Green: 305 unit tests + 8 e2e, lint 0 warnings, tsc clean, build clean. Released as **v2.6.0** (app version + SW cache synced).
 > Next session: pick from "Future ideas" below, or open new batches as needed.
 
 Update this line at the end of every session.
@@ -272,20 +272,28 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ---
 
+## F. Finish pass (B31-B38) — done 2026-05-30
+
+- [x] **B31** — lint to 0 warnings: documented the 4 intentional cache-buster `useMemo` deps (`entries`, `activityRevision`, `progressNodes` x2) instead of removing them (removal would cause stale UI).
+- [x] **B32** — deleted 6 dead dashboard widgets (`SatTodayCard`, `DailyGoalStrip`, `DayNarrativeStrip`, `StudyIntentStrip`, `RecentStudyStrip`, `StudyBlockCard`); refreshed README + docs references.
+- [x] **B33** — synced version to **2.6.0** across `package.json`, `src/lib/version.ts`, and the SW cache via `scripts/bump-version.mjs`.
+- [x] **B34** — shared `useFocusTrap` hook + `Modal` shell (backdrop + role/aria + Escape + Tab trap + initial focus + focus restore); refactored ConfirmDialog / SessionCompleteModal / LevelUpModal / OnboardingModal onto it; trapped the CommandPalette.
+- [x] **B35** — CommandPalette `role=listbox` + `aria-activedescendant` + input focus ring; OnboardingModal accessible step state + duplicate-id cleanup + roving-tabindex arrow-key options.
+- [x] **B36** — quiz options use `--focus-ring`; AchievementToast 44px dismiss target; DailyChallengeCompact `aria-controls` + `aria-hidden` chevrons.
+- [x] **B37** — bottom-stack z-index policy tokens (`--z-chrome` < `--z-action-bar` < `--z-overlay` < `--z-modal` < `--z-modal-top`) + offsets; fixed session-bar/quiz-footer/toast/SW-banner collisions and the focus-mode nav gap.
+- [x] **B38** — unified the Today hero title scale via one `--text-hero` token (RightNowHero + ContinueHero).
+
 ## Future ideas (optional — open new batches when you want them)
 
-The B01-B30 backlog is complete. Good candidates if you keep going:
-
-- **B31 — Clear the 4 `react-hooks/exhaustive-deps` warnings** (small cleanup; get lint to 0 warnings).
-- **B32 — Full focus-trap for dialogs** (B24 added Escape + initial focus + backdrop; Tab can still leave the panel — add a trap or a shared `<Modal>` wrapper).
-- **B33 — Retire the unused legacy widgets** (`SatTodayCard`, etc. no longer mounted on Today — delete or repurpose).
-- **B34 — Compact mobile status row** (StatusBar is desktop-only; the Today strip is the phone source of truth — optionally add a slim mobile status line).
-- **B35 — Release/versioning pass** (bump `package.json` to match the SW cache `v2.5.x` and add a CHANGELOG when you cut a real release).
+- **Compact mobile status row** — StatusBar is desktop-only; the Today minimum strip is the phone accountability surface. Optionally add a slim mobile status line.
+- **CHANGELOG + git release tags** — now that versioning is synced at 2.6.0.
+- **Periodic a11y audit** — run axe/Lighthouse occasionally; wire any remaining custom lists to roving-tabindex like the onboarding options.
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-30 — B31-B38 — Finish pass: cleanup, accessibility, UI polish. Pushed the 3 prior commits. Lint to 0 warnings (documented intentional cache-buster useMemo deps). Deleted 6 dead dashboard widgets + refreshed README/docs. Synced version to 2.6.0 (package.json + version.ts + SW cache via bump-version.mjs). New `useFocusTrap` hook + shared `Modal` shell (Escape + Tab trap + initial focus + restore) adopted by ConfirmDialog/SessionCompleteModal/LevelUpModal/OnboardingModal; CommandPalette trapped + `role=listbox`/`aria-activedescendant`/input ring; OnboardingModal step a11y + roving-tabindex options. Quiz `--focus-ring`, toast 44px dismiss, DailyChallengeCompact `aria-controls`. Bottom-stack z-index policy tokens + offsets (fixed session/quiz/toast/banner collisions + focus-mode gap). Unified Today hero scale (`--text-hero`). Added Modal SSR render test + a Playwright keyboard/focus-trap e2e. Result: 305 unit tests + 8 e2e, lint 0 warnings, tsc + build clean. Released v2.6.0.
 - 2026-05-29 — B21-B30 — A11y + UI polish pass and SAT-depth features (backlog complete). Ran a read-only Composer 2.5 UI/a11y audit in parallel, then implemented: SessionBar overlap fix (clears mobile nav + desktop status bar) + 44px touch targets; contrast sweep (small `text-subtle` body copy -> `text-muted` across StatusBar/Today/heroes/reminders); shared `useEscapeKey` hook + Escape/backdrop dismissal + initial focus on ConfirmDialog/SessionCompleteModal/LevelUpModal; Button `focus-visible` ring; quiz progressbar + StatusBar segment + nav review-badge `aria-label`s; `aria-pressed` on reminder toggles; robust `prefers-reduced-motion` reset; focus-mode mobile padding. Features: honest SAT readiness signal (B26), weak-category weighting for the Daily 5 (B27), spaced mistake re-drill schedule (B28, new `satDrillSchedule.ts`), removed dead `LessonContent` + trimmed exotic quiz schema (B29), urgent college-deadline chip in the status bar (B30). Result: 303 unit tests + 7 e2e, lint 0 errors, build green.
 - 2026-05-29 — B11-B20 — Ops + testing + start of UI pass. Pinned runtime (engines >=20, .nvmrc 22); `npm run doctor`; fixed PWA under sub-path (relative manifest/icon links, scope-relative SW precache, cool-slate theme colors) and verified the /learnv2/ base build; README "install as app" + "update the app" notes; CI workflow (lint+test+build on PRs); unit tests for focusSession/satCountdown/satWeeklyProgress; render smoke tests for StatusBar/RightNowHero/TodayMinimumStrip/RemindersSettingsCard/SessionBar/SessionCompleteModal; Playwright e2e flows (theme, session ritual, Daily 5, settings goal/date, export) — all 7 green via reducedMotion + onboarding seed; guarded focus-mode DOM access for SSR/tests; contrast bump on --text-subtle (both themes) + deepened the lightest subject accents for light mode. Result: 296 unit tests + 7 e2e, lint 0 errors, build green.
 - 2026-05-29 — B01-B10 — Reliability + data-safety + ops pass. storageSafety.ts (write/quota failure tracking + StorageHealthPanel warning + corrupt-data quarantine on rehydrate via safe persist storage on progress + preferences). Backup hardened (registry entries + ephemeral exclusion + export/round-trip tests). Auto-backup nudge (backupReminder.ts + Settings prompt). Error boundary recovery (export-backup + reload) + route-level boundary. Removed synthetic sat-daily/sat-drill node pollution (Quiz persistAttempt=false + rehydrate strip). Reminder honesty (Settings test button, last-fired, tab-open note) + cross-midnight 12h activity guard. UTC day convention documented. subjectId now tagged on lesson/quiz completion -> accurate SAT weekly stats. README "update the app" note. Result: 278 tests, lint 0 errors, build green.
@@ -297,8 +305,9 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- `package.json` version is `2.4.0` while the service-worker cache is `learnv2-v2.5.1` (intentional cache-bust); bump the package version when you cut a release (see B35).
-- Lint shows ~4 pre-existing `react-hooks/exhaustive-deps` warnings (not errors) — see B31.
-- Dialogs now close on Escape/backdrop with initial focus (B24), but do not yet trap Tab inside the panel — see B32.
-- StatusBar is desktop-only (`hidden md:flex`); on phones the Today minimum strip is the accountability surface — see B34.
+- Version is synced at **2.6.0** across `package.json`, `src/lib/version.ts`, and the SW cache (`learnv2-v2.6.0`) as of B33; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
+- Lint is at **0 warnings** (B31). The 4 former `exhaustive-deps` warnings were intentional cache-busters and are now documented with scoped `eslint-disable` + reason comments — do not "fix" them by removing the dep (that reintroduces stale UI).
+- Dialogs share the `Modal` shell (B34): Escape + backdrop + Tab focus trap + initial focus + focus restore. New dialogs should use `Modal` (or `useFocusTrap`) rather than hand-rolling an overlay.
+- Bottom-stack layering is governed by the `--z-*` tokens in `index.css` (B37); keep new fixed bottom elements on that scale.
+- StatusBar is desktop-only (`hidden md:flex`); on phones the Today minimum strip is the accountability surface — see "Future ideas" (compact mobile status row).
 - e2e (`npm run test:e2e`) runs against a clean `npm run preview` build with `reducedMotion: reduce`; tests seed `onboardingCompleted` so the first-run modal doesn't block clicks.

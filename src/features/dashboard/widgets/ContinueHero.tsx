@@ -50,7 +50,7 @@ export function ContinueHero({ subject, node }: Props) {
             lesson {lessonIndex}/{totalInSubject}
           </span>
         </div>
-        <h2 className="text-[clamp(1.5rem,4vw,2rem)] font-semibold leading-tight tracking-tight text-[var(--text-heading)]">
+        <h2 className="text-[length:var(--text-hero)] font-semibold leading-tight tracking-tight text-[var(--text-heading)]">
           {node.name}
         </h2>
         <div className="flex flex-wrap items-center gap-2 pt-1">

@@ -28,7 +28,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 **Core loop**
 
-- **Today** — daily goal, study intent, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
+- **Today** — your one move (next SAT action), daily minimum + streak, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
 - **SAT Prep** — 80-lesson Digital SAT path (gap drills st76–st80, mistake log, in-app Draft 1/2/3 diagnostic, Bluebook checkpoints) with **August SAT Track**
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math

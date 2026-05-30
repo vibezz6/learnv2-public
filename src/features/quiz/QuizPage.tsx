@@ -5,6 +5,7 @@ import type { QuizQuestion } from "@/curriculum/types";
 import { Button, Card } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useProgress } from "@/stores/progress";
+import { useFocusSession } from "@/stores/focusSession";
 import { recordStudyActivity } from "@/lib/studyActivity";
 import { clearQuizProgress, restoreQuizSession, saveQuizProgress } from "@/features/quiz/quizProgress";
 
@@ -37,6 +38,7 @@ export function Quiz({
   onComplete,
 }: QuizProps) {
   const saveQuizAttempt = useProgress((s) => s.saveQuizAttempt);
+  const sessionActive = useFocusSession((s) => s.active != null);
   const [initial] = useState(() => restoreQuizSession(nodeId, questions.length));
   const [current, setCurrent] = useState(initial.current);
   const [selected, setSelected] = useState<number | null>(initial.selected);
@@ -290,7 +292,7 @@ export function Quiz({
               disabled={answered}
               onClick={() => handleSelect(i)}
               onFocus={() => setFocusedOption(i)}
-              className="flex min-h-11 w-full min-w-0 touch-manipulation items-center gap-3 rounded-[var(--radius)] border px-4 py-3 text-left text-sm transition hover:border-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] disabled:cursor-default"
+              className="flex min-h-11 w-full min-w-0 touch-manipulation items-center gap-3 rounded-[var(--radius)] border px-4 py-3 text-left text-sm transition hover:border-[var(--accent)] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] disabled:cursor-default"
               style={{
                 borderColor: border,
                 background: "var(--bg-elevated)",
@@ -328,7 +330,14 @@ export function Quiz({
       )}
       {answered && (
         <>
-          <div className="fixed inset-x-0 bottom-[var(--mobile-nav-height)] z-10 border-t border-[var(--border)] bg-[var(--bg-glass)] px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-xl sm:hidden">
+          <div
+            className={cn(
+              "fixed inset-x-0 z-[var(--z-action-bar)] border-t border-[var(--border)] bg-[var(--bg-glass)] px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] backdrop-blur-xl sm:hidden",
+              sessionActive
+                ? "bottom-[calc(env(safe-area-inset-bottom,0px)+var(--sessionbar-height)+1rem)]"
+                : "bottom-[var(--mobile-nav-height)]",
+            )}
+          >
             <div className="flex gap-2">
               <Button onClick={handleNext} className="min-h-11 flex-1">
                 {current < questions.length - 1 ? "Next" : "View results"}

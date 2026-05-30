@@ -50,6 +50,7 @@ export function SubjectsPage() {
       map.set(subject.id, summarizeSubjectProgress(subject, getNodeStatus));
     }
     return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `progressNodes` is the recompute trigger; getNodeStatus is a stable store selector
   }, [subjects, getNodeStatus, progressNodes]);
 
   const filtered = useMemo(() => {

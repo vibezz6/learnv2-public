@@ -8,6 +8,7 @@ export { FocusShell } from "./FocusShell";
 export { FocusStudyBar } from "./FocusStudyBar";
 export { KeyHint } from "./KeyHint";
 export { Meter } from "./Meter";
+export { Modal } from "./Modal";
 export { PageContainer } from "./PageContainer";
 export { PageHeader } from "./PageHeader";
 export { PageLoading } from "./PageLoading";

@@ -71,7 +71,7 @@ Checklist, essays, nudges, transcript (incl. Draft 3 retest line), settings back
 | Layer | Key paths |
 |-------|-----------|
 | Routes | `src/app/App.tsx`, `src/app/lazyPages.ts` |
-| Dashboard | `src/features/dashboard/` — `SatTodayCard`, `TomorrowTasks`, `CampusHome` |
+| Dashboard | `src/features/dashboard/` — `RightNowHero`, `TodayMinimumStrip`, `CampusHome` |
 | SAT | `src/features/sat/`, `src/lib/satPretest.ts`, `src/lib/satDailyStudy.ts`, `src/lib/satPracticeLog.ts` |
 | Curriculum | `src/curriculum/data/sat-prep.json`, `src/data/tracks.ts` |
 | Progress | `src/stores/progress.ts`, `src/stores/preferences.ts` |

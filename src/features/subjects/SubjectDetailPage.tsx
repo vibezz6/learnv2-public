@@ -623,6 +623,7 @@ export function SubjectDetailPage() {
   const completedCount = useMemo(() => {
     if (loadState.phase !== "ok") return 0;
     return loadState.subject.nodes.filter((n) => getNodeStatus(n) === "completed").length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `progressNodes` is the recompute trigger; getNodeStatus is a stable store selector
   }, [loadState, getNodeStatus, progressNodes]);
 
   if (loadState.phase === "loading") {
