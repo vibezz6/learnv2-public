@@ -9,11 +9,12 @@ import {
   countEssaysForCollege,
   discoverCollegesFromEssays,
   importCollegesFromEssays,
-  loadColleges,
+  listColleges,
+  markCollegeSubmitted,
   removeCollege,
+  setCollegeArchived,
   updateCollegeDeadline,
   updateCollegeNotes,
-  type CollegesState,
 } from "@/lib/colleges";
 import { daysUntilDue } from "@/lib/campusAdmissionsNudges";
 import { getChecklistProgress, loadCollegeChecklist } from "@/lib/collegeChecklist";
@@ -21,15 +22,19 @@ import { Button, Card, Field, Input, Section, Tag } from "@/components/ui";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 
 export function CampusSchoolsSection() {
-  const [state, setState] = useState<CollegesState>(() => loadColleges());
   const [revision, setRevision] = useState(0);
+  const [showArchived, setShowArchived] = useState(false);
   const [name, setName] = useState("");
   const [deadline, setDeadline] = useState("");
   const [notes, setNotes] = useState("");
   const [dismissImport, setDismissImport] = useState(false);
 
+  const colleges = useMemo(() => {
+    void revision;
+    return listColleges(undefined, { includeArchived: showArchived });
+  }, [revision, showArchived]);
+
   const refresh = useCallback(() => {
-    setState(loadColleges());
     setRevision((r) => r + 1);
   }, []);
 
@@ -48,7 +53,8 @@ export function CampusSchoolsSection() {
 
   const handleAdd = () => {
     if (!name.trim()) return;
-    setState(addCollege(name, deadline || undefined, notes || undefined));
+    addCollege(name, deadline || undefined, notes || undefined);
+    refresh();
     setName("");
     setDeadline("");
     setNotes("");
@@ -79,13 +85,24 @@ export function CampusSchoolsSection() {
         </Card>
       ) : null}
 
-      {state.colleges.length === 0 ? (
+      {colleges.length > 0 ? (
+        <label className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+          <input
+            type="checkbox"
+            checked={showArchived}
+            onChange={(e) => setShowArchived(e.target.checked)}
+          />
+          Show archived
+        </label>
+      ) : null}
+
+      {colleges.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">
           Add your first school to track deadlines and essays.
         </p>
       ) : (
         <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {state.colleges.map((college) => {
+          {colleges.map((college) => {
             const days =
               college.deadline != null ? daysUntilDue(college.deadline, new Date()) : null;
             const badge = formatPackageDeadline(days);
@@ -113,41 +130,97 @@ export function CampusSchoolsSection() {
                       aria-label={`Remove ${college.name}`}
                       onClick={() => {
                         if (window.confirm(`Remove ${college.name} from your list? Essays stay tagged.`)) {
-                          setState(removeCollege(college.id));
+                          removeCollege(college.id);
+                          refresh();
                         }
                       }}
                     >
                       <Trash2 size={14} />
                     </button>
                   </div>
-                  <Tag tone={badge.tone === "overdue" ? "danger" : badge.tone === "muted" ? "muted" : "accent"} size="sm">
-                    {badge.label}
-                  </Tag>
+                  <div className="flex flex-wrap gap-2">
+                    <Tag tone={badge.tone === "overdue" ? "danger" : badge.tone === "muted" ? "muted" : "accent"} size="sm">
+                      {badge.label}
+                    </Tag>
+                    {college.submittedAt ? (
+                      <Tag tone="success" size="sm">
+                        Submitted
+                      </Tag>
+                    ) : null}
+                    {college.archived ? (
+                      <Tag tone="muted" size="sm">
+                        Archived
+                      </Tag>
+                    ) : null}
+                  </div>
                   <p className="text-xs text-[var(--text-muted)]">
                     {essayCount} essay{essayCount === 1 ? "" : "s"} · Shared checklist {checklistPct}%
                   </p>
+                  <div className="flex flex-wrap gap-2">
+                    {!college.submittedAt ? (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => {
+                          markCollegeSubmitted(college.id);
+                          refresh();
+                        }}
+                      >
+                        Mark submitted
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          markCollegeSubmitted(college.id, false);
+                          refresh();
+                        }}
+                      >
+                        Undo submit
+                      </Button>
+                    )}
+                    {college.submittedAt ? (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setCollegeArchived(college.id, !college.archived);
+                          refresh();
+                        }}
+                      >
+                        {college.archived ? "Unarchive" : "Archive"}
+                      </Button>
+                    ) : null}
+                  </div>
                   <Field label="Deadline" htmlFor={`deadline-${college.id}`}>
                     {(id) => (
                       <Input
                         id={id}
                         type="date"
                         value={college.deadline ?? ""}
-                        onChange={(e) =>
-                          setState(updateCollegeDeadline(college.id, e.target.value))
-                        }
+                        onChange={(e) => {
+                          updateCollegeDeadline(college.id, e.target.value);
+                          refresh();
+                        }}
                       />
                     )}
                   </Field>
-                  <Field label="Notes (optional)" htmlFor={`notes-${college.id}`}>
+                  <Field
+                    label="Notes (optional)"
+                    htmlFor={`notes-${college.id}`}
+                    hint="Short label on package cards (e.g. ED, EA, RD) — not separate deadlines."
+                  >
                     {(id) => (
                       <Input
                         id={id}
                         value={college.notes ?? ""}
                         maxLength={COLLEGE_NOTES_MAX_LENGTH}
                         placeholder="e.g. ED, EA, RD"
-                        onChange={(e) =>
-                          setState(updateCollegeNotes(college.id, e.target.value))
-                        }
+                        onChange={(e) => {
+                          updateCollegeNotes(college.id, e.target.value);
+                          refresh();
+                        }}
                       />
                     )}
                   </Field>

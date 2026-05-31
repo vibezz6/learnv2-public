@@ -16,6 +16,8 @@ import {
   Textarea,
   Toolbar,
 } from "@/components/ui";
+import { TransientBanner } from "@/components/TransientBanner";
+import { useTransientMessage } from "@/hooks/useTransientMessage";
 import {
   addCustomEssay,
   addEssayFromTemplate,
@@ -48,6 +50,7 @@ const STATUS_DOT_TONE: Record<
 
 export function EssayTrackerPage() {
   const [state, setState] = useState<EssayTrackerState>(() => loadEssayTracker());
+  const { message: toastMessage, showMessage: showToast } = useTransientMessage(3000);
   const [templateId, setTemplateId] = useState(DEFAULT_ESSAY_PROMPTS[0]!.id);
   const [college, setCollege] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -188,15 +191,13 @@ export function EssayTrackerPage() {
                           <Select
                             id={id}
                             value={essay.status}
-                            onChange={(e) =>
-                              persist(
-                                updateEssayStatus(
-                                  state,
-                                  essay.id,
-                                  e.target.value as EssayDraftStatus,
-                                ),
-                              )
-                            }
+                            onChange={(e) => {
+                              const status = e.target.value as EssayDraftStatus;
+                              persist(updateEssayStatus(state, essay.id, status));
+                              if (status === "final") {
+                                showToast("Marked final — nice work!");
+                              }
+                            }}
                           >
                             {ESSAY_STATUS_ORDER.map((s) => (
                               <option key={s} value={s}>
@@ -326,6 +327,7 @@ export function EssayTrackerPage() {
           ) : null}
         </div>
       </Section>
+      <TransientBanner message={toastMessage} />
     </PageContainer>
   );
 }

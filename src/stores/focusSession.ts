@@ -17,6 +17,7 @@ export interface ActiveFocusSession {
 
 export interface FocusSessionSummary {
   label: string;
+  href: string;
   minutes: number;
   endedAt: number;
 }
@@ -71,6 +72,7 @@ export const useFocusSession = create<FocusSessionState>()(
           active: null,
           summary: {
             label: active.label,
+            href: active.href,
             minutes: Math.round(elapsedSeconds / 60),
             endedAt: Date.now(),
           },

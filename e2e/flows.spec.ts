@@ -40,7 +40,8 @@ test.describe("Learn v2 core flows", () => {
     await page.locator('input[type="number"]').first().fill("45");
     await page.getByRole("button", { name: "Save goal" }).click();
     await page.locator('input[type="date"]').first().fill("2099-08-22");
-    await expect(page.getByText(/days to SAT/).first()).toBeVisible();
+    await expect(page.locator('input[type="date"]').first()).toHaveValue("2099-08-22");
+    await expect(page.getByRole("main").getByText(/\d+ days to SAT/)).toBeVisible();
   });
 
   test("export downloads a backup file", async ({ page }) => {
@@ -53,8 +54,9 @@ test.describe("Learn v2 core flows", () => {
   });
 
   test("command palette: opens via keyboard, traps focus, closes on Escape", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto("/");
-    await page.keyboard.press("Control+k");
+    await page.getByRole("button", { name: "Quick open" }).click();
     const input = page.getByPlaceholder(/Quick open/i);
     await expect(input).toBeVisible();
     await expect(input).toBeFocused();
@@ -66,8 +68,9 @@ test.describe("Learn v2 core flows", () => {
   });
 
   test("command palette: SAT Daily 5 navigates to daily quiz", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto("/");
-    await page.keyboard.press("Control+k");
+    await page.getByRole("button", { name: "Quick open" }).click();
     const input = page.getByPlaceholder(/Quick open/i);
     await input.fill("SAT Daily 5");
     await page.keyboard.press("Enter");

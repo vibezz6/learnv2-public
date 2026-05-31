@@ -23,7 +23,18 @@ import {
 import {
   COLLEGE_NOTES_DISPLAY_MAX,
   findCollegeByName,
+  markCollegeSubmitted,
 } from "@/lib/colleges";
+import {
+  ESSAY_STATUS_LABELS,
+  ESSAY_STATUS_ORDER,
+  loadEssayTracker,
+  updateEssayStatus,
+  saveEssayTracker,
+  type EssayDraftStatus,
+} from "@/lib/essayTracker";
+import { TransientBanner } from "@/components/TransientBanner";
+import { useTransientMessage } from "@/hooks/useTransientMessage";
 import {
   loadCollegeChecklist,
   saveCollegeChecklist,
@@ -93,10 +104,26 @@ export function ApplicationPackagePage() {
     if (college && titleRef.current) titleRef.current.focus();
   }, [college]);
 
-  const persistChecklist = useCallback((next: CollegeChecklistState) => {
-    setChecklist(next);
-    saveCollegeChecklist(next);
-  }, []);
+  const { message: savedMessage, showMessage: showSaved } = useTransientMessage();
+
+  const persistChecklist = useCallback(
+    (next: CollegeChecklistState) => {
+      setChecklist(next);
+      saveCollegeChecklist(next);
+      showSaved("Saved");
+    },
+    [showSaved],
+  );
+
+  const handleEssayStatus = useCallback(
+    (essayId: string, status: EssayDraftStatus) => {
+      const next = updateEssayStatus(loadEssayTracker(), essayId, status);
+      saveEssayTracker(next);
+      setRevision((r) => r + 1);
+      showSaved("Saved");
+    },
+    [showSaved],
+  );
 
   const handleCollegeChange = (value: string) => {
     setSearchParams({ college: encodeURIComponent(value) }, { replace: true });
@@ -175,6 +202,23 @@ export function ApplicationPackagePage() {
               <CalendarClock size={12} aria-hidden />
               {pkg.deadline.label}
             </Tag>
+            {registryEntry && !registryEntry.submittedAt ? (
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  markCollegeSubmitted(registryEntry.id);
+                  setRevision((r) => r + 1);
+                  showSaved("Marked submitted");
+                }}
+              >
+                Mark submitted
+              </Button>
+            ) : registryEntry?.submittedAt ? (
+              <Tag tone="success" size="sm">
+                Submitted
+              </Tag>
+            ) : null}
           </div>
         </div>
 
@@ -277,25 +321,37 @@ export function ApplicationPackagePage() {
             <ul className="grid gap-3 md:grid-cols-2">
               {pkg.essays.map((essay) => (
                 <li key={essay.id}>
-                  <Link
-                    to={`${ROUTES.essayTracker}#essay-${essay.id}`}
-                    className="block h-full rounded-[var(--radius-md)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-                  >
-                  <Card variant="default" density="normal" className="h-full min-w-0 space-y-2">
-                    <p className="text-sm font-semibold text-[var(--text-heading)]">{essay.title}</p>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Tag tone="info" size="sm">
-                        {essay.statusLabel}
-                      </Tag>
-                      {essay.dueDate ? (
-                        <span className="text-xs text-[var(--text-muted)]">Due {essay.dueDate}</span>
-                      ) : null}
-                    </div>
+                  <Card variant="default" density="normal" className="h-full min-w-0 space-y-3">
+                    <Link
+                      to={`${ROUTES.essayTracker}#essay-${essay.id}`}
+                      className="text-sm font-semibold text-[var(--text-heading)] hover:text-[var(--accent)]"
+                    >
+                      {essay.title}
+                    </Link>
+                    <Field label="Status" htmlFor={`essay-status-${essay.id}`}>
+                      {(id) => (
+                        <Select
+                          id={id}
+                          value={essay.status}
+                          onChange={(e) =>
+                            handleEssayStatus(essay.id, e.target.value as EssayDraftStatus)
+                          }
+                        >
+                          {ESSAY_STATUS_ORDER.map((s) => (
+                            <option key={s} value={s}>
+                              {ESSAY_STATUS_LABELS[s]}
+                            </option>
+                          ))}
+                        </Select>
+                      )}
+                    </Field>
+                    {essay.dueDate ? (
+                      <p className="text-xs text-[var(--text-muted)]">Due {essay.dueDate}</p>
+                    ) : null}
                     {essay.wordLimit ? (
                       <p className="text-xs text-[var(--text-muted)]">— / {essay.wordLimit} words</p>
                     ) : null}
                   </Card>
-                  </Link>
                 </li>
               ))}
             </ul>
@@ -317,6 +373,7 @@ export function ApplicationPackagePage() {
           </Link>
         </div>
       </Card>
+      <TransientBanner message={savedMessage} />
     </PageContainer>
   );
 }

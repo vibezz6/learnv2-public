@@ -1,7 +1,7 @@
 import { notifyAdmissionsUpdated } from "@/lib/admissionsSync";
 import { daysUntilDue } from "@/lib/campusAdmissionsNudges";
 import { loadEssayTracker } from "@/lib/essayTracker";
-import { readJson, writeJson } from "@/lib/storageJson";
+import { readJsonSafe, writeJson } from "@/lib/storageJson";
 
 export const COLLEGES_STORAGE_KEY = "learnv2_colleges_v1";
 
@@ -15,6 +15,8 @@ export interface CollegeEntry {
   deadline?: string;
   /** Optional label (e.g. ED, EA, RD) — copy-only, not a deadline schema. */
   notes?: string;
+  submittedAt?: string;
+  archived?: boolean;
   createdAt: string;
 }
 
@@ -58,7 +60,7 @@ function generateId(): string {
 }
 
 export function loadColleges(storage: Storage = localStorage): CollegesState {
-  const parsed = readJson<CollegesState>(storage, COLLEGES_STORAGE_KEY, emptyState());
+  const parsed = readJsonSafe<CollegesState>(storage, COLLEGES_STORAGE_KEY, emptyState());
   if (!parsed || !Array.isArray(parsed.colleges)) return emptyState();
   return {
     colleges: parsed.colleges.filter(
@@ -76,8 +78,50 @@ export function saveColleges(state: CollegesState, storage: Storage = localStora
   notifyAdmissionsUpdated();
 }
 
-export function listColleges(storage: Storage = localStorage): CollegeEntry[] {
-  return [...loadColleges(storage).colleges].sort((a, b) => a.name.localeCompare(b.name));
+export function listColleges(
+  storage: Storage = localStorage,
+  options?: { includeArchived?: boolean },
+): CollegeEntry[] {
+  const includeArchived = options?.includeArchived ?? false;
+  return [...loadColleges(storage).colleges]
+    .filter((c) => includeArchived || !c.archived)
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export function markCollegeSubmitted(
+  id: string,
+  submitted = true,
+  storage: Storage = localStorage,
+): CollegesState {
+  const state = loadColleges(storage);
+  const next = {
+    colleges: state.colleges.map((c) =>
+      c.id === id
+        ? {
+            ...c,
+            submittedAt: submitted ? new Date().toISOString() : undefined,
+            archived: submitted ? c.archived : false,
+          }
+        : c,
+    ),
+  };
+  saveColleges(next, storage);
+  return next;
+}
+
+export function setCollegeArchived(
+  id: string,
+  archived: boolean,
+  storage: Storage = localStorage,
+): CollegesState {
+  const state = loadColleges(storage);
+  const college = state.colleges.find((c) => c.id === id);
+  if (archived && college && !college.submittedAt) return state;
+  const next = {
+    colleges: state.colleges.map((c) => (c.id === id ? { ...c, archived } : c)),
+  };
+  saveColleges(next, storage);
+  return next;
 }
 
 export function findCollegeByName(

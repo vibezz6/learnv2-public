@@ -4,7 +4,9 @@ import { Download, Printer, Upload } from "lucide-react";
 import { ROUTES } from "@/app/navigation";
 import { Button, Card, ConfirmDialog, Stat, Toolbar } from "@/components/ui";
 import { buildAdmissionsExportPayload, buildAdmissionsSummary } from "@/lib/admissionsSummary";
+import { ImportOverwriteConfirm } from "@/components/ImportOverwriteConfirm";
 import {
+  ADMISSIONS_IMPORT_OVERWRITE_KEYS,
   applyAdmissionsImport,
   clearAllAdmissionsData,
   parseAdmissionsImportJson,
@@ -22,6 +24,7 @@ interface Props {
 export function AdmissionsSettingsCard({ onMessage }: Props) {
   const [revision, setRevision] = useState(0);
   const [resetOpen, setResetOpen] = useState(false);
+  const [pendingImportJson, setPendingImportJson] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
 
   const summary = useMemo(() => {
@@ -55,14 +58,13 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
   const handleImportFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
-      const result = parseAdmissionsImportJson(String(reader.result ?? ""));
+      const text = String(reader.result ?? "");
+      const result = parseAdmissionsImportJson(text);
       if (!result.ok) {
         onMessage(result.error);
         return;
       }
-      applyAdmissionsImport(result);
-      setRevision((r) => r + 1);
-      onMessage("Admissions data imported — checklist and essays replaced on this device.");
+      setPendingImportJson(text);
     };
     reader.readAsText(file);
   };
@@ -185,6 +187,25 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
           </Button>
         </Toolbar>
       </div>
+
+      <ImportOverwriteConfirm
+        open={!!pendingImportJson}
+        title="Import admissions backup?"
+        keys={[...ADMISSIONS_IMPORT_OVERWRITE_KEYS]}
+        onConfirm={() => {
+          if (!pendingImportJson) return;
+          const result = parseAdmissionsImportJson(pendingImportJson);
+          setPendingImportJson(null);
+          if (!result.ok) {
+            onMessage(result.error);
+            return;
+          }
+          applyAdmissionsImport(result);
+          setRevision((r) => r + 1);
+          onMessage("Admissions data imported — checklist and essays replaced on this device.");
+        }}
+        onCancel={() => setPendingImportJson(null)}
+      />
 
       <ConfirmDialog
         open={resetOpen}

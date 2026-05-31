@@ -9,6 +9,7 @@ import {
   ESSAY_STATUS_LABELS,
   loadEssayTracker,
   wordLimitForEntry,
+  type EssayDraftStatus,
   type EssayEntry,
   type EssayTrackerState,
 } from "@/lib/essayTracker";
@@ -20,6 +21,7 @@ export const GENERAL_APPLICATION_COLLEGE = "General application";
 export interface ApplicationPackageEssayRow {
   id: string;
   title: string;
+  status: EssayDraftStatus;
   statusLabel: string;
   dueDate?: string;
   wordLimit?: number;
@@ -274,6 +276,7 @@ export function buildApplicationPackage(
     essays: essayEntries.map((e) => ({
       id: e.id,
       title: e.title,
+      status: e.status,
       statusLabel: ESSAY_STATUS_LABELS[e.status],
       dueDate: e.dueDate,
       wordLimit: wordLimitForEntry(e),

@@ -1,5 +1,5 @@
 import { recordStudyActivity } from "@/lib/studyActivity";
-import { readJsonArray, writeJson } from "@/lib/storageJson";
+import { readJsonArraySafe, writeJson } from "@/lib/storageJson";
 import { resolveSkillId, type SatSkillId } from "@/lib/satSkills";
 
 export const SAT_MISTAKE_LOG_KEY = "learnv2_sat_mistakes_v1";
@@ -49,7 +49,7 @@ function generateId(): string {
 }
 
 function loadRaw(storage: Storage = localStorage): SatMistakeEntry[] {
-  return readJsonArray(storage, SAT_MISTAKE_LOG_KEY, isValidEntry);
+  return readJsonArraySafe(storage, SAT_MISTAKE_LOG_KEY, isValidEntry);
 }
 
 function saveRaw(entries: SatMistakeEntry[], storage: Storage = localStorage): void {

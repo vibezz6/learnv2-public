@@ -4,6 +4,23 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-05-30
+
+### Added
+
+- **Today hero overlays** after Daily 5 — drill-next and “good shape” modes (`todayHero.ts`); SAT **session-complete** next-steps (mistake log, top drill).
+- Package **inline essay status**; college **submitted** / **archived** with Campus toggle.
+- **`readJsonSafe`** with FIFO `learnv2_storage_errors_v1` log; Settings **storage read errors** panel.
+- **Import overwrite** confirmation (checkbox + key list) for full backup and admissions import.
+- SAT hub **mastery ↔ drill** cross-links; stats mistake bars **click-to-drill**.
+- Playwright **`e2e/b74-k.spec.ts`** — college block, Daily 5 footnote, print summary, ⌘K mistake, backup export.
+
+### Changed
+
+- Subject SAT hero uses **Settings SAT date** (`getSatCountdown`) — no hardcoded August 2026.
+- Week plan empty state CTA when caught up (Daily 5 or drill).
+- Essay **final** toast; package checklist **Saved** banner.
+
 ## [2.7.3] - 2026-05-31
 
 ### Added

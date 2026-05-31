@@ -6,6 +6,7 @@ import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
 import { getReadinessNudge } from "@/lib/satReadiness";
 import { isDailySatQuizDone } from "@/lib/satDailyQuiz";
+import { getTodayHeroPresentation } from "@/lib/todayHero";
 import { resolveContinueKind, continueHref } from "@/lib/continuePresentation";
 import { useProgress } from "@/stores/progress";
 import { nodeIdFromHref, useFocusSession } from "@/stores/focusSession";
@@ -13,36 +14,35 @@ import { ROUTES } from "@/app/navigation";
 
 interface Props {
   subjects: Subject[];
-  /** An in-progress lesson to offer as a quick "pick up where you left off". */
   resume?: { subject: Subject; node: SkillNode } | null;
 }
 
-/**
- * The single dominant action on Today. One headline, one primary button that
- * drops you straight into a focused, timed session — no menu, no deciding.
- */
 export function RightNowHero({ subjects, resume }: Props) {
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const startSession = useFocusSession((s) => s.startSession);
   const navigate = useNavigate();
 
   const study = getSatDailyStudyCommand({ subjects, getNodeStatus });
+  const overlay = getTodayHeroPresentation({ study, subjects, getNodeStatus });
   const isCollegeFocus = study.kind === "college_blocking";
   const topMistakes = getTopMistakeCategories(2);
   const readinessNudge = getReadinessNudge();
   const dailyQuizDone = isDailySatQuizDone();
 
-  const handleStart = () => {
-    const nodeId = nodeIdFromHref(study.href);
-    // Only drop into deep-focus mode for a real lesson page — hubs (mistake log,
-    // official practice, diagnostic) are meant to be browsed with chrome visible.
+  const headline = overlay?.headline ?? study.headline;
+  const detail = overlay?.detail ?? study.detail;
+  const primaryHref = overlay?.primaryHref ?? study.href;
+  const primaryButtonLabel = overlay?.primaryButtonLabel ?? study.buttonLabel;
+
+  const handleStart = (href: string, label: string) => {
+    const nodeId = nodeIdFromHref(href);
     startSession({
-      label: study.detail,
-      href: study.href,
+      label,
+      href,
       nodeId,
       focus: Boolean(nodeId),
     });
-    navigate(study.href);
+    navigate(href);
   };
 
   const resumeKind = resume ? resolveContinueKind(resume.node.id) : null;
@@ -65,9 +65,9 @@ export function RightNowHero({ subjects, resume }: Props) {
         </span>
         <div className="min-w-0 flex-1 space-y-3">
           <div>
-            <p className="eyebrow-mono text-[var(--accent)]">{study.headline}</p>
+            <p className="eyebrow-mono text-[var(--accent)]">{headline}</p>
             <h2 className="mt-1 text-[length:var(--text-hero)] font-semibold leading-snug tracking-tight text-[var(--text-heading)]">
-              {study.detail}
+              {detail}
             </h2>
           </div>
 
@@ -78,25 +78,59 @@ export function RightNowHero({ subjects, resume }: Props) {
             </p>
           ) : null}
 
-          {topMistakes.length > 0 ? (
+          {topMistakes.length > 0 && !overlay ? (
             <p className="text-xs text-[var(--text-muted)]">
               Top miss {topMistakes.length === 1 ? "area" : "areas"}:{" "}
               {topMistakes.map((row) => `${row.category} (${row.count})`).join(", ")}
             </p>
           ) : null}
 
-          <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
-            <Button onClick={handleStart} className="w-full touch-manipulation sm:w-auto">
-              <Play size={14} aria-hidden />
-              Start focus session
-            </Button>
-            <Link to={study.href} className="w-full sm:w-auto">
-              <Button variant="secondary" className="w-full touch-manipulation sm:w-auto">
-                {study.buttonLabel}
-                <ArrowRight size={14} aria-hidden />
+          {overlay?.mode === "good_shape" && overlay.secondaryActions ? (
+            <div className="flex flex-col gap-2 pt-1">
+              <Button
+                onClick={() => handleStart(primaryHref, detail)}
+                className="w-full touch-manipulation sm:w-auto"
+              >
+                <Play size={14} aria-hidden />
+                {primaryButtonLabel}
               </Button>
-            </Link>
-          </div>
+              <div className="flex flex-wrap gap-2">
+                {overlay.secondaryActions.map((action) => (
+                  <Link key={action.href} to={action.href} className="w-full sm:w-auto">
+                    <Button variant="ghost" size="sm" className="w-full sm:w-auto">
+                      {action.label}
+                      <ArrowRight size={12} aria-hidden />
+                    </Button>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
+              <Button
+                onClick={() => handleStart(primaryHref, detail)}
+                className="w-full touch-manipulation sm:w-auto"
+              >
+                <Play size={14} aria-hidden />
+                {overlay?.mode === "drill_after_daily5" ? primaryButtonLabel : "Start focus session"}
+              </Button>
+              {overlay?.mode !== "drill_after_daily5" ? (
+                <Link to={study.href} className="w-full sm:w-auto">
+                  <Button variant="secondary" className="w-full touch-manipulation sm:w-auto">
+                    {study.buttonLabel}
+                    <ArrowRight size={14} aria-hidden />
+                  </Button>
+                </Link>
+              ) : (
+                <Link to={ROUTES.sat} className="w-full sm:w-auto">
+                  <Button variant="secondary" className="w-full touch-manipulation sm:w-auto">
+                    Open SAT hub
+                    <ArrowRight size={14} aria-hidden />
+                  </Button>
+                </Link>
+              )}
+            </div>
+          )}
 
           {!dailyQuizDone ? (
             <p className="text-xs text-[var(--text-muted)]">
@@ -108,7 +142,7 @@ export function RightNowHero({ subjects, resume }: Props) {
             </p>
           ) : null}
 
-          {study.diagnosticNote ? (
+          {study.diagnosticNote && !overlay ? (
             <p className="text-xs text-[var(--text-muted)]">{study.diagnosticNote}</p>
           ) : null}
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   exportManagedStorage,
+  listBackupRestoreKeys,
   parseBackupKeys,
   restoreManagedStorageBackup,
 } from "@/lib/backupFormat";
@@ -32,6 +33,24 @@ describe("backupFormat", () => {
   it("rejects unknown versions", () => {
     const result = parseBackupKeys({ version: 1, keys: {} });
     expect("error" in result).toBe(true);
+  });
+
+  it("listBackupRestoreKeys returns allowed keys only", () => {
+    const json = JSON.stringify({
+      version: 3,
+      keys: {
+        learnv2_progress: "{}",
+        learnv2_focus_session_v1: "{}",
+        learnv2_openrouter_key: "x",
+      },
+    });
+    const result = listBackupRestoreKeys(json);
+    expect("error" in result).toBe(false);
+    if (!("error" in result)) {
+      expect(result.keys).toContain("learnv2_progress");
+      expect(result.keys).not.toContain("learnv2_focus_session_v1");
+      expect(result.keys).not.toContain("learnv2_openrouter_key");
+    }
   });
 
   it("excludes ephemeral and secret keys from export, includes real data", () => {

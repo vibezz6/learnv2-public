@@ -4,8 +4,11 @@ import {
   COLLEGE_NOTES_MAX_LENGTH,
   discoverCollegesFromEssays,
   importCollegesFromEssays,
+  listColleges,
   loadColleges,
+  markCollegeSubmitted,
   saveColleges,
+  setCollegeArchived,
   updateCollegeNotes,
 } from "./colleges";
 import { saveEssayTracker } from "./essayTracker";
@@ -136,5 +139,19 @@ describe("colleges", () => {
     const long = "x".repeat(COLLEGE_NOTES_MAX_LENGTH + 20);
     updateCollegeNotes(id, long, storage);
     expect(loadColleges(storage).colleges[0]?.notes).toHaveLength(COLLEGE_NOTES_MAX_LENGTH);
+  });
+
+  it("round-trips submittedAt and archived", () => {
+    addCollege("MIT", "2026-11-01", "EA", storage);
+    const id = loadColleges(storage).colleges[0]!.id;
+    markCollegeSubmitted(id, true, storage);
+    setCollegeArchived(id, true, storage);
+    const raw = storage.getItem("learnv2_colleges_v1");
+    expect(raw).toBeTruthy();
+    const reloaded = loadColleges(storage).colleges[0];
+    expect(reloaded?.submittedAt).toBeTruthy();
+    expect(reloaded?.archived).toBe(true);
+    expect(listColleges(storage)).toHaveLength(0);
+    expect(listColleges(storage, { includeArchived: true })).toHaveLength(1);
   });
 });

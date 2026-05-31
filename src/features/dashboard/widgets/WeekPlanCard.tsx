@@ -10,6 +10,7 @@ import {
   buildWeekPlan,
   WEEK_PLAN_SOURCE_LABELS,
 } from "@/lib/weekPlan";
+import { isDailySatQuizDone } from "@/lib/satDailyQuiz";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
@@ -46,6 +47,11 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
     });
   }, [subjects, getNodeStatus, activeTrackId, placementGoal, revision]);
 
+  const dailyDone = useMemo(() => {
+    void revision;
+    return isDailySatQuizDone();
+  }, [revision]);
+
   if (rows.length === 0) {
     return (
       <Card variant="default" density="normal" className="min-w-0">
@@ -59,10 +65,27 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
         <p className="mt-2 text-sm text-[var(--text)]">
           You&apos;re caught up on track lessons and application deadlines for the next 7 days.
         </p>
+        {dailyDone ? (
+          <Link
+            to={ROUTES.satDrill}
+            className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+          >
+            Drill your top mistake skill
+            <ArrowRight size={14} aria-hidden />
+          </Link>
+        ) : (
+          <Link
+            to={ROUTES.satDailyQuiz}
+            className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+          >
+            Take today&apos;s Daily 5
+            <ArrowRight size={14} aria-hidden />
+          </Link>
+        )}
         {track ? (
           <Link
             to={`/tracks/${track.id}`}
-            className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+            className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)] hover:underline"
           >
             Open {track.name}
             <ArrowRight size={14} aria-hidden />

@@ -3,6 +3,11 @@ import { TriangleAlert } from "lucide-react";
 import { Card } from "@/components/ui";
 import { collectStorageHealth, type StorageHealthRow } from "@/lib/storageHealth";
 import {
+  clearStorageErrors,
+  loadStorageErrors,
+  type StorageErrorEntry,
+} from "@/lib/storageErrors";
+import {
   getStorageStatus,
   probeStorageWritable,
   subscribeStorageStatus,
@@ -12,9 +17,13 @@ import { DATA_UPDATED_EVENT } from "@/lib/dataSync";
 
 export function StorageHealthPanel() {
   const [rows, setRows] = useState<StorageHealthRow[]>(() => collectStorageHealth());
+  const [errors, setErrors] = useState<StorageErrorEntry[]>(() => loadStorageErrors());
   const [status, setStatus] = useState<StorageStatus>(() => getStorageStatus());
 
-  const refresh = useCallback(() => setRows(collectStorageHealth()), []);
+  const refresh = useCallback(() => {
+    setRows(collectStorageHealth());
+    setErrors(loadStorageErrors());
+  }, []);
 
   useEffect(() => {
     refresh();
@@ -75,6 +84,37 @@ export function StorageHealthPanel() {
           </table>
         </div>
       </details>
+      {errors.length > 0 ? (
+        <div className="mt-4 space-y-2 border-t border-[var(--rule)] pt-4">
+          <p className="eyebrow-mono text-[var(--warning-fg)]">Recent read errors</p>
+          <p className="text-xs text-[var(--text-muted)]">
+            These keys failed to parse. Export a backup, then fix or clear the key in devtools if
+            needed.
+          </p>
+          <ul className="max-h-32 space-y-2 overflow-y-auto text-xs">
+            {errors.map((entry) => (
+              <li
+                key={`${entry.key}-${entry.timestamp}`}
+                className="rounded-[var(--radius)] border border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2"
+              >
+                <code className="font-mono text-[11px] text-[var(--text-heading)]">{entry.key}</code>
+                <p className="mt-0.5 text-[var(--text-muted)]">{entry.error}</p>
+                <p className="font-mono text-[10px] text-[var(--text-subtle)]">{entry.timestamp}</p>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            className="text-xs font-medium text-[var(--accent)] hover:underline"
+            onClick={() => {
+              clearStorageErrors();
+              setErrors([]);
+            }}
+          >
+            Clear error log
+          </button>
+        </div>
+      ) : null}
     </Card>
   );
 }

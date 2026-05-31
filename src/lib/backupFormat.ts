@@ -20,6 +20,21 @@ export interface BackupRestoreResult {
   progressRaw?: string | null;
 }
 
+/** Keys that would be restored from a full progress export (for import confirmation). */
+export function listBackupRestoreKeys(
+  json: string,
+): { keys: string[] } | { error: string } {
+  try {
+    const parsed = JSON.parse(json) as { version?: number; keys?: Record<string, unknown> };
+    const keysResult = parseBackupKeys(parsed);
+    if ("error" in keysResult) return keysResult;
+    const keys = Object.keys(keysResult.keys).filter(isBackupKeyAllowed).sort();
+    return { keys };
+  } catch {
+    return { error: "Failed to parse import file." };
+  }
+}
+
 export function parseBackupKeys(
   parsed: { version?: number; keys?: Record<string, unknown> },
 ): { version: number; keys: Record<string, string | null> } | { error: string } {

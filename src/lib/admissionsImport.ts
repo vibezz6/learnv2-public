@@ -11,6 +11,13 @@ import {
   type EssayTrackerState,
 } from "./essayTracker";
 import { clearAllNudgeSnoozes } from "./nudgeSnooze";
+import { COLLEGE_CHECKLIST_KEY } from "./collegeChecklist";
+import { ESSAY_TRACKER_KEY } from "./essayTracker";
+
+export const ADMISSIONS_IMPORT_OVERWRITE_KEYS = [
+  COLLEGE_CHECKLIST_KEY,
+  ESSAY_TRACKER_KEY,
+] as const;
 
 export type AdmissionsImportResult =
   | { ok: true; checklist: CollegeChecklistState; essays: EssayTrackerState }

@@ -12,7 +12,9 @@ import {
   Tag,
   Toolbar,
 } from "@/components/ui";
+import { ImportOverwriteConfirm } from "@/components/ImportOverwriteConfirm";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { listBackupRestoreKeys } from "@/lib/backupFormat";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import {
@@ -47,6 +49,7 @@ export function SettingsPage() {
   const resetProgress = useProgress((s) => s.resetProgress);
   const [message, setMessage] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [pendingImport, setPendingImport] = useState<{ json: string; keys: string[] } | null>(null);
   const [soundOn, setSoundOn] = useState(isSoundEnabled);
   const [goalInput, setGoalInput] = useState(String(dailyGoal));
   const [backupTick, setBackupTick] = useState(0);
@@ -87,23 +90,39 @@ export function SettingsPage() {
   const handleImportFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
-      const result = importData(reader.result as string);
-      if (result.success) {
-        const report = result.importReport;
-        const summary = report
-          ? ` Restored ${report.restored.length} key${report.restored.length === 1 ? "" : "s"}${report.skipped.length ? `; skipped ${report.skipped.length}` : ""}.`
-          : "";
-        setMessage(
-          (result.reloadRequired
-            ? "Import successful — reload the page so all stores pick up restored data."
-            : "Import successful.") + summary,
-        );
-        if (result.reloadRequired) setTimeout(() => window.location.reload(), 500);
-      } else {
-        setMessage(result.error ?? "Import failed.");
+      const json = String(reader.result ?? "");
+      const parsed = listBackupRestoreKeys(json);
+      if ("error" in parsed) {
+        setMessage(parsed.error);
+        return;
       }
+      if (parsed.keys.length === 0) {
+        setMessage("No restorable keys found in that file.");
+        return;
+      }
+      setPendingImport({ json, keys: parsed.keys });
     };
     reader.readAsText(file);
+  };
+
+  const applyPendingImport = () => {
+    if (!pendingImport) return;
+    const result = importData(pendingImport.json);
+    setPendingImport(null);
+    if (result.success) {
+      const report = result.importReport;
+      const summary = report
+        ? ` Restored ${report.restored.length} key${report.restored.length === 1 ? "" : "s"}${report.skipped.length ? `; skipped ${report.skipped.length}` : ""}.`
+        : "";
+      setMessage(
+        (result.reloadRequired
+          ? "Import successful — reload the page so all stores pick up restored data."
+          : "Import successful.") + summary,
+      );
+      if (result.reloadRequired) setTimeout(() => window.location.reload(), 500);
+    } else {
+      setMessage(result.error ?? "Import failed.");
+    }
   };
 
   return (
@@ -470,6 +489,14 @@ export function SettingsPage() {
           Reset all progress
         </Button>
       </Card>
+
+      <ImportOverwriteConfirm
+        open={!!pendingImport}
+        title="Import progress backup?"
+        keys={pendingImport?.keys ?? []}
+        onConfirm={applyPendingImport}
+        onCancel={() => setPendingImport(null)}
+      />
 
       <ConfirmDialog
         open={showResetConfirm}

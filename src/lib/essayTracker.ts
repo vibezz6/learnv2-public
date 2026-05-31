@@ -1,5 +1,5 @@
 import { notifyAdmissionsUpdated } from "./admissionsSync";
-import { readJson, writeJson } from "@/lib/storageJson";
+import { readJsonSafe, writeJson } from "@/lib/storageJson";
 
 export const ESSAY_TRACKER_KEY = "learnv2_essay_tracker_v1";
 
@@ -134,7 +134,7 @@ function newId(): string {
 }
 
 export function loadEssayTracker(storage: Storage = localStorage): EssayTrackerState {
-  const parsed = readJson(storage, ESSAY_TRACKER_KEY, emptyState(), isValidState);
+  const parsed = readJsonSafe(storage, ESSAY_TRACKER_KEY, emptyState(), isValidState);
   const essays = parsed.essays.map(normalizeEntry).filter((e): e is EssayEntry => e !== null);
   return { essays };
 }

@@ -1,9 +1,13 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Flame, Target } from "lucide-react";
+import { ROUTES } from "@/app/navigation";
 import { Button, Modal, Tag } from "@/components/ui";
+import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
+import { getDrillQueue } from "@/lib/satDrillQueue";
+import { isSatFocusHref } from "@/lib/todayHero";
 import { useFocusSession } from "@/stores/focusSession";
 import { useProgress } from "@/stores/progress";
-import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 
 /** Reward + reinforce screen shown right after a focus session is logged. */
 export function SessionCompleteModal() {
@@ -11,6 +15,9 @@ export function SessionCompleteModal() {
   const dismissSummary = useFocusSession((s) => s.dismissSummary);
   const streak = useProgress((s) => s.data.streaks.current);
   const navigate = useNavigate();
+
+  const satSession = summary ? isSatFocusHref(summary.href) : false;
+  const drillTop = useMemo(() => (satSession ? getDrillQueue(1)[0] : undefined), [satSession]);
 
   if (!summary) return null;
 
@@ -74,6 +81,36 @@ export function SessionCompleteModal() {
           <span>One more action locks in today and protects your streak.</span>
         )}
       </p>
+
+      {satSession ? (
+        <div className="mt-4 space-y-2 border-t border-[var(--rule)] pt-4">
+          <p className="eyebrow-mono">What&apos;s next</p>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                dismissSummary();
+                navigate(ROUTES.satMistakes);
+              }}
+            >
+              Log a mistake
+            </Button>
+            {drillTop ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  dismissSummary();
+                  navigate(`${ROUTES.satDrill}?skill=${encodeURIComponent(drillTop.skillId)}`);
+                }}
+              >
+                Drill {drillTop.label}
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       <div className="mt-6 flex justify-end gap-2">
         <Button

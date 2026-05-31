@@ -59,12 +59,16 @@ function SkillRow({ row }: { row: SatSkillMasteryRow }) {
           {row.questionCount} Q{row.questionCount === 1 ? "" : "s"}
         </span>
       ) : null}
-      {row.questionCount > 0 ? (
+      {row.mistakeCount > 0 ? (
         <Link to={`${ROUTES.satDrill}?skill=${row.skillId}`}>
           <Button variant="secondary" size="sm">
             Drill
           </Button>
         </Link>
+      ) : row.questionCount > 0 ? (
+        <span className="font-mono text-[11px] text-[var(--text-subtle)]" title="Log a mistake to prioritize this skill">
+          log a miss
+        </span>
       ) : (
         <span className="font-mono text-[11px] text-[var(--text-subtle)]" title="No practice questions for this skill yet">
           needs questions

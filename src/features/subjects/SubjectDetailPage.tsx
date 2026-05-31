@@ -32,6 +32,8 @@ import { loadSubjectResult } from "@/curriculum/loader";
 import type { LoadSubjectResult } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
+import { usePreferences } from "@/stores/preferences";
+import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
 import { SatDiagnosticSection } from "@/features/sat/SatDiagnosticSection";
 import { SatDrillQueueSection } from "@/features/sat/SatDrillQueueSection";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
@@ -55,9 +57,6 @@ const NODE_W = 184;
 const NODE_H = 76;
 const COL_GAP = 36;
 const ROW_GAP = 24;
-
-/** Approximate August 2026 SAT date for the countdown. */
-const AUGUST_SAT_DATE = "2026-08-22";
 
 interface TreeLayout {
   columns: SkillNode[][];
@@ -489,21 +488,15 @@ function unavailableDescription(reason: Exclude<LoadSubjectResult["status"], "ok
   }
 }
 
-function daysUntil(dateString: string): number {
-  const target = new Date(`${dateString}T12:00:00`);
-  const today = new Date();
-  const start = new Date(
-    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
-      today.getDate(),
-    ).padStart(2, "0")}T12:00:00`,
-  );
-  return Math.max(0, Math.round((target.getTime() - start.getTime()) / 86_400_000));
-}
-
 function SatHeroBand({ subject, completed }: { subject: Subject; completed: number }) {
+  const satTestDate = usePreferences((s) => s.satTestDate);
+  const countdown = useMemo(() => getSatCountdown(satTestDate), [satTestDate]);
+  const countdownLabel = formatCountdownLabel(countdown);
+  const daysDisplay =
+    countdown == null ? "—" : countdown.past ? 0 : countdown.daysUntil;
+  const dateSub = countdown?.date ?? "Set SAT date in Settings";
   const total = subject.nodes.length;
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-  const days = daysUntil(AUGUST_SAT_DATE);
   const weakest = useMemo(
     () => getSatSkillMastery([subject]).find((row) => row.hasSignal) ?? null,
     [subject],
@@ -512,15 +505,15 @@ function SatHeroBand({ subject, completed }: { subject: Subject; completed: numb
     <Card variant="primary" density="roomy" className="min-w-0">
       <div className="flex flex-wrap items-center gap-2 border-b border-[var(--rule)] pb-3">
         <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: getSubjectAccent(subject.id) }} />
-        <span className="eyebrow-mono">August SAT command center</span>
+        <span className="eyebrow-mono">SAT command center</span>
         <Tag tone="accent" size="sm" mono className="ml-auto gap-1">
           <Calendar size={11} aria-hidden />
-          T-{days} days
+          {countdownLabel}
         </Tag>
       </div>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
         <Stat label="Skill tree" value={`${pct}%`} sub={`${completed}/${total} done`} />
-        <Stat label="Days to SAT" value={days} sub="Aug 22, 2026" />
+        <Stat label="Days to SAT" value={daysDisplay} sub={dateSub} />
         <Stat label="Track" value="August" sub="75 lessons" />
       </div>
       <div className="mt-4">
@@ -735,7 +728,7 @@ export function SubjectDetailPage() {
             <SatMistakesPrimary />
           </div>
 
-          <SatDrillQueueSection />
+          <SatDrillQueueSection subject={subject} />
 
           <Section eyebrow="Recommended" id="recommended">
             <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
