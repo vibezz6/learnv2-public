@@ -1,8 +1,12 @@
 import type { Subject } from "@/curriculum/types";
 import { getEntrySkillId, listMistakes } from "@/lib/satMistakeLog";
 import { getDrillSchedule } from "@/lib/satDrillSchedule";
-import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
+import {
+  getLatestCompletedSatPretestAttempt,
+  type SatPretestAttempt,
+} from "@/lib/satPretest";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
+import { SAT_PRETEST_DRAFT_3_ID } from "@/data/satPretestDrafts";
 import {
   getNodeSkillId,
   resolveSkillId,
@@ -11,6 +15,8 @@ import {
   type SatSkillId,
 } from "@/lib/satSkills";
 
+export type SatDiagnosticSource = "baseline" | "retest";
+
 export interface SatSkillMasteryRow {
   skillId: SatSkillId;
   label: string;
@@ -18,6 +24,7 @@ export interface SatSkillMasteryRow {
   domain: string;
   mistakeCount: number;
   diagnostic: { correct: number; total: number; pct: number } | null;
+  diagnosticSource: SatDiagnosticSource | null;
   drill: { due: boolean; lastDrilledAt: number | null } | null;
   questionCount: number;
   /** Higher = weaker / more urgent. 0 means no signal yet. */
@@ -53,21 +60,10 @@ export function getMistakeCountsBySkill(storage: Storage = localStorage): Map<Sa
   return counts;
 }
 
-/**
- * Per-skill mastery, merging four signals (mistakes, Draft 1 diagnostic, drill
- * recency, question coverage) into one list sorted weakest-first. Strategy/mixed
- * and general buckets are excluded — this is the "what do I attack" content view.
- */
-export function getSatSkillMastery(
-  subjects: Subject[],
-  storage: Storage = localStorage,
-  now: number = Date.now(),
-): SatSkillMasteryRow[] {
-  const mistakeCounts = getMistakeCountsBySkill(storage);
-  const questionCounts = countSatQuestionsBySkill(subjects);
-
+function getDiagnosticBySkillFromAttempt(
+  attempt: SatPretestAttempt | null,
+): Map<SatSkillId, { correct: number; total: number; pct: number }> {
   const diagnosticBySkill = new Map<SatSkillId, { correct: number; total: number; pct: number }>();
-  const attempt = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID, storage);
   for (const row of attempt?.scoreSummary?.skillBreakdown ?? []) {
     const skillId = resolveSkillId(row.label);
     if (!skillId) continue;
@@ -84,6 +80,39 @@ export function getSatSkillMastery(
       diagnosticBySkill.set(skillId, { correct: row.correct, total: row.total, pct: row.pct });
     }
   }
+  return diagnosticBySkill;
+}
+
+/** Prefer the newer completed baseline (Draft 1) or retest (Draft 3). */
+export function getLatestDiagnosticAttempt(
+  storage: Storage = localStorage,
+): { attempt: SatPretestAttempt; source: SatDiagnosticSource } | null {
+  const d1 = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID, storage);
+  const d3 = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_3_ID, storage);
+  if (!d1 && !d3) return null;
+  if (!d1) return { attempt: d3!, source: "retest" };
+  if (!d3) return { attempt: d1, source: "baseline" };
+  const t1 = Date.parse(d1.completedAt ?? d1.startedAt);
+  const t3 = Date.parse(d3.completedAt ?? d3.startedAt);
+  return t3 >= t1 ? { attempt: d3, source: "retest" } : { attempt: d1, source: "baseline" };
+}
+
+/**
+ * Per-skill mastery, merging four signals (mistakes, latest diagnostic, drill
+ * recency, question coverage) into one list sorted weakest-first. Strategy/mixed
+ * and general buckets are excluded — this is the "what do I attack" content view.
+ */
+export function getSatSkillMastery(
+  subjects: Subject[],
+  storage: Storage = localStorage,
+  now: number = Date.now(),
+): SatSkillMasteryRow[] {
+  const mistakeCounts = getMistakeCountsBySkill(storage);
+  const questionCounts = countSatQuestionsBySkill(subjects);
+
+  const latestDiag = getLatestDiagnosticAttempt(storage);
+  const diagnosticBySkill = getDiagnosticBySkillFromAttempt(latestDiag?.attempt ?? null);
+  const diagnosticSource = latestDiag?.source ?? null;
 
   const drillBySkill = new Map<SatSkillId, { due: boolean; lastDrilledAt: number | null }>();
   for (const entry of getDrillSchedule(storage, now)) {
@@ -109,6 +138,7 @@ export function getSatSkillMastery(
       domain: meta.domain,
       mistakeCount,
       diagnostic,
+      diagnosticSource: diagnostic ? diagnosticSource : null,
       drill,
       questionCount,
       weaknessScore,

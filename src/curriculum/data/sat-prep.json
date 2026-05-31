@@ -78,7 +78,9 @@
       "name": "Daily Rhythm & Tools",
       "description": "Set up your study stack: Learn v2 for lessons and notes, Khan for skill drills, Bluebook for timed sections. Learn when to study Math vs R&W.",
       "xpValue": 60,
-      "parentIds": ["st1"],
+      "parentIds": [
+        "st1"
+      ],
       "estimatedMinutes": 30,
       "difficulty": "beginner",
       "keyConcepts": [
@@ -120,7 +122,9 @@
       "name": "SAT Math — What They Test",
       "description": "Overview of Digital SAT Math: Algebra, Problem-Solving & Data Analysis, Advanced Math, and Geometry/Trig. Know the terrain before drilling.",
       "xpValue": 100,
-      "parentIds": ["st2"],
+      "parentIds": [
+        "st2"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "beginner",
       "keyConcepts": [
@@ -152,7 +156,12 @@
         {
           "id": "q_st3_1",
           "question": "Which topic appears most often on SAT Math?",
-          "options": ["Advanced calculus", "Algebra and linear relationships", "Chemistry stoichiometry", "Proof-based geometry"],
+          "options": [
+            "Advanced calculus",
+            "Algebra and linear relationships",
+            "Chemistry stoichiometry",
+            "Proof-based geometry"
+          ],
           "correctIndex": 1,
           "explanation": "Algebra and problem-solving dominate; calculus is not on the SAT."
         }
@@ -163,7 +172,9 @@
       "name": "Algebra & Linear Equations",
       "description": "Solve for x, translate word problems, work with slopes and systems. The highest-yield math bucket for most students.",
       "xpValue": 120,
-      "parentIds": ["st3"],
+      "parentIds": [
+        "st3"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "beginner",
       "keyConcepts": [
@@ -190,14 +201,24 @@
         {
           "id": "q_st4_1",
           "question": "Solve: 2(x - 3) = 10",
-          "options": ["x = 4", "x = 8", "x = 5", "x = 11"],
+          "options": [
+            "x = 4",
+            "x = 8",
+            "x = 5",
+            "x = 11"
+          ],
           "correctIndex": 1,
           "explanation": "2x - 6 = 10 → 2x = 16 → x = 8."
         },
         {
           "id": "q_st4_2",
           "question": "In y = 3x + 2, the 3 represents:",
-          "options": ["y-intercept", "slope", "x-intercept", "starting cost only"],
+          "options": [
+            "y-intercept",
+            "slope",
+            "x-intercept",
+            "starting cost only"
+          ],
           "correctIndex": 1,
           "explanation": "In y = mx + b, m is slope (rate of change)."
         }
@@ -208,7 +229,9 @@
       "name": "Problem Solving & Data",
       "description": "Percentages, ratios, proportional reasoning, mean/median, tables and scatterplots. SAT loves real-world word problems.",
       "xpValue": 120,
-      "parentIds": ["st4"],
+      "parentIds": [
+        "st4"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -235,7 +258,12 @@
         {
           "id": "q_st5_1",
           "question": "Price rises from $80 to $100. Percent increase?",
-          "options": ["20%", "25%", "80%", "125%"],
+          "options": [
+            "20%",
+            "25%",
+            "80%",
+            "125%"
+          ],
           "correctIndex": 1,
           "explanation": "Increase 20/80 = 25%."
         }
@@ -246,7 +274,9 @@
       "name": "Advanced Math Essentials",
       "description": "Quadratics, factoring basics, function notation, and exponentials at SAT level — not full precalculus.",
       "xpValue": 130,
-      "parentIds": ["st5"],
+      "parentIds": [
+        "st5"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -273,7 +303,12 @@
         {
           "id": "q_st6_1",
           "question": "What is f(4) if f(x) = x² - 3?",
-          "options": ["1", "7", "13", "16"],
+          "options": [
+            "1",
+            "7",
+            "13",
+            "16"
+          ],
           "correctIndex": 2,
           "explanation": "4² - 3 = 16 - 3 = 13."
         }
@@ -284,7 +319,9 @@
       "name": "Math Strategy & Timing",
       "description": "When to skip, when to guess, how to use Desmos on the Digital SAT, and how to check answers without redoing everything.",
       "xpValue": 100,
-      "parentIds": ["st6"],
+      "parentIds": [
+        "st6"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -326,7 +363,9 @@
       "name": "Math — Timed Module Practice",
       "description": "Run a timed Math module (or half test) in Bluebook. Log errors by topic in your mistake log. Review in Learn v2 notes.",
       "xpValue": 150,
-      "parentIds": ["st7"],
+      "parentIds": [
+        "st7"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -367,7 +406,9 @@
       "name": "Reading & Writing — Overview",
       "description": "How SAT R&W works: short passages, one question each, grammar and reading skills combined. Build reading stamina without zoning out.",
       "xpValue": 100,
-      "parentIds": ["st2"],
+      "parentIds": [
+        "st2"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "beginner",
       "keyConcepts": [
@@ -409,7 +450,9 @@
       "name": "Grammar & Standard English",
       "description": "Subject-verb agreement, pronouns, commas, sentence boundaries, and concise phrasing. Fast points when you know the rules.",
       "xpValue": 120,
-      "parentIds": ["st9"],
+      "parentIds": [
+        "st9"
+      ],
       "estimatedMinutes": 75,
       "difficulty": "beginner",
       "keyConcepts": [
@@ -451,7 +494,9 @@
       "name": "Words in Context & Craft",
       "description": "Vocabulary in context, tone, purpose, and structure questions. Eliminate answers that change the passage's meaning.",
       "xpValue": 120,
-      "parentIds": ["st10"],
+      "parentIds": [
+        "st10"
+      ],
       "estimatedMinutes": 75,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -509,6 +554,42 @@
           ],
           "correctIndex": 1,
           "explanation": "Substitution tests whether the word fits grammar and logic in context."
+        },
+        {
+          "id": "q_stretch_wic_1",
+          "question": "As used in the passage, \"reserved\" most nearly means:",
+          "options": [
+            "Booked in advance",
+            "Quiet and restrained",
+            "Brightly colored",
+            "Legally required"
+          ],
+          "correctIndex": 1,
+          "explanation": "Context describes someone who rarely speaks up."
+        },
+        {
+          "id": "q_stretch_wic_2",
+          "question": "The scientist called the result \"preliminary,\" suggesting it is:",
+          "options": [
+            "Final and proven",
+            "Initial and subject to revision",
+            "Secret",
+            "Unrelated to the study"
+          ],
+          "correctIndex": 1,
+          "explanation": "Preliminary means not yet final."
+        },
+        {
+          "id": "q_stretch_wic_3",
+          "question": "In context, \"charge\" most nearly means:",
+          "options": [
+            "Electrical energy stored in a battery",
+            "Accusation that someone did wrong",
+            "Price of admission",
+            "Military unit"
+          ],
+          "correctIndex": 1,
+          "explanation": "Legal/moral accusation fits courtroom context."
         }
       ]
     },
@@ -517,7 +598,9 @@
       "name": "Information, Ideas & Evidence",
       "description": "Main idea, detail, inference, and paired evidence questions. Learn to prove answers with lines from the text.",
       "xpValue": 120,
-      "parentIds": ["st11"],
+      "parentIds": [
+        "st11"
+      ],
       "estimatedMinutes": 75,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -575,6 +658,42 @@
           ],
           "correctIndex": 1,
           "explanation": "Detail answers must be directly supported by the text."
+        },
+        {
+          "id": "q_stretch_central_1",
+          "question": "A passage states that urban gardens reduce food deserts. The central idea is best summarized as:",
+          "options": [
+            "Gardens are decorative",
+            "Local growing improves food access in cities",
+            "All cities ban gardens",
+            "Food deserts only affect farms"
+          ],
+          "correctIndex": 1,
+          "explanation": "The main claim ties urban gardens to better food access."
+        },
+        {
+          "id": "q_stretch_central_2",
+          "question": "Which detail most directly supports the central idea that sleep helps memory?",
+          "options": [
+            "Students who slept 8 hours recalled 30% more vocabulary",
+            "The lab used blue walls",
+            "Some students drank coffee",
+            "The study lasted one semester"
+          ],
+          "correctIndex": 0,
+          "explanation": "Recall improvement after sleep supports the memory claim."
+        },
+        {
+          "id": "q_stretch_central_3",
+          "question": "The author argues that public transit cuts emissions. Which sentence states that central idea?",
+          "options": [
+            "Buses are painted green",
+            "Shifting drivers to trains lowers city carbon output",
+            "Tickets cost more on weekends",
+            "One station closed for repairs"
+          ],
+          "correctIndex": 1,
+          "explanation": "Lower carbon from mode shift is the main point."
         }
       ]
     },
@@ -583,7 +702,9 @@
       "name": "R&W Strategy & Pacing",
       "description": "Module timing, when to skip, handling boring passages, and staying sharp after Math sections on test day.",
       "xpValue": 100,
-      "parentIds": ["st12"],
+      "parentIds": [
+        "st12"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -625,7 +746,9 @@
       "name": "R&W — Timed Module Practice",
       "description": "Timed R&W module in Bluebook or Khan. Log misses. Tie weak areas back to grammar vs reading lessons in this tree.",
       "xpValue": 150,
-      "parentIds": ["st13"],
+      "parentIds": [
+        "st13"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -666,7 +789,10 @@
       "name": "Full Practice Test & Test Week",
       "description": "Take a full Digital SAT in Bluebook. Build a one-week test plan: sleep, materials, score send strategy, and what to do the morning of.",
       "xpValue": 200,
-      "parentIds": ["st8", "st14"],
+      "parentIds": [
+        "st8",
+        "st14"
+      ],
       "estimatedMinutes": 180,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -727,7 +853,9 @@
       "name": "Fractions & Rational Numbers",
       "description": "Focused drill on fraction operations, equivalence, and SAT word problems with rational expressions. Build speed without skipping steps.",
       "xpValue": 90,
-      "parentIds": ["st15"],
+      "parentIds": [
+        "st15"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -760,14 +888,24 @@
         {
           "id": "q_st16_1",
           "question": "What is 3/4 ÷ 1/2?",
-          "options": ["3/8", "3/2", "2/3", "6/4"],
+          "options": [
+            "3/8",
+            "3/2",
+            "2/3",
+            "6/4"
+          ],
           "correctIndex": 1,
           "explanation": "Dividing by 1/2 is multiplying by 2: (3/4) × 2 = 3/2."
         },
         {
           "id": "q_st16_2",
           "question": "Which is equivalent to 0.375?",
-          "options": ["3/8", "3/7", "37.5/10", "1/3"],
+          "options": [
+            "3/8",
+            "3/7",
+            "37.5/10",
+            "1/3"
+          ],
           "correctIndex": 0,
           "explanation": "0.375 = 375/1000 = 3/8."
         }
@@ -778,7 +916,9 @@
       "name": "Linear Equations — Focused Drill",
       "description": "One- and two-step equations, translating words to algebra, and slope-intercept fluency under drill conditions.",
       "xpValue": 90,
-      "parentIds": ["st16"],
+      "parentIds": [
+        "st16"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -811,14 +951,24 @@
         {
           "id": "q_st17_1",
           "question": "Solve: 5x - 3 = 2x + 9",
-          "options": ["x = 2", "x = 4", "x = 6", "x = 12"],
+          "options": [
+            "x = 2",
+            "x = 4",
+            "x = 6",
+            "x = 12"
+          ],
           "correctIndex": 1,
           "explanation": "5x - 2x = 9 + 3 → 3x = 12 → x = 4."
         },
         {
           "id": "q_st17_2",
           "question": "In y = -2x + 7, the y-intercept is:",
-          "options": ["-2", "7", "2", "x = 7"],
+          "options": [
+            "-2",
+            "7",
+            "2",
+            "x = 7"
+          ],
           "correctIndex": 1,
           "explanation": "In y = mx + b, b = 7 is the y-intercept."
         }
@@ -829,7 +979,9 @@
       "name": "Systems of Equations Drill",
       "description": "Substitution, elimination, and recognizing when a system has no solution or infinitely many — at SAT pace.",
       "xpValue": 90,
-      "parentIds": ["st17"],
+      "parentIds": [
+        "st17"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -874,14 +1026,24 @@
         {
           "id": "q_st18_2",
           "question": "For x + y = 10 and x - y = 2, x equals:",
-          "options": ["4", "6", "8", "12"],
+          "options": [
+            "4",
+            "6",
+            "8",
+            "12"
+          ],
           "correctIndex": 1,
           "explanation": "Add equations: 2x = 12 → x = 6."
         },
         {
           "id": "q_st18_3",
           "question": "Using substitution, if y = 3x and 2x + y = 20, then y equals:",
-          "options": ["6", "9", "12", "15"],
+          "options": [
+            "6",
+            "9",
+            "12",
+            "15"
+          ],
           "correctIndex": 2,
           "explanation": "Substitute: 2x + 3x = 20 → 5x = 20 → x = 4, so y = 12."
         },
@@ -900,9 +1062,50 @@
         {
           "id": "q_st18_5",
           "question": "For 2x + y = 11 and x - y = 1, the ordered pair (x, y) is:",
-          "options": ["(3, 2)", "(4, 3)", "(5, 4)", "(2, 1)"],
+          "options": [
+            "(3, 2)",
+            "(4, 3)",
+            "(5, 4)",
+            "(2, 1)"
+          ],
           "correctIndex": 1,
           "explanation": "Substitute x = y + 1: 2(y + 1) + y = 11 → 3y = 9 → y = 3, x = 4."
+        },
+        {
+          "id": "q_stretch_sys_1",
+          "question": "If 2x + y = 14 and x - y = 1, then x equals:",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "correctIndex": 2,
+          "explanation": "Add: 3x = 15 → x = 5."
+        },
+        {
+          "id": "q_stretch_sys_2",
+          "question": "A system has equations with the same slope but different intercepts. The system has:",
+          "options": [
+            "One solution",
+            "No solution",
+            "Infinite solutions",
+            "Two solutions"
+          ],
+          "correctIndex": 1,
+          "explanation": "Parallel lines never meet."
+        },
+        {
+          "id": "q_stretch_sys_3",
+          "question": "Using substitution: y = x + 2 and 3x + y = 18. What is y?",
+          "options": [
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "correctIndex": 2,
+          "explanation": "3x + x + 2 = 18 → x = 4, y = 8."
         }
       ]
     },
@@ -911,7 +1114,9 @@
       "name": "Percentages & Proportions Drill",
       "description": "Percent change, ratios, unit rates, and proportional reasoning — the word-problem style SAT loves.",
       "xpValue": 90,
-      "parentIds": ["st18"],
+      "parentIds": [
+        "st18"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -944,14 +1149,24 @@
         {
           "id": "q_st19_1",
           "question": "Price drops from $50 to $40. Percent decrease?",
-          "options": ["10%", "20%", "25%", "80%"],
+          "options": [
+            "10%",
+            "20%",
+            "25%",
+            "80%"
+          ],
           "correctIndex": 1,
           "explanation": "Decrease 10/50 = 20%."
         },
         {
           "id": "q_st19_2",
           "question": "A map scale is 1 inch : 5 miles. 3.5 inches represents:",
-          "options": ["8.5 miles", "15 miles", "17.5 miles", "35 miles"],
+          "options": [
+            "8.5 miles",
+            "15 miles",
+            "17.5 miles",
+            "35 miles"
+          ],
           "correctIndex": 2,
           "explanation": "3.5 × 5 = 17.5 miles."
         }
@@ -962,7 +1177,9 @@
       "name": "Quadratics & Factoring Drill",
       "description": "Factoring, completing the square basics, quadratic formula, and parabola features at SAT level.",
       "xpValue": 100,
-      "parentIds": ["st19"],
+      "parentIds": [
+        "st19"
+      ],
       "estimatedMinutes": 75,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -995,14 +1212,24 @@
         {
           "id": "q_st20_1",
           "question": "Factor: x² - 5x + 6",
-          "options": ["(x-2)(x-3)", "(x+2)(x+3)", "(x-1)(x-6)", "(x-2)(x+3)"],
+          "options": [
+            "(x-2)(x-3)",
+            "(x+2)(x+3)",
+            "(x-1)(x-6)",
+            "(x-2)(x+3)"
+          ],
           "correctIndex": 0,
           "explanation": "Numbers that multiply to 6 and add to -5 are -2 and -3."
         },
         {
           "id": "q_st20_2",
           "question": "For y = x² - 4x + 3, the x-coordinate of the vertex is:",
-          "options": ["-4", "2", "3", "4"],
+          "options": [
+            "-4",
+            "2",
+            "3",
+            "4"
+          ],
           "correctIndex": 1,
           "explanation": "Vertex x = -b/(2a) = 4/2 = 2."
         }
@@ -1013,7 +1240,9 @@
       "name": "Functions & Graphs Drill",
       "description": "Function notation, table/graph matching, intercepts, and interpreting linear and nonlinear graphs on the Digital SAT.",
       "xpValue": 100,
-      "parentIds": ["st20"],
+      "parentIds": [
+        "st20"
+      ],
       "estimatedMinutes": 75,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1046,7 +1275,12 @@
         {
           "id": "q_st21_1",
           "question": "If f(x) = 3x - 1, what is f(5)?",
-          "options": ["14", "15", "16", "4"],
+          "options": [
+            "14",
+            "15",
+            "16",
+            "4"
+          ],
           "correctIndex": 0,
           "explanation": "f(5) = 3(5) - 1 = 14."
         },
@@ -1069,7 +1303,9 @@
       "name": "Desmos on the Digital SAT",
       "description": "Graphing equations, finding intersections, regression lines, and backsolving with the built-in calculator — strategy drill, not just button tutorial.",
       "xpValue": 90,
-      "parentIds": ["st21"],
+      "parentIds": [
+        "st21"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1130,7 +1366,9 @@
       "name": "Geometry & Right-Triangle Trig",
       "description": "Angles, circles, area and volume, similar triangles, and SOHCAHTOA at SAT level — lighter weight than algebra but still drill-worthy.",
       "xpValue": 90,
-      "parentIds": ["st22"],
+      "parentIds": [
+        "st22"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1163,14 +1401,24 @@
         {
           "id": "q_st23_1",
           "question": "In a right triangle, sin(θ) equals:",
-          "options": ["adjacent/hypotenuse", "opposite/hypotenuse", "opposite/adjacent", "hypotenuse/opposite"],
+          "options": [
+            "adjacent/hypotenuse",
+            "opposite/hypotenuse",
+            "opposite/adjacent",
+            "hypotenuse/opposite"
+          ],
           "correctIndex": 1,
           "explanation": "SOH — sine is opposite over hypotenuse."
         },
         {
           "id": "q_st23_2",
           "question": "Two similar triangles have side ratio 2:3. If the smaller has a side of 8, the matching side on the larger is:",
-          "options": ["10", "12", "16", "24"],
+          "options": [
+            "10",
+            "12",
+            "16",
+            "24"
+          ],
           "correctIndex": 1,
           "explanation": "8/2 = x/3 → x = 12."
         }
@@ -1181,7 +1429,9 @@
       "name": "Math Mixed Topic Review",
       "description": "Untimed mixed set tagged by topic. Redo misses from your mistake log before the timed checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st23"],
+      "parentIds": [
+        "st23"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1242,7 +1492,9 @@
       "name": "Math — Timed Module Checkpoint",
       "description": "Bluebook or Khan timed Math module. Log misses by topic within 24 hours — capstone of the st16–st25 drill chain.",
       "xpValue": 150,
-      "parentIds": ["st24"],
+      "parentIds": [
+        "st24"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -1303,7 +1555,9 @@
       "name": "Subject-Verb Agreement Drill",
       "description": "Focused drill on singular/plural subjects, collective nouns, neither/nor constructions, and interrupting phrases that hide the real subject.",
       "xpValue": 90,
-      "parentIds": ["st15"],
+      "parentIds": [
+        "st15"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1364,7 +1618,9 @@
       "name": "Punctuation & Sentence Boundaries",
       "description": "Commas, semicolons, colons, dashes, run-ons, and comma splices — the punctuation rules the SAT tests repeatedly under time pressure.",
       "xpValue": 90,
-      "parentIds": ["st26"],
+      "parentIds": [
+        "st26"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1425,7 +1681,9 @@
       "name": "Pronouns & Modifier Placement",
       "description": "Pronoun clarity, case, agreement, and dangling or misplaced modifiers — grammar items that look like reading but follow clear rules.",
       "xpValue": 90,
-      "parentIds": ["st27"],
+      "parentIds": [
+        "st27"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1486,7 +1744,9 @@
       "name": "Words in Context — Focused Drill",
       "description": "Predict-then-match vocabulary using surrounding sentence and paragraph clues — no flashcard marathon required.",
       "xpValue": 90,
-      "parentIds": ["st28"],
+      "parentIds": [
+        "st28"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1547,7 +1807,9 @@
       "name": "Main Idea & Central Claims",
       "description": "Distinguish main idea from supporting detail and identify the author's central claim in science and humanities passages.",
       "xpValue": 90,
-      "parentIds": ["st29"],
+      "parentIds": [
+        "st29"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1608,7 +1870,9 @@
       "name": "Evidence & Paired Questions",
       "description": "Select the quote or detail that best supports a prior answer — and avoid half-right evidence traps on paired items.",
       "xpValue": 90,
-      "parentIds": ["st30"],
+      "parentIds": [
+        "st30"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1661,6 +1925,18 @@
           ],
           "correctIndex": 1,
           "explanation": "Half-right evidence touches the subject but fails to prove the claim you selected."
+        },
+        {
+          "id": "q_stretch_evidence_1",
+          "question": "Claim: The policy lowered traffic deaths. Which evidence best supports it?",
+          "options": [
+            "Deaths per mile driven fell 12% the year after the speed limit dropped",
+            "More cars were sold",
+            "A bridge was painted",
+            "Drivers enjoy music"
+          ],
+          "correctIndex": 0,
+          "explanation": "Direct drop in deaths per mile supports the claim."
         }
       ]
     },
@@ -1669,7 +1945,9 @@
       "name": "Inference & Logical Conclusions",
       "description": "Text-bound inferences only — eliminate extreme or outside-knowledge choices and stay close to what the passage actually says.",
       "xpValue": 90,
-      "parentIds": ["st31"],
+      "parentIds": [
+        "st31"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1722,6 +2000,42 @@
           ],
           "correctIndex": 1,
           "explanation": "Extreme language rarely matches the cautious scope of SAT passages."
+        },
+        {
+          "id": "q_stretch_infer_1",
+          "question": "The narrator mentions packing boxes and forwarding mail. It is reasonable to infer the narrator is:",
+          "options": [
+            "Starting a new job elsewhere",
+            "Retiring at home",
+            "On vacation",
+            "Buying a house nearby"
+          ],
+          "correctIndex": 0,
+          "explanation": "Moving cues imply relocation for work or life change."
+        },
+        {
+          "id": "q_stretch_infer_2",
+          "question": "From \"She paused before answering, eyes on the floor,\" the reader can infer she feels:",
+          "options": [
+            "Confident",
+            "Uncertain or uncomfortable",
+            "Hungry",
+            "Amused"
+          ],
+          "correctIndex": 1,
+          "explanation": "Hesitation and downcast eyes suggest discomfort."
+        },
+        {
+          "id": "q_stretch_infer_3",
+          "question": "If soil samples show rising salt levels each year, the farm most likely faces:",
+          "options": [
+            "Improving fertility",
+            "Gradual salinization",
+            "More rainfall",
+            "Fewer pests"
+          ],
+          "correctIndex": 1,
+          "explanation": "Rising salt implies worsening soil salinity."
         }
       ]
     },
@@ -1730,7 +2044,9 @@
       "name": "Rhetorical Synthesis & Transitions",
       "description": "Bullet notes, logical transitions, and concise revision for Digital SAT synthesis items — combine ideas without losing clarity.",
       "xpValue": 90,
-      "parentIds": ["st32"],
+      "parentIds": [
+        "st32"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1795,6 +2111,42 @@
           ],
           "correctIndex": 1,
           "explanation": "Match the rhetorical goal — here, highlighting a limitation from the provided notes."
+        },
+        {
+          "id": "q_stretch_rhet_1",
+          "question": "Goal: emphasize that the program reduced absences. Which sentence best achieves this?",
+          "options": [
+            "The program started in 2019",
+            "Absenteeism fell 18% the year after mentors were added",
+            "Some students play sports",
+            "The building has three floors"
+          ],
+          "correctIndex": 1,
+          "explanation": "A concrete drop in absences supports the goal."
+        },
+        {
+          "id": "q_stretch_rhet_2",
+          "question": "Notes: (1) bees pollinate crops (2) hive counts dropped 30% (3) farmers use fewer native plants. Goal: warn about crop risk. Best synthesis:",
+          "options": [
+            "Bees are insects",
+            "Fewer bees and less habitat may threaten pollination and yields",
+            "Farmers like flowers",
+            "30% is a large number"
+          ],
+          "correctIndex": 1,
+          "explanation": "Connects hive loss and habitat to pollination risk."
+        },
+        {
+          "id": "q_stretch_rhet_3",
+          "question": "Which addition best links the study's method to its conclusion about screen time?",
+          "options": [
+            "Participants logged hours nightly for six weeks before tests",
+            "Screens are bright",
+            "Many teens use phones",
+            "The lab was renovated"
+          ],
+          "correctIndex": 0,
+          "explanation": "Method detail supports the causal claim."
         }
       ]
     },
@@ -1803,7 +2155,9 @@
       "name": "R&W Mixed Topic Review",
       "description": "Untimed mixed set across grammar and reading skills. Tag each miss by category before the timed checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st33"],
+      "parentIds": [
+        "st33"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1864,7 +2218,9 @@
       "name": "R&W — Timed Module Checkpoint",
       "description": "Bluebook or Khan timed R&W module. Log misses by category within 24 hours — capstone of the st26–st35 drill chain.",
       "xpValue": 150,
-      "parentIds": ["st34"],
+      "parentIds": [
+        "st34"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -1925,7 +2281,9 @@
       "name": "Inequalities & Absolute Value Drill",
       "description": "One- and two-variable inequalities, compound inequalities, and absolute value equations/inequalities — Heart of Algebra at drill pace.",
       "xpValue": 90,
-      "parentIds": ["st25"],
+      "parentIds": [
+        "st25"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -1970,30 +2328,86 @@
         {
           "id": "q_st36_2",
           "question": "The equation |x - 4| = 3 has solutions:",
-          "options": ["x = 7 only", "x = 1 only", "x = 7 or x = 1", "No solution"],
+          "options": [
+            "x = 7 only",
+            "x = 1 only",
+            "x = 7 or x = 1",
+            "No solution"
+          ],
           "correctIndex": 2,
           "explanation": "x - 4 = 3 → x = 7; x - 4 = -3 → x = 1."
         },
         {
           "id": "q_st36_3",
           "question": "Which value satisfies 2x + 5 ≤ 13?",
-          "options": ["x = 5", "x = 4", "x = 3", "x = 6"],
+          "options": [
+            "x = 5",
+            "x = 4",
+            "x = 3",
+            "x = 6"
+          ],
           "correctIndex": 2,
           "explanation": "2x ≤ 8 → x ≤ 4. Only x = 3 is less than or equal to 4 among the choices."
         },
         {
           "id": "q_st36_4",
           "question": "The inequality |x + 2| < 5 is equivalent to:",
-          "options": ["-7 < x < 3", "-5 < x < 5", "x < 3 only", "x > -7 only"],
+          "options": [
+            "-7 < x < 3",
+            "-5 < x < 5",
+            "x < 3 only",
+            "x > -7 only"
+          ],
           "correctIndex": 0,
           "explanation": "|x + 2| < 5 means -5 < x + 2 < 5, so -7 < x < 3."
         },
         {
           "id": "q_st36_5",
           "question": "If 4 - 3x ≥ 10, then x is:",
-          "options": ["x ≥ 2", "x ≤ -2", "x ≥ -2", "x ≤ 2"],
+          "options": [
+            "x ≥ 2",
+            "x ≤ -2",
+            "x ≥ -2",
+            "x ≤ 2"
+          ],
           "correctIndex": 1,
           "explanation": "-3x ≥ 6; divide by -3 and flip: x ≤ -2."
+        },
+        {
+          "id": "q_stretch_ineq_1",
+          "question": "Which value satisfies 2x + 5 > 13?",
+          "options": [
+            "x = 3",
+            "x = 4",
+            "x = 5",
+            "x = 2"
+          ],
+          "correctIndex": 2,
+          "explanation": "2(5) + 5 = 15 > 13."
+        },
+        {
+          "id": "q_stretch_ineq_2",
+          "question": "Solve: |x - 3| ≤ 2",
+          "options": [
+            "1 ≤ x ≤ 5",
+            "x ≤ 1 or x ≥ 5",
+            "x = 3 only",
+            "No solution"
+          ],
+          "correctIndex": 0,
+          "explanation": "Distance from 3 is at most 2, so x is between 1 and 5."
+        },
+        {
+          "id": "q_stretch_ineq_3",
+          "question": "For 4 - 3x ≥ 10, which is correct?",
+          "options": [
+            "x ≥ 2",
+            "x ≤ -2",
+            "x ≥ -2",
+            "x ≤ 2"
+          ],
+          "correctIndex": 1,
+          "explanation": "-3x ≥ 6 → x ≤ -2 (flip sign when dividing by negative)."
         }
       ]
     },
@@ -2002,7 +2416,9 @@
       "name": "Exponential Growth & Decay Drill",
       "description": "Exponential models, percent growth/decay, and comparing linear vs exponential change — Passport to Advanced Math.",
       "xpValue": 90,
-      "parentIds": ["st36"],
+      "parentIds": [
+        "st36"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2047,7 +2463,12 @@
         {
           "id": "q_st37_2",
           "question": "A quantity decreases by 20% each year. After 2 years it is what fraction of the start?",
-          "options": ["0.8", "0.64", "0.6", "0.4"],
+          "options": [
+            "0.8",
+            "0.64",
+            "0.6",
+            "0.4"
+          ],
           "correctIndex": 1,
           "explanation": "Two 20% decreases: 0.8 × 0.8 = 0.64 of the original."
         }
@@ -2058,7 +2479,9 @@
       "name": "Polynomial & Rational Expressions Drill",
       "description": "Polynomial add/multiply, factoring beyond quadratics, and simplifying rational expressions — equivalent-form traps on the SAT.",
       "xpValue": 90,
-      "parentIds": ["st37"],
+      "parentIds": [
+        "st37"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2091,7 +2514,12 @@
         {
           "id": "q_st38_1",
           "question": "Simplify (x² - 4) / (x + 2) for x ≠ -2:",
-          "options": ["x - 2", "x + 2", "x² - 2", "Cannot simplify"],
+          "options": [
+            "x - 2",
+            "x + 2",
+            "x² - 2",
+            "Cannot simplify"
+          ],
           "correctIndex": 0,
           "explanation": "Factor x² - 4 = (x + 2)(x - 2), then cancel (x + 2)."
         },
@@ -2114,7 +2542,9 @@
       "name": "Statistics & Scatterplots Drill",
       "description": "Mean, median, range, outliers, line of best fit, and interpreting slope/intercept in context — Problem Solving & Data Analysis.",
       "xpValue": 90,
-      "parentIds": ["st38"],
+      "parentIds": [
+        "st38"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2147,7 +2577,12 @@
         {
           "id": "q_st39_1",
           "question": "An outlier in a dataset most strongly affects:",
-          "options": ["The median", "The mean", "The mode always", "The range only"],
+          "options": [
+            "The median",
+            "The mean",
+            "The mode always",
+            "The range only"
+          ],
           "correctIndex": 1,
           "explanation": "The mean uses every value; a single extreme value pulls it more than the median."
         },
@@ -2170,7 +2605,9 @@
       "name": "Coordinate Geometry Drill",
       "description": "Distance and midpoint formulas, parallel/perpendicular slopes, and circle equations in the plane — Additional Topics in Math.",
       "xpValue": 90,
-      "parentIds": ["st39"],
+      "parentIds": [
+        "st39"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2203,16 +2640,62 @@
         {
           "id": "q_st40_1",
           "question": "The midpoint of (2, 4) and (8, 10) is:",
-          "options": ["(5, 7)", "(6, 7)", "(10, 14)", "(3, 3)"],
+          "options": [
+            "(5, 7)",
+            "(6, 7)",
+            "(10, 14)",
+            "(3, 3)"
+          ],
           "correctIndex": 0,
           "explanation": "Midpoint = ((2+8)/2, (4+10)/2) = (5, 7)."
         },
         {
           "id": "q_st40_2",
           "question": "A line perpendicular to y = 3x + 1 has slope:",
-          "options": ["3", "-3", "-1/3", "1/3"],
+          "options": [
+            "3",
+            "-3",
+            "-1/3",
+            "1/3"
+          ],
           "correctIndex": 2,
           "explanation": "Perpendicular slope is the negative reciprocal of 3 → -1/3."
+        },
+        {
+          "id": "q_stretch_coord_1",
+          "question": "What is the slope of the line through (2, 3) and (6, 11)?",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctIndex": 1,
+          "explanation": "Slope = (11 - 3) / (6 - 2) = 8/4 = 2."
+        },
+        {
+          "id": "q_stretch_coord_2",
+          "question": "The line y = -x + 5 crosses the y-axis at:",
+          "options": [
+            "(-5, 0)",
+            "(0, 5)",
+            "(5, 0)",
+            "(0, -5)"
+          ],
+          "correctIndex": 1,
+          "explanation": "At x = 0, y = 5."
+        },
+        {
+          "id": "q_stretch_coord_3",
+          "question": "A circle has center (0, 0) and radius 5. Which point lies on it?",
+          "options": [
+            "(3, 4)",
+            "(5, 5)",
+            "(0, 6)",
+            "(2, 2)"
+          ],
+          "correctIndex": 0,
+          "explanation": "3² + 4² = 25, so (3, 4) is on the circle."
         }
       ]
     },
@@ -2221,7 +2704,9 @@
       "name": "Verb Tense & Parallel Structure Drill",
       "description": "Consistent tense, parallel lists and constructions, and perfect vs simple tense — Standard English Conventions under drill conditions.",
       "xpValue": 90,
-      "parentIds": ["st35"],
+      "parentIds": [
+        "st35"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2282,7 +2767,9 @@
       "name": "Apostrophes & Possessives Drill",
       "description": "Possessive vs plural, its/it's, who's/whose, and they're/their/there in context — apostrophe traps on the Digital SAT.",
       "xpValue": 90,
-      "parentIds": ["st41"],
+      "parentIds": [
+        "st41"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2343,7 +2830,9 @@
       "name": "Cross-Text Connections Drill",
       "description": "Compare two short texts — agree/disagree, shared claim, and differences in evidence — Craft and Structure on the Digital SAT.",
       "xpValue": 90,
-      "parentIds": ["st42"],
+      "parentIds": [
+        "st42"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2396,6 +2885,42 @@
           ],
           "correctIndex": 1,
           "explanation": "Same topic, different claims or evidence — classic cross-text setup."
+        },
+        {
+          "id": "q_stretch_cross_1",
+          "question": "Text 1 praises renewable energy jobs; Text 2 warns retraining takes years. Together they suggest:",
+          "options": [
+            "Renewables have no costs",
+            "Benefits exist but workforce transition is slow",
+            "Fossil fuels are illegal",
+            "Jobs never change"
+          ],
+          "correctIndex": 1,
+          "explanation": "Both texts balance opportunity with transition time."
+        },
+        {
+          "id": "q_stretch_cross_2",
+          "question": "How does Text 2 qualify the claim in Text 1 that the treaty ended all conflict?",
+          "options": [
+            "It lists ongoing border skirmishes",
+            "It repeats the same claim",
+            "It ignores politics",
+            "It discusses weather"
+          ],
+          "correctIndex": 0,
+          "explanation": "Skirmishes show the treaty did not end all conflict."
+        },
+        {
+          "id": "q_stretch_cross_3",
+          "question": "Both authors agree that the discovery was important, but they differ on:",
+          "options": [
+            "Whether it was accidental",
+            "The color of the lab coat",
+            "How many scientists were involved",
+            "The year it happened"
+          ],
+          "correctIndex": 0,
+          "explanation": "One stresses accident; the other stresses deliberate research."
         }
       ]
     },
@@ -2404,7 +2929,9 @@
       "name": "Text Structure & Organization Drill",
       "description": "Passage purpose, paragraph function, and logical sequence of sentences — Craft and Structure organization items.",
       "xpValue": 90,
-      "parentIds": ["st43"],
+      "parentIds": [
+        "st43"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2469,6 +2996,42 @@
           ],
           "correctIndex": 1,
           "explanation": "Introductions set up topic and direction before body paragraphs develop ideas."
+        },
+        {
+          "id": "q_stretch_struct_1",
+          "question": "A passage presents a problem, failed attempts, then a new solution. Its structure is:",
+          "options": [
+            "Chronological biography",
+            "Problem-solution",
+            "Compare two poets",
+            "List of definitions"
+          ],
+          "correctIndex": 1,
+          "explanation": "Problem followed by resolution is problem-solution structure."
+        },
+        {
+          "id": "q_stretch_struct_2",
+          "question": "Paragraph 2 contrasts ancient and modern maps before Paragraph 3 argues for digital tools. Paragraph 2 mainly:",
+          "options": [
+            "Introduces the thesis",
+            "Provides comparison to set up the argument",
+            "Summarizes the essay",
+            "Quotes a statistic only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Contrast prepares the case for modern tools."
+        },
+        {
+          "id": "q_stretch_struct_3",
+          "question": "The author alternates between personal story and research data. This structure likely aims to:",
+          "options": [
+            "Hide the thesis",
+            "Blend emotional appeal with evidence",
+            "Avoid any claims",
+            "Eliminate transitions"
+          ],
+          "correctIndex": 1,
+          "explanation": "Narrative plus data balances pathos and logos."
         }
       ]
     },
@@ -2477,7 +3040,9 @@
       "name": "Charts & Quantitative R&W Drill",
       "description": "Read axes and units, match charts to claims, and find data-supported inferences — Information and Ideas with quantitative evidence.",
       "xpValue": 90,
-      "parentIds": ["st44"],
+      "parentIds": [
+        "st44"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2538,7 +3103,9 @@
       "name": "Volume & Advanced Geometry Drill",
       "description": "3D volume and surface area, composite figures, and arc/sector extensions — Additional Topics building on st23 and st40.",
       "xpValue": 90,
-      "parentIds": ["st40"],
+      "parentIds": [
+        "st40"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2571,7 +3138,12 @@
         {
           "id": "q_st46_1",
           "question": "Volume of a cylinder is V = πr²h. If radius doubles and height stays the same, volume:",
-          "options": ["Stays the same", "Doubles", "Quadruples", "Halves"],
+          "options": [
+            "Stays the same",
+            "Doubles",
+            "Quadruples",
+            "Halves"
+          ],
           "correctIndex": 2,
           "explanation": "Volume depends on r² — doubling r multiplies volume by 4."
         },
@@ -2594,7 +3166,9 @@
       "name": "Nonlinear Graphs & Systems Drill",
       "description": "Parabola-line intersections, number of solutions, and graph-based systems — Passport to Advanced Math at drill pace.",
       "xpValue": 90,
-      "parentIds": ["st46"],
+      "parentIds": [
+        "st46"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2627,7 +3201,12 @@
         {
           "id": "q_st47_1",
           "question": "A line and a parabola can intersect at:",
-          "options": ["Exactly 1 point only", "0, 1, or 2 points", "Always 2 points", "Never"],
+          "options": [
+            "Exactly 1 point only",
+            "0, 1, or 2 points",
+            "Always 2 points",
+            "Never"
+          ],
           "correctIndex": 1,
           "explanation": "A line can miss, touch once (tangent), or cross a parabola twice."
         },
@@ -2650,7 +3229,9 @@
       "name": "Hard Word Problems — Multi-Step Setup",
       "description": "Multi-representation setup: table → equation → graph. Rate, work, and mixture problems at SAT pace.",
       "xpValue": 90,
-      "parentIds": ["st47"],
+      "parentIds": [
+        "st47"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2707,23 +3288,74 @@
         {
           "id": "q_st48_3",
           "question": "A car travels 180 miles at a constant speed of 45 mph. The trip takes:",
-          "options": ["3 hours", "4 hours", "5 hours", "6 hours"],
+          "options": [
+            "3 hours",
+            "4 hours",
+            "5 hours",
+            "6 hours"
+          ],
           "correctIndex": 1,
           "explanation": "Time = distance ÷ rate = 180 ÷ 45 = 4 hours."
         },
         {
           "id": "q_st48_4",
           "question": "A mixture is 30% acid. How many liters of pure acid are in 20 liters of the mixture?",
-          "options": ["3 L", "6 L", "10 L", "14 L"],
+          "options": [
+            "3 L",
+            "6 L",
+            "10 L",
+            "14 L"
+          ],
           "correctIndex": 1,
           "explanation": "30% of 20 = 0.30 × 20 = 6 liters of acid."
         },
         {
           "id": "q_st48_5",
           "question": "A phone plan charges $25 plus $0.10 per text. Which equation gives total cost C for t texts?",
-          "options": ["C = 25t + 0.10", "C = 0.10t + 25", "C = 25 + t", "C = 0.10 + 25t"],
+          "options": [
+            "C = 25t + 0.10",
+            "C = 0.10t + 25",
+            "C = 25 + t",
+            "C = 0.10 + 25t"
+          ],
           "correctIndex": 1,
           "explanation": "Fixed fee plus per-text rate: C = 0.10t + 25."
+        },
+        {
+          "id": "q_stretch_word_1",
+          "question": "A train travels 120 miles in 2 hours at constant speed. How far in 3.5 hours?",
+          "options": [
+            "180 miles",
+            "200 miles",
+            "210 miles",
+            "240 miles"
+          ],
+          "correctIndex": 2,
+          "explanation": "Rate 60 mph × 3.5 h = 210 miles."
+        },
+        {
+          "id": "q_stretch_word_2",
+          "question": "Tickets cost $12 each plus a $5 service fee per order. Cost of 4 tickets?",
+          "options": [
+            "$48",
+            "$53",
+            "$57",
+            "$60"
+          ],
+          "correctIndex": 1,
+          "explanation": "4 × 12 + 5 = 53."
+        },
+        {
+          "id": "q_stretch_word_3",
+          "question": "A tank drains 8 gallons per hour and holds 96 gallons when full. Empty after:",
+          "options": [
+            "8 hours",
+            "10 hours",
+            "12 hours",
+            "14 hours"
+          ],
+          "correctIndex": 2,
+          "explanation": "96 ÷ 8 = 12 hours."
         }
       ]
     },
@@ -2732,7 +3364,9 @@
       "name": "Math Mistake-Log Retarget Drill",
       "description": "Pull top 3 miss categories from your mistake log; untimed redo plus 3 similar items per category before the half-test checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st48"],
+      "parentIds": [
+        "st48"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2793,7 +3427,9 @@
       "name": "Math — Bluebook Half-Test Checkpoint",
       "description": "Timed Math modules (Module 1 + Module 2 or equivalent half-test block). Log misses by domain within 24 hours — capstone of the st36–st50 drill chain.",
       "xpValue": 150,
-      "parentIds": ["st49"],
+      "parentIds": [
+        "st49"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -2854,7 +3490,9 @@
       "name": "Conciseness & Redundancy Drill",
       "description": "Delete redundancy, choose the shortest grammatically correct option — Expression of Ideas under drill conditions.",
       "xpValue": 90,
-      "parentIds": ["st45"],
+      "parentIds": [
+        "st45"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2915,7 +3553,9 @@
       "name": "Author's Tone & Style Drill",
       "description": "Tone words, attitude, and stylistic choices — reject extreme or off-tone options on Craft and Structure items.",
       "xpValue": 90,
-      "parentIds": ["st51"],
+      "parentIds": [
+        "st51"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -2976,7 +3616,9 @@
       "name": "Form, Structure & Sense — Mixed Grammar",
       "description": "Combined Standard English Conventions: boundaries plus form/structure in one timed-style set — grammar under module pacing.",
       "xpValue": 90,
-      "parentIds": ["st52"],
+      "parentIds": [
+        "st52"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3037,7 +3679,9 @@
       "name": "R&W Mistake-Log Retarget & Mixed Review",
       "description": "Untimed 20-question mix from st41–st53 categories. Tag every miss before the R&W half-test checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st53"],
+      "parentIds": [
+        "st53"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3098,7 +3742,9 @@
       "name": "R&W — Bluebook Half-Test Checkpoint",
       "description": "Timed R&W modules (Module 1 + Module 2 or equivalent half-test block). Log misses by category within 24 hours — capstone of the st41–st55 drill chain.",
       "xpValue": 150,
-      "parentIds": ["st54"],
+      "parentIds": [
+        "st54"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -3159,7 +3805,9 @@
       "name": "Linear Models & Rate of Change Drill",
       "description": "Write and interpret y = mx + b from tables, graphs, and word problems — Heart of Algebra with context and units under drill pace.",
       "xpValue": 90,
-      "parentIds": ["st55"],
+      "parentIds": [
+        "st55"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3210,7 +3858,12 @@
         {
           "id": "q_st56_2",
           "question": "A line through (0, 50) and (4, 130) has slope:",
-          "options": ["20", "25", "32.5", "80"],
+          "options": [
+            "20",
+            "25",
+            "32.5",
+            "80"
+          ],
           "correctIndex": 0,
           "explanation": "Slope = (130 - 50) / (4 - 0) = 80/4 = 20."
         },
@@ -3233,7 +3886,9 @@
       "name": "Function Notation & Composition Drill",
       "description": "Evaluate f(x), combine functions, and interpret input-output in context — Passport to Advanced Math at SAT pace.",
       "xpValue": 90,
-      "parentIds": ["st56"],
+      "parentIds": [
+        "st56"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3272,7 +3927,12 @@
         {
           "id": "q_st57_1",
           "question": "If f(x) = 3x - 5, then f(4) equals:",
-          "options": ["7", "12", "1", "17"],
+          "options": [
+            "7",
+            "12",
+            "1",
+            "17"
+          ],
           "correctIndex": 0,
           "explanation": "f(4) = 3(4) - 5 = 12 - 5 = 7."
         },
@@ -3291,7 +3951,12 @@
         {
           "id": "q_st57_3",
           "question": "For f(x) = 1/(x - 2), which x-value is NOT in the domain?",
-          "options": ["0", "2", "-2", "5"],
+          "options": [
+            "0",
+            "2",
+            "-2",
+            "5"
+          ],
           "correctIndex": 1,
           "explanation": "x = 2 makes the denominator zero — undefined."
         }
@@ -3302,7 +3967,9 @@
       "name": "Two-Way Tables & Data Reasoning Drill",
       "description": "Relative frequency, conditional probability, and association from two-way tables — Problem Solving & Data Analysis under drill conditions.",
       "xpValue": 90,
-      "parentIds": ["st57"],
+      "parentIds": [
+        "st57"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3381,7 +4048,9 @@
       "name": "Evidence & Paired Questions — Retarget Drill",
       "description": "Round-3 retarget on command of evidence: lock your answer first, then find the line that proves it — post-checkpoint focus on half-right quote traps.",
       "xpValue": 90,
-      "parentIds": ["st58"],
+      "parentIds": [
+        "st58"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3460,7 +4129,9 @@
       "name": "Run-Ons, Comma Splices & Boundaries Drill",
       "description": "Fix fused sentences, comma splices, and boundary errors — Standard English Conventions with semicolons, periods, and coordinating conjunctions at module pace.",
       "xpValue": 90,
-      "parentIds": ["st59"],
+      "parentIds": [
+        "st59"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3539,7 +4210,9 @@
       "name": "Quadratic Applications & Vertex Drill",
       "description": "Max/min word problems, projectile-style models, and interpreting vertex form — Passport to Advanced Math under drill pace after round-3 algebra retarget.",
       "xpValue": 90,
-      "parentIds": ["st60"],
+      "parentIds": [
+        "st60"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3578,7 +4251,12 @@
         {
           "id": "q_st61_1",
           "question": "For y = -2(x - 3)² + 18, the vertex is:",
-          "options": ["(3, 18)", "(-3, 18)", "(3, -18)", "(18, 3)"],
+          "options": [
+            "(3, 18)",
+            "(-3, 18)",
+            "(3, -18)",
+            "(18, 3)"
+          ],
           "correctIndex": 0,
           "explanation": "Vertex form y = a(x - h)² + k has vertex (h, k) — here (3, 18)."
         },
@@ -3613,7 +4291,9 @@
       "name": "Radicals & Rational Exponents Drill",
       "description": "Simplify radicals, convert between rational exponents and roots, and solve basic radical equations — Advanced Math at SAT pace.",
       "xpValue": 90,
-      "parentIds": ["st61"],
+      "parentIds": [
+        "st61"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3652,7 +4332,12 @@
         {
           "id": "q_st62_1",
           "question": "8^(2/3) equals:",
-          "options": ["4", "16", "2", "6"],
+          "options": [
+            "4",
+            "16",
+            "2",
+            "6"
+          ],
           "correctIndex": 0,
           "explanation": "8^(2/3) = (³√8)² = 2² = 4."
         },
@@ -3687,7 +4372,9 @@
       "name": "Scatterplots & Line of Best Fit — Retarget Drill",
       "description": "Round-3 retarget on association, line of best fit, and residual reasoning — PSDA under drill conditions after st58 two-way tables.",
       "xpValue": 90,
-      "parentIds": ["st62"],
+      "parentIds": [
+        "st62"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3766,7 +4453,9 @@
       "name": "Math Mistake-Log Retarget — Round 3",
       "description": "Pull top 3 miss categories from st50 and st56–st63 logs; untimed redo plus 3 similar items per category before the Math half-test checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st63"],
+      "parentIds": [
+        "st63"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3845,7 +4534,9 @@
       "name": "Math — Bluebook Half-Test Checkpoint",
       "description": "Timed Math modules (Module 1 + Module 2 or equivalent half-test block). Log misses by domain within 24 hours — capstone of the st56–st65 drill chain.",
       "xpValue": 150,
-      "parentIds": ["st64"],
+      "parentIds": [
+        "st64"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -3924,7 +4615,9 @@
       "name": "Exponential Growth & Percent Change Drill",
       "description": "Compound percent change, exponential models, and multi-step percent traps — Problem Solving & Data Analysis under drill pace after the st65 Math checkpoint.",
       "xpValue": 90,
-      "parentIds": ["st65"],
+      "parentIds": [
+        "st65"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -3963,7 +4656,12 @@
         {
           "id": "q_st66_1",
           "question": "A $80 item increases by 25%. The new price is:",
-          "options": ["$85", "$100", "$105", "$90"],
+          "options": [
+            "$85",
+            "$100",
+            "$105",
+            "$90"
+          ],
           "correctIndex": 1,
           "explanation": "25% of 80 = 20, so 80 + 20 = 100."
         },
@@ -3998,7 +4696,9 @@
       "name": "Inference & Logical Conclusions — Retarget Drill",
       "description": "Round-4 retarget on inference: answer only what the passage supports, reject extreme or out-of-scope choices — Craft and Structure under drill conditions.",
       "xpValue": 90,
-      "parentIds": ["st66"],
+      "parentIds": [
+        "st66"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4077,7 +4777,9 @@
       "name": "Coordinate Geometry & Distance Drill",
       "description": "Slope, distance, midpoint, and graph interpretation on the coordinate plane — Geometry and Heart of Algebra under drill pace.",
       "xpValue": 90,
-      "parentIds": ["st67"],
+      "parentIds": [
+        "st67"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4116,7 +4818,12 @@
         {
           "id": "q_st68_1",
           "question": "The midpoint of (4, 6) and (10, 2) is:",
-          "options": ["(7, 4)", "(14, 8)", "(6, 4)", "(5, 5)"],
+          "options": [
+            "(7, 4)",
+            "(14, 8)",
+            "(6, 4)",
+            "(5, 5)"
+          ],
           "correctIndex": 0,
           "explanation": "Midpoint = ((4+10)/2, (6+2)/2) = (7, 4)."
         },
@@ -4135,7 +4842,12 @@
         {
           "id": "q_st68_3",
           "question": "Distance from (0, 0) to (3, 4) equals:",
-          "options": ["5", "7", "1", "25"],
+          "options": [
+            "5",
+            "7",
+            "1",
+            "25"
+          ],
           "correctIndex": 0,
           "explanation": "√(3² + 4²) = √25 = 5 — classic 3-4-5 triangle."
         }
@@ -4146,7 +4858,9 @@
       "name": "R&W Mistake-Log Retarget — Round 4",
       "description": "Pull top 3 miss categories from st55 and st67 logs; untimed redo plus 3 similar items per category before the R&W half-test checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st68"],
+      "parentIds": [
+        "st68"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4225,7 +4939,9 @@
       "name": "R&W — Bluebook Half-Test Checkpoint",
       "description": "Timed R&W modules (Module 1 + Module 2 or equivalent half-test block). Log misses by category within 24 hours — capstone of the st66–st70 drill chain.",
       "xpValue": 150,
-      "parentIds": ["st69"],
+      "parentIds": [
+        "st69"
+      ],
       "estimatedMinutes": 70,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -4304,7 +5020,9 @@
       "name": "Volume & Surface Area Drill",
       "description": "Cylinders, spheres, prisms, and composite solids — Advanced Math and Geometry under drill pace after the st70 R&W checkpoint.",
       "xpValue": 90,
-      "parentIds": ["st70"],
+      "parentIds": [
+        "st70"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4343,7 +5061,12 @@
         {
           "id": "q_st71_1",
           "question": "The volume of a cylinder with radius r and height h is:",
-          "options": ["πrh", "πr²h", "2πrh", "πr² + h"],
+          "options": [
+            "πrh",
+            "πr²h",
+            "2πrh",
+            "πr² + h"
+          ],
           "correctIndex": 1,
           "explanation": "Cylinder volume = base area × height = πr²h."
         },
@@ -4362,7 +5085,12 @@
         {
           "id": "q_st71_3",
           "question": "A sphere with radius 3 has volume (in terms of π):",
-          "options": ["12π", "27π", "36π", "9π"],
+          "options": [
+            "12π",
+            "27π",
+            "36π",
+            "9π"
+          ],
           "correctIndex": 2,
           "explanation": "V = (4/3)πr³ = (4/3)π(27) = 36π."
         }
@@ -4373,7 +5101,9 @@
       "name": "Cross-Text Connections — Retarget Drill",
       "description": "Round-5 retarget on how two passages agree, disagree, or respond to each other — Craft and Structure under drill conditions.",
       "xpValue": 90,
-      "parentIds": ["st71"],
+      "parentIds": [
+        "st71"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4452,7 +5182,9 @@
       "name": "Right-Triangle Trigonometry Drill",
       "description": "sin, cos, tan, special right triangles, and angle-of-elevation word problems — Geometry under drill pace.",
       "xpValue": 90,
-      "parentIds": ["st72"],
+      "parentIds": [
+        "st72"
+      ],
       "estimatedMinutes": 60,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4503,7 +5235,12 @@
         {
           "id": "q_st73_2",
           "question": "In a 45-45-90 triangle, if one leg is 5, the hypotenuse is:",
-          "options": ["5", "5√2", "10", "5√3"],
+          "options": [
+            "5",
+            "5√2",
+            "10",
+            "5√3"
+          ],
           "correctIndex": 1,
           "explanation": "45-45-90 ratio 1 : 1 : √2 — hypotenuse = leg × √2 = 5√2."
         },
@@ -4526,7 +5263,9 @@
       "name": "Mixed Mistake-Log Retarget — Round 5",
       "description": "Pull top 3 Math and top 3 R&W miss categories from st65, st70, and round-5 drills; untimed redo plus 3 similar items per category before the full Bluebook checkpoint.",
       "xpValue": 100,
-      "parentIds": ["st73"],
+      "parentIds": [
+        "st73"
+      ],
       "estimatedMinutes": 90,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4605,7 +5344,9 @@
       "name": "Full Bluebook Practice Checkpoint — R&W + Math",
       "description": "Timed full Digital SAT in Bluebook (both R&W modules + both Math modules). Log misses by section and category within 24 hours — capstone of the st71–st75 drill chain.",
       "xpValue": 200,
-      "parentIds": ["st74"],
+      "parentIds": [
+        "st74"
+      ],
       "estimatedMinutes": 180,
       "difficulty": "advanced",
       "keyConcepts": [
@@ -4684,7 +5425,9 @@
       "name": "Gap drill — Linear equations",
       "description": "Short retarget set for isolating x, checking arithmetic, and translating one-step word problems after a diagnostic miss.",
       "xpValue": 70,
-      "parentIds": ["st4"],
+      "parentIds": [
+        "st4"
+      ],
       "estimatedMinutes": 35,
       "difficulty": "beginner",
       "keyConcepts": [
@@ -4709,35 +5452,60 @@
         {
           "id": "q_st76_1",
           "question": "If 5x + 2 = 27, what is x?",
-          "options": ["4", "5", "6", "25"],
+          "options": [
+            "4",
+            "5",
+            "6",
+            "25"
+          ],
           "correctIndex": 1,
           "explanation": "Subtract 2, then divide by 5: x = 5."
         },
         {
           "id": "q_st76_2",
           "question": "If 2x - 8 = 10, what is x?",
-          "options": ["1", "9", "18", "4"],
+          "options": [
+            "1",
+            "9",
+            "18",
+            "4"
+          ],
           "correctIndex": 1,
           "explanation": "Add 8: 2x = 18 → x = 9."
         },
         {
           "id": "q_st76_3",
           "question": "A taxi charges $3 plus $2 per mile. Which equation gives cost C for m miles?",
-          "options": ["C = 3m + 2", "C = 2m + 3", "C = 5m", "C = 3 + m"],
+          "options": [
+            "C = 3m + 2",
+            "C = 2m + 3",
+            "C = 5m",
+            "C = 3 + m"
+          ],
           "correctIndex": 1,
           "explanation": "Fixed $3 plus $2 per mile: C = 2m + 3."
         },
         {
           "id": "q_st76_4",
           "question": "If 4(x - 1) = 20, then x equals:",
-          "options": ["4", "5", "6", "24"],
+          "options": [
+            "4",
+            "5",
+            "6",
+            "24"
+          ],
           "correctIndex": 2,
           "explanation": "Divide by 4: x - 1 = 5 → x = 6."
         },
         {
           "id": "q_st76_5",
           "question": "Which value satisfies 3x + 4 = 19?",
-          "options": ["3", "4", "5", "6"],
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
           "correctIndex": 2,
           "explanation": "3x = 15 → x = 5."
         }
@@ -4748,7 +5516,9 @@
       "name": "Gap drill — Percent change",
       "description": "Retarget percent increase/decrease and which number is the original when a diagnostic flagged PSDA misses.",
       "xpValue": 70,
-      "parentIds": ["st5"],
+      "parentIds": [
+        "st5"
+      ],
       "estimatedMinutes": 35,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4773,35 +5543,60 @@
         {
           "id": "q_st77_1",
           "question": "From $50 to $65 is what percent increase?",
-          "options": ["15%", "30%", "65%", "130%"],
+          "options": [
+            "15%",
+            "30%",
+            "65%",
+            "130%"
+          ],
           "correctIndex": 1,
           "explanation": "Change is 15; 15/50 = 0.30 → 30%."
         },
         {
           "id": "q_st77_2",
           "question": "A $80 item is discounted 25%. The sale price is:",
-          "options": ["$20", "$55", "$60", "$65"],
+          "options": [
+            "$20",
+            "$55",
+            "$60",
+            "$65"
+          ],
           "correctIndex": 2,
           "explanation": "25% of 80 is 20; 80 - 20 = $60."
         },
         {
           "id": "q_st77_3",
           "question": "What percent of 200 is 50?",
-          "options": ["20%", "25%", "40%", "50%"],
+          "options": [
+            "20%",
+            "25%",
+            "40%",
+            "50%"
+          ],
           "correctIndex": 1,
           "explanation": "50/200 = 0.25 → 25%."
         },
         {
           "id": "q_st77_4",
           "question": "A population grows from 1,000 to 1,150. The percent increase is:",
-          "options": ["15%", "50%", "115%", "150%"],
+          "options": [
+            "15%",
+            "50%",
+            "115%",
+            "150%"
+          ],
           "correctIndex": 0,
           "explanation": "Change 150; 150/1000 = 0.15 → 15%."
         },
         {
           "id": "q_st77_5",
           "question": "After a 10% tax on a $40 purchase, the total is:",
-          "options": ["$4", "$44", "$50", "$36"],
+          "options": [
+            "$4",
+            "$44",
+            "$50",
+            "$36"
+          ],
           "correctIndex": 1,
           "explanation": "10% of 40 is 4; total 40 + 4 = $44."
         }
@@ -4812,7 +5607,9 @@
       "name": "Gap drill — Sentence boundaries",
       "description": "Comma splices, run-ons, and semicolon joins — targeted R&W drill after diagnostic grammar gaps.",
       "xpValue": 70,
-      "parentIds": ["st10"],
+      "parentIds": [
+        "st10"
+      ],
       "estimatedMinutes": 30,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4901,7 +5698,9 @@
       "name": "Gap drill — Transitions",
       "description": "Contrast, continuation, and cause-effect transitions in context — for rhetorical synthesis and passage logic misses.",
       "xpValue": 70,
-      "parentIds": ["st13"],
+      "parentIds": [
+        "st13"
+      ],
       "estimatedMinutes": 30,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4926,37 +5725,98 @@
         {
           "id": "q_st79_1",
           "question": "The first plan was cheap but fragile. _____, the redesign cost more but lasted.",
-          "options": ["Similarly", "By contrast", "For example", "Therefore"],
+          "options": [
+            "Similarly",
+            "By contrast",
+            "For example",
+            "Therefore"
+          ],
           "correctIndex": 1,
           "explanation": "By contrast signals opposition between the two designs."
         },
         {
           "id": "q_st79_2",
           "question": "The team finished early; _____, they reviewed every checklist item.",
-          "options": ["However", "Therefore", "Nevertheless", "By contrast"],
+          "options": [
+            "However",
+            "Therefore",
+            "Nevertheless",
+            "By contrast"
+          ],
           "correctIndex": 1,
           "explanation": "Therefore shows that reviewing followed logically from finishing early."
         },
         {
           "id": "q_st79_3",
           "question": "She practiced daily. _____, her performance improved steadily.",
-          "options": ["For instance", "As a result", "In contrast", "On the other hand"],
+          "options": [
+            "For instance",
+            "As a result",
+            "In contrast",
+            "On the other hand"
+          ],
           "correctIndex": 1,
           "explanation": "As a result links cause (practice) to effect (improvement)."
         },
         {
           "id": "q_st79_4",
           "question": "The data were incomplete. _____, the committee postponed the vote.",
-          "options": ["Similarly", "Consequently", "Likewise", "For example"],
+          "options": [
+            "Similarly",
+            "Consequently",
+            "Likewise",
+            "For example"
+          ],
           "correctIndex": 1,
           "explanation": "Consequently signals that postponing followed from incomplete data."
         },
         {
           "id": "q_st79_5",
           "question": "Many students prefer online notes; _____, others still print every page.",
-          "options": ["Therefore", "However", "Thus", "As a result"],
+          "options": [
+            "Therefore",
+            "However",
+            "Thus",
+            "As a result"
+          ],
           "correctIndex": 1,
           "explanation": "However introduces contrast between two groups' preferences."
+        },
+        {
+          "id": "q_stretch_trans_1",
+          "question": "The experiment failed twice. _____, the team redesigned the sensor.",
+          "options": [
+            "Nevertheless",
+            "Similarly",
+            "For example",
+            "In contrast"
+          ],
+          "correctIndex": 0,
+          "explanation": "Nevertheless shows action despite prior failure."
+        },
+        {
+          "id": "q_stretch_trans_2",
+          "question": "Many species rely on coral reefs. _____, bleaching events have damaged half the reef area studied.",
+          "options": [
+            "Therefore",
+            "However",
+            "Specifically",
+            "Meanwhile"
+          ],
+          "correctIndex": 2,
+          "explanation": "Specifically introduces a precise supporting fact."
+        },
+        {
+          "id": "q_stretch_trans_3",
+          "question": "First, collect samples; _____, analyze them in the lab.",
+          "options": [
+            "instead",
+            "next",
+            "however",
+            "for instance"
+          ],
+          "correctIndex": 1,
+          "explanation": "Next signals sequence in a process."
         }
       ]
     },
@@ -4965,7 +5825,9 @@
       "name": "Gap drill — Quadratics",
       "description": "Factoring, roots, and the vertex form intuition — for Advanced Math diagnostic gaps.",
       "xpValue": 80,
-      "parentIds": ["st6"],
+      "parentIds": [
+        "st6"
+      ],
       "estimatedMinutes": 40,
       "difficulty": "intermediate",
       "keyConcepts": [
@@ -4990,35 +5852,60 @@
         {
           "id": "q_st80_1",
           "question": "What are the solutions to x^2 - 9 = 0?",
-          "options": ["x = 3 only", "x = -3 only", "x = 3 or x = -3", "x = 9"],
+          "options": [
+            "x = 3 only",
+            "x = -3 only",
+            "x = 3 or x = -3",
+            "x = 9"
+          ],
           "correctIndex": 2,
           "explanation": "Difference of squares: (x - 3)(x + 3) = 0."
         },
         {
           "id": "q_st80_2",
           "question": "The solutions to x^2 - 5x + 6 = 0 are:",
-          "options": ["x = 2 or x = 3", "x = -2 or x = -3", "x = 1 or x = 6", "x = 5 only"],
+          "options": [
+            "x = 2 or x = 3",
+            "x = -2 or x = -3",
+            "x = 1 or x = 6",
+            "x = 5 only"
+          ],
           "correctIndex": 0,
           "explanation": "Factor: (x - 2)(x - 3) = 0 → x = 2 or x = 3."
         },
         {
           "id": "q_st80_3",
           "question": "The vertex of y = (x - 1)^2 + 4 is at:",
-          "options": ["(1, 4)", "(-1, 4)", "(1, -4)", "(4, 1)"],
+          "options": [
+            "(1, 4)",
+            "(-1, 4)",
+            "(1, -4)",
+            "(4, 1)"
+          ],
           "correctIndex": 0,
           "explanation": "Vertex form y = a(x - h)^2 + k has vertex (h, k) = (1, 4)."
         },
         {
           "id": "q_st80_4",
           "question": "If (x + 2)^2 = 16, then x equals:",
-          "options": ["2 or -6", "4 or -4", "6 or -2", "8 only"],
+          "options": [
+            "2 or -6",
+            "4 or -4",
+            "6 or -2",
+            "8 only"
+          ],
           "correctIndex": 0,
           "explanation": "x + 2 = ±4 → x = 2 or x = -6."
         },
         {
           "id": "q_st80_5",
           "question": "How many real solutions does x^2 + 1 = 0 have?",
-          "options": ["0", "1", "2", "Infinitely many"],
+          "options": [
+            "0",
+            "1",
+            "2",
+            "Infinitely many"
+          ],
           "correctIndex": 0,
           "explanation": "x^2 = -1 has no real solutions."
         }

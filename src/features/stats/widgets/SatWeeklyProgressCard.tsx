@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Target, TrendingDown, TrendingUp } from "lucide-react";
+import { ArrowRight, Target, TrendingDown, TrendingUp, Zap } from "lucide-react";
 import { Button, Card, Section, Stat, Tag } from "@/components/ui";
+import { loadAllSubjects } from "@/curriculum/loader";
+import { getSatSkillMastery, type SatSkillMasteryRow } from "@/lib/satSkillMastery";
 import {
   getSatReadinessSignal,
   getSatWeeklyProgress,
@@ -20,6 +23,16 @@ const READINESS_TONE: Record<SatReadinessTone, "warning" | "success" | "accent" 
 export function SatWeeklyProgressCard() {
   const satTestDate = usePreferences((s) => s.satTestDate);
   const p = getSatWeeklyProgress();
+  const [weakest, setWeakest] = useState<SatSkillMasteryRow | null>(null);
+
+  useEffect(() => {
+    loadAllSubjects().then((subjects) => {
+      const sat = subjects.find((s) => s.id === "sat-prep");
+      if (!sat) return;
+      setWeakest(getSatSkillMastery([sat]).find((r) => r.hasSignal) ?? null);
+    });
+  }, []);
+
   if (!p.hasAnySignal) return null;
   const readiness = getSatReadinessSignal(satTestDate);
 
@@ -67,6 +80,36 @@ export function SatWeeklyProgressCard() {
           ) : (
             <span className="text-xs text-[var(--text-subtle)]">Retake Draft 3 for a fresh read.</span>
           )}
+        </div>
+      ) : null}
+
+      {weakest ? (
+        <div className="hidden border-t border-[var(--rule)] pt-3 md:block">
+          <p className="eyebrow-mono mb-2">Weakest skill this week</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Tag tone="warning" size="sm">
+              {weakest.label}
+            </Tag>
+            {weakest.diagnostic ? (
+              <span className="font-mono text-[11px] text-[var(--text-subtle)]">
+                diag {weakest.diagnostic.pct}%
+              </span>
+            ) : null}
+            <div className="ml-auto flex flex-wrap gap-2">
+              <Link to={`${ROUTES.satDrill}?skill=${weakest.skillId}`}>
+                <Button size="sm">
+                  <Target size={14} aria-hidden />
+                  Drill weakest
+                </Button>
+              </Link>
+              <Link to={ROUTES.satDailyQuiz}>
+                <Button variant="secondary" size="sm">
+                  <Zap size={14} aria-hidden />
+                  Daily 5
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       ) : null}
 

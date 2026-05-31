@@ -4,6 +4,22 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-05-31
+
+### Added
+
+- CI and `npm run doctor` run `curriculum:lint` and `sat:coverage:strict`.
+- SAT question rotation history for drills and Daily 5 (`learnv2_sat_question_history_v1`).
+- Stretch coverage report (`npm run sat:coverage:stretch`, target 8 MC per skill).
+- Draft 3 retest with 24 unique stems ([`satPretestDraft3Extra.ts`](src/data/satPretestDraft3Extra.ts)).
+- Command palette SAT shortcuts (Daily 5, drill weakest, mastery); Stats desktop drill CTAs.
+- Mastery diagnostic % from latest baseline or Draft 3 retest.
+
+### Changed
+
+- Expanded SAT MC bank (+34 questions) so all teachable skills reach 8 MC.
+- SAT hub / pretest copy emphasizes study-first workflow on desktop.
+
 ## [2.6.2] - 2026-05-31
 
 ### Added

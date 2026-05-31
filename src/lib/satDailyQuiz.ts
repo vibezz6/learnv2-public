@@ -1,6 +1,7 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
 import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
 import { bestNodeTier, type WeakTarget } from "@/lib/satSkillMatch";
+import { deprioritizeRecent, getRecentQuestionIds } from "@/lib/satQuestionHistory";
 import { getToday } from "@/stores/progress";
 
 export const SAT_DAILY_QUIZ_SIZE = 5;
@@ -110,7 +111,9 @@ export function getDailySatQuiz(
   candidates.sort(
     (a, b) => b.tier - a.tier || b.tokenScore - a.tokenScore || a.tiebreak - b.tiebreak,
   );
-  const questions = candidates.slice(0, Math.min(size, candidates.length)).map((c) => c.q);
+  const recentIds = getRecentQuestionIds({ storage });
+  const picked = deprioritizeRecent(candidates, (c) => c.q.id, recentIds, size);
+  const questions = picked.map((c) => c.q);
   return { id: `sat-daily-${date}`, date, questions };
 }
 

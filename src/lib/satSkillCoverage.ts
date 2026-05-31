@@ -26,6 +26,7 @@ export function countSatQuestionsBySkill(subjects: Subject[]): Map<SatSkillId, n
 }
 
 export const SAT_COVERAGE_TARGET = 5;
+export const SAT_COVERAGE_STRETCH_TARGET = 8;
 
 export interface SatSkillCoverageRow {
   skillId: SatSkillId;

@@ -27,6 +27,7 @@ import {
   type SatPretestQuestion,
 } from "@/lib/satPretest";
 import { satPretestDraft1Questions } from "@/data/satPretestDraft1";
+import { satPretestDraft3Questions } from "@/data/satPretestDraft3";
 
 function mockLocalStorage(): Storage {
   const map = new Map<string, string>();
@@ -506,6 +507,16 @@ describe("satPretest", () => {
     expect(satPretestDraft1Questions.filter((q) => q.section === "math")).toHaveLength(12);
     for (const question of satPretestDraft1Questions) {
       expect(resolvePretestQuestionSkill(question).skillId).toBeTruthy();
+    }
+  });
+
+  it("draft 3 bank has 24 unique stems vs draft 1", () => {
+    expect(satPretestDraft3Questions).toHaveLength(24);
+    const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+    const d1 = new Set(satPretestDraft1Questions.map((q) => norm(q.prompt)));
+    for (const q of satPretestDraft3Questions) {
+      expect(resolvePretestQuestionSkill(q).skillId).toBeTruthy();
+      expect(d1.has(norm(q.prompt))).toBe(false);
     }
   });
 

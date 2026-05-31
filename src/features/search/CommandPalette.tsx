@@ -16,10 +16,15 @@ import {
   Shuffle,
   Sparkles,
   Sun,
+  Target,
+  Zap,
 } from "lucide-react";
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
+import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
+import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
+import { getSatSkillMastery } from "@/lib/satSkillMastery";
 import { getSubjectAccent } from "@/lib/subjectAccent";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useProgress } from "@/stores/progress";
@@ -281,13 +286,34 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         action: () => go(ROUTES.tradingLab, { id: "trading-lab", label: "Trading Lab" }),
       },
       {
-        id: "sat-pretest",
-        label: "SAT optional baseline (Draft 1)",
-        description: "In-app diagnostic · also under SAT Prep",
+        id: "sat-daily-5",
+        label: "SAT Daily 5",
+        description: "Today's five-question warm-up",
         section: "SAT",
-        icon: GraduationCap,
-        recentPath: ROUTES.satPretest,
-        action: () => go(ROUTES.satPretest, { id: "sat-pretest", label: "SAT optional baseline (Draft 1)" }),
+        icon: Zap,
+        recentPath: ROUTES.satDailyQuiz,
+        action: () => go(ROUTES.satDailyQuiz, { id: "sat-daily-5", label: "SAT Daily 5" }),
+      },
+      {
+        id: "sat-drill-weakest",
+        label: "Drill weakest skill",
+        description:
+          getSatSkillMastery(subjects).find((r) => r.hasSignal)?.label ??
+          "Log mistakes or finish a diagnostic first",
+        section: "SAT",
+        icon: Target,
+        recentPath: ROUTES.satDrill,
+        action: () => {
+          const weakest = getSatSkillMastery(subjects).find((r) => r.hasSignal);
+          if (weakest?.questionCount) {
+            go(`${ROUTES.satDrill}?skill=${weakest.skillId}`, {
+              id: "sat-drill-weakest",
+              label: "Drill weakest skill",
+            });
+          } else {
+            go(ROUTES.satDrill, { id: "sat-drill-weakest", label: "Drill weakest skill" });
+          }
+        },
       },
       {
         id: "sat-recommended",
@@ -322,14 +348,40 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         action: () => go(ROUTES.satMistakes, { id: "sat-mistake-log", label: "SAT mistake log" }),
       },
       {
+        id: "sat-skills",
+        label: "SAT skill mastery",
+        description: "Per-skill diagnostic and drill links",
+        section: "SAT",
+        icon: Target,
+        recentPath: ROUTES.satSkills,
+        action: () => go(ROUTES.satSkills, { id: "sat-skills", label: "SAT skill mastery" }),
+      },
+      {
         id: "sat-prep",
         label: "SAT Prep",
-        description: "75-lesson August track",
+        description: "Study hub — lessons, mistakes, drills",
         section: "SAT",
         icon: BookOpen,
         recentPath: ROUTES.sat,
         action: () => go(ROUTES.sat, { id: "sat-prep", label: "SAT Prep" }),
       },
+      ...(getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID)
+        ? []
+        : [
+            {
+              id: "sat-pretest",
+              label: "SAT optional baseline (Draft 1)",
+              description: "In-app diagnostic when you want a baseline",
+              section: "SAT" as const,
+              icon: GraduationCap,
+              recentPath: ROUTES.satPretest,
+              action: () =>
+                go(ROUTES.satPretest, {
+                  id: "sat-pretest",
+                  label: "SAT optional baseline (Draft 1)",
+                }),
+            },
+          ]),
     ];
 
     const subjectItems: CommandItem[] = subjects.map((sub) => ({

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Target } from "lucide-react";
 import { Button, Card, EmptyState, PageContainer, PageHeader, PageLoading } from "@/components/ui";
@@ -11,6 +11,7 @@ import { isSatSkillId } from "@/lib/satSkills";
 import { getToday } from "@/stores/progress";
 import { ROUTES } from "@/app/navigation";
 import { trackStudyEvent } from "@/lib/analytics";
+import { recordSatQuestionsSeen } from "@/lib/satQuestionHistory";
 
 /**
  * Plays a 5-question micro-drill targeted at the next mistake category due for
@@ -19,10 +20,15 @@ import { trackStudyEvent } from "@/lib/analytics";
 export function SatDrillPage() {
   const [subjects, setSubjects] = useState<Subject[] | null>(null);
   const [done, setDone] = useState<{ score: number; total: number } | null>(null);
+  const completeHeadingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     loadAllSubjects().then(setSubjects);
   }, []);
+
+  useEffect(() => {
+    if (done) completeHeadingRef.current?.focus();
+  }, [done]);
 
   const [searchParams] = useSearchParams();
   const skillParam = searchParams.get("skill");
@@ -61,7 +67,13 @@ export function SatDrillPage() {
         <Card variant="primary" className="space-y-4">
           <div className="flex items-center gap-2 text-[var(--success)]">
             <CheckCircle2 size={18} aria-hidden />
-            <h2 className="text-lg font-semibold text-[var(--text-heading)]">Drill complete</h2>
+            <h2
+              ref={completeHeadingRef}
+              tabIndex={-1}
+              className="text-lg font-semibold text-[var(--text-heading)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
+            >
+              Drill complete
+            </h2>
           </div>
           <p className="font-mono text-2xl tabular-nums text-[var(--accent)]">
             {done.score}/{done.total}
@@ -94,6 +106,10 @@ export function SatDrillPage() {
             persistAttempt={false}
             onComplete={(score, total) => {
               if (target) markCategoryDrilled(getDrillKey(target));
+              recordSatQuestionsSeen(
+                drill.questions.map((q) => q.question.id),
+                { skillId: target?.skillId ?? null },
+              );
               trackStudyEvent("sat_drill_complete", {
                 score,
                 total,

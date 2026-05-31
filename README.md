@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.4.0 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live (GitHub Pages):** https://dishwashersol.github.io/learnv2/ · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.6.2 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live:** https://learnv2-tau.vercel.app (auto-deploy on push to `main`) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -30,7 +30,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 - **Today** — your one move (next SAT action), daily minimum + streak, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
-- **SAT Prep** — 80-lesson Digital SAT path (gap drills st76–st80, mistake log, in-app Draft 1/2/3 diagnostic, Bluebook checkpoints) with **August SAT Track**
+- **SAT Prep** — study-first hub (lessons, mistake log, drills, official practice), optional Draft 1/2/3 diagnostics, 80-lesson August track, Bluebook checkpoints
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
 - **SRS review** — spaced repetition queue with due-date scheduling
 - **Tracks** — guided learning paths across subjects
@@ -164,9 +164,11 @@ npm run preview
 npm run test
 npm run test:watch
 npm run lint
+npm run doctor          # lint + unit tests + curriculum:lint + sat:coverage:strict + build (run from repo root)
 npm run curriculum:split
 npm run version:bump
 npm run sat:coverage
+npm run sat:coverage:strict
 ```
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes. `npm run version:bump` syncs `package.json`, `src/lib/version.ts`, and the PWA service worker cache name.

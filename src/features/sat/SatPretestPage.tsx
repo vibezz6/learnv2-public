@@ -316,7 +316,13 @@ export function SatPretestPage() {
               disabled={!unlocked}
               title={draft.shortLabel}
             >
-              {draft.label}
+              {draft.id === SAT_PRETEST_DRAFT_1_ID &&
+              getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID)
+                ? `${draft.label} (done)`
+                : draft.id === SAT_PRETEST_DRAFT_3_ID &&
+                    getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID)
+                  ? `${draft.label} — retest`
+                  : draft.label}
             </Button>
           );
         })}
@@ -451,8 +457,8 @@ function StartCard({
           ) : isRetest ? (
             draft1Done ? (
               <>
-                Retake the same {total} Draft 1 questions to measure progress. Scores compare to your
-                last completed Draft 1.
+                Retest with {total} new questions (same skills as Draft 1, different stems). Scores
+                compare to your last completed baseline.
               </>
             ) : (
               "Complete Draft 1 first before a retest."

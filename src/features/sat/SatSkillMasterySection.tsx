@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ChevronDown, ChevronUp, Target } from "lucide-react";
 import { Button, Card, Tag } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
-import { getSatSkillMastery, type SatSkillMasteryRow } from "@/lib/satSkillMastery";
+import {
+  getLatestDiagnosticAttempt,
+  getSatSkillMastery,
+  type SatSkillMasteryRow,
+} from "@/lib/satSkillMastery";
 import { ROUTES } from "@/app/navigation";
 
 const SECTION_LABEL: Record<SatSkillMasteryRow["section"], string> = {
@@ -33,7 +37,12 @@ function SkillRow({ row }: { row: SatSkillMasteryRow }) {
         </Tag>
       ) : null}
       {row.diagnostic ? (
-        <Tag tone={diagnosticTone(row.diagnostic.pct)} size="sm" mono>
+        <Tag
+          tone={diagnosticTone(row.diagnostic.pct)}
+          size="sm"
+          mono
+          title={`${row.diagnostic.correct}/${row.diagnostic.total} on diagnostic`}
+        >
           diag {row.diagnostic.pct}%
         </Tag>
       ) : null}
@@ -76,6 +85,13 @@ export function SatSkillMasterySection({
   const [showAll, setShowAll] = useState(false);
   const rows = useMemo(() => getSatSkillMastery([subject], storage), [subject, storage]);
   const tracked = rows.filter((r) => r.hasSignal);
+  const diagMeta = useMemo(() => getLatestDiagnosticAttempt(storage), [storage]);
+  const diagSubtitle =
+    diagMeta?.source === "retest"
+      ? "Per-skill % from your latest Draft 3 retest."
+      : diagMeta?.source === "baseline"
+        ? "Per-skill % from your Draft 1 baseline."
+        : null;
 
   return (
     <Card variant="default" density="normal" className="min-w-0 space-y-4">
@@ -102,7 +118,8 @@ export function SatSkillMasterySection({
         <>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs text-[var(--text-muted)]">
-              Ranked weakest-first from your mistakes, diagnostic, and drills.
+              {diagSubtitle ??
+                "Ranked weakest-first from your mistakes, diagnostic, and drills."}
             </p>
             <Link to={ROUTES.satDrill}>
               <Button variant="secondary" size="sm">

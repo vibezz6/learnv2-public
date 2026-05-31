@@ -18,4 +18,6 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run test
+      - run: npm run curriculum:lint
+      - run: npm run sat:coverage:strict
       - run: npm run build

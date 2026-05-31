@@ -1,6 +1,7 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
 import { getPrimaryMistakeCategory, type MistakeCategorySummary } from "@/lib/satMistakeTriage";
 import { nodeRelevanceTier, type WeakTarget } from "@/lib/satSkillMatch";
+import { deprioritizeRecent, getRecentQuestionIds } from "@/lib/satQuestionHistory";
 import { SAT_SKILLS, type SatSkillId } from "@/lib/satSkills";
 
 /**
@@ -99,7 +100,12 @@ export function buildSatMicroDrill(
   candidates.sort(
     (a, b) => b.tier - a.tier || b.tokenScore - a.tokenScore || a.nodeId.localeCompare(b.nodeId),
   );
-  const questions: SatMicroDrillQuestion[] = candidates.slice(0, limit).map((item) => ({
+  const recentIds = getRecentQuestionIds({
+    skillId: weak?.skillId ?? null,
+    storage,
+  });
+  const picked = deprioritizeRecent(candidates, (c) => c.question.id, recentIds, limit);
+  const questions: SatMicroDrillQuestion[] = picked.map((item) => ({
     subjectId: item.subjectId,
     nodeId: item.nodeId,
     nodeTitle: item.nodeTitle,

@@ -10,6 +10,7 @@ import {
   formatCoverageTable,
   gapDrillMcCounts,
   getCoverageFailures,
+  SAT_COVERAGE_STRETCH_TARGET,
   SAT_COVERAGE_TARGET,
   unmappedSatNodes,
 } from "../src/lib/satSkillCoverage.ts";
@@ -21,6 +22,13 @@ const args = process.argv.slice(2);
 const strict = args.includes("--strict");
 const sectionArg = args.find((a) => a.startsWith("--section="));
 const sectionFilter = sectionArg?.split("=")[1] as SatSection | undefined;
+const targetArg = args.find((a) => a.startsWith("--target="));
+const reportTarget = targetArg
+  ? Number(targetArg.split("=")[1])
+  : strict
+    ? SAT_COVERAGE_TARGET
+    : SAT_COVERAGE_TARGET;
+const stretchMode = reportTarget === SAT_COVERAGE_STRETCH_TARGET && !strict;
 
 const result = await loadSubjectResult("sat-prep");
 if (result.status !== "ok") {
@@ -33,12 +41,13 @@ if (unmapped.length > 0) {
   console.warn("Unmapped nodes:", unmapped.join(", "));
 }
 
-let rows = buildSatSkillCoverageReport(result.subject);
+let rows = buildSatSkillCoverageReport(result.subject, reportTarget);
 if (sectionFilter === "math" || sectionFilter === "rw") {
   rows = rows.filter((r) => r.section === sectionFilter);
 }
 
-console.log(`\nSAT skill MC coverage (target ≥${SAT_COVERAGE_TARGET} per content skill)\n`);
+const label = stretchMode ? "stretch" : "minimum";
+console.log(`\nSAT skill MC coverage (${label} target ≥${reportTarget} per content skill)\n`);
 console.log(formatCoverageTable(rows));
 
 const gaps = gapDrillMcCounts(result.subject);
@@ -48,7 +57,7 @@ for (const g of gaps) {
   console.log(`  ${ok} ${g.nodeId}: ${g.count} MC`);
 }
 
-const failures = getCoverageFailures(rows);
+const failures = getCoverageFailures(rows, reportTarget);
 const totalDeficit = failures.reduce((n, r) => n + r.deficit, 0);
 console.log(
   `\n${failures.length} skill(s) below target${sectionFilter ? ` (${sectionFilter})` : ""}; ${totalDeficit} MC items needed.`,
@@ -61,4 +70,6 @@ if (strict) {
     process.exit(1);
   }
   console.log("\nStrict mode: all content skills and gap drills meet target.");
+} else if (stretchMode && failures.length > 0) {
+  console.log(`\nStretch report: ${failures.length} skill(s) still below ${reportTarget} (non-blocking).`);
 }

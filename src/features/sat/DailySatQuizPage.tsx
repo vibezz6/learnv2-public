@@ -14,6 +14,7 @@ import {
 import { getToday } from "@/stores/progress";
 import { ROUTES } from "@/app/navigation";
 import { trackStudyEvent } from "@/lib/analytics";
+import { recordSatQuestionsSeen } from "@/lib/satQuestionHistory";
 
 export function DailySatQuizPage() {
   const [subjects, setSubjects] = useState<Subject[] | null>(null);
@@ -84,6 +85,7 @@ export function DailySatQuizPage() {
             accentColor="var(--accent)"
             persistAttempt={false}
             onComplete={(score, total) => {
+              recordSatQuestionsSeen(quiz.questions.map((q) => q.id));
               markDailySatQuizDone({ date: today, score, total });
               trackStudyEvent("sat_daily_complete", { score, total });
               setDone(true);

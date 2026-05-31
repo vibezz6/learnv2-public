@@ -13,9 +13,9 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01-B47 done.** Last session: 2026-05-31 (B43–B47 SAT coverage, diagnostics, mobile strip, changelog).
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Green: **328** unit tests + **8** e2e, lint 0 warnings, `npm run doctor` + `npm run sat:coverage:strict` clean. Version **v2.6.2**.
-> Next session: pick from "Future ideas" below, or open new batches as needed.
+> **B01–B55 done.** Last session: B48–B55 desktop SAT phase (rotation, stretch content, Draft 3 stems, ⌘K, a11y).
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.0**.
+> **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
 Update this line at the end of every session.
 
@@ -71,15 +71,16 @@ Backups cover every `learnv2_*` and `learnapp_*` key (OpenRouter API keys are ex
 ## Health check (run every session)
 
 ```bash
+cd ~/liqui/projects/learnv2   # required — commands fail from $HOME
 npm install      # ensure deps present (use `npm ci` for a clean install)
-npm run lint     # expect 0 errors (a few exhaustive-deps warnings are pre-existing)
-npm test         # expect all suites green
-npm run build    # expect a clean production build
-npm run sat:coverage:strict   # all SAT content skills + gap drills >= 5 MC
+npm run doctor   # lint + test + curriculum:lint + sat:coverage:strict + build
+npm run sat:coverage:stretch  # optional: report skills below 8 MC (non-blocking)
 npm run dev      # smoke test http://127.0.0.1:8080, then stop
 ```
 
 Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
+
+**Desktop a11y spot-check (each release):** keyboard-only at `md+` on `/`, `/sat/drill`, `/subjects/sat-prep#skills`, and ⌘K (trap, arrows, focus restore). Record issues in session log if any.
 
 ## Status legend
 
@@ -297,16 +298,30 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 - [x] **B46** — [`CHANGELOG.md`](CHANGELOG.md) + README link; version bump script sync documented.
 - [x] **B47** — A11y pass: mobile strip `aria-label`s; native skill `Select` in mistake log; periodic Lighthouse/axe noted in health check.
 
-## Future ideas (optional — open new batches when you want them)
+## G. Desktop SAT phase (B48–B55) — done
 
-- **More SAT question variety** — skills meet ≥5 MC; add harder/alternate stems per skill for drill rotation.
-- **Draft 3 unique stems** — today D3 mirrors D1 items with new ids; author fresh retest prompts later.
-- **Periodic a11y audit** — run axe/Lighthouse on `/`, `/sat/drill`, ⌘K each release.
+- [x] **B48** — CI + `npm run doctor` run `curriculum:lint` and `sat:coverage:strict`; README live URL + `cd` note.
+- [x] **B49** — [`satQuestionHistory.ts`](src/lib/satQuestionHistory.ts) + drill/Daily 5 deprioritize; backup registry key.
+- [x] **B50** — Stretch target 8 MC/skill (`sat:coverage:stretch`); +34 MC via [`sat-stretch-additions.json`](src/curriculum/data/sat-stretch-additions.json).
+- [x] **B51** — [`satPretestDraft3Extra.ts`](src/data/satPretestDraft3Extra.ts) (24 unique stems); tests vs Draft 1.
+- [x] **B52** — Mastery uses latest Draft 1 or Draft 3 diagnostic; source subtitle on SAT hub.
+- [x] **B53** — ⌘K: Daily 5, drill weakest, skill mastery; Draft 1 hidden when baseline done; Stats desktop weakest row.
+- [x] **B54** — Pretest retest copy; draft tab labels; README study-first blurb (hub layout was already study-first).
+- [x] **B55** — Desktop a11y checklist in Health check; drill-complete focus target.
+
+---
+
+## Future ideas (after B55)
+
+- **College triage 2.0** — single blocking essay/checklist chip refinement (beyond B30 status bar).
+- **Gap lesson follow-through** — after completing a recommended lesson, nudge to log a miss or one official module.
+- **GitHub Release** notes from [`CHANGELOG.md`](CHANGELOG.md) for each tagged version.
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-31 — B48–B55 — Desktop SAT: question rotation, 8 MC stretch bank, unique Draft 3, mastery D1/D3, ⌘K shortcuts, a11y checklist. v2.7.0.
 - 2026-05-31 — B43–B47 — SAT coverage + diagnostics + mobile strip. `sat:coverage:strict` green (21 skills ≥5 MC; st76–st80 ×5). Expanded sat-prep.json (+~50 MC). Pretest: skillId scoring, D1=24, D2=16, D3 bank. MobileStudyStrip. CHANGELOG.md. v2.6.2. 328 unit tests + 8 e2e, doctor green.
 - 2026-05-31 — B42 — Vercel Analytics + Speed Insights: `@vercel/analytics` + `@vercel/speed-insights`, `VercelObservability` in `App.tsx`, `trackStudyEvent` for Daily 5 / drill / minimum met / backup export. Deploy `822675c` READY on production. 324 unit tests, doctor green.
 - 2026-05-30 — B41 — Drill any skill: `skillTargetSummary`, `?skill=` on `SatDrillPage`, per-row Drill on mastery, weakest chip on SAT hero. 321 unit tests + 8 e2e green.
