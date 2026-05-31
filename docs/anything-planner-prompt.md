@@ -4,35 +4,45 @@ Use **Plan or Discussion** in Anything (not Build). Attach screenshots of the re
 
 - **Phase 1 (done):** B61–B67 — application package, college registry, drill queue, palette, stats.
 - **Phase 2 (done):** B68–B73 — college-aware Today, registry notes, drill Today card, Daily 5 weighting, print summary, a11y.
-- **Phase 3 (next):** B74+ — copy the block below.
+- **Phase 3 (done):** B74–B80 — study loop closure, package submit/archive, `readJsonSafe`, import confirm, mastery/drill links, SAT date sync, e2e.
+- **Phase 4 (next):** B81+ — copy the block below.
 
 After Anything answers, paste the full output in Cursor:
 
-`Here is Anything's plan — turn it into BATCHES §K B74+ implementation plan:`
+`Here is Anything's plan — turn it into BATCHES §L B81+ implementation plan:`
 
 ---
 
-## Phase 3 — B74+ (copy from here)
+## Phase 4 — B81+ (copy from here)
 
 ```text
 You are a senior product designer planning the NEXT wave of improvements for "Learn v2" — a local-first study PWA (React + Vite, no backend, no accounts). I'm attaching screenshots of the REAL app (dark slate UI, indigo accent, card layout).
 
 ## What already shipped (do NOT re-propose unless a small polish pass)
 
+**Study loop + safety (B74–B80, v2.8.0)**
+- Today hero overlays after Daily 5: drill-next (`todayHero.ts`) and "good shape" ghost CTAs; college blocking unchanged
+- Session complete modal: SAT "What's next" (mistake log, top drill) when focus href is SAT
+- Package: inline essay status Select; college Mark submitted; Campus submit/archive + Show archived
+- `readJsonSafe` + `learnv2_storage_errors_v1` FIFO log; Settings storage read-errors panel
+- Import overwrite confirm (checkbox + key list) for full backup + admissions import
+- SAT hub: mastery ↔ drill cross-links; stats mistake bars click → `?skill=` drill
+- Subject SAT hero uses Settings `satTestDate` + `getSatCountdown` (no hardcoded August date)
+- Week plan empty CTA (Daily 5 or drill); essay final toast; package checklist "Saved" banner
+- Playwright `e2e/b74-k.spec.ts` + stabilized palette tests
+
 **Campus / applications (B61–B73)**
-- Application package per college (`/campus/application?college=…`) — essays, shared checklist preview, do-this-first
-- College registry `learnv2_colleges_v1` — Campus grid, deadlines, optional `notes` (ED/EA/RD copy-only, NOT a deadline schema)
-- Week plan links to package; Today `college_blocking` with package CTA when school known; registry deadlines in urgent merge
-- Essay tracker + `#essay-<id>` deep links from package (no essay detail route)
-- Print summary `/campus/print-summary` via `window.print` (no PDF lib)
-- Drill queue on SAT hub + secondary "Drill next" card on Today (hidden when college blocks ≤7d; 24h snooze)
-- Daily 5 soft 2× weight toward top-3 drill-queue skills (deterministic)
+- Application package per college; college registry with copy-only `notes` (ED/EA/RD label, NOT deadline schema)
+- Today `college_blocking` with package CTA; essay `#essay-<id>` links (no essay detail route)
+- Print summary `/campus/print-summary` via `window.print`
+- Drill queue + Today "Drill next" card (hidden when college blocks ≤7d; 24h snooze)
+- Daily 5 soft 2× weight toward top-3 drill-queue skills
 
 **SAT study loop (B48–B60)**
-- Mistake log with skillId; Daily 5 + drill rotation; diagnostics Draft 1/3; skill mastery; ⌘K actions; gap lessons
+- Mistake log with skillId; Daily 5 + drill rotation; diagnostics Draft 1/3; skill mastery; ⌘K; gap lessons
 
 **Ops**
-- `npm run doctor` (363+ unit tests), Vercel deploy on push to main, localStorage backup/export
+- `npm run doctor` (368 unit tests, 14 e2e), Vercel deploy on push to main, localStorage backup/export v3
 
 ## HARD CONSTRAINTS (never violate)
 
@@ -40,27 +50,27 @@ You are a senior product designer planning the NEXT wave of improvements for "Le
 - localStorage only — no server, auth, sync, or payments
 - Do NOT suggest rebuilding in Anything/Next.js — plan is for the existing React repo
 - SAT study-first: lessons, mistakes, drills, official practice; diagnostics optional
-- College blocking wins over drill nudges when deadline ≤7 days
-- NO: `deadlines: { ED, EA, RD }` schema; per-school checklist fork; essay `/essay/:id` route; PDF library; browser "you changed devices" backup detection; drill queue overriding college in 7d window; bulk ~400 new SAT MCs unless I explicitly opt in
+- College blocking wins over drill nudges when deadline ≤7 days (fixed 48h drill cooldown — no graduated SRS)
+- NO: `deadlines: { ED, EA, RD }` schema; per-school checklist fork; essay `/essay/:id` route; PDF library; browser "you changed devices" backup detection; drill queue overriding college in 7d window; bulk ~400 new SAT MCs unless I explicitly opt in; auto-archive on submit; diff preview on import; auto-repair corrupt keys
 
 ## YOUR JOB
 
 1. Ask me **12–18 specific clarifying questions** BEFORE proposing batches. Group by:
-   - Today / week plan / focus session
-   - Campus / essays / package / print
-   - SAT hub / mistakes / drills / Daily 5 / diagnostics
-   - Data safety / backup / export / migration
-   - Polish / a11y / e2e / performance
-   - August SAT date / study intent / countdown alignment
+   - Today / week plan / focus session / study intent
+   - Campus / essays / package / print / submitted schools
+   - SAT hub / mistakes / drills / Daily 5 / diagnostics / stretch MC coverage
+   - Data safety / backup / export / corrupt recovery / PWA update UX
+   - Polish / a11y / e2e gaps / performance
+   - Countdown / test date / August track alignment
 
-2. After I answer, produce **6–10 batches** (IDs **B74–B8X**), each shippable in ~1–2 Cursor sessions.
+2. After I answer, produce **6–10 batches** (IDs **B81–B8X**), each shippable in ~1–2 Cursor sessions.
 
 For EACH batch include:
 - Batch ID + short title
 - User problem (1 sentence)
 - Scope IN / OUT
 - UI behavior (screens, components, example copy)
-- Data model (localStorage keys / modules: `satMistakeLog`, `satDrillQueue`, `colleges`, `essayTracker`, `admissionsSummary`, `progress`, etc.)
+- Data model (localStorage keys / modules — cite real ones: `todayHero`, `satDrillQueue`, `colleges`, `essayTracker`, `storageErrors`, `admissionsSummary`, etc.)
 - Open questions
 - Verify steps (browser manual test)
 - Effort: S / M / L
@@ -68,20 +78,19 @@ For EACH batch include:
 
 ## Seed themes (prioritize and challenge these — add better ideas)
 
-Rank what matters most for a student using Learn v2 daily until August SAT + college apps:
-
 | Theme | Why it might matter now |
 |--------|-------------------------|
-| **Study loop closure** | After Daily 5 / drill / lesson — clearer "what's next" without nag overload |
-| **Mistake → drill → mastery** | Triage queue UX, spaced re-drill schedule visibility, skill mastery gaps on SAT hub |
-| **Backup confidence** | Export reminders, import UX, corrupt-data recovery — without cloud sync |
-| **Campus depth (light)** | Package/checklist/essay flows still rough edges — no new routes |
-| **⌘K + Stats CTAs** | Power-user paths from mistake categories / week plan to drill or package |
-| **E2E coverage** | Playwright for package, print, drill Today card, college blocking |
-| **Stretch SAT content** | Only if `sat:coverage:stretch` shows gaps — default defer bulk authoring |
-| **PWA / perf** | SW update UX, chunk load, focus mode — only if user-visible pain |
+| **Stretch SAT MCs** | `npm run sat:coverage:stretch` — only if gaps block daily drill quality |
+| **Diagnostic / Draft 2** | Retest flow, score history — defer heavy promotion unless user pain |
+| **Study intent → routing** | `learnv2_study_intent_v1` exists but does NOT drive Daily 5 — intentional; revisit lightly? |
+| **Campus polish** | Submitted/archived schools UX, package empty states, print layout (no PDF) |
+| **E2e gaps** | Mark-drilled cooldown, import confirm flow, hero drill overlay with seeded mistakes |
+| **Backup habits** | `backupReminder` nudge, export cadence — without cloud |
+| **⌘K depth** | More SAT/campus actions; recent actions quality |
+| **PWA / perf** | SW update banner, chunk errors — only if user-visible |
+| **A11y / keyboard** | Desktop focus traps on new modals (import confirm, package status) |
 
-Explicitly **deprioritize or OUT**: AI tutor chat, social features, accounts, mobile redesign, new subjects.
+Explicitly **deprioritize or OUT**: AI tutor chat, social, accounts, mobile redesign, new subjects, graduated drill SRS, essay detail routes, ED/EA/RD deadline schema.
 
 ## Output format (strict markdown)
 
@@ -92,20 +101,30 @@ Explicitly **deprioritize or OUT**: AI tutor chat, social features, accounts, mo
 (bullets)
 
 ## Batch backlog
-### B74 — Title
-(repeat B75–B8X)
+### B81 — Title
+(repeat B82–B8X)
 
 ## Recommended order
 | Order | Batch | Why |
 
 ## Anything Build vs skip
-| Batch | Build in Anything? | Why |
+| Batch | Build? | Why |
 
 ## What NOT to do next
-(align with constraints above)
+(align with constraints + §K footer: graduated cooldown, Draft 2 promotion, ED/EA schema, print polish batch, study intent → Daily 5, 400 MCs, browser backup detection, perf batch, drill overrides college)
 
 ## Open risks
 ```
+
+---
+
+## Phase 3 archive (B74 — historical)
+
+<details>
+<summary>B74+ planner prompt (collapsed — shipped as §K v2.8.0)</summary>
+
+Phase 3 covered study loop closure, package essay status + submit/archive, `readJsonSafe`, import confirm, mastery/drill links, stats click-to-drill, SAT date sync, and e2e extension. See `CHANGELOG.md` [2.8.0] and `BATCHES.md` §K.
+</details>
 
 ---
 
