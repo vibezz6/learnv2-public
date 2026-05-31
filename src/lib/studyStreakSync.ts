@@ -3,6 +3,7 @@ import {
   getLastActivity,
   REAL_STUDY_ACTIVITY_TYPES,
 } from "@/lib/studyActivity";
+import { maybeTrackMinimumMet } from "@/lib/analytics";
 import { getToday, useProgress } from "@/stores/progress";
 
 let wired = false;
@@ -24,6 +25,7 @@ export function initStudyStreakSync(): void {
       const last = getLastActivity(REAL_STUDY_ACTIVITY_TYPES);
       if (last && last.date === getToday()) {
         useProgress.getState().creditStudyDay();
+        maybeTrackMinimumMet();
       }
     });
   });

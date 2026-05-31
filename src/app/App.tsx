@@ -33,6 +33,7 @@ import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
 import { PageLoading } from "@/components/ui";
+import { VercelObservability } from "@/components/VercelObservability";
 
 function RouteFallback() {
   return <PageLoading />;
@@ -41,6 +42,7 @@ function RouteFallback() {
 export function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <VercelObservability />
       <ComponentErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>

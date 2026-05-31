@@ -30,6 +30,7 @@ import { RemindersSettingsCard } from "@/features/settings/RemindersSettingsCard
 import { LessonDraftWorkspace } from "@/features/settings/LessonDraftWorkspace";
 import { OPENROUTER_KEY } from "@/services/llmReview";
 import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
+import { trackStudyEvent } from "@/lib/analytics";
 import { getDaysSinceBackup, isBackupOverdue, markBackupDone } from "@/lib/backupReminder";
 import { cn } from "@/lib/cn";
 
@@ -78,6 +79,7 @@ export function SettingsPage() {
     a.click();
     URL.revokeObjectURL(url);
     markBackupDone();
+    trackStudyEvent("backup_export");
     setBackupTick((t) => t + 1);
     setMessage("Progress exported. Keep the file somewhere safe.");
   };

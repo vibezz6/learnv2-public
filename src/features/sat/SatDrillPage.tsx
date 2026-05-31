@@ -10,6 +10,7 @@ import { getDrillKey, getNextDrillCategory, markCategoryDrilled } from "@/lib/sa
 import { isSatSkillId } from "@/lib/satSkills";
 import { getToday } from "@/stores/progress";
 import { ROUTES } from "@/app/navigation";
+import { trackStudyEvent } from "@/lib/analytics";
 
 /**
  * Plays a 5-question micro-drill targeted at the next mistake category due for
@@ -93,6 +94,12 @@ export function SatDrillPage() {
             persistAttempt={false}
             onComplete={(score, total) => {
               if (target) markCategoryDrilled(getDrillKey(target));
+              trackStudyEvent("sat_drill_complete", {
+                score,
+                total,
+                skillId: target?.skillId ?? "auto",
+                thin: drill.thin,
+              });
               setDone({ score, total });
             }}
           />
