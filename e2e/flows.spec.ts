@@ -64,4 +64,14 @@ test.describe("Learn v2 core flows", () => {
     await page.keyboard.press("Escape");
     await expect(input).toHaveCount(0);
   });
+
+  test("command palette: SAT Daily 5 navigates to daily quiz", async ({ page }) => {
+    await page.goto("/");
+    await page.keyboard.press("Control+k");
+    const input = page.getByPlaceholder(/Quick open/i);
+    await input.fill("SAT Daily 5");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/sat\/daily-quiz/);
+    await expect(page.getByRole("heading", { name: "Daily 5" })).toBeVisible();
+  });
 });

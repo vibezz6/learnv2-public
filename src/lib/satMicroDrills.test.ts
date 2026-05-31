@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Subject } from "@/curriculum/types";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
+import { recordSatQuestionsSeen } from "@/lib/satQuestionHistory";
 import { buildSatMicroDrill, skillTargetSummary } from "@/lib/satMicroDrills";
 
 function mapStorage(): Storage {
@@ -20,8 +21,9 @@ function mapStorage(): Storage {
 function q(id: string) {
   return { id, question: `Q ${id}?`, options: ["a", "b"], correctIndex: 0, explanation: "" };
 }
-function node(id: string, name: string) {
-  return { id, name, description: "", keyConcepts: [], quiz: [q(`${id}-q1`), q(`${id}-q2`)] };
+function node(id: string, name: string, questionCount = 2) {
+  const quiz = Array.from({ length: questionCount }, (_, i) => q(`${id}-q${i + 1}`));
+  return { id, name, description: "", keyConcepts: [], quiz };
 }
 
 // Real node ids so SAT_NODE_SKILLS applies: st17/st4 = linear-equations, st27 = sentence-boundaries, st1 = general.
@@ -91,6 +93,36 @@ describe("buildSatMicroDrill (skill-based)", () => {
   it("skillTargetSummary returns null for non-content (mixed/general) skills", () => {
     expect(skillTargetSummary("test-strategy")).toBeNull();
     expect(skillTargetSummary("math-mixed")).toBeNull();
+  });
+
+  it("deprioritizes recently seen question ids when the bank is large enough", () => {
+    const storage = mapStorage();
+    const richSubjects = [
+      {
+        id: "sat-prep",
+        name: "SAT",
+        description: "",
+        color: "#000",
+        icon: "g",
+        nodes: [node("st17", "Linear", 8), node("st4", "Algebra", 2)],
+      },
+    ] as unknown as Subject[];
+    seed(storage, {
+      id: "m1",
+      date: "2026-05-29",
+      section: "math",
+      category: "Linear equations",
+      skillId: "linear-equations",
+      note: "x",
+      createdAt: 1,
+    });
+    const first = buildSatMicroDrill(richSubjects, storage, 5);
+    const firstIds = first.questions.map((x) => x.question.id);
+    recordSatQuestionsSeen(firstIds, { skillId: "linear-equations", storage });
+    const second = buildSatMicroDrill(richSubjects, storage, 5);
+    const secondIds = second.questions.map((x) => x.question.id);
+    expect(firstIds.length).toBe(5);
+    expect(secondIds.some((id) => !firstIds.includes(id))).toBe(true);
   });
 
   it("dedupes and stays within the limit", () => {

@@ -1,7 +1,7 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDraft2";
-import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
+import { getBlockingApplicationItem, getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
 import { getSatNextLesson, type NodeStatus } from "@/lib/campusHome";
@@ -80,6 +80,18 @@ export function buildTomorrowTasks(
         });
       }
     }
+  }
+
+  const blocking = getBlockingApplicationItem(now);
+  if (blocking && (blocking.overdue || blocking.daysUntil <= 7)) {
+    push({
+      id: `blocking-${blocking.id}`,
+      title: blocking.title,
+      detail: blocking.nextStep ?? blocking.detail,
+      href: blocking.href,
+      source: "college",
+    });
+    if (tasks.length >= maxTasks) return tasks;
   }
 
   for (const row of getUrgentCollegeDeadlines(now, maxTasks)) {

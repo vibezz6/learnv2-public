@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.6.2 · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live:** https://learnv2-tau.vercel.app (auto-deploy on push to `main`) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.7.1 · **GitHub tags:** [v2.7.0](https://github.com/dishwashersol/learnv2/releases/tag/v2.7.0), v2.7.1 on `main` · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live:** https://learnv2-tau.vercel.app (auto-deploy on push to `main`) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 

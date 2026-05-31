@@ -31,7 +31,9 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { ResourceCard } from "@/features/lesson/ResourceCard";
 import { CollapsibleSection, WorkedExampleCard } from "@/features/lesson/LessonSections";
 import { useSwipeNavigation } from "@/hooks/useSwipeNavigation";
+import { isSatTargetedLesson } from "@/lib/satRecommendedLessons";
 import { getSubjectAccent } from "@/lib/subjectAccent";
+import { ROUTES } from "@/app/navigation";
 import { usePreferences } from "@/stores/preferences";
 import {
   getTakeaways,
@@ -120,6 +122,10 @@ export function LessonPage() {
   const tradingLessonIndex = subject.id === "trading" ? getTradingLessonIndex(node.id) : null;
   const showTradingLabCard = tradingLessonIndex !== null && tradingLessonIndex >= 11;
   const lessonIndex = subject.nodes.findIndex((n) => n.id === node.id) + 1;
+  const showSatFollowUp =
+    subject.id === "sat-prep" &&
+    isCompleted &&
+    isSatTargetedLesson(node.id, [subject], getNodeStatus);
 
   const handleComplete = () => {
     completeNode(node.id, node.xpValue, subject.id);
@@ -217,6 +223,35 @@ export function LessonPage() {
                 {node.description}
               </p>
             </header>
+
+            {showSatFollowUp ? (
+              <Card variant="primary" density="normal" className="stagger-item space-y-3">
+                <p className="eyebrow-mono">Next for this gap</p>
+                <p className="text-sm text-[var(--text-muted)]">
+                  Lesson done — log any misses from your last official set, or record a practice
+                  session so drills stay aligned.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Link to="/subjects/sat-prep#mistakes">
+                    <Button variant="secondary" size="sm">
+                      Log a mistake
+                      <ArrowRight size={14} aria-hidden />
+                    </Button>
+                  </Link>
+                  <Link to="/subjects/sat-prep#official">
+                    <Button variant="secondary" size="sm">
+                      Official practice
+                      <ArrowRight size={14} aria-hidden />
+                    </Button>
+                  </Link>
+                  <Link to={ROUTES.satDrill}>
+                    <Button variant="ghost" size="sm">
+                      Quick drill
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ) : null}
 
             {showTradingLabCard ? (
               <Card

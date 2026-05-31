@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { saveCollegeChecklist } from "@/lib/collegeChecklist";
+import { addEssayFromTemplate, loadEssayTracker, saveEssayTracker } from "@/lib/essayTracker";
 import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
 import { addMistake } from "@/lib/satMistakeLog";
 import { buildTomorrowTasks } from "@/lib/tomorrowTasks";
@@ -50,6 +51,25 @@ describe("tomorrowTasks", () => {
     vi.unstubAllGlobals();
   });
 
+  it("prefers blocking application item when essay is overdue", () => {
+    let essays = loadEssayTracker(storage);
+    essays = addEssayFromTemplate(essays, "why-us", { dueDate: "2026-05-20" });
+    saveEssayTracker(essays, storage);
+
+    const tasks = buildTomorrowTasks(
+      {
+        subjects: [],
+        getNodeStatus: () => "available",
+        reviewDueCount: 0,
+        storage,
+      },
+      3,
+    );
+
+    expect(tasks[0]?.id).toMatch(/^blocking-/);
+    expect(tasks[0]?.source).toBe("college");
+  });
+
   it("prioritizes college deadlines due today or tomorrow", () => {
     saveCollegeChecklist(
       {
@@ -79,7 +99,7 @@ describe("tomorrowTasks", () => {
     );
 
     expect(tasks[0]).toMatchObject({
-      id: "checklist-c1",
+      id: "blocking-checklist-c1",
       title: "Submit FAFSA",
       source: "college",
     });
@@ -113,8 +133,8 @@ describe("tomorrowTasks", () => {
     );
 
     expect(tasks[0]).toMatchObject({
-      id: "checklist-late",
-      detail: "Overdue",
+      id: "blocking-checklist-late",
+      title: "Late application fee",
       source: "college",
     });
   });

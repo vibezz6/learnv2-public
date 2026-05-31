@@ -53,6 +53,8 @@ function satStepTitle(command: SatDailyStudyCommand): string {
       return "SAT: mistake review";
     case "diagnostic_optional":
       return "SAT: optional diagnostic follow-up";
+    case "college_blocking":
+      return "College: urgent application step";
   }
 }
 

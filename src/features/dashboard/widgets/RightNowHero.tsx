@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, GraduationCap, Moon, Play } from "lucide-react";
+import { ArrowRight, CalendarClock, GraduationCap, Moon, Play } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
@@ -27,6 +27,7 @@ export function RightNowHero({ subjects, resume }: Props) {
   const navigate = useNavigate();
 
   const study = getSatDailyStudyCommand({ subjects, getNodeStatus });
+  const isCollegeFocus = study.kind === "college_blocking";
   const topMistakes = getTopMistakeCategories(2);
   const readinessNudge = getReadinessNudge();
   const dailyQuizDone = isDailySatQuizDone();
@@ -49,8 +50,18 @@ export function RightNowHero({ subjects, resume }: Props) {
   return (
     <Card variant="primary" density="roomy" className="min-w-0">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius)] bg-[var(--accent-bg)] text-[var(--accent)]">
-          <GraduationCap size={18} aria-hidden />
+        <span
+          className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius)] ${
+            isCollegeFocus
+              ? "bg-[var(--warning-bg)] text-[var(--warning-fg)]"
+              : "bg-[var(--accent-bg)] text-[var(--accent)]"
+          }`}
+        >
+          {isCollegeFocus ? (
+            <CalendarClock size={18} aria-hidden />
+          ) : (
+            <GraduationCap size={18} aria-hidden />
+          )}
         </span>
         <div className="min-w-0 flex-1 space-y-3">
           <div>

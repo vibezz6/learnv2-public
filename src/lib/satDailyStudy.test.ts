@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { addEssayFromTemplate, loadEssayTracker, saveEssayTracker } from "@/lib/essayTracker";
 import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
 import { SAT_READINESS_STORAGE_KEY } from "@/lib/satReadiness";
@@ -205,6 +206,50 @@ describe("satDailyStudy", () => {
     expect(
       shouldShowSatTodayCard("sat", subjects, () => "available", storage),
     ).toBe(true);
+  });
+
+  it("surfaces overdue college application work ahead of optional SAT diagnostic", () => {
+    storage.setItem(
+      SAT_PRETEST_STORAGE_KEY,
+      JSON.stringify({
+        schemaVersion: 1,
+        attempts: [
+          {
+            id: "a1",
+            draftId: "draft-1",
+            status: "completed",
+            startedAt: "2026-05-20T00:00:00.000Z",
+            completedAt: "2026-05-20T00:10:00.000Z",
+            questionOrder: ["q1"],
+            currentIndex: 0,
+            responses: {},
+            scoreSummary: {
+              totalQuestions: 10,
+              correctAnswers: 7,
+              pct: 70,
+              sectionBreakdown: [],
+              skillBreakdown: [],
+              weakSkills: [],
+              recommendedNodeIds: [],
+              timeSpentSeconds: 600,
+            },
+          },
+        ],
+      }),
+    );
+    let essays = loadEssayTracker(storage);
+    essays = addEssayFromTemplate(essays, "common-app-personal", { dueDate: "2026-05-20" });
+    saveEssayTracker(essays, storage);
+
+    const command = getSatDailyStudyCommand({
+      subjects,
+      getNodeStatus: () => "available",
+      storage,
+    });
+
+    expect(command.kind).toBe("college_blocking");
+    expect(command.headline).toContain("overdue");
+    expect(command.href).toContain("campus");
   });
 
 });

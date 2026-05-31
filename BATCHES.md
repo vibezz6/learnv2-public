@@ -13,8 +13,8 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B55 done.** Last session: B48–B55 desktop SAT phase (rotation, stretch content, Draft 3 stems, ⌘K, a11y).
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.0**.
+> **B01–B60 done.** Last session: B56–B60 college Today triage, gap follow-through, mistake queue, tests, release tag.
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.1**.
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
 Update this line at the end of every session.
@@ -309,18 +309,27 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 - [x] **B54** — Pretest retest copy; draft tab labels; README study-first blurb (hub layout was already study-first).
 - [x] **B55** — Desktop a11y checklist in Health check; drill-complete focus target.
 
+## H. Post-desktop SAT (B56–B60) — done
+
+- [x] **B56** — `getBlockingApplicationItem` on Today via `getSatDailyStudyCommand` (`college_blocking` kind); tomorrow tasks prefer blocking row.
+- [x] **B57** — SAT gap/recommended lesson follow-up strip after mark complete ([`LessonPage`](src/features/lesson/LessonPage.tsx)).
+- [x] **B58** — Git tag `v2.7.0` + GitHub Release from CHANGELOG.
+- [x] **B59** — Mistake log top categories: drill link, lesson link, latest date copy.
+- [x] **B60** — `satMicroDrills` rotation test + ⌘K → Daily 5 e2e.
+
 ---
 
-## Future ideas (after B55)
+## Future ideas (after B60)
 
-- **College triage 2.0** — single blocking essay/checklist chip refinement (beyond B30 status bar).
-- **Gap lesson follow-through** — after completing a recommended lesson, nudge to log a miss or one official module.
-- **GitHub Release** notes from [`CHANGELOG.md`](CHANGELOG.md) for each tagged version.
+- **Application package per college** — group checklist + essays by school.
+- **Stretch 10 MC/skill** — optional; run `sat:coverage:stretch` before authoring.
+- **Gap nodes** — only with evidence per [`docs/sat-gap-lesson-authoring.md`](docs/sat-gap-lesson-authoring.md).
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-31 — B56–B60 — College blocking on Today; gap lesson follow-up; mistake triage drill links; rotation test + ⌘K e2e; gh release v2.7.0. v2.7.1.
 - 2026-05-31 — B48–B55 — Desktop SAT: question rotation, 8 MC stretch bank, unique Draft 3, mastery D1/D3, ⌘K shortcuts, a11y checklist. v2.7.0.
 - 2026-05-31 — B43–B47 — SAT coverage + diagnostics + mobile strip. `sat:coverage:strict` green (21 skills ≥5 MC; st76–st80 ×5). Expanded sat-prep.json (+~50 MC). Pretest: skillId scoring, D1=24, D2=16, D3 bank. MobileStudyStrip. CHANGELOG.md. v2.6.2. 328 unit tests + 8 e2e, doctor green.
 - 2026-05-31 — B42 — Vercel Analytics + Speed Insights: `@vercel/analytics` + `@vercel/speed-insights`, `VercelObservability` in `App.tsx`, `trackStudyEvent` for Daily 5 / drill / minimum met / backup export. Deploy `822675c` READY on production. 324 unit tests, doctor green.
@@ -339,7 +348,7 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- Version is synced at **2.6.0** across `package.json`, `src/lib/version.ts`, and the SW cache (`learnv2-v2.6.0`) as of B33; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
+- Version is synced at **2.7.1** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
 - Lint is at **0 warnings** (B31). The 4 former `exhaustive-deps` warnings were intentional cache-busters and are now documented with scoped `eslint-disable` + reason comments — do not "fix" them by removing the dep (that reintroduces stale UI).
 - Dialogs share the `Modal` shell (B34): Escape + backdrop + Tab focus trap + initial focus + focus restore. New dialogs should use `Modal` (or `useFocusTrap`) rather than hand-rolling an overlay.
 - Bottom-stack layering is governed by the `--z-*` tokens in `index.css` (B37); keep new fixed bottom elements on that scale.

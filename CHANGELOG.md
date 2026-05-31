@@ -4,6 +4,19 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.7.1] - 2026-05-31
+
+### Added
+
+- Today surfaces urgent college application work (`college_blocking`) ahead of optional SAT diagnostics.
+- Post-complete follow-up on SAT gap/recommended lessons (mistake log, official practice, drill).
+- Mistake log top categories show drill/lesson links and clearer empty-state copy.
+- Unit test for drill question rotation; Playwright e2e for ⌘K → SAT Daily 5.
+
+### Changed
+
+- Tomorrow tasks prefer the single blocking admissions item when due within a week or overdue.
+
 ## [2.7.0] - 2026-05-31
 
 ### Added

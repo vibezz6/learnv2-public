@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { ROUTES } from "@/app/navigation";
 import { ClipboardList, Trash2 } from "lucide-react";
 import {
   Button,
   Card,
   Field,
   Input,
-  Row,
   Select,
   Tag,
   Textarea,
@@ -107,39 +107,51 @@ export function SatMistakeLogPanel({
           </p>
           <ul className="space-y-2">
             {topCategories.map((row) => (
-              <li key={row.category}>
-                {row.nodeId ? (
-                  <Row
-                    to={`/subjects/sat-prep/${row.nodeId}`}
-                    title={row.category}
-                    detail={`${row.count} ${row.count === 1 ? "entry" : "entries"} · latest ${formatEntryDate(row.latestDate)}`}
-                    meta={
-                      <Tag tone="warning" size="sm" mono>
-                        {SECTION_LABELS[row.latestSection]}
-                      </Tag>
-                    }
-                  />
-                ) : (
-                  <div className="flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)] px-4 py-3">
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-[var(--text-heading)]">
-                        {row.category}
-                      </p>
-                      <p className="mt-0.5 text-xs text-[var(--text-muted)]">
-                        {row.count} {row.count === 1 ? "entry" : "entries"} · latest{" "}
-                        {formatEntryDate(row.latestDate)}
-                      </p>
-                    </div>
-                    <Tag tone="warning" size="sm" mono>
-                      {SECTION_LABELS[row.latestSection]}
-                    </Tag>
-                  </div>
-                )}
+              <li
+                key={row.skillId ?? row.category}
+                className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-[var(--text-heading)]">{row.category}</p>
+                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                    {row.count} {row.count === 1 ? "miss" : "misses"} · last {formatEntryDate(row.latestDate)}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Tag tone="warning" size="sm" mono>
+                    {SECTION_LABELS[row.latestSection]}
+                  </Tag>
+                  {row.skillId ? (
+                    <Link to={`${ROUTES.satDrill}?skill=${row.skillId}`}>
+                      <Button variant="secondary" size="sm">
+                        Drill skill
+                      </Button>
+                    </Link>
+                  ) : null}
+                  {row.nodeId ? (
+                    <Link to={`/subjects/sat-prep/${row.nodeId}`}>
+                      <Button variant="ghost" size="sm">
+                        Lesson
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link to="/subjects/sat-prep#mistakes">
+                      <Button variant="ghost" size="sm">
+                        Log more
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
         </Card>
-      ) : null}
+      ) : (
+        <p className="text-sm text-[var(--text-muted)]">
+          After a Bluebook module or Khan set, log each miss by skill — your top categories will
+          show up here with drill links.
+        </p>
+      )}
 
       <Card variant="default" density="normal" className="min-w-0 space-y-4">
         <div className="flex items-start gap-3 border-b border-[var(--rule)] pb-3">

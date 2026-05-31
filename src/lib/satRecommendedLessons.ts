@@ -101,6 +101,17 @@ function lessonsFromPretestGaps(
   return lessons;
 }
 
+/** True when this SAT lesson is a gap or imported plan target (show post-complete follow-up). */
+export function isSatTargetedLesson(
+  nodeId: string,
+  subjects: Subject[],
+  getNodeStatus: (node: SkillNode) => NodeStatus,
+): boolean {
+  const plan = getSatRecommendedLessons(subjects, getNodeStatus);
+  if (plan.source !== "pretest_gaps" && plan.source !== "lesson_plan") return false;
+  return plan.lessons.some((lesson) => lesson.nodeId === nodeId);
+}
+
 export function getSatRecommendedLessons(
   subjects: Subject[],
   getNodeStatus: (node: SkillNode) => NodeStatus,
