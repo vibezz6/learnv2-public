@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button, KeyHint } from "@/components/ui";
 import { StatusBar } from "@/components/StatusBar";
+import { MobileStudyStrip } from "@/components/MobileStudyStrip";
 import { ComponentErrorBoundary } from "@/components/ComponentErrorBoundary";
 import { CommandPalette } from "@/features/search/CommandPalette";
 import { loadAllSubjects } from "@/curriculum/loader";
@@ -330,6 +331,8 @@ export function AppShell() {
             </Button>
           </div>
         </header>
+
+        <MobileStudyStrip />
 
         <main
           className={cn(

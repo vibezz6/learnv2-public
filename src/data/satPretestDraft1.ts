@@ -1,14 +1,18 @@
 import type { SatPretestQuestion } from "@/lib/satPretest";
+import { satPretestDraft1ExtraQuestions } from "@/data/satPretestDraft1Extra";
 
-export const SAT_PRETEST_DRAFT_1_ID = "draft-1";
+import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDrafts";
 
-export const satPretestDraft1Questions: SatPretestQuestion[] = [
+export { SAT_PRETEST_DRAFT_1_ID };
+
+const satPretestDraft1CoreQuestions: SatPretestQuestion[] = [
   {
     id: "draft1-math-linear-1",
     draftId: SAT_PRETEST_DRAFT_1_ID,
     section: "math",
     domain: "Algebra",
     skill: "Linear equations",
+    skillId: "linear-equations",
     difficulty: "easy",
     prompt: "If 3x - 7 = 20, what is the value of x?",
     choices: [
@@ -26,7 +30,8 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_1_ID,
     section: "math",
     domain: "Problem Solving and Data Analysis",
-    skill: "Percent change",
+    skill: "Ratios, percentages & proportions",
+    skillId: "ratios-percentages",
     difficulty: "medium",
     prompt:
       "A jacket's price increased from $80 to $92. By what percent did the price increase?",
@@ -45,7 +50,8 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_1_ID,
     section: "math",
     domain: "Advanced Math",
-    skill: "Quadratics",
+    skill: "Quadratics & factoring",
+    skillId: "quadratics",
     difficulty: "medium",
     prompt: "Which expression is equivalent to x^2 + 7x + 12?",
     choices: [
@@ -63,7 +69,8 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_1_ID,
     section: "math",
     domain: "Problem Solving and Data Analysis",
-    skill: "Mean and median",
+    skill: "Statistics & data analysis",
+    skillId: "statistics-data",
     difficulty: "easy",
     prompt: "The numbers 4, 6, 8, 12, and 20 have what median?",
     choices: [
@@ -81,7 +88,8 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_1_ID,
     section: "math",
     domain: "Geometry and Trigonometry",
-    skill: "Right triangles",
+    skill: "Geometry & trigonometry",
+    skillId: "geometry-trig",
     difficulty: "medium",
     prompt: "A right triangle has legs of lengths 5 and 12. What is the hypotenuse?",
     choices: [
@@ -99,7 +107,8 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_1_ID,
     section: "rw",
     domain: "Standard English Conventions",
-    skill: "Sentence boundaries",
+    skill: "Sentence boundaries & punctuation",
+    skillId: "sentence-boundaries",
     difficulty: "medium",
     prompt:
       "The experiment was repeated three times _____ the final trial produced the clearest results.",
@@ -119,6 +128,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Expression of Ideas",
     skill: "Transitions",
+    skillId: "transitions",
     difficulty: "medium",
     prompt:
       "The first design was inexpensive but fragile. _____, the revised design cost more but lasted much longer.",
@@ -138,6 +148,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Information and Ideas",
     skill: "Inference",
+    skillId: "inference",
     difficulty: "hard",
     prompt:
       "A researcher notes that a plant grows faster in indirect light than in direct light. Which conclusion is best supported?",
@@ -157,6 +168,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Craft and Structure",
     skill: "Words in context",
+    skillId: "words-in-context",
     difficulty: "easy",
     prompt:
       "In the sentence 'The team's approach was novel,' which word best matches the meaning of novel?",
@@ -176,6 +188,7 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Expression of Ideas",
     skill: "Rhetorical synthesis",
+    skillId: "rhetorical-synthesis",
     difficulty: "hard",
     prompt:
       "A student wants to emphasize that two sources agree. Which choice best introduces the second source?",
@@ -189,4 +202,9 @@ export const satPretestDraft1Questions: SatPretestQuestion[] = [
     explanation: "Likewise signals agreement or similarity between the two sources.",
     relatedNodeIds: ["st33"],
   },
+];
+
+export const satPretestDraft1Questions: SatPretestQuestion[] = [
+  ...satPretestDraft1CoreQuestions,
+  ...satPretestDraft1ExtraQuestions,
 ];

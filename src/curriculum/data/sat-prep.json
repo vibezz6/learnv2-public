@@ -485,6 +485,30 @@
           ],
           "correctIndex": 1,
           "explanation": "Prediction before looking at choices reduces trap answers."
+        },
+        {
+          "id": "q_st11_2",
+          "question": "In context, a word's meaning is usually determined by:",
+          "options": [
+            "Its dictionary definition alone",
+            "Surrounding sentences and the passage's tone",
+            "The longest answer choice",
+            "Outside knowledge of history"
+          ],
+          "correctIndex": 1,
+          "explanation": "Context clues in nearby sentences narrow the intended meaning."
+        },
+        {
+          "id": "q_st11_3",
+          "question": "If two answer choices both seem possible for a vocabulary-in-context item, you should:",
+          "options": [
+            "Pick the more common word every time",
+            "Plug each choice into the sentence and eliminate what breaks meaning",
+            "Choose the first option",
+            "Skip the question"
+          ],
+          "correctIndex": 1,
+          "explanation": "Substitution tests whether the word fits grammar and logic in context."
         }
       ]
     },
@@ -527,6 +551,30 @@
           ],
           "correctIndex": 1,
           "explanation": "SAT rewards conservative, text-bound inferences."
+        },
+        {
+          "id": "q_st12_2",
+          "question": "The main idea of a passage is best described as:",
+          "options": [
+            "One interesting detail from paragraph 2",
+            "The central claim the whole passage supports",
+            "The definition of a single vocabulary word",
+            "A quote from the final sentence only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Main idea summarizes the passage as a whole, not one detail."
+        },
+        {
+          "id": "q_st12_3",
+          "question": "For a detail question, the correct answer should:",
+          "options": [
+            "Go beyond what the text states",
+            "Match explicit information in the passage",
+            "Always disagree with the main idea",
+            "Use outside historical facts"
+          ],
+          "correctIndex": 1,
+          "explanation": "Detail answers must be directly supported by the text."
         }
       ]
     },
@@ -829,6 +877,32 @@
           "options": ["4", "6", "8", "12"],
           "correctIndex": 1,
           "explanation": "Add equations: 2x = 12 → x = 6."
+        },
+        {
+          "id": "q_st18_3",
+          "question": "Using substitution, if y = 3x and 2x + y = 20, then y equals:",
+          "options": ["6", "9", "12", "15"],
+          "correctIndex": 2,
+          "explanation": "Substitute: 2x + 3x = 20 → 5x = 20 → x = 4, so y = 12."
+        },
+        {
+          "id": "q_st18_4",
+          "question": "The system 2x + 4y = 8 and x + 2y = 4 has:",
+          "options": [
+            "No solution",
+            "Exactly one solution",
+            "Infinitely many solutions",
+            "Exactly two solutions"
+          ],
+          "correctIndex": 2,
+          "explanation": "The second equation is half of the first — same line, infinitely many solutions."
+        },
+        {
+          "id": "q_st18_5",
+          "question": "For 2x + y = 11 and x - y = 1, the ordered pair (x, y) is:",
+          "options": ["(3, 2)", "(4, 3)", "(5, 4)", "(2, 1)"],
+          "correctIndex": 1,
+          "explanation": "Substitute x = y + 1: 2(y + 1) + y = 11 → 3y = 9 → y = 3, x = 4."
         }
       ]
     },
@@ -1709,6 +1783,18 @@
           ],
           "correctIndex": 1,
           "explanation": "However introduces contrast — the next idea qualifies or opposes what came before."
+        },
+        {
+          "id": "q_st33_3",
+          "question": "A synthesis prompt asks you to emphasize a limitation. You should:",
+          "options": [
+            "Include only positive notes",
+            "Select notes that state the limitation and frame them clearly",
+            "Ignore the prompt and list every note",
+            "Add new facts not in the bullets"
+          ],
+          "correctIndex": 1,
+          "explanation": "Match the rhetorical goal — here, highlighting a limitation from the provided notes."
         }
       ]
     },
@@ -1887,6 +1973,27 @@
           "options": ["x = 7 only", "x = 1 only", "x = 7 or x = 1", "No solution"],
           "correctIndex": 2,
           "explanation": "x - 4 = 3 → x = 7; x - 4 = -3 → x = 1."
+        },
+        {
+          "id": "q_st36_3",
+          "question": "Which value satisfies 2x + 5 ≤ 13?",
+          "options": ["x = 5", "x = 4", "x = 3", "x = 6"],
+          "correctIndex": 2,
+          "explanation": "2x ≤ 8 → x ≤ 4. Only x = 3 is less than or equal to 4 among the choices."
+        },
+        {
+          "id": "q_st36_4",
+          "question": "The inequality |x + 2| < 5 is equivalent to:",
+          "options": ["-7 < x < 3", "-5 < x < 5", "x < 3 only", "x > -7 only"],
+          "correctIndex": 0,
+          "explanation": "|x + 2| < 5 means -5 < x + 2 < 5, so -7 < x < 3."
+        },
+        {
+          "id": "q_st36_5",
+          "question": "If 4 - 3x ≥ 10, then x is:",
+          "options": ["x ≥ 2", "x ≤ -2", "x ≥ -2", "x ≤ 2"],
+          "correctIndex": 1,
+          "explanation": "-3x ≥ 6; divide by -3 and flip: x ≤ -2."
         }
       ]
     },
@@ -2350,6 +2457,18 @@
           ],
           "correctIndex": 1,
           "explanation": "Acknowledging then refuting opposition is a common argumentative structure."
+        },
+        {
+          "id": "q_st44_3",
+          "question": "The primary purpose of an introductory paragraph is often to:",
+          "options": [
+            "List every detail in the passage",
+            "Present the topic and orient the reader to the argument",
+            "Contradict the conclusion",
+            "Quote statistics only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Introductions set up topic and direction before body paragraphs develop ideas."
         }
       ]
     },
@@ -2584,6 +2703,27 @@
           ],
           "correctIndex": 0,
           "explanation": "Rates add when working together: 1/t₁ + 1/t₂ = 1/t_combined."
+        },
+        {
+          "id": "q_st48_3",
+          "question": "A car travels 180 miles at a constant speed of 45 mph. The trip takes:",
+          "options": ["3 hours", "4 hours", "5 hours", "6 hours"],
+          "correctIndex": 1,
+          "explanation": "Time = distance ÷ rate = 180 ÷ 45 = 4 hours."
+        },
+        {
+          "id": "q_st48_4",
+          "question": "A mixture is 30% acid. How many liters of pure acid are in 20 liters of the mixture?",
+          "options": ["3 L", "6 L", "10 L", "14 L"],
+          "correctIndex": 1,
+          "explanation": "30% of 20 = 0.30 × 20 = 6 liters of acid."
+        },
+        {
+          "id": "q_st48_5",
+          "question": "A phone plan charges $25 plus $0.10 per text. Which equation gives total cost C for t texts?",
+          "options": ["C = 25t + 0.10", "C = 0.10t + 25", "C = 25 + t", "C = 0.10 + 25t"],
+          "correctIndex": 1,
+          "explanation": "Fixed fee plus per-text rate: C = 0.10t + 25."
         }
       ]
     },
@@ -4572,6 +4712,34 @@
           "options": ["4", "5", "6", "25"],
           "correctIndex": 1,
           "explanation": "Subtract 2, then divide by 5: x = 5."
+        },
+        {
+          "id": "q_st76_2",
+          "question": "If 2x - 8 = 10, what is x?",
+          "options": ["1", "9", "18", "4"],
+          "correctIndex": 1,
+          "explanation": "Add 8: 2x = 18 → x = 9."
+        },
+        {
+          "id": "q_st76_3",
+          "question": "A taxi charges $3 plus $2 per mile. Which equation gives cost C for m miles?",
+          "options": ["C = 3m + 2", "C = 2m + 3", "C = 5m", "C = 3 + m"],
+          "correctIndex": 1,
+          "explanation": "Fixed $3 plus $2 per mile: C = 2m + 3."
+        },
+        {
+          "id": "q_st76_4",
+          "question": "If 4(x - 1) = 20, then x equals:",
+          "options": ["4", "5", "6", "24"],
+          "correctIndex": 2,
+          "explanation": "Divide by 4: x - 1 = 5 → x = 6."
+        },
+        {
+          "id": "q_st76_5",
+          "question": "Which value satisfies 3x + 4 = 19?",
+          "options": ["3", "4", "5", "6"],
+          "correctIndex": 2,
+          "explanation": "3x = 15 → x = 5."
         }
       ]
     },
@@ -4608,6 +4776,34 @@
           "options": ["15%", "30%", "65%", "130%"],
           "correctIndex": 1,
           "explanation": "Change is 15; 15/50 = 0.30 → 30%."
+        },
+        {
+          "id": "q_st77_2",
+          "question": "A $80 item is discounted 25%. The sale price is:",
+          "options": ["$20", "$55", "$60", "$65"],
+          "correctIndex": 2,
+          "explanation": "25% of 80 is 20; 80 - 20 = $60."
+        },
+        {
+          "id": "q_st77_3",
+          "question": "What percent of 200 is 50?",
+          "options": ["20%", "25%", "40%", "50%"],
+          "correctIndex": 1,
+          "explanation": "50/200 = 0.25 → 25%."
+        },
+        {
+          "id": "q_st77_4",
+          "question": "A population grows from 1,000 to 1,150. The percent increase is:",
+          "options": ["15%", "50%", "115%", "150%"],
+          "correctIndex": 0,
+          "explanation": "Change 150; 150/1000 = 0.15 → 15%."
+        },
+        {
+          "id": "q_st77_5",
+          "question": "After a 10% tax on a $40 purchase, the total is:",
+          "options": ["$4", "$44", "$50", "$36"],
+          "correctIndex": 1,
+          "explanation": "10% of 40 is 4; total 40 + 4 = $44."
         }
       ]
     },
@@ -4649,6 +4845,54 @@
           ],
           "correctIndex": 1,
           "explanation": "A semicolon can link two independent clauses without a conjunction."
+        },
+        {
+          "id": "q_st78_2",
+          "question": "Which sentence is a comma splice?",
+          "options": [
+            "It rained, so we stayed inside.",
+            "It rained, we stayed inside.",
+            "It rained; we stayed inside.",
+            "Because it rained, we stayed inside."
+          ],
+          "correctIndex": 1,
+          "explanation": "Two independent clauses joined only by a comma is a comma splice."
+        },
+        {
+          "id": "q_st78_3",
+          "question": "Which revision fixes a run-on?",
+          "options": [
+            "The bell rang the class ended.",
+            "The bell rang, the class ended.",
+            "The bell rang, and the class ended.",
+            "The bell rang; and the class ended."
+          ],
+          "correctIndex": 2,
+          "explanation": "A comma plus coordinating conjunction correctly joins two independent clauses."
+        },
+        {
+          "id": "q_st78_4",
+          "question": "A semicolon is appropriate when:",
+          "options": [
+            "Joining a phrase and a fragment",
+            "Linking two closely related independent clauses",
+            "Separating items in a simple list of words",
+            "Ending any introductory phrase"
+          ],
+          "correctIndex": 1,
+          "explanation": "Semicolons join independent clauses that could stand as sentences."
+        },
+        {
+          "id": "q_st78_5",
+          "question": "Which uses a colon correctly?",
+          "options": [
+            "She brought: apples and oranges.",
+            "She brought three items: apples, oranges, and bread.",
+            "She: brought apples.",
+            "She brought apples: and oranges."
+          ],
+          "correctIndex": 1,
+          "explanation": "A colon can introduce a list after a complete independent clause."
         }
       ]
     },
@@ -4685,6 +4929,34 @@
           "options": ["Similarly", "By contrast", "For example", "Therefore"],
           "correctIndex": 1,
           "explanation": "By contrast signals opposition between the two designs."
+        },
+        {
+          "id": "q_st79_2",
+          "question": "The team finished early; _____, they reviewed every checklist item.",
+          "options": ["However", "Therefore", "Nevertheless", "By contrast"],
+          "correctIndex": 1,
+          "explanation": "Therefore shows that reviewing followed logically from finishing early."
+        },
+        {
+          "id": "q_st79_3",
+          "question": "She practiced daily. _____, her performance improved steadily.",
+          "options": ["For instance", "As a result", "In contrast", "On the other hand"],
+          "correctIndex": 1,
+          "explanation": "As a result links cause (practice) to effect (improvement)."
+        },
+        {
+          "id": "q_st79_4",
+          "question": "The data were incomplete. _____, the committee postponed the vote.",
+          "options": ["Similarly", "Consequently", "Likewise", "For example"],
+          "correctIndex": 1,
+          "explanation": "Consequently signals that postponing followed from incomplete data."
+        },
+        {
+          "id": "q_st79_5",
+          "question": "Many students prefer online notes; _____, others still print every page.",
+          "options": ["Therefore", "However", "Thus", "As a result"],
+          "correctIndex": 1,
+          "explanation": "However introduces contrast between two groups' preferences."
         }
       ]
     },
@@ -4721,6 +4993,34 @@
           "options": ["x = 3 only", "x = -3 only", "x = 3 or x = -3", "x = 9"],
           "correctIndex": 2,
           "explanation": "Difference of squares: (x - 3)(x + 3) = 0."
+        },
+        {
+          "id": "q_st80_2",
+          "question": "The solutions to x^2 - 5x + 6 = 0 are:",
+          "options": ["x = 2 or x = 3", "x = -2 or x = -3", "x = 1 or x = 6", "x = 5 only"],
+          "correctIndex": 0,
+          "explanation": "Factor: (x - 2)(x - 3) = 0 → x = 2 or x = 3."
+        },
+        {
+          "id": "q_st80_3",
+          "question": "The vertex of y = (x - 1)^2 + 4 is at:",
+          "options": ["(1, 4)", "(-1, 4)", "(1, -4)", "(4, 1)"],
+          "correctIndex": 0,
+          "explanation": "Vertex form y = a(x - h)^2 + k has vertex (h, k) = (1, 4)."
+        },
+        {
+          "id": "q_st80_4",
+          "question": "If (x + 2)^2 = 16, then x equals:",
+          "options": ["2 or -6", "4 or -4", "6 or -2", "8 only"],
+          "correctIndex": 0,
+          "explanation": "x + 2 = ±4 → x = 2 or x = -6."
+        },
+        {
+          "id": "q_st80_5",
+          "question": "How many real solutions does x^2 + 1 = 0 have?",
+          "options": ["0", "1", "2", "Infinitely many"],
+          "correctIndex": 0,
+          "explanation": "x^2 = -1 has no real solutions."
         }
       ]
     }

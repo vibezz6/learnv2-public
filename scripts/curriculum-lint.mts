@@ -33,6 +33,12 @@ function isSatLightDrill(subjectId: string, nodeId: string): boolean {
   return subjectId === "sat-prep" && /^st(7[6-9]|80)$/.test(nodeId);
 }
 
+function countSatMcQuiz(node: { quiz?: Array<{ type?: string; options?: string[] }> }): number {
+  return (node.quiz ?? []).filter(
+    (q) => (q.type ?? "multiple-choice") === "multiple-choice" && (q.options?.length ?? 0) >= 2,
+  ).length;
+}
+
 function hasValidResourceUrl(url: string): boolean {
   return url.startsWith("/") || /^https?:\/\//.test(url);
 }
@@ -76,6 +82,12 @@ for (let i = 0; i < manifest.length; i++) {
     if (!isSatLightDrill(entry.id, node.id) && entry.id !== "sat-prep") {
       if ((node.workedExamples ?? []).length < 1) {
         fail(`${entry.id}: node ${node.id} needs a worked example`);
+      }
+    }
+    if (isSatLightDrill(entry.id, node.id)) {
+      const mc = countSatMcQuiz(node);
+      if (mc < 5) {
+        fail(`${entry.id}: gap drill ${node.id} needs at least 5 MC questions (has ${mc})`);
       }
     }
     if (seen.has(node.id)) fail(`${entry.id}: duplicate node id ${node.id}`);

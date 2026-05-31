@@ -13,8 +13,8 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01-B42 done.** Last session: 2026-05-31 (Vercel observability).
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Green: **324** unit tests + **8** e2e, lint 0 warnings, `npm run doctor` clean. Version **v2.6.0**.
+> **B01-B47 done.** Last session: 2026-05-31 (B43–B47 SAT coverage, diagnostics, mobile strip, changelog).
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Green: **328** unit tests + **8** e2e, lint 0 warnings, `npm run doctor` + `npm run sat:coverage:strict` clean. Version **v2.6.2**.
 > Next session: pick from "Future ideas" below, or open new batches as needed.
 
 Update this line at the end of every session.
@@ -75,6 +75,7 @@ npm install      # ensure deps present (use `npm ci` for a clean install)
 npm run lint     # expect 0 errors (a few exhaustive-deps warnings are pre-existing)
 npm test         # expect all suites green
 npm run build    # expect a clean production build
+npm run sat:coverage:strict   # all SAT content skills + gap drills >= 5 MC
 npm run dev      # smoke test http://127.0.0.1:8080, then stop
 ```
 
@@ -289,19 +290,24 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 - [x] **B40** — skill mastery command center on SAT hub (`#skills`) + app version on Today footer / Settings / StatusBar.
 - [x] **B41** — drill any skill (`/sat/drill?skill=`) from mastery rows + weakest-skill hero chip.
 - [x] **B42** — Vercel Web Analytics + Speed Insights (prod-only SDK, SPA `route` for vitals, study custom events).
+- [x] **B43a** — `npm run sat:coverage` / `sat:coverage:strict`; [`src/lib/satSkillCoverage.ts`](src/lib/satSkillCoverage.ts); gap-drill lint ≥5 MC.
+- [x] **B43b–c** — SAT MC bank: all 21 teachable skills ≥5; st76–st80 gap drills ×5 each (v2.6.1 → 2.6.2).
+- [x] **B44** — Pretest `skillId` + canonical breakdown; D1=24, D2=16, D3 retest bank; [`satPretestDraft1Extra.ts`](src/data/satPretestDraft1Extra.ts), [`satPretestDraft3.ts`](src/data/satPretestDraft3.ts).
+- [x] **B45** — [`MobileStudyStrip`](src/components/MobileStudyStrip.tsx) in AppShell (mobile streak / minimum / SAT countdown).
+- [x] **B46** — [`CHANGELOG.md`](CHANGELOG.md) + README link; version bump script sync documented.
+- [x] **B47** — A11y pass: mobile strip `aria-label`s; native skill `Select` in mistake log; periodic Lighthouse/axe noted in health check.
 
 ## Future ideas (optional — open new batches when you want them)
 
-- **Author more SAT questions per skill** — 17 single-question nodes + gap drills st76-st80; target >=5 MC items per teachable skill so drills/Daily 5 have real variety (skills live in `src/lib/satSkills.ts`; matching already prefers same-skill questions and flags thin coverage).
-- **Deepen diagnostics** — expand Draft 1/2/3 (`src/data/satPretestDraft1.ts`, `satPretestDrafts.ts`) to ~20-30 section-representative items and align their `skill` strings to the `SatSkillId` taxonomy.
-- **Compact mobile status row** — StatusBar is desktop-only; the Today minimum strip is the phone accountability surface. Optionally add a slim mobile status line.
-- **CHANGELOG + git release tags** — now that versioning is synced at 2.6.0.
-- **Periodic a11y audit** — run axe/Lighthouse occasionally; wire any remaining custom lists to roving-tabindex like the onboarding options.
+- **More SAT question variety** — skills meet ≥5 MC; add harder/alternate stems per skill for drill rotation.
+- **Draft 3 unique stems** — today D3 mirrors D1 items with new ids; author fresh retest prompts later.
+- **Periodic a11y audit** — run axe/Lighthouse on `/`, `/sat/drill`, ⌘K each release.
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-31 — B43–B47 — SAT coverage + diagnostics + mobile strip. `sat:coverage:strict` green (21 skills ≥5 MC; st76–st80 ×5). Expanded sat-prep.json (+~50 MC). Pretest: skillId scoring, D1=24, D2=16, D3 bank. MobileStudyStrip. CHANGELOG.md. v2.6.2. 328 unit tests + 8 e2e, doctor green.
 - 2026-05-31 — B42 — Vercel Analytics + Speed Insights: `@vercel/analytics` + `@vercel/speed-insights`, `VercelObservability` in `App.tsx`, `trackStudyEvent` for Daily 5 / drill / minimum met / backup export. Deploy `822675c` READY on production. 324 unit tests, doctor green.
 - 2026-05-30 — B41 — Drill any skill: `skillTargetSummary`, `?skill=` on `SatDrillPage`, per-row Drill on mastery, weakest chip on SAT hero. 321 unit tests + 8 e2e green.
 - 2026-05-30 — B40 — Skill mastery section + version surfacing (`formatAppVersion` on Today/Settings/StatusBar). 318 unit tests green.

@@ -1,15 +1,19 @@
 import type { SatPretestQuestion } from "@/lib/satPretest";
+import { satPretestDraft2ExtraQuestions } from "@/data/satPretestDraft2Extra";
 
-export const SAT_PRETEST_DRAFT_2_ID = "draft-2";
+import { SAT_PRETEST_DRAFT_2_ID } from "@/data/satPretestDrafts";
+
+export { SAT_PRETEST_DRAFT_2_ID };
 
 /** Targeted follow-up items — same skills as Draft 1, different stems. */
-export const satPretestDraft2Questions: SatPretestQuestion[] = [
+const satPretestDraft2CoreQuestions: SatPretestQuestion[] = [
   {
     id: "draft2-math-linear-1",
     draftId: SAT_PRETEST_DRAFT_2_ID,
     section: "math",
     domain: "Algebra",
     skill: "Linear equations",
+    skillId: "linear-equations",
     difficulty: "medium",
     prompt: "If 5x + 12 = 2x + 27, what is x?",
     choices: [
@@ -27,7 +31,8 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_2_ID,
     section: "math",
     domain: "Problem Solving and Data Analysis",
-    skill: "Percent change",
+    skill: "Ratios, percentages & proportions",
+    skillId: "ratios-percentages",
     difficulty: "medium",
     prompt: "A store marks a $60 item down by 25%. What is the sale price?",
     choices: [
@@ -45,7 +50,8 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_2_ID,
     section: "math",
     domain: "Advanced Math",
-    skill: "Quadratics",
+    skill: "Quadratics & factoring",
+    skillId: "quadratics",
     difficulty: "hard",
     prompt: "What are the solutions to x^2 - 5x + 6 = 0?",
     choices: [
@@ -63,7 +69,8 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     draftId: SAT_PRETEST_DRAFT_2_ID,
     section: "rw",
     domain: "Standard English Conventions",
-    skill: "Sentence boundaries",
+    skill: "Sentence boundaries & punctuation",
+    skillId: "sentence-boundaries",
     difficulty: "medium",
     prompt: "Choose the best revision: 'The trial ended early, the results were inconclusive.'",
     choices: [
@@ -82,6 +89,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Expression of Ideas",
     skill: "Transitions",
+    skillId: "transitions",
     difficulty: "medium",
     prompt: "The first sample was noisy. _____, the second sample was clean enough to analyze.",
     choices: [
@@ -100,6 +108,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Information and Ideas",
     skill: "Inference",
+    skillId: "inference",
     difficulty: "medium",
     prompt:
       "A memo says ticket sales rose after the band announced a smaller venue. What is the best inference?",
@@ -119,6 +128,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Craft and Structure",
     skill: "Words in context",
+    skillId: "words-in-context",
     difficulty: "easy",
     prompt: "In context, 'The critic's review was scathing' means the review was:",
     choices: [
@@ -137,6 +147,7 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     section: "rw",
     domain: "Expression of Ideas",
     skill: "Rhetorical synthesis",
+    skillId: "rhetorical-synthesis",
     difficulty: "medium",
     prompt: "A writer wants to add a sentence that contrasts two studies. Which transition fits?",
     choices: [
@@ -149,4 +160,9 @@ export const satPretestDraft2Questions: SatPretestQuestion[] = [
     explanation: "In contrast introduces opposing findings.",
     relatedNodeIds: ["st33"],
   },
+];
+
+export const satPretestDraft2Questions: SatPretestQuestion[] = [
+  ...satPretestDraft2CoreQuestions,
+  ...satPretestDraft2ExtraQuestions,
 ];

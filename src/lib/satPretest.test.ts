@@ -22,9 +22,11 @@ import {
   parseSatPretestExportRestoreJson,
   resetSatPretestDraft,
   restoreSatPretestFromExport,
+  resolvePretestQuestionSkill,
   startSatPretestAttempt,
   type SatPretestQuestion,
 } from "@/lib/satPretest";
+import { satPretestDraft1Questions } from "@/data/satPretestDraft1";
 
 function mockLocalStorage(): Storage {
   const map = new Map<string, string>();
@@ -47,6 +49,7 @@ const questions: SatPretestQuestion[] = [
     section: "math",
     domain: "Algebra",
     skill: "Linear equations",
+    skillId: "linear-equations",
     difficulty: "easy",
     prompt: "Solve 2x + 3 = 11.",
     choices: [
@@ -64,7 +67,8 @@ const questions: SatPretestQuestion[] = [
     draftId: "draft-1",
     section: "rw",
     domain: "Standard English Conventions",
-    skill: "Sentence boundaries",
+    skill: "Sentence boundaries & punctuation",
+    skillId: "sentence-boundaries",
     difficulty: "medium",
     prompt: "Choose the option that correctly joins the clauses.",
     choices: [
@@ -220,7 +224,13 @@ describe("satPretest", () => {
       { key: "rw", label: "Reading & Writing", correct: 0, total: 1, pct: 0 },
     ]);
     expect(summary.weakSkills).toEqual([
-      { key: "Sentence boundaries", label: "Sentence boundaries", correct: 0, total: 1, pct: 0 },
+      {
+        key: "sentence-boundaries",
+        label: "Sentence boundaries & punctuation",
+        correct: 0,
+        total: 1,
+        pct: 0,
+      },
     ]);
   });
 
@@ -489,6 +499,48 @@ describe("satPretest", () => {
 
   it("rejects invalid export restore JSON", () => {
     expect(parseSatPretestExportRestoreJson("{}").ok).toBe(false);
+  });
+
+  it("draft 1 bank has 24 items with canonical skill ids", () => {
+    expect(satPretestDraft1Questions).toHaveLength(24);
+    expect(satPretestDraft1Questions.filter((q) => q.section === "math")).toHaveLength(12);
+    for (const question of satPretestDraft1Questions) {
+      expect(resolvePretestQuestionSkill(question).skillId).toBeTruthy();
+    }
+  });
+
+  it("merges skill breakdown by canonical skill id", () => {
+    const mergedQuestions: SatPretestQuestion[] = [
+      {
+        ...questions[0],
+        id: "merge-a",
+        skill: "Linear equations",
+        skillId: "linear-equations",
+      },
+      {
+        ...questions[0],
+        id: "merge-b",
+        skill: "Old label text",
+        skillId: "linear-equations",
+      },
+    ];
+    const attempt = startSatPretestAttempt("draft-1", mergedQuestions, storage)!;
+    for (const q of mergedQuestions) {
+      recordSatPretestResponse(
+        {
+          attemptId: attempt.id,
+          questionId: q.id,
+          selectedChoiceId: q.correctChoiceId,
+          rationale: "ok",
+          timeSpentSeconds: 10,
+        },
+        mergedQuestions,
+        storage,
+      );
+    }
+    const done = completeSatPretestAttempt(attempt.id, mergedQuestions, storage)!;
+    const row = done!.scoreSummary!.skillBreakdown.find((r) => r.label === "Linear equations");
+    expect(row?.total).toBe(2);
   });
 
   it("includes Draft 3 retest in transcript when completed", () => {

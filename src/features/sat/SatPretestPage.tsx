@@ -33,6 +33,7 @@ import {
   getSatPretestDraftLabel,
   isSatPretestFollowUpDraft,
 } from "@/data/satPretestDrafts";
+import { satPretestDraft3Questions } from "@/data/satPretestDraft3";
 import {
   loadImportedDraft2Questions,
   saveImportedDraft2Questions,
@@ -86,7 +87,7 @@ function resolveQuestionBank(
   }
   if (attempt.draftId === SAT_PRETEST_DRAFT_3_ID) {
     return attempt.questionOrder
-      .map((id) => satPretestDraft1Questions.find((question) => question.id === id))
+      .map((id) => satPretestDraft3Questions.find((question) => question.id === id))
       .filter((question): question is SatPretestQuestion => !!question);
   }
   const pool = [...satPretestDraft2Questions, ...importedDraft2];
@@ -193,7 +194,7 @@ export function SatPretestPage() {
     }
     const nextAttempt = startSatPretestAttempt(
       SAT_PRETEST_DRAFT_3_ID,
-      satPretestDraft1Questions,
+      satPretestDraft3Questions,
       localStorage,
       { compareDraftId: SAT_PRETEST_DRAFT_1_ID },
     );
@@ -328,9 +329,11 @@ export function SatPretestPage() {
           mathCount={sectionCounts.math}
           rwCount={sectionCounts.rw}
           total={
-            viewDraftId === SAT_PRETEST_DRAFT_1_ID || viewDraftId === SAT_PRETEST_DRAFT_3_ID
+            viewDraftId === SAT_PRETEST_DRAFT_1_ID
               ? satPretestDraft1Questions.length
-              : satPretestDraft2Questions.length
+              : viewDraftId === SAT_PRETEST_DRAFT_3_ID
+                ? satPretestDraft3Questions.length
+                : satPretestDraft2Questions.length
           }
           draftKind={viewDraftConfig?.kind ?? "baseline"}
           draft1Done={!!draft1Completed}

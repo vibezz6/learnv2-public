@@ -1,5 +1,6 @@
 import type { SatLessonPlanEntry } from "@/lib/satLessonPlan";
 import { recordStudyActivity } from "@/lib/studyActivity";
+import { getSkillMeta, resolveSkillId, type SatSkillId } from "@/lib/satSkills";
 
 export const SAT_PRETEST_STORAGE_KEY = "learnv2_sat_pretest_v1";
 export const SAT_PRETEST_SCHEMA_VERSION = 1;
@@ -19,6 +20,8 @@ export interface SatPretestQuestion {
   section: SatPretestSection;
   domain: string;
   skill: string;
+  /** Canonical skill for mastery/drill alignment; `skill` stays human-readable. */
+  skillId?: SatSkillId;
   difficulty: SatPretestDifficulty;
   prompt: string;
   choices: SatPretestChoice[];
@@ -234,6 +237,22 @@ function uniqueStrings(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))];
 }
 
+export function resolvePretestQuestionSkill(question: SatPretestQuestion): {
+  key: string;
+  label: string;
+  skillId: SatSkillId | null;
+} {
+  if (question.skillId) {
+    const label = getSkillMeta(question.skillId).label;
+    return { key: question.skillId, label, skillId: question.skillId };
+  }
+  const skillId = resolveSkillId(question.skill);
+  if (skillId) {
+    return { key: skillId, label: getSkillMeta(skillId).label, skillId };
+  }
+  return { key: question.skill.trim().toLowerCase(), label: question.skill, skillId: null };
+}
+
 export function loadSatPretestState(storage: Storage = localStorage): SatPretestState {
   return loadRaw(storage);
 }
@@ -371,14 +390,15 @@ export function buildSatPretestScoreSummary(
     section.total += 1;
     sections.set(question.section, section);
 
-    const skill = skills.get(question.skill) ?? {
-      label: question.skill,
+    const resolved = resolvePretestQuestionSkill(question);
+    const skill = skills.get(resolved.key) ?? {
+      label: resolved.label,
       correct: 0,
       total: 0,
     };
     skill.correct += isCorrect ? 1 : 0;
     skill.total += 1;
-    skills.set(question.skill, skill);
+    skills.set(resolved.key, skill);
 
     if (!isCorrect) {
       recommendedNodeIds.push(...(question.relatedNodeIds ?? []));

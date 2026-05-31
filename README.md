@@ -166,6 +166,12 @@ npm run test:watch
 npm run lint
 npm run curriculum:split
 npm run version:bump
+npm run sat:coverage
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes. `npm run version:bump` syncs `package.json`, `src/lib/version.ts`, and the PWA service worker cache name.
+
+```bash
 node ~/cursor/scripts/audit-curriculum.mjs
 ```
 
