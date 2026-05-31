@@ -5,10 +5,12 @@ import { ROUTES } from "@/app/navigation";
 import { Button, Card } from "@/components/ui";
 import {
   DRILL_QUEUE_TODAY_SNOOZE_ID,
+  isCollegeBlockingWeek,
   shouldShowDrillQueueTodayCard,
 } from "@/lib/drillQueueToday";
-import { getDrillQueue } from "@/lib/satDrillQueue";
-import { snoozeNudge } from "@/lib/nudgeSnooze";
+import { isSatTestDatePast } from "@/lib/satCountdown";
+import { getDrillCooldownRows, getDrillQueue } from "@/lib/satDrillQueue";
+import { isNudgeSnoozed, loadNudgeSnooze, snoozeNudge } from "@/lib/nudgeSnooze";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 
 function formatRecency(latestAt: number, now: number): string {
@@ -32,7 +34,32 @@ export function DrillQueueTodayCard() {
     return getDrillQueue(1)[0];
   }, [revision]);
 
-  if (!visible || !top) return null;
+  const coolingTop = useMemo(() => {
+    void revision;
+    return getDrillCooldownRows(1, localStorage, now)[0];
+  }, [revision, now]);
+
+  const canShowDrillNudge =
+    !isCollegeBlockingWeek(localStorage, new Date(now)) &&
+    !isSatTestDatePast(localStorage) &&
+    !isNudgeSnoozed(DRILL_QUEUE_TODAY_SNOOZE_ID, loadNudgeSnooze(localStorage), now);
+
+  if (!visible && !(canShowDrillNudge && !top && coolingTop)) return null;
+
+  if (!top && coolingTop && canShowDrillNudge) {
+    return (
+      <Card variant="default" density="normal" className="min-w-0" role="status">
+        <p className="text-sm text-[var(--text-muted)]">
+          Top drill skill is on cooldown ({coolingTop.label}). See the SAT hub for when it returns.
+        </p>
+        <Link to={ROUTES.sat} className="mt-2 inline-flex text-sm font-medium text-[var(--accent)] hover:underline">
+          Open SAT hub
+        </Link>
+      </Card>
+    );
+  }
+
+  if (!top) return null;
 
   const handleSnooze = () => {
     snoozeNudge(DRILL_QUEUE_TODAY_SNOOZE_ID, 1);

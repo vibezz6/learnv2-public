@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { addMistake } from "./satMistakeLog";
-import { getDrillQueue, markSkillDrilled } from "./satDrillQueue";
+import { getDrillCooldownRows, getDrillQueue, markSkillDrilled } from "./satDrillQueue";
 
 function mockStorage(): Storage {
   const map = new Map<string, string>();
@@ -44,5 +44,16 @@ describe("satDrillQueue", () => {
     markSkillDrilled("linear-equations", storage, now);
     expect(getDrillQueue(5, storage, now + 1000)).toHaveLength(0);
     expect(getDrillQueue(5, storage, now + 49 * 60 * 60 * 1000)).toHaveLength(1);
+  });
+
+  it("getDrillCooldownRows lists cooled skills with hours remaining", () => {
+    const now = 1_000_000;
+    addMistake({ section: "math", category: "Linear equations", skillId: "linear-equations", note: "a" }, storage);
+    markSkillDrilled("linear-equations", storage, now);
+    const cooled = getDrillCooldownRows(3, storage, now + 60 * 60 * 1000);
+    expect(cooled).toHaveLength(1);
+    expect(cooled[0]?.skillId).toBe("linear-equations");
+    expect(cooled[0]?.hoursLeft).toBeGreaterThan(0);
+    expect(getDrillCooldownRows(3, storage, now + 49 * 60 * 60 * 1000)).toHaveLength(0);
   });
 });

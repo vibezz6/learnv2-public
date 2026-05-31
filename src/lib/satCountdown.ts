@@ -1,3 +1,4 @@
+import { V2_PREFERENCES_KEY } from "@/lib/storageRegistry";
 import { getToday } from "@/stores/progress";
 
 export interface SatCountdown {
@@ -21,6 +22,25 @@ export function getSatCountdown(
   if (Number.isNaN(target) || Number.isNaN(start)) return null;
   const daysUntil = Math.round((target - start) / 86_400_000);
   return { date: satTestDate, daysUntil, past: daysUntil < 0 };
+}
+
+export function readSatTestDate(storage: Storage = localStorage): string | null {
+  try {
+    const raw = storage.getItem(V2_PREFERENCES_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { state?: { satTestDate?: string | null } };
+    const date = parsed.state?.satTestDate;
+    return date && String(date).trim() ? String(date).trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+export function isSatTestDatePast(
+  storage: Storage = localStorage,
+  today: string = getToday(),
+): boolean {
+  return getSatCountdown(readSatTestDate(storage), today)?.past === true;
 }
 
 export function formatCountdownLabel(countdown: SatCountdown | null): string {

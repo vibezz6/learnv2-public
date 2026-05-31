@@ -2,6 +2,7 @@ import { ROUTES } from "@/app/navigation";
 import { getSatNextLesson, type NodeStatus } from "@/lib/campusHome";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { shouldShowDrillQueueTodayCard } from "@/lib/drillQueueToday";
+import { isSatTestDatePast } from "@/lib/satCountdown";
 import { isDailySatQuizDone } from "@/lib/satDailyQuiz";
 import { getDrillQueue } from "@/lib/satDrillQueue";
 import type { SatDailyStudyCommand } from "@/lib/satDailyStudy";
@@ -36,6 +37,7 @@ export function getTodayHeroPresentation(input: TodayHeroInput): TodayHeroPresen
 
   if (study.kind === "college_blocking") return null;
   if (!isDailySatQuizDone(undefined, storage)) return null;
+  if (isSatTestDatePast(storage)) return null;
 
   if (shouldShowDrillQueueTodayCard(storage)) {
     const top = getDrillQueue(1, storage)[0];

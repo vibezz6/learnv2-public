@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Flame, Target } from "lucide-react";
 import { ROUTES } from "@/app/navigation";
 import { Button, Modal, Tag } from "@/components/ui";
+import { getCollegeSessionNextSteps, isCollegeFocusHref } from "@/lib/collegeFocus";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { getDrillQueue } from "@/lib/satDrillQueue";
 import { isSatFocusHref } from "@/lib/todayHero";
@@ -17,7 +18,12 @@ export function SessionCompleteModal() {
   const navigate = useNavigate();
 
   const satSession = summary ? isSatFocusHref(summary.href) : false;
+  const collegeSession = summary ? isCollegeFocusHref(summary.href) : false;
   const drillTop = useMemo(() => (satSession ? getDrillQueue(1)[0] : undefined), [satSession]);
+  const collegeSteps = useMemo(
+    () => (summary && collegeSession ? getCollegeSessionNextSteps(summary.href) : []),
+    [summary, collegeSession],
+  );
 
   if (!summary) return null;
 
@@ -108,6 +114,27 @@ export function SessionCompleteModal() {
                 Drill {drillTop.label}
               </Button>
             ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      {collegeSession ? (
+        <div className="mt-4 space-y-2 border-t border-[var(--rule)] pt-4">
+          <p className="eyebrow-mono">What&apos;s next</p>
+          <div className="flex flex-wrap gap-2">
+            {collegeSteps.map((step) => (
+              <Button
+                key={step.href}
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  dismissSummary();
+                  navigate(step.href);
+                }}
+              >
+                {step.label}
+              </Button>
+            ))}
           </div>
         </div>
       ) : null}

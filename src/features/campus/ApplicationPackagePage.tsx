@@ -53,6 +53,12 @@ function deadlineTagTone(
   return "accent";
 }
 
+function formatSubmittedDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso.slice(0, 10);
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
 export function ApplicationPackagePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -89,6 +95,8 @@ export function ApplicationPackagePage() {
     void revision;
     return college ? findCollegeByName(college) : undefined;
   }, [college, revision]);
+
+  const isSubmitted = Boolean(registryEntry?.submittedAt);
 
   const registryNotesLabel = useMemo(() => {
     const notes = registryEntry?.notes?.trim();
@@ -193,15 +201,17 @@ export function ApplicationPackagePage() {
                 {registryNotesLabel.short}
               </Tag>
             ) : null}
-            <Tag
-              tone={deadlineTagTone(pkg.deadline.tone)}
-              size="sm"
-              className="inline-flex items-center gap-1"
-              aria-label={formatPackageDeadlineAriaLabel(pkg.deadline)}
-            >
-              <CalendarClock size={12} aria-hidden />
-              {pkg.deadline.label}
-            </Tag>
+            {!isSubmitted ? (
+              <Tag
+                tone={deadlineTagTone(pkg.deadline.tone)}
+                size="sm"
+                className="inline-flex items-center gap-1"
+                aria-label={formatPackageDeadlineAriaLabel(pkg.deadline)}
+              >
+                <CalendarClock size={12} aria-hidden />
+                {pkg.deadline.label}
+              </Tag>
+            ) : null}
             {registryEntry && !registryEntry.submittedAt ? (
               <Button
                 size="sm"
@@ -222,7 +232,22 @@ export function ApplicationPackagePage() {
           </div>
         </div>
 
-        {pkg.doThisFirst ? (
+        {isSubmitted && registryEntry?.submittedAt ? (
+          <div
+            className="rounded-[var(--radius-md)] border border-[var(--success-border)] bg-[var(--success-bg)] px-4 py-3"
+            role="status"
+          >
+            <p className="text-sm font-semibold text-[var(--text-heading)]">
+              Application submitted
+            </p>
+            <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+              Marked complete on {formatSubmittedDate(registryEntry.submittedAt)}. Essays and
+              checklist stay editable for your records.
+            </p>
+          </div>
+        ) : null}
+
+        {pkg.doThisFirst && !isSubmitted ? (
           <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-panel)] px-4 py-3">
             <p className="text-xs font-mono uppercase tracking-wide text-[var(--text-muted)]">
               Do this first

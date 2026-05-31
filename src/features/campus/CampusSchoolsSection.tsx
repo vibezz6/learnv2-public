@@ -34,6 +34,11 @@ export function CampusSchoolsSection() {
     return listColleges(undefined, { includeArchived: showArchived });
   }, [revision, showArchived]);
 
+  const hasArchivedColleges = useMemo(() => {
+    void revision;
+    return listColleges(undefined, { includeArchived: true }).some((c) => c.archived);
+  }, [revision]);
+
   const refresh = useCallback(() => {
     setRevision((r) => r + 1);
   }, []);
@@ -85,7 +90,7 @@ export function CampusSchoolsSection() {
         </Card>
       ) : null}
 
-      {colleges.length > 0 ? (
+      {hasArchivedColleges ? (
         <label className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
           <input
             type="checkbox"

@@ -51,6 +51,15 @@ export function StorageHealthPanel() {
           </span>
         </div>
       ) : null}
+      {errors.length > 0 ? (
+        <div className="mb-3 flex items-start gap-2 rounded-[var(--radius)] border border-[var(--warning-border)] bg-[var(--warning-bg)] px-3 py-2 text-sm text-[var(--text)]">
+          <TriangleAlert size={15} className="mt-0.5 shrink-0 text-[var(--warning)]" aria-hidden />
+          <span>
+            {errors.length} localStorage key{errors.length === 1 ? "" : "s"} failed to parse.
+            Expand storage health below for details, or export a backup before clearing data.
+          </span>
+        </div>
+      ) : null}
       <details>
         <summary className="flex min-h-9 cursor-pointer items-center gap-2 list-none">
           <span className="eyebrow-mono">Storage health (local)</span>

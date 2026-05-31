@@ -5,7 +5,8 @@ Use **Plan or Discussion** in Anything (not Build). Attach screenshots of the re
 - **Phase 1 (done):** B61–B67 — application package, college registry, drill queue, palette, stats.
 - **Phase 2 (done):** B68–B73 — college-aware Today, registry notes, drill Today card, Daily 5 weighting, print summary, a11y.
 - **Phase 3 (done):** B74–B80 — study loop closure, package submit/archive, `readJsonSafe`, import confirm, mastery/drill links, SAT date sync, e2e.
-- **Phase 4 (next):** B81+ — copy the block below.
+- **Phase 4 (done):** B81–B86 — Cursor-planned §L (v2.9.0); cooldown, submitted package, college modal, post-SAT, e2e, backup UI.
+- **Phase 5 (next):** B87+ — copy the block below (or extend themes in Phase 4 block).
 
 After Anything answers, paste the full output in Cursor:
 

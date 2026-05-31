@@ -41,9 +41,11 @@ export function TodayMinimumStrip({ stats }: Props) {
               {minimum.met ? "Today's minimum is done" : "Today's minimum: one real study action"}
             </p>
             <p className="text-xs text-[var(--text-muted)]">
-              {minimum.met
-                ? `${minimum.actionsToday} action${minimum.actionsToday === 1 ? "" : "s"} logged — streak protected.`
-                : "Finish one SAT lesson, quiz, or mistake log to keep the chain alive."}
+              {countdown?.past
+                ? "SAT date passed — update your test date in Settings if you are retesting."
+                : minimum.met
+                  ? `${minimum.actionsToday} action${minimum.actionsToday === 1 ? "" : "s"} logged — streak protected.`
+                  : "Finish one SAT lesson, quiz, or mistake log to keep the chain alive."}
             </p>
           </div>
         </div>

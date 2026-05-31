@@ -1,5 +1,6 @@
 import { getBlockingApplicationItem } from "@/lib/admissionsSummary";
 import { isNudgeSnoozed, loadNudgeSnooze } from "@/lib/nudgeSnooze";
+import { isSatTestDatePast } from "@/lib/satCountdown";
 import { getDrillQueue } from "@/lib/satDrillQueue";
 
 export const DRILL_QUEUE_TODAY_SNOOZE_ID = "drill-queue-today";
@@ -16,6 +17,7 @@ export function shouldShowDrillQueueTodayCard(
   now = Date.now(),
 ): boolean {
   if (isCollegeBlockingWeek(storage, new Date(now))) return false;
+  if (isSatTestDatePast(storage)) return false;
 
   const snooze = loadNudgeSnooze(storage);
   if (isNudgeSnoozed(DRILL_QUEUE_TODAY_SNOOZE_ID, snooze, now)) return false;

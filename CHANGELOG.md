@@ -4,6 +4,20 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.9.0] - 2026-05-30
+
+### Added
+
+- **Drill cooldown rows** on SAT hub (`getDrillCooldownRows`) plus Today hint when the top skill is cooling.
+- **Submitted application** banner on package; hides do-this-first; college **session-complete** next-steps.
+- **Post-SAT** suppresses drill Today card and post–Daily-5 hero overlays when test date has passed.
+- Playwright **`e2e/b81-l.spec.ts`**: import confirm, submitted package, cooldown UI, good-shape hero, archive toggle.
+- Settings: persistent last-backup line; **storage parse errors** warning above storage health details.
+
+### Changed
+
+- [`collegeFocus.ts`](src/lib/collegeFocus.ts) for campus session-complete routing.
+
 ## [2.8.0] - 2026-05-30
 
 ### Added

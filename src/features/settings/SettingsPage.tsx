@@ -367,11 +367,15 @@ export function SettingsPage() {
                 Export now so a cleared browser can't wipe your progress.
               </span>
             </div>
-          ) : daysSinceBackup != null ? (
+          ) : (
             <p className="text-xs text-[var(--text-subtle)]">
-              Last backup: {daysSinceBackup === 0 ? "today" : `${daysSinceBackup} day${daysSinceBackup === 1 ? "" : "s"} ago`}.
+              {daysSinceBackup != null
+                ? `Last backup: ${daysSinceBackup === 0 ? "today" : `${daysSinceBackup} day${daysSinceBackup === 1 ? "" : "s"} ago`}.`
+                : hasProgress
+                  ? "No backup recorded on this device yet."
+                  : "Export after you have progress to save."}
             </p>
-          ) : null}
+          )}
           <p className="text-sm text-[var(--text-muted)]">
             Backup every localStorage key whose name starts with{" "}
             {BACKUP_STORAGE_PREFIXES.map((prefix, index) => (

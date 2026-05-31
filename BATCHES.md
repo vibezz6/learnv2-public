@@ -13,8 +13,8 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B80 done.** Last session: §K shipped (v2.8.0). Next: stretch MC / B81+ when planned.
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.8.0**.
+> **B01–B86 done.** Last session: §L shipped (v2.9.0).
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.9.0**.
 > **Anything workflow:** Phase 3 planner (B74+) in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); UI iteration loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
@@ -355,7 +355,7 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 - [x] **B76** — `readJsonSafe` + storage health panel; import overwrite confirmation.
 - [x] **B77** — Mastery table ↔ drill queue cross-links on SAT hub.
 - [x] **B78** — Stats mistake bars click-to-drill.
-- [x] **B79** — Playwright e2e: college block, drill cooldown, Daily 5, backup, ⌘K, print smoke.
+- [x] **B79** — Playwright e2e: college block, Daily 5 footnote, backup export, ⌘K, print smoke (drill cooldown e2e added in §L).
 
 **Verify §K:** B74 hero after Daily 5 → B75 package status + archive → B80 countdown sync → B76 corrupt JSON warning → B77/B78 drill links → B79 e2e green → `npm run doctor`.
 
@@ -365,15 +365,33 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ---
 
-## Future ideas (after B80)
+## L. Polish + loop closure (B81–B86)
 
-- **Stretch 10 MC/skill** — optional; run `sat:coverage:stretch` before authoring.
-- Next Anything planner pass for B81+ if needed.
+- [x] **B81** — Drill cooldown visible on SAT hub (and optional Today hint).
+- [x] **B82** — Submitted school package banner; hide do-this-first; soften deadline.
+- [x] **B83** — College focus session-complete next-steps.
+- [x] **B84** — Post-SAT soft suppress for drill nudges + copy.
+- [x] **B85** — Playwright e2e: import confirm, submitted package, cooldown, good shape, archive.
+- [x] **B86** — Settings last-backup line + storage errors warning banner.
+
+**Verify §L:** B81 cooled rows → B82 submitted package → B83 college modal → B84 past SAT date → B85 e2e green → B86 backup/errors UI → `npm run doctor`.
+
+**What NOT to do next:** Graduated drill cooldown; Draft 2 promotion; ED/EA/RD schema; print layout polish batch; study intent driving Daily 5; ~400 new SAT MCs; browser backup detection; perf/bundle batch; drill overrides college ≤7d.
+
+**PR checklist:** Preserves desktop-only / local-first / study-first?
+
+---
+
+## Future ideas (after B86)
+
+- **Stretch 10 MC/skill** — `sat:coverage:stretch` is green; defer bulk authoring.
+- Draft 3 retest nudge on SAT hub; print CSS polish; good-shape hero streak; campus essay-final ratio badge; PWA SW UX.
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-30 — B81–B86 — Drill cooldown visibility, submitted package polish, college session-complete, post-SAT suppress, e2e hardening, backup/errors UI. v2.9.0.
 - 2026-05-30 — B74–B80 — Study loop hero overlays, package essay status + submit/archive, `readJsonSafe` + import confirm, mastery/drill links, stats click-to-drill, SAT date sync, e2e extension. v2.8.0.
 - 2026-05-31 — B68–B73 — College-aware Today hero, registry notes, drill queue Today card, Daily 5 queue weighting, print summary, a11y sweep. v2.7.3.
 - 2026-05-31 — B62–B67 — College registry, week plan package links, drill queue, lock tooltips, palette actions, stats widgets. v2.7.2.
@@ -397,7 +415,7 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- Version is synced at **2.8.0** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
+- Version is synced at **2.9.0** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
 - Lint is at **0 warnings** (B31). The 4 former `exhaustive-deps` warnings were intentional cache-busters and are now documented with scoped `eslint-disable` + reason comments — do not "fix" them by removing the dep (that reintroduces stale UI).
 - Dialogs share the `Modal` shell (B34): Escape + backdrop + Tab focus trap + initial focus + focus restore. New dialogs should use `Modal` (or `useFocusTrap`) rather than hand-rolling an overlay.
 - Bottom-stack layering is governed by the `--z-*` tokens in `index.css` (B37); keep new fixed bottom elements on that scale.
