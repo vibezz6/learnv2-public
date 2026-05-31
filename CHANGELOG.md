@@ -4,6 +4,19 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.7.2] - 2026-05-31
+
+### Added
+
+- Campus **Application package** page (`/campus/application?college=…`) — per-college essays, shared checklist preview, do-this-first, deadline ladder.
+- **College schools registry** (`learnv2_colleges_v1`) — Campus grid, import from essays, deadlines wired into package view.
+- Week plan college rows link to application package (max 3; “+N more in Campus”).
+- SAT **drill queue** by skill with 48h mark-drilled cooldown (`drilledAt` on mistake entries).
+- **Lock tooltips** on skill tree and track lessons (`lockRules.ts`).
+- Command palette: log mistake, start focus session, open package per school.
+- Stats: top mistake category bars and 14-day study minutes chart.
+- [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md) and [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md) for Anything → Cursor batch workflow.
+
 ## [2.7.1] - 2026-05-31
 
 ### Added

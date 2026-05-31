@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./AppShell";
 import {
+  ApplicationPackagePage,
   BookmarksPage,
   CampusServicesPage,
   CollegeChecklistPage,
@@ -64,6 +65,7 @@ export function App() {
               <Route path="timer" element={<TimerPage />} />
               <Route path="campus" element={<CampusServicesPage />} />
               <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
+              <Route path="campus/application" element={<ApplicationPackagePage />} />
               <Route path="campus/essay-tracker" element={<EssayTrackerPage />} />
               <Route path="campus/calculators" element={<ToolsPage />} />
               <Route path="tools" element={<Navigate to="/campus" replace />} />

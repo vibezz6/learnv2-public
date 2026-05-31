@@ -13,8 +13,9 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B60 done.** Last session: B56–B60 college Today triage, gap follow-through, mistake queue, tests, release tag.
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.1**.
+> **B01–B67 done.** Last session: B62–B67 campus registry, week plan links, drill queue, lock tooltips, palette actions, stats widgets.
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.2**.
+> **Anything workflow:** Phase 1 planner prompt in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); Phase 3 UI loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
 Update this line at the end of every session.
@@ -317,18 +318,31 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 - [x] **B59** — Mistake log top categories: drill link, lesson link, latest date copy.
 - [x] **B60** — `satMicroDrills` rotation test + ⌘K → Daily 5 e2e.
 
+## I. Anything planner + campus package (B61–B67) — done
+
+- [x] **B61** — Application package page (`/campus/application?college=…`): college-grouped essays, shared checklist preview, do-this-first, links to full checklist/essays. Lib: [`applicationPackage.ts`](src/lib/applicationPackage.ts).
+- [x] **B62** — `learnv2_colleges_v1` registry + Campus “Your schools” grid + B61 school deadline wire ([`colleges.ts`](src/lib/colleges.ts), [`CampusSchoolsSection.tsx`](src/features/campus/CampusSchoolsSection.tsx)).
+- [x] **B63** — Week plan college rows link to application package (7d window, max 3, “+N more in Campus”).
+- [x] **B64** — SAT drill queue by skill + `drilledAt` cooldown + SAT hub section ([`satDrillQueue.ts`](src/lib/satDrillQueue.ts)).
+- [x] **B65** — Lock rules + tooltips on skill tree and track lessons ([`lockRules.ts`](src/lib/lockRules.ts)).
+- [x] **B66** — Command palette: log mistake, start focus, open application package per school.
+- [x] **B67** — Stats widgets: top mistake category bars + 14-day study minutes chart.
+
+**Verify B61–B67:** Campus schools grid → application package per school → Week plan college links → SAT drill queue mark drilled → locked lesson tooltip → ⌘K campus/SAT actions → Stats mistake/time widgets → `npm run doctor`.
+
 ---
 
-## Future ideas (after B60)
+## Future ideas (after B61)
 
-- **Application package per college** — group checklist + essays by school.
+- Refresh B62–B66 after pasting Anything multi-batch plan into Cursor (see `docs/anything-planner-prompt.md`).
 - **Stretch 10 MC/skill** — optional; run `sat:coverage:stretch` before authoring.
-- **Gap nodes** — only with evidence per [`docs/sat-gap-lesson-authoring.md`](docs/sat-gap-lesson-authoring.md).
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-31 — B62–B67 — College registry, week plan package links, drill queue, lock tooltips, palette actions, stats widgets. v2.7.2.
+- 2026-05-31 — B61 — Application package per college; Anything planner + UI iteration docs. v2.7.2.
 - 2026-05-31 — B56–B60 — College blocking on Today; gap lesson follow-up; mistake triage drill links; rotation test + ⌘K e2e; gh release v2.7.0. v2.7.1.
 - 2026-05-31 — B48–B55 — Desktop SAT: question rotation, 8 MC stretch bank, unique Draft 3, mastery D1/D3, ⌘K shortcuts, a11y checklist. v2.7.0.
 - 2026-05-31 — B43–B47 — SAT coverage + diagnostics + mobile strip. `sat:coverage:strict` green (21 skills ≥5 MC; st76–st80 ×5). Expanded sat-prep.json (+~50 MC). Pretest: skillId scoring, D1=24, D2=16, D3 bank. MobileStudyStrip. CHANGELOG.md. v2.6.2. 328 unit tests + 8 e2e, doctor green.
@@ -348,7 +362,7 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- Version is synced at **2.7.1** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
+- Version is synced at **2.7.2** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
 - Lint is at **0 warnings** (B31). The 4 former `exhaustive-deps` warnings were intentional cache-busters and are now documented with scoped `eslint-disable` + reason comments — do not "fix" them by removing the dep (that reintroduces stale UI).
 - Dialogs share the `Modal` shell (B34): Escape + backdrop + Tab focus trap + initial focus + focus restore. New dialogs should use `Modal` (or `useFocusTrap`) rather than hand-rolling an overlay.
 - Bottom-stack layering is governed by the `--z-*` tokens in `index.css` (B37); keep new fixed bottom elements on that scale.

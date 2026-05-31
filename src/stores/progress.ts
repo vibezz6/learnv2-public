@@ -19,6 +19,7 @@ import {
 } from "@/lib/storageRegistry";
 import { getLastActivity, recordStudyActivity } from "@/lib/studyActivity";
 import { canAccessReview, getSession } from "@/stores/noteSessions";
+import { isNodeLocked } from "@/lib/lockRules";
 import {
   mergeBookmarksFromV1,
   mergeLegacyNotes,
@@ -454,10 +455,7 @@ export const useProgress = create<ProgressState>()(
       getNodeStatus: (node) => {
         const prog = get().getNodeProgress(node.id);
         if (prog.completedAt) return "completed";
-        if (node.parentIds.length === 0) return "available";
-        return node.parentIds.every((pid) => get().getNodeProgress(pid).completedAt)
-          ? "available"
-          : "locked";
+        return isNodeLocked(node, get().getNodeProgress) ? "locked" : "available";
       },
 
       startNode: (nodeId) =>

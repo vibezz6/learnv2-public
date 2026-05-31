@@ -17,6 +17,7 @@ import { tracks } from "@/data/tracks";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { TrackDetailHeader } from "@/features/tracks/TrackDetailHeader";
 import { useProgress } from "@/stores/progress";
+import { getLockTooltip } from "@/lib/lockRules";
 import { cn } from "@/lib/cn";
 
 const trackIcons: Record<string, LucideIcon> = {
@@ -91,6 +92,7 @@ function getTrackStats(track: LearningTrack, subjects: Subject[], getNodeStatus:
 export function TracksPage() {
   const { trackId } = useParams();
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const getNodeProgress = useProgress((s) => s.getNodeProgress);
   const [subjects, setSubjects] = useState<Subject[]>([]);
 
   useEffect(() => {
@@ -156,11 +158,17 @@ export function TracksPage() {
             {lessons.map(({ index, subject, node }) => {
               const status = getNodeStatus(node);
               const locked = status === "locked";
+              const byId = new Map(subject.nodes.map((n) => [n.id, n]));
+              const lockHint = locked
+                ? getLockTooltip(node, getNodeProgress, (id) => byId.get(id)?.name ?? id)
+                : null;
               return (
                 <Link
                   key={`${subject.id}-${node.id}`}
                   to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
-                  className={locked ? "pointer-events-none" : ""}
+                  className={locked ? "cursor-not-allowed" : ""}
+                  title={lockHint ?? undefined}
+                  onClick={locked ? (e) => e.preventDefault() : undefined}
                 >
                   <Card
                     className={cn(

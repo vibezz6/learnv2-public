@@ -44,6 +44,11 @@ export const CollegeChecklistPage = lazy(() =>
     default: m.CollegeChecklistPage,
   })),
 );
+export const ApplicationPackagePage = lazy(() =>
+  import("@/features/campus/ApplicationPackagePage").then((m) => ({
+    default: m.ApplicationPackagePage,
+  })),
+);
 export const EssayTrackerPage = lazy(() =>
   import("@/features/college/EssayTrackerPage").then((m) => ({ default: m.EssayTrackerPage })),
 );

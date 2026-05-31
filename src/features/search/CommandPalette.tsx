@@ -20,6 +20,7 @@ import {
   Zap,
 } from "lucide-react";
 import { getUrgentCollegeDeadlines } from "@/lib/admissionsSummary";
+import { listColleges } from "@/lib/colleges";
 import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
@@ -43,6 +44,7 @@ import {
   scoreCommandMatch,
 } from "@/features/search/searchHelpers";
 import { usePreferences } from "@/stores/preferences";
+import { useFocusSession } from "@/stores/focusSession";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -81,6 +83,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
   const { setTheme } = usePreferences();
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const startFocusSession = useFocusSession((s) => s.startSession);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -286,6 +289,44 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         action: () => go(ROUTES.tradingLab, { id: "trading-lab", label: "Trading Lab" }),
       },
       {
+        id: "log-mistake",
+        label: "Log SAT mistake",
+        description: "Open mistake log",
+        section: "Actions",
+        icon: ClipboardList,
+        recentPath: ROUTES.satMistakes,
+        action: () => go(ROUTES.satMistakes, { id: "log-mistake", label: "Log SAT mistake" }),
+      },
+      {
+        id: "start-focus",
+        label: "Start focus session",
+        description: "Timer on SAT hub (no deep-focus chrome)",
+        section: "Actions",
+        icon: Target,
+        recentPath: ROUTES.sat,
+        action: () => {
+          startFocusSession({
+            label: "SAT focus",
+            href: ROUTES.sat,
+            focus: false,
+          });
+          go(ROUTES.sat, { id: "start-focus", label: "Start focus session" });
+        },
+      },
+      ...listColleges().map((college) => ({
+        id: `app-package-${college.id}`,
+        label: `Open application package — ${college.name}`,
+        description: college.deadline ? `Deadline ${college.deadline}` : "Campus school",
+        section: "Campus" as const,
+        icon: GraduationCap,
+        recentPath: `${ROUTES.applicationPackage}?college=${encodeURIComponent(college.name)}`,
+        action: () =>
+          go(`${ROUTES.applicationPackage}?college=${encodeURIComponent(college.name)}`, {
+            id: `app-package-${college.id}`,
+            label: `Application package — ${college.name}`,
+          }),
+      })),
+      {
         id: "sat-daily-5",
         label: "SAT Daily 5",
         description: "Today's five-question warm-up",
@@ -415,7 +456,18 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...actionItems,
       ...themeItems,
     ];
-  }, [subjects, go, setTheme, onClose, recentSearches, recentActions, fillQuery, satRecommended, urgentDeadlines]);
+  }, [
+    subjects,
+    go,
+    setTheme,
+    onClose,
+    recentSearches,
+    recentActions,
+    fillQuery,
+    satRecommended,
+    urgentDeadlines,
+    startFocusSession,
+  ]);
 
   const filtered = useMemo(() => {
     const q = query.trim();

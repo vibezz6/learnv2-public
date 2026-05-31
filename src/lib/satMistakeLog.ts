@@ -16,6 +16,8 @@ export interface SatMistakeEntry {
   nodeId?: string;
   note: string;
   createdAt: number;
+  /** When set, entry is hidden from drill queue for 48h after mark drilled. */
+  drilledAt?: number;
 }
 
 export interface AddMistakeInput {
@@ -65,7 +67,8 @@ function isValidEntry(value: unknown): value is SatMistakeEntry {
     typeof entry.note === "string" &&
     typeof entry.createdAt === "number" &&
     (entry.nodeId === undefined || typeof entry.nodeId === "string") &&
-    (entry.skillId === undefined || typeof entry.skillId === "string")
+    (entry.skillId === undefined || typeof entry.skillId === "string") &&
+    (entry.drilledAt === undefined || typeof entry.drilledAt === "number")
   );
 }
 
@@ -109,6 +112,23 @@ export function addMistake(
 
 export function listMistakes(storage: Storage = localStorage): SatMistakeEntry[] {
   return loadRaw(storage).sort((a, b) => b.createdAt - a.createdAt);
+}
+
+export function markMistakeDrilled(
+  id: string,
+  drilledAt = Date.now(),
+  storage: Storage = localStorage,
+): boolean {
+  const entries = loadRaw(storage);
+  let changed = false;
+  const next = entries.map((entry) => {
+    if (entry.id !== id) return entry;
+    changed = true;
+    return { ...entry, drilledAt };
+  });
+  if (!changed) return false;
+  saveRaw(next, storage);
+  return true;
 }
 
 export function deleteMistake(id: string, storage: Storage = localStorage): boolean {

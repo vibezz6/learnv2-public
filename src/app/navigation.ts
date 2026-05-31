@@ -17,6 +17,7 @@ export const ROUTES = {
   sat: "/subjects/sat-prep",
   college: "/campus",
   collegeChecklist: "/campus/college-checklist",
+  applicationPackage: "/campus/application",
   essayTracker: "/campus/essay-tracker",
   subjects: "/subjects",
   tracks: "/tracks",
@@ -222,6 +223,9 @@ export function resolveBreadcrumb(pathname: string): BreadcrumbCrumb[] {
   }
   if (path === ROUTES.essayTracker) {
     return [{ label: "College", to: ROUTES.college }, { label: "Essays" }];
+  }
+  if (path === ROUTES.applicationPackage) {
+    return [{ label: "College", to: ROUTES.college }, { label: "Application package" }];
   }
   if (path.startsWith("/campus/calculators")) {
     return [{ label: "Campus", to: ROUTES.college }, { label: "Calculators" }];

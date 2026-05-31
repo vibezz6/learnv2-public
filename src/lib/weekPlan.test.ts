@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { ROUTES } from "@/app/navigation";
 import { saveCollegeChecklist } from "@/lib/collegeChecklist";
-import { buildWeekPlanRows } from "@/lib/weekPlan";
+import { addCollege } from "@/lib/colleges";
+import { buildWeekPlan } from "@/lib/weekPlan";
 
 function mockLocalStorage(): Storage {
   const map = new Map<string, string>();
@@ -76,7 +78,7 @@ describe("weekPlan", () => {
       },
     ];
 
-    const rows = buildWeekPlanRows(
+    const { rows } = buildWeekPlan(
       {
         subjects,
         getNodeStatus: (n) => (n.id === "st1" ? "available" : "locked"),
@@ -94,11 +96,29 @@ describe("weekPlan", () => {
 
   it("does not throw when building rows (regression: undefined admissions args)", () => {
     expect(() =>
-      buildWeekPlanRows({
+      buildWeekPlan({
         subjects: [],
         getNodeStatus: () => "available",
         storage,
       }),
     ).not.toThrow();
+  });
+
+  it("caps college rows at 3 and links registry schools to application package", () => {
+    addCollege("Alpha U", "2026-05-25", storage);
+    addCollege("Beta U", "2026-05-26", storage);
+    addCollege("Gamma U", "2026-05-27", storage);
+    addCollege("Delta U", "2026-05-28", storage);
+
+    const { rows, collegeOverflow } = buildWeekPlan(
+      { subjects: [], getNodeStatus: () => "available", storage },
+      6,
+    );
+
+    const collegeRows = rows.filter((r) => r.source === "college");
+    expect(collegeRows).toHaveLength(3);
+    expect(collegeOverflow).toBe(1);
+    expect(collegeRows[0]?.href).toContain(ROUTES.applicationPackage);
+    expect(collegeRows[0]?.href).toContain("college=");
   });
 });

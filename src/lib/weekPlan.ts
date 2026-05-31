@@ -1,6 +1,10 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { ROUTES } from "@/app/navigation";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
 import { getWeekDeadlineRows, type WeekDeadlineRow } from "@/lib/admissionsSummary";
+import { loadCollegeChecklist } from "@/lib/collegeChecklist";
+import { listCollegeRegistryDeadlines } from "@/lib/colleges";
+import { loadEssayTracker } from "@/lib/essayTracker";
 import { listActivitiesForDate } from "@/lib/studyActivity";
 import { loadStudyIntent } from "@/lib/studyIntent";
 import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
@@ -21,6 +25,13 @@ export interface WeekPlanRow {
   source: WeekPlanSource;
   overdue?: boolean;
   disabled?: boolean;
+}
+
+const MAX_COLLEGE_WEEK_ROWS = 3;
+
+export interface WeekPlanResult {
+  rows: WeekPlanRow[];
+  collegeOverflow: number;
 }
 
 export interface WeekPlanInput {
@@ -52,12 +63,61 @@ function tomorrowToWeekRow(task: TomorrowTask): WeekPlanRow {
   };
 }
 
+function applicationPackageHref(collegeName: string): string {
+  return `${ROUTES.applicationPackage}?college=${encodeURIComponent(collegeName)}`;
+}
+
+function collectCollegeDeadlineRows(storage: Storage, now = new Date()): WeekDeadlineRow[] {
+  const seen = new Set<string>();
+  const rows: WeekDeadlineRow[] = [];
+
+  const push = (row: WeekDeadlineRow, collegeKey?: string) => {
+    const key = (collegeKey ?? row.detail ?? row.id).toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push(row);
+  };
+
+  for (const school of listCollegeRegistryDeadlines(7, now, storage)) {
+    push(
+      {
+        id: school.id,
+        title: school.title,
+        detail: school.collegeName,
+        dueDate: school.dueDate,
+        daysUntil: school.daysUntil,
+        href: applicationPackageHref(school.collegeName),
+        overdue: school.overdue,
+      },
+      school.collegeName.toLowerCase(),
+    );
+  }
+
+  for (const deadline of getWeekDeadlineRows(
+    7,
+    now,
+    loadCollegeChecklist(storage),
+    loadEssayTracker(storage),
+  )) {
+    const college = deadline.detail?.trim();
+    const href = college ? applicationPackageHref(college) : deadline.href;
+    push({ ...deadline, href }, college?.toLowerCase());
+  }
+
+  return rows.sort((a, b) => a.daysUntil - b.daysUntil);
+}
+
 /** Unified “this week” rows: admissions deadlines, track lessons, SAT follow-ups. */
 export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRow[] {
+  return buildWeekPlan(input, maxRows).rows;
+}
+
+export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult {
   const storage = input.storage ?? localStorage;
   const intent = loadStudyIntent(storage);
   const rows: WeekPlanRow[] = [];
   const used = new Set<string>();
+  let collegeOverflow = 0;
 
   const prioritizeSat = intent.focus === "sat";
 
@@ -69,7 +129,13 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
   };
 
   let hasUrgentCollege = false;
-  for (const deadline of getWeekDeadlineRows(7)) {
+  let collegeShown = 0;
+  for (const deadline of collectCollegeDeadlineRows(storage)) {
+    if (collegeShown >= MAX_COLLEGE_WEEK_ROWS) {
+      collegeOverflow += 1;
+      continue;
+    }
+    collegeShown += 1;
     if (deadline.overdue || deadline.daysUntil <= 1) hasUrgentCollege = true;
     push({
       id: deadline.id,
@@ -79,7 +145,7 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
       source: "college",
       overdue: deadline.overdue,
     });
-    if (rows.length >= maxRows) return rows;
+    if (rows.length >= maxRows) return { rows, collegeOverflow };
   }
 
   if (!hasUrgentCollege) {
@@ -96,7 +162,7 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
           href: `/subjects/${found.subject.id}/${found.node.id}`,
           source: "track",
         });
-        if (rows.length >= maxRows) return rows;
+        if (rows.length >= maxRows) return { rows, collegeOverflow };
       }
     }
   }
@@ -113,7 +179,7 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
           : "/subjects/sat-prep#mistakes",
         source: "sat",
       });
-      if (rows.length >= maxRows) return rows;
+      if (rows.length >= maxRows) return { rows, collegeOverflow };
     }
   }
 
@@ -135,7 +201,7 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
         source: "track",
         disabled: locked,
       });
-      if (rows.length >= maxRows) return rows;
+      if (rows.length >= maxRows) return { rows, collegeOverflow };
     }
   }
 
@@ -153,10 +219,10 @@ export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRo
   for (const task of extras) {
     if (task.source === "review" || task.source === "college") continue;
     push(tomorrowToWeekRow(task));
-    if (rows.length >= maxRows) return rows;
+    if (rows.length >= maxRows) return { rows, collegeOverflow };
   }
 
-  return rows;
+  return { rows, collegeOverflow };
 }
 
 export const WEEK_PLAN_SOURCE_LABELS: Record<WeekPlanSource, string> = {

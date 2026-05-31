@@ -33,6 +33,7 @@ import type { LoadSubjectResult } from "@/curriculum/loader";
 import type { SkillNode, Subject } from "@/curriculum/types";
 import { useProgress } from "@/stores/progress";
 import { SatDiagnosticSection } from "@/features/sat/SatDiagnosticSection";
+import { SatDrillQueueSection } from "@/features/sat/SatDrillQueueSection";
 import { SatMistakeLogPanel } from "@/features/sat/SatMistakeLogPanel";
 import { SatSkillMasterySection } from "@/features/sat/SatSkillMasterySection";
 import { SatOfficialResourcesCard } from "@/features/sat/SatOfficialResourcesCard";
@@ -44,7 +45,9 @@ import { listMistakes } from "@/lib/satMistakeLog";
 import { getSubjectAccent } from "@/lib/subjectAccent";
 import { getSatSkillMastery } from "@/lib/satSkillMastery";
 import { ROUTES } from "@/app/navigation";
+import { getLockTooltip } from "@/lib/lockRules";
 import { cn } from "@/lib/cn";
+import type { NodeProgress } from "@/stores/progress";
 
 type NodeStatus = "locked" | "available" | "completed";
 
@@ -213,13 +216,20 @@ function SkillNodeTooltip({
   node,
   status,
   subject,
+  getNodeProgress,
 }: {
   node: SkillNode;
   status: NodeStatus;
   subject: Subject;
+  getNodeProgress: (nodeId: string) => NodeProgress;
 }) {
   const { prereqs, unlocks } = nodeMeta(subject, node);
   const meta = statusMeta(status);
+  const byId = new Map(subject.nodes.map((n) => [n.id, n]));
+  const lockHint =
+    status === "locked"
+      ? getLockTooltip(node, getNodeProgress, (id) => byId.get(id)?.name ?? id)
+      : null;
 
   return (
     <div
@@ -230,6 +240,9 @@ function SkillNodeTooltip({
       <p className="mt-1 font-mono text-[11px] text-[var(--text-muted)] tabular-nums">
         {meta.label} · ~{node.estimatedMinutes} min · {node.xpValue} XP
       </p>
+      {lockHint ? (
+        <p className="mt-2 text-[10px] leading-relaxed text-[var(--warning)]">{lockHint}</p>
+      ) : null}
       {prereqs.length > 0 && (
         <p className="mt-2 text-[10px] leading-relaxed text-[var(--text-muted)]">
           <span className="text-[var(--text-heading)]">Requires:</span> {prereqs.join(", ")}
@@ -289,10 +302,12 @@ function SkillTreeGraph({
   subject,
   layout,
   getNodeStatus,
+  getNodeProgress,
 }: {
   subject: Subject;
   layout: TreeLayout;
   getNodeStatus: (node: SkillNode) => NodeStatus;
+  getNodeProgress: (nodeId: string) => NodeProgress;
 }) {
   const { edges, positions, width, height } = layout;
   const pad = 24;
@@ -364,6 +379,9 @@ function SkillTreeGraph({
             if (!pos) return null;
             const status = getNodeStatus(node);
             const locked = status === "locked";
+            const lockHint = locked
+              ? getLockTooltip(node, getNodeProgress, (id) => nodeById.get(id)?.name ?? id)
+              : null;
 
             return (
               <Link
@@ -372,9 +390,11 @@ function SkillTreeGraph({
                 className={cn(
                   "group absolute block",
                   locked
-                    ? "pointer-events-none cursor-not-allowed"
+                    ? "cursor-not-allowed"
                     : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-canvas)]",
                 )}
+                title={lockHint ?? undefined}
+                onClick={locked ? (e) => e.preventDefault() : undefined}
                 style={{
                   left: pos.x + pad,
                   top: pos.y + pad,
@@ -383,7 +403,12 @@ function SkillTreeGraph({
                 }}
                 aria-disabled={locked}
               >
-                {!locked && <SkillNodeTooltip node={node} status={status} subject={subject} />}
+                <SkillNodeTooltip
+                  node={node}
+                  status={status}
+                  subject={subject}
+                  getNodeProgress={getNodeProgress}
+                />
                 <SkillNodeCard node={node} status={status} compact />
               </Link>
             );
@@ -398,11 +423,14 @@ function SkillNodeList({
   subject,
   nodes,
   getNodeStatus,
+  getNodeProgress,
 }: {
   subject: Subject;
   nodes: SkillNode[];
   getNodeStatus: (node: SkillNode) => NodeStatus;
+  getNodeProgress: (nodeId: string) => NodeProgress;
 }) {
+  const nodeById = useMemo(() => new Map(subject.nodes.map((n) => [n.id, n])), [subject.nodes]);
   return (
     <div className="relative space-y-0">
       <div
@@ -413,6 +441,9 @@ function SkillNodeList({
         const status = getNodeStatus(node);
         const meta = statusMeta(status);
         const locked = status === "locked";
+        const lockHint = locked
+          ? getLockTooltip(node, getNodeProgress, (id) => nodeById.get(id)?.name ?? id)
+          : null;
 
         return (
           <Link
@@ -420,10 +451,12 @@ function SkillNodeList({
             to={locked ? "#" : `/subjects/${subject.id}/${node.id}`}
             className={cn(
               "relative block pl-8",
-              locked ? "pointer-events-none" : "group",
+              locked ? "cursor-not-allowed" : "group",
               index > 0 && "mt-3",
             )}
             aria-disabled={locked}
+            title={lockHint ?? undefined}
+            onClick={locked ? (e) => e.preventDefault() : undefined}
           >
             <span
               className={cn(
@@ -598,6 +631,7 @@ export function SubjectDetailPage() {
   const location = useLocation();
   const progressNodes = useProgress((s) => s.data.nodes);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const getNodeProgress = useProgress((s) => s.getNodeProgress);
   const [loadState, setLoadState] = useState<SubjectLoadState>({ phase: "loading" });
   const [skillTreeOpen, setSkillTreeOpen] = useState(true);
   const [secondaryOpen, setSecondaryOpen] = useState(false);
@@ -701,6 +735,8 @@ export function SubjectDetailPage() {
             <SatMistakesPrimary />
           </div>
 
+          <SatDrillQueueSection />
+
           <Section eyebrow="Recommended" id="recommended">
             <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
           </Section>
@@ -779,10 +815,16 @@ export function SubjectDetailPage() {
                 subject={subject}
                 nodes={layout.orderedNodes}
                 getNodeStatus={getNodeStatus}
+                getNodeProgress={getNodeProgress}
               />
             </div>
             <div className="hidden md:block">
-              <SkillTreeGraph subject={subject} layout={layout} getNodeStatus={getNodeStatus} />
+              <SkillTreeGraph
+                subject={subject}
+                layout={layout}
+                getNodeStatus={getNodeStatus}
+                getNodeProgress={getNodeProgress}
+              />
             </div>
           </>
         ) : (

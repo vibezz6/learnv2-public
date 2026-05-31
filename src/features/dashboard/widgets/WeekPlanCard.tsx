@@ -5,8 +5,9 @@ import { Card, Tag } from "@/components/ui";
 import type { Subject } from "@/curriculum/types";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import { DEFAULT_TRACK_ID, getTrackById } from "@/lib/campusHome";
+import { ROUTES } from "@/app/navigation";
 import {
-  buildWeekPlanRows,
+  buildWeekPlan,
   WEEK_PLAN_SOURCE_LABELS,
 } from "@/lib/weekPlan";
 import { usePreferences } from "@/stores/preferences";
@@ -35,9 +36,9 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
   const activeTrackId = enrolledTrackId ?? DEFAULT_TRACK_ID;
   const track = getTrackById(activeTrackId);
 
-  const rows = useMemo(() => {
+  const { rows, collegeOverflow } = useMemo(() => {
     void revision;
-    return buildWeekPlanRows({
+    return buildWeekPlan({
       subjects,
       getNodeStatus,
       enrolledTrackId: activeTrackId,
@@ -116,6 +117,15 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
           </li>
         ))}
       </ul>
+      {collegeOverflow > 0 ? (
+        <Link
+          to={ROUTES.college}
+          className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+        >
+          +{collegeOverflow} more in Campus
+          <ArrowRight size={14} aria-hidden />
+        </Link>
+      ) : null}
       {track ? (
         <Link
           to={`/tracks/${track.id}`}

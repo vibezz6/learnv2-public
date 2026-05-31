@@ -16,6 +16,7 @@ import {
 } from "@/components/ui";
 import { getManifestEntry } from "@/curriculum";
 import { CampusAdmissionsHub } from "@/features/campus/CampusAdmissionsHub";
+import { CampusSchoolsSection } from "@/features/campus/CampusSchoolsSection";
 
 interface ServiceCard {
   to: string;
@@ -25,6 +26,12 @@ interface ServiceCard {
 }
 
 const coreServices: ServiceCard[] = [
+  {
+    to: "/campus/application",
+    title: "Application package",
+    description: "One college view — essays for that school plus the shared checklist.",
+    icon: GraduationCap,
+  },
   {
     to: "/campus/college-checklist",
     title: "College checklist",
@@ -86,6 +93,8 @@ export function CampusServicesPage() {
       />
 
       <CampusAdmissionsHub />
+
+      <CampusSchoolsSection />
 
       <div className="grid gap-4 md:grid-cols-2">
         <Section eyebrow="College" title="Admissions workflow">

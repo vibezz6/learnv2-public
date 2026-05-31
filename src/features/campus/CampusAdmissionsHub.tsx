@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ClipboardList, FileText, Settings } from "lucide-react";
+import { ArrowRight, ClipboardList, FileText, GraduationCap, Settings } from "lucide-react";
+import { ROUTES } from "@/app/navigation";
+import { listApplicationColleges } from "@/lib/applicationPackage";
 import { Button, Card, Stat, Tag, Toolbar } from "@/components/ui";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import {
@@ -25,6 +27,14 @@ export function CampusAdmissionsHub() {
   const blocking = useMemo(() => {
     void revision;
     return getBlockingApplicationItem();
+  }, [revision]);
+
+  const packageHref = useMemo(() => {
+    void revision;
+    const colleges = listApplicationColleges();
+    const first = colleges[0];
+    if (!first) return ROUTES.applicationPackage;
+    return `${ROUTES.applicationPackage}?college=${encodeURIComponent(first)}`;
   }, [revision]);
 
   if (blocking) {
@@ -70,7 +80,7 @@ export function CampusAdmissionsHub() {
             hasActivity={summary.hasActivity}
           />
         </div>
-        <FooterToolbar />
+        <FooterToolbar packageHref={packageHref} />
       </Card>
     );
   }
@@ -97,7 +107,7 @@ export function CampusAdmissionsHub() {
           </p>
         )}
       </div>
-      <FooterToolbar />
+      <FooterToolbar packageHref={packageHref} />
     </Card>
   );
 }
@@ -130,9 +140,15 @@ function SummaryStats({
   );
 }
 
-function FooterToolbar() {
+function FooterToolbar({ packageHref }: { packageHref: string }) {
   return (
     <Toolbar className="mt-4 border-t border-[var(--rule)] pt-3" density="tight">
+      <Link to={packageHref}>
+        <Button variant="secondary" size="sm">
+          <GraduationCap size={14} aria-hidden />
+          Package
+        </Button>
+      </Link>
       <Link to="/campus/college-checklist">
         <Button variant="secondary" size="sm">
           <ClipboardList size={14} aria-hidden />

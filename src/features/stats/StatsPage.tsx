@@ -38,6 +38,8 @@ import { SatWeeklyProgressCard } from "@/features/stats/widgets/SatWeeklyProgres
 import { StreakCalendar } from "@/features/stats/widgets/StreakCalendar";
 import { StudyActivityList } from "@/features/stats/widgets/StudyActivityList";
 import { WeekInReviewStrip } from "@/features/stats/widgets/WeekInReviewStrip";
+import { MistakeCategoriesBars } from "@/features/stats/widgets/MistakeCategoriesBars";
+import { Minutes14DayChart } from "@/features/stats/widgets/Minutes14DayChart";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import { buildStudyRecommendations } from "@/lib/studyRecommendations";
 import { getSubjectAccent } from "@/lib/subjectAccent";
@@ -242,6 +244,13 @@ export function StatsPage() {
           </Section>
 
           <SatWeeklyProgressCard />
+
+          <Section eyebrow="SAT study" title="Mistakes and time" divider>
+            <div className="grid gap-4 md:grid-cols-2">
+              <MistakeCategoriesBars />
+              <Minutes14DayChart />
+            </div>
+          </Section>
 
           {recommendations.length > 0 ? (
             <Section eyebrow="Recommended next" divider>

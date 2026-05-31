@@ -1,3 +1,4 @@
+import { ROUTES } from "@/app/navigation";
 import { daysUntilDue } from "@/lib/campusAdmissionsNudges";
 import {
   getChecklistProgress,
@@ -149,13 +150,16 @@ export function getWeekDeadlineRows(
     if (essay.status === "final" || !essay.dueDate) continue;
     const daysUntil = daysUntilDue(essay.dueDate, now);
     if (daysUntil === null || daysUntil > withinDays) continue;
+    const college = essay.college?.trim();
     rows.push({
       id: `essay-${essay.id}`,
       title: essay.title,
-      detail: essay.college,
+      detail: college,
       dueDate: essay.dueDate,
       daysUntil,
-      href: "/campus/essay-tracker",
+      href: college
+        ? `${ROUTES.applicationPackage}?college=${encodeURIComponent(college)}`
+        : ROUTES.essayTracker,
       overdue: daysUntil < 0,
     });
   }
