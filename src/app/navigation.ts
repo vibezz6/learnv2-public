@@ -18,6 +18,7 @@ export const ROUTES = {
   college: "/campus",
   collegeChecklist: "/campus/college-checklist",
   applicationPackage: "/campus/application",
+  campusPrintSummary: "/campus/print-summary",
   essayTracker: "/campus/essay-tracker",
   subjects: "/subjects",
   tracks: "/tracks",
@@ -226,6 +227,9 @@ export function resolveBreadcrumb(pathname: string): BreadcrumbCrumb[] {
   }
   if (path === ROUTES.applicationPackage) {
     return [{ label: "College", to: ROUTES.college }, { label: "Application package" }];
+  }
+  if (path === ROUTES.campusPrintSummary) {
+    return [{ label: "College", to: ROUTES.college }, { label: "Print summary" }];
   }
   if (path.startsWith("/campus/calculators")) {
     return [{ label: "Campus", to: ROUTES.college }, { label: "Calculators" }];

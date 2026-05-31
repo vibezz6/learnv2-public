@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowRight, CalendarClock, Check, FileText } from "lucide-react";
 import {
@@ -16,9 +16,14 @@ import { ROUTES } from "@/app/navigation";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
 import {
   buildApplicationPackage,
+  formatPackageDeadlineAriaLabel,
   listApplicationColleges,
   resolveApplicationCollege,
 } from "@/lib/applicationPackage";
+import {
+  COLLEGE_NOTES_DISPLAY_MAX,
+  findCollegeByName,
+} from "@/lib/colleges";
 import {
   loadCollegeChecklist,
   saveCollegeChecklist,
@@ -42,6 +47,7 @@ export function ApplicationPackagePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [revision, setRevision] = useState(0);
   const [checklist, setChecklist] = useState<CollegeChecklistState>(() => loadCollegeChecklist());
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     const bump = () => {
@@ -67,6 +73,25 @@ export function ApplicationPackagePage() {
     if (!college) return null;
     return buildApplicationPackage(college, { checklist });
   }, [college, checklist, revision]);
+
+  const registryEntry = useMemo(() => {
+    void revision;
+    return college ? findCollegeByName(college) : undefined;
+  }, [college, revision]);
+
+  const registryNotesLabel = useMemo(() => {
+    const notes = registryEntry?.notes?.trim();
+    if (!notes) return null;
+    const short =
+      notes.length > COLLEGE_NOTES_DISPLAY_MAX
+        ? `${notes.slice(0, COLLEGE_NOTES_DISPLAY_MAX)}…`
+        : notes;
+    return { short, full: notes };
+  }, [registryEntry]);
+
+  useEffect(() => {
+    if (college && titleRef.current) titleRef.current.focus();
+  }, [college]);
 
   const persistChecklist = useCallback((next: CollegeChecklistState) => {
     setChecklist(next);
@@ -127,16 +152,30 @@ export function ApplicationPackagePage() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="eyebrow-mono">College</p>
-            <h2 className="mt-1 text-2xl font-semibold text-[var(--text-heading)]">{college}</h2>
+            <h2
+              ref={titleRef}
+              tabIndex={-1}
+              className="mt-1 text-2xl font-semibold text-[var(--text-heading)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            >
+              {college}
+            </h2>
           </div>
-          <Tag
-            tone={deadlineTagTone(pkg.deadline.tone)}
-            size="sm"
-            className="inline-flex items-center gap-1"
-          >
-            <CalendarClock size={12} aria-hidden />
-            {pkg.deadline.label}
-          </Tag>
+          <div className="flex flex-wrap items-center gap-2">
+            {registryNotesLabel ? (
+              <Tag tone="muted" size="sm" title={registryNotesLabel.full}>
+                {registryNotesLabel.short}
+              </Tag>
+            ) : null}
+            <Tag
+              tone={deadlineTagTone(pkg.deadline.tone)}
+              size="sm"
+              className="inline-flex items-center gap-1"
+              aria-label={formatPackageDeadlineAriaLabel(pkg.deadline)}
+            >
+              <CalendarClock size={12} aria-hidden />
+              {pkg.deadline.label}
+            </Tag>
+          </div>
         </div>
 
         {pkg.doThisFirst ? (
@@ -238,6 +277,10 @@ export function ApplicationPackagePage() {
             <ul className="grid gap-3 md:grid-cols-2">
               {pkg.essays.map((essay) => (
                 <li key={essay.id}>
+                  <Link
+                    to={`${ROUTES.essayTracker}#essay-${essay.id}`}
+                    className="block h-full rounded-[var(--radius-md)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+                  >
                   <Card variant="default" density="normal" className="h-full min-w-0 space-y-2">
                     <p className="text-sm font-semibold text-[var(--text-heading)]">{essay.title}</p>
                     <div className="flex flex-wrap items-center gap-2">
@@ -252,6 +295,7 @@ export function ApplicationPackagePage() {
                       <p className="text-xs text-[var(--text-muted)]">— / {essay.wordLimit} words</p>
                     ) : null}
                   </Card>
+                  </Link>
                 </li>
               ))}
             </ul>

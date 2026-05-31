@@ -117,4 +117,100 @@ describe("satDailyQuiz", () => {
     const quiz = getDailySatQuiz(subjects, "2026-05-29", 1, storage);
     expect(quiz.questions[0]?.id).toBe("st2-q1");
   });
+
+  it("is stable when drill queue skills are present", () => {
+    const storage = mapStorage();
+    const now = Date.now();
+    storage.setItem(
+      SAT_MISTAKE_LOG_KEY,
+      JSON.stringify([
+        {
+          id: "m1",
+          date: "2026-05-29",
+          section: "math",
+          category: "Linear equations",
+          skillId: "linear-equations",
+          note: "",
+          createdAt: now,
+        },
+        {
+          id: "m2",
+          date: "2026-05-29",
+          section: "math",
+          category: "Linear equations",
+          skillId: "linear-equations",
+          note: "",
+          createdAt: now - 1,
+        },
+        {
+          id: "m3",
+          date: "2026-05-29",
+          section: "math",
+          category: "Linear equations",
+          skillId: "linear-equations",
+          note: "",
+          createdAt: now - 2,
+        },
+      ]),
+    );
+    const subjects: Subject[] = [
+      {
+        id: "sat-prep",
+        name: "SAT Prep",
+        description: "",
+        color: "#000",
+        icon: "g",
+        nodes: [
+          {
+            id: "st4",
+            name: "Linear",
+            description: "",
+            xpValue: 10,
+            parentIds: [],
+            estimatedMinutes: 10,
+            resources: [],
+            keyConcepts: [],
+            whyItMatters: "",
+            practiceProblems: [],
+            difficulty: "beginner",
+            quiz: [
+              {
+                id: "st4-q1",
+                question: "Linear?",
+                options: ["a", "b"],
+                correctIndex: 0,
+                explanation: "",
+              },
+            ],
+          },
+          {
+            id: "st99",
+            name: "Other",
+            description: "",
+            xpValue: 10,
+            parentIds: [],
+            estimatedMinutes: 10,
+            resources: [],
+            keyConcepts: [],
+            whyItMatters: "",
+            practiceProblems: [],
+            difficulty: "beginner",
+            quiz: [
+              {
+                id: "st99-q1",
+                question: "Other?",
+                options: ["a", "b"],
+                correctIndex: 0,
+                explanation: "",
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    const a = getDailySatQuiz(subjects, "2026-05-29", 5, storage);
+    const b = getDailySatQuiz(subjects, "2026-05-29", 5, storage);
+    expect(a.questions.map((q) => q.id)).toEqual(b.questions.map((q) => q.id));
+    expect(a.questions[0]?.id).toBe("st4-q1");
+  });
 });

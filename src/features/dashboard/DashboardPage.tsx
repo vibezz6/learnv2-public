@@ -22,6 +22,7 @@ import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { formatAppVersion } from "@/lib/version";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
+import { DrillQueueTodayCard } from "./widgets/DrillQueueTodayCard";
 import { RightNowHero } from "./widgets/RightNowHero";
 import { TodayMinimumStrip } from "./widgets/TodayMinimumStrip";
 import { EssayDueToday } from "./widgets/EssayDueToday";
@@ -92,6 +93,7 @@ export function DashboardPage() {
               <TodayEmptyFocus />
             )}
           </Section>
+          <DrillQueueTodayCard />
         </div>
 
         <aside className="min-w-0 space-y-6">

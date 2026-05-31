@@ -4,6 +4,21 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.7.3] - 2026-05-31
+
+### Added
+
+- **College-aware Today hero** — blocking admissions rows include registry deadlines; package CTA when a school is known (`collegeName`, `blockerKind`).
+- Registry **notes** field (ED/EA/RD copy-only) on Campus schools, application package, and week plan.
+- **Drill queue Today card** — secondary nudge when college is not blocking within 7 days; 24h snooze.
+- Daily 5 **2× soft weight** toward top-3 drill-queue skills (deterministic per day).
+- **Print summary** at `/campus/print-summary` (`window.print`, no PDF library).
+- Essay tracker **hash links** (`#essay-<id>`) from application package cards.
+
+### Changed
+
+- a11y pass on application package, Campus schools, drill Today card, print summary, and stats mistake bars.
+
 ## [2.7.2] - 2026-05-31
 
 ### Added

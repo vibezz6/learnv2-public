@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   addCollege,
+  COLLEGE_NOTES_MAX_LENGTH,
   discoverCollegesFromEssays,
   importCollegesFromEssays,
   loadColleges,
   saveColleges,
+  updateCollegeNotes,
 } from "./colleges";
 import { saveEssayTracker } from "./essayTracker";
 
@@ -92,7 +94,7 @@ describe("colleges", () => {
   });
 
   it("discover excludes already saved schools", () => {
-    addCollege("MIT", undefined, storage);
+    addCollege("MIT", undefined, undefined, storage);
     saveEssayTracker(
       {
         essays: [
@@ -114,7 +116,25 @@ describe("colleges", () => {
   });
 
   it("trims college names on add", () => {
-    addCollege("  Yale  ", undefined, storage);
+    addCollege("  Yale  ", undefined, undefined, storage);
     expect(loadColleges(storage).colleges[0]?.name).toBe("Yale");
+  });
+
+  it("trims and stores registry notes", () => {
+    addCollege("Duke", undefined, "  EA round  ", storage);
+    expect(loadColleges(storage).colleges[0]?.notes).toBe("EA round");
+  });
+
+  it("drops empty notes on add", () => {
+    addCollege("Duke", undefined, "   ", storage);
+    expect(loadColleges(storage).colleges[0]?.notes).toBeUndefined();
+  });
+
+  it("caps notes length on update", () => {
+    addCollege("Duke", undefined, undefined, storage);
+    const id = loadColleges(storage).colleges[0]!.id;
+    const long = "x".repeat(COLLEGE_NOTES_MAX_LENGTH + 20);
+    updateCollegeNotes(id, long, storage);
+    expect(loadColleges(storage).colleges[0]?.notes).toHaveLength(COLLEGE_NOTES_MAX_LENGTH);
   });
 });

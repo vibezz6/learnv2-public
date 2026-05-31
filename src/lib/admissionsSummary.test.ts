@@ -1,7 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { addCustomItem, loadCollegeChecklist, toggleBuiltInItem } from "./collegeChecklist";
 import { addEssayFromTemplate, loadEssayTracker, updateEssayStatus } from "./essayTracker";
+import { addCollege, saveColleges } from "./colleges";
 import {
+  applicationPackageHref,
   buildAdmissionsExportPayload,
   buildAdmissionsSummary,
   formatAdmissionsTranscriptSection,
@@ -9,6 +11,21 @@ import {
   getUrgentCollegeDeadlines,
   getWeekDeadlineRows,
 } from "./admissionsSummary";
+import { ROUTES } from "@/app/navigation";
+
+function mockStorage(): Storage {
+  const map = new Map<string, string>();
+  return {
+    get length() {
+      return map.size;
+    },
+    clear: () => map.clear(),
+    getItem: (k) => map.get(k) ?? null,
+    key: (i) => [...map.keys()][i] ?? null,
+    removeItem: (k) => map.delete(k),
+    setItem: (k, v) => map.set(k, v),
+  } as Storage;
+}
 
 describe("admissionsSummary", () => {
   it("buildAdmissionsSummary reflects checklist and essays", () => {
@@ -67,7 +84,52 @@ describe("admissionsSummary", () => {
       title: "Common App personal statement",
       nextStep: "Write first draft",
       daysUntil: 1,
+      blockerKind: "essay",
     });
+  });
+
+  it("getBlockingApplicationItem routes essay with college to package", () => {
+    const now = new Date("2026-05-24T12:00:00Z");
+    let essays = loadEssayTracker();
+    essays = addEssayFromTemplate(essays, "why-us", {
+      college: "Stanford University",
+      dueDate: "2026-05-25",
+    });
+
+    const blocking = getBlockingApplicationItem(now, loadCollegeChecklist(), essays);
+    expect(blocking?.collegeName).toBe("Stanford University");
+    expect(blocking?.href).toBe(applicationPackageHref("Stanford University"));
+    expect(blocking?.blockerKind).toBe("essay");
+  });
+
+  it("getBlockingApplicationItem uses checklist href without collegeName", () => {
+    const now = new Date("2026-05-24T12:00:00Z");
+    let checklist = loadCollegeChecklist();
+    checklist = addCustomItem(checklist, "Submit FAFSA", "2026-05-25");
+
+    const blocking = getBlockingApplicationItem(now, checklist, loadEssayTracker());
+    expect(blocking?.blockerKind).toBe("checklist");
+    expect(blocking?.collegeName).toBeUndefined();
+    expect(blocking?.href).toBe(ROUTES.collegeChecklist);
+  });
+
+  it("getBlockingApplicationItem includes registry school deadline", () => {
+    const now = new Date("2026-05-24T12:00:00Z");
+    const storage = mockStorage();
+    vi.stubGlobal("localStorage", storage);
+    saveColleges({ colleges: [] }, storage);
+    addCollege("MIT", "2026-05-26", undefined, storage);
+
+    const blocking = getBlockingApplicationItem(
+      now,
+      loadCollegeChecklist(storage),
+      loadEssayTracker(storage),
+      storage,
+    );
+    expect(blocking?.blockerKind).toBe("registry");
+    expect(blocking?.collegeName).toBe("MIT");
+    expect(blocking?.href).toContain(ROUTES.applicationPackage);
+    vi.unstubAllGlobals();
   });
 
   it("buildAdmissionsExportPayload includes summary and raw state", () => {

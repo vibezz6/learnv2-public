@@ -4,6 +4,7 @@ import { ArrowRight, Plus, Trash2 } from "lucide-react";
 import { ROUTES } from "@/app/navigation";
 import { formatPackageDeadline } from "@/lib/applicationPackage";
 import {
+  COLLEGE_NOTES_MAX_LENGTH,
   addCollege,
   countEssaysForCollege,
   discoverCollegesFromEssays,
@@ -11,6 +12,7 @@ import {
   loadColleges,
   removeCollege,
   updateCollegeDeadline,
+  updateCollegeNotes,
   type CollegesState,
 } from "@/lib/colleges";
 import { daysUntilDue } from "@/lib/campusAdmissionsNudges";
@@ -23,6 +25,7 @@ export function CampusSchoolsSection() {
   const [revision, setRevision] = useState(0);
   const [name, setName] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [notes, setNotes] = useState("");
   const [dismissImport, setDismissImport] = useState(false);
 
   const refresh = useCallback(() => {
@@ -45,9 +48,10 @@ export function CampusSchoolsSection() {
 
   const handleAdd = () => {
     if (!name.trim()) return;
-    setState(addCollege(name, deadline || undefined));
+    setState(addCollege(name, deadline || undefined, notes || undefined));
     setName("");
     setDeadline("");
+    setNotes("");
   };
 
   const handleImport = () => {
@@ -77,7 +81,7 @@ export function CampusSchoolsSection() {
 
       {state.colleges.length === 0 ? (
         <p className="text-sm text-[var(--text-muted)]">
-          Add your first school to see deadlines and essays per school.
+          Add your first school to track deadlines and essays.
         </p>
       ) : (
         <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -90,7 +94,19 @@ export function CampusSchoolsSection() {
               <li key={college.id}>
                 <Card variant="default" density="normal" className="flex h-full min-w-0 flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-base font-semibold text-[var(--text-heading)]">{college.name}</p>
+                    <div className="min-w-0">
+                      <p className="text-base font-semibold text-[var(--text-heading)]">{college.name}</p>
+                      {college.notes ? (
+                        <p
+                          className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-[var(--text-muted)]"
+                          title={college.notes}
+                        >
+                          {college.notes.length > 24
+                            ? `${college.notes.slice(0, 24)}…`
+                            : college.notes}
+                        </p>
+                      ) : null}
+                    </div>
                     <button
                       type="button"
                       className="text-[var(--text-muted)] hover:text-[var(--danger)]"
@@ -122,6 +138,19 @@ export function CampusSchoolsSection() {
                       />
                     )}
                   </Field>
+                  <Field label="Notes (optional)" htmlFor={`notes-${college.id}`}>
+                    {(id) => (
+                      <Input
+                        id={id}
+                        value={college.notes ?? ""}
+                        maxLength={COLLEGE_NOTES_MAX_LENGTH}
+                        placeholder="e.g. ED, EA, RD"
+                        onChange={(e) =>
+                          setState(updateCollegeNotes(college.id, e.target.value))
+                        }
+                      />
+                    )}
+                  </Field>
                   <Link
                     to={`${ROUTES.applicationPackage}?college=${encodeURIComponent(college.name)}`}
                     className="mt-auto"
@@ -140,7 +169,7 @@ export function CampusSchoolsSection() {
 
       <Card variant="default" density="normal" className="min-w-0 space-y-3">
         <p className="text-sm font-medium text-[var(--text-heading)]">Add school</p>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <Field label="Name" htmlFor="new-college-name">
             {(id) => (
               <Input
@@ -158,6 +187,21 @@ export function CampusSchoolsSection() {
                 type="date"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
+              />
+            )}
+          </Field>
+          <Field
+            label="Notes (optional)"
+            htmlFor="new-college-notes"
+            hint="Optional label shown next to this school's deadline (e.g. ED Nov 1, EA, RD)"
+          >
+            {(id) => (
+              <Input
+                id={id}
+                value={notes}
+                maxLength={COLLEGE_NOTES_MAX_LENGTH}
+                placeholder="e.g. ED, EA, RD"
+                onChange={(e) => setNotes(e.target.value)}
               />
             )}
           </Field>

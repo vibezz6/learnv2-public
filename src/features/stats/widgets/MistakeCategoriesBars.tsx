@@ -26,9 +26,11 @@ export function MistakeCategoriesBars() {
   }
 
   return (
-    <Card variant="default" density="normal" className="min-w-0">
-      <p className="eyebrow-mono">Top mistake categories</p>
-      <ul className="mt-4 space-y-3">
+    <Card variant="default" density="normal" className="min-w-0" aria-labelledby="mistake-categories-heading">
+      <p id="mistake-categories-heading" className="eyebrow-mono">
+        Top mistake categories
+      </p>
+      <ul className="mt-4 space-y-3" aria-label="Mistake counts by category">
         {top.map((row) => (
           <li key={row.category}>
             <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
@@ -41,12 +43,16 @@ export function MistakeCategoriesBars() {
             </div>
             <div
               className="h-2 rounded-full bg-[var(--bg-sunken)]"
-              role="img"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={max}
+              aria-valuenow={row.count}
               aria-label={`${row.category}: ${row.count} mistakes`}
             >
               <div
                 className="h-full rounded-full bg-[var(--accent)]"
                 style={{ width: `${Math.round((row.count / max) * 100)}%` }}
+                aria-hidden
               />
             </div>
           </li>

@@ -43,6 +43,11 @@ export interface ApplicationPackageDeadline {
 }
 
 /** Human-readable deadline badge from days-until (essay-min source in B61). */
+export function formatPackageDeadlineAriaLabel(deadline: ApplicationPackageDeadline): string {
+  if (deadline.daysUntil === null) return "No deadline set for this school";
+  return `Application deadline: ${deadline.label}`;
+}
+
 export function formatPackageDeadline(daysUntil: number | null): ApplicationPackageDeadline {
   if (daysUntil === null) {
     return { label: "No deadline set", overdue: false, daysUntil: null, tone: "muted" };

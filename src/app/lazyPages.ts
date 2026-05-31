@@ -49,6 +49,11 @@ export const ApplicationPackagePage = lazy(() =>
     default: m.ApplicationPackagePage,
   })),
 );
+export const CampusPrintSummaryPage = lazy(() =>
+  import("@/features/campus/CampusPrintSummaryPage").then((m) => ({
+    default: m.CampusPrintSummaryPage,
+  })),
+);
 export const EssayTrackerPage = lazy(() =>
   import("@/features/college/EssayTrackerPage").then((m) => ({ default: m.EssayTrackerPage })),
 );

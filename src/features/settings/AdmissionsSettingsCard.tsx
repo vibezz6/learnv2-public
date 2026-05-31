@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Download, Upload } from "lucide-react";
+import { Download, Printer, Upload } from "lucide-react";
+import { ROUTES } from "@/app/navigation";
 import { Button, Card, ConfirmDialog, Stat, Toolbar } from "@/components/ui";
 import { buildAdmissionsExportPayload, buildAdmissionsSummary } from "@/lib/admissionsSummary";
 import {
@@ -112,6 +113,12 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
         <Link to="/campus/essay-tracker">
           <Button variant="secondary" size="sm">
             Essay tracker
+          </Button>
+        </Link>
+        <Link to={ROUTES.campusPrintSummary}>
+          <Button variant="ghost" size="sm">
+            <Printer size={13} aria-hidden />
+            Print summary
           </Button>
         </Link>
       </Toolbar>

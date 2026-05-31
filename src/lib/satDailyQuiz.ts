@@ -1,8 +1,13 @@
 import type { QuizQuestion, Subject } from "@/curriculum/types";
-import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
-import { bestNodeTier, type WeakTarget } from "@/lib/satSkillMatch";
 import { deprioritizeRecent, getRecentQuestionIds } from "@/lib/satQuestionHistory";
+import { getDrillQueue } from "@/lib/satDrillQueue";
+import { getTopMistakeCategories } from "@/lib/satMistakeTriage";
+import { getNodeSkillId } from "@/lib/satSkills";
+import { bestNodeTier, type WeakTarget } from "@/lib/satSkillMatch";
 import { getToday } from "@/stores/progress";
+
+/** Soft boost for skills in the top drill queue (see getDrillQueue). */
+export const DRILL_QUEUE_WEIGHT = 2;
 
 export const SAT_DAILY_QUIZ_SIZE = 5;
 const DONE_KEY = "learnv2_sat_daily_quiz_v1";
@@ -64,6 +69,7 @@ export function getDailySatQuiz(
   const sat = subjects.find((s) => s.id === "sat-prep");
 
   const tops = getTopMistakeCategories(3, storage);
+  const queueSkillIds = new Set(getDrillQueue(3, storage).map((row) => row.skillId));
   const targets: WeakTarget[] = tops.map((cat) => ({
     skillId: cat.skillId ?? null,
     section: cat.latestSection,
@@ -85,7 +91,11 @@ export function getDailySatQuiz(
   if (sat) {
     for (const node of sat.nodes) {
       if (!node.quiz) continue;
-      const tier = targets.length ? bestNodeTier(node.id, targets) : 0;
+      let tier = targets.length ? bestNodeTier(node.id, targets) : 0;
+      const nodeSkill = getNodeSkillId(node.id);
+      if (nodeSkill && queueSkillIds.has(nodeSkill) && tier > 0) {
+        tier *= DRILL_QUEUE_WEIGHT;
+      }
       const nodeTokens = tokenize(
         [node.name, node.description, ...(node.keyConcepts ?? [])].join(" "),
       );

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ClipboardList, FileText, GraduationCap, Settings } from "lucide-react";
+import { ArrowRight, ClipboardList, FileText, GraduationCap, Printer, Settings } from "lucide-react";
 import { ROUTES } from "@/app/navigation";
 import { listApplicationColleges } from "@/lib/applicationPackage";
 import { Button, Card, Stat, Tag, Toolbar } from "@/components/ui";
@@ -159,6 +159,12 @@ function FooterToolbar({ packageHref }: { packageHref: string }) {
         <Button variant="secondary" size="sm">
           <FileText size={14} aria-hidden />
           Essays
+        </Button>
+      </Link>
+      <Link to={ROUTES.campusPrintSummary}>
+        <Button variant="ghost" size="sm">
+          <Printer size={14} aria-hidden />
+          Print summary
         </Button>
       </Link>
       <Link to="/settings#admissions-backup">

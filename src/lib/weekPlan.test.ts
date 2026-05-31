@@ -105,10 +105,10 @@ describe("weekPlan", () => {
   });
 
   it("caps college rows at 3 and links registry schools to application package", () => {
-    addCollege("Alpha U", "2026-05-25", storage);
-    addCollege("Beta U", "2026-05-26", storage);
-    addCollege("Gamma U", "2026-05-27", storage);
-    addCollege("Delta U", "2026-05-28", storage);
+    addCollege("Alpha U", "2026-05-25", undefined, storage);
+    addCollege("Beta U", "2026-05-26", undefined, storage);
+    addCollege("Gamma U", "2026-05-27", undefined, storage);
+    addCollege("Delta U", "2026-05-28", undefined, storage);
 
     const { rows, collegeOverflow } = buildWeekPlan(
       { subjects: [], getNodeStatus: () => "available", storage },

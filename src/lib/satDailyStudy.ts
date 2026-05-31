@@ -11,7 +11,10 @@ import {
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
 } from "@/lib/satPretest";
-import { getBlockingApplicationItem } from "@/lib/admissionsSummary";
+import {
+  blockingButtonLabel,
+  getBlockingApplicationItem,
+} from "@/lib/admissionsSummary";
 import { getToday } from "@/stores/progress";
 
 export type SatDailyStudyIntensity = "minimum" | "normal" | "stretch";
@@ -90,13 +93,15 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   const blocker = getBlockingApplicationItem(new Date());
   if (blocker && (blocker.overdue || blocker.daysUntil <= 7)) {
     const headline = blocker.overdue ? "College — overdue" : "College — due this week";
-    const detailParts = [blocker.title, blocker.detail].filter(Boolean);
-    if (blocker.nextStep) detailParts.push(blocker.nextStep);
+    const bodyParts = [blocker.title, blocker.detail].filter(Boolean);
+    if (blocker.nextStep) bodyParts.push(blocker.nextStep);
+    const body = bodyParts.join(" · ");
+    const detail = blocker.collegeName ? `${blocker.collegeName} — ${body}` : body;
     return {
       headline,
-      detail: detailParts.join(" · "),
+      detail,
       href: blocker.href,
-      buttonLabel: blocker.nextStep ?? "Open application task",
+      buttonLabel: blockingButtonLabel(blocker),
       kind: "college_blocking",
       intensity,
     };

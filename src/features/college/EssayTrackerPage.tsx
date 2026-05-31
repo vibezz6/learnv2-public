@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, FileText, PenLine, Plus, Trash2 } from "lucide-react";
 import {
@@ -62,6 +62,12 @@ export function EssayTrackerPage() {
 
   const progress = useMemo(() => getEssayTrackerProgress(state), [state]);
   const dueSoon = useMemo(() => getEssaysDueSoon(state), [state]);
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (!hash.startsWith("essay-")) return;
+    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [state.essays]);
 
   const handleAddTemplate = () => {
     persist(
@@ -134,7 +140,7 @@ export function EssayTrackerPage() {
             {state.essays.map((essay) => {
               const limit = wordLimitForEntry(essay);
               return (
-                <li key={essay.id}>
+                <li key={essay.id} id={`essay-${essay.id}`} className="scroll-mt-24">
                   <Card variant="default" density="normal" className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1 space-y-1.5">

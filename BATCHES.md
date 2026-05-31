@@ -13,9 +13,9 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B67 done.** Last session: B62–B67 campus registry, week plan links, drill queue, lock tooltips, palette actions, stats widgets.
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.2**.
-> **Anything workflow:** Phase 1 planner prompt in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); Phase 3 UI loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
+> **B01–B73 done.** Last session: §J B68–B73 shipped (v2.7.3). Next: see Future ideas or Anything planner for B74+.
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.7.3**.
+> **Anything workflow:** Phase 3 planner (B74+) in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); UI iteration loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
 Update this line at the end of every session.
@@ -330,17 +330,34 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 **Verify B61–B67:** Campus schools grid → application package per school → Week plan college links → SAT drill queue mark drilled → locked lesson tooltip → ⌘K campus/SAT actions → Stats mistake/time widgets → `npm run doctor`.
 
+## J. Post-package polish (B68–B73)
+
+- [x] **B68** — College-aware Today hero: `collegeName` + `blockerKind` on blocker; package CTA when school known; registry deadlines in urgent merge.
+- [x] **B71** — Registry `notes` field (ED/EA/RD copy-only); Campus, package, week plan display.
+- [x] **B69** — Drill queue card on Today (secondary; hidden during `college_blocking` ≤7d); 24h snooze.
+- [x] **B70** — Daily 5 soft 2× weight toward top-3 drill-queue skills (deterministic).
+- [x] **B72** — `/campus/print-summary` print-friendly admissions summary (`window.print`, no PDF lib).
+- [x] **B73** — a11y + empty states on B61–B72 surfaces.
+
+**Verify §J:** B68 package CTA from Today → B71 notes on cards → B69 drill card snooze → B70 Daily 5 stable → B72 print preview → B73 keyboard/axe → `npm run doctor`.
+
+**What NOT to do next:** ED/EA/RD schema; essay detail route; 400 new SAT MCs; drill overrides college in 7d window; per-school progress %; browser-change backup detection; drill top-10 + filters; PDF library.
+
+**PR checklist:** Preserves desktop-only / local-first / study-first?
+
 ---
 
-## Future ideas (after B61)
+## Future ideas (B74+)
 
-- Refresh B62–B66 after pasting Anything multi-batch plan into Cursor (see `docs/anything-planner-prompt.md`).
-- **Stretch 10 MC/skill** — optional; run `sat:coverage:stretch` before authoring.
+- Run **Phase 3** Anything planner (`docs/anything-planner-prompt.md`) → paste into Cursor as §K.
+- **Stretch 10 MC/skill** — optional; run `sat:coverage:stretch` before authoring (strict mode already green at 5 MC/skill).
+- Likely next themes: study-loop closure after drills, backup/import UX, mistake→mastery visibility, campus polish, e2e for package/print/blocking.
 
 ## Session log
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-31 — B68–B73 — College-aware Today hero, registry notes, drill queue Today card, Daily 5 queue weighting, print summary, a11y sweep. v2.7.3.
 - 2026-05-31 — B62–B67 — College registry, week plan package links, drill queue, lock tooltips, palette actions, stats widgets. v2.7.2.
 - 2026-05-31 — B61 — Application package per college; Anything planner + UI iteration docs. v2.7.2.
 - 2026-05-31 — B56–B60 — College blocking on Today; gap lesson follow-up; mistake triage drill links; rotation test + ⌘K e2e; gh release v2.7.0. v2.7.1.
@@ -362,7 +379,7 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- Version is synced at **2.7.2** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
+- Version is synced at **2.7.3** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
 - Lint is at **0 warnings** (B31). The 4 former `exhaustive-deps` warnings were intentional cache-busters and are now documented with scoped `eslint-disable` + reason comments — do not "fix" them by removing the dep (that reintroduces stale UI).
 - Dialogs share the `Modal` shell (B34): Escape + backdrop + Tab focus trap + initial focus + focus restore. New dialogs should use `Modal` (or `useFocusTrap`) rather than hand-rolling an overlay.
 - Bottom-stack layering is governed by the `--z-*` tokens in `index.css` (B37); keep new fixed bottom elements on that scale.

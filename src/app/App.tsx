@@ -4,6 +4,7 @@ import { AppShell } from "./AppShell";
 import {
   ApplicationPackagePage,
   BookmarksPage,
+  CampusPrintSummaryPage,
   CampusServicesPage,
   CollegeChecklistPage,
   CompoundInterestToolPage,
@@ -66,6 +67,7 @@ export function App() {
               <Route path="campus" element={<CampusServicesPage />} />
               <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
               <Route path="campus/application" element={<ApplicationPackagePage />} />
+              <Route path="campus/print-summary" element={<CampusPrintSummaryPage />} />
               <Route path="campus/essay-tracker" element={<EssayTrackerPage />} />
               <Route path="campus/calculators" element={<ToolsPage />} />
               <Route path="tools" element={<Navigate to="/campus" replace />} />

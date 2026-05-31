@@ -1,10 +1,9 @@
 import type { SkillNode, Subject } from "@/curriculum/types";
-import { ROUTES } from "@/app/navigation";
 import { findNodeAcrossSubjects } from "@/curriculum/loader";
-import { getWeekDeadlineRows, type WeekDeadlineRow } from "@/lib/admissionsSummary";
-import { loadCollegeChecklist } from "@/lib/collegeChecklist";
-import { listCollegeRegistryDeadlines } from "@/lib/colleges";
-import { loadEssayTracker } from "@/lib/essayTracker";
+import {
+  collectUrgentAdmissionsRows,
+  type WeekDeadlineRow,
+} from "@/lib/admissionsSummary";
 import { listActivitiesForDate } from "@/lib/studyActivity";
 import { loadStudyIntent } from "@/lib/studyIntent";
 import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
@@ -63,50 +62,6 @@ function tomorrowToWeekRow(task: TomorrowTask): WeekPlanRow {
   };
 }
 
-function applicationPackageHref(collegeName: string): string {
-  return `${ROUTES.applicationPackage}?college=${encodeURIComponent(collegeName)}`;
-}
-
-function collectCollegeDeadlineRows(storage: Storage, now = new Date()): WeekDeadlineRow[] {
-  const seen = new Set<string>();
-  const rows: WeekDeadlineRow[] = [];
-
-  const push = (row: WeekDeadlineRow, collegeKey?: string) => {
-    const key = (collegeKey ?? row.detail ?? row.id).toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
-    rows.push(row);
-  };
-
-  for (const school of listCollegeRegistryDeadlines(7, now, storage)) {
-    push(
-      {
-        id: school.id,
-        title: school.title,
-        detail: school.collegeName,
-        dueDate: school.dueDate,
-        daysUntil: school.daysUntil,
-        href: applicationPackageHref(school.collegeName),
-        overdue: school.overdue,
-      },
-      school.collegeName.toLowerCase(),
-    );
-  }
-
-  for (const deadline of getWeekDeadlineRows(
-    7,
-    now,
-    loadCollegeChecklist(storage),
-    loadEssayTracker(storage),
-  )) {
-    const college = deadline.detail?.trim();
-    const href = college ? applicationPackageHref(college) : deadline.href;
-    push({ ...deadline, href }, college?.toLowerCase());
-  }
-
-  return rows.sort((a, b) => a.daysUntil - b.daysUntil);
-}
-
 /** Unified “this week” rows: admissions deadlines, track lessons, SAT follow-ups. */
 export function buildWeekPlanRows(input: WeekPlanInput, maxRows = 6): WeekPlanRow[] {
   return buildWeekPlan(input, maxRows).rows;
@@ -130,7 +85,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
 
   let hasUrgentCollege = false;
   let collegeShown = 0;
-  for (const deadline of collectCollegeDeadlineRows(storage)) {
+  for (const deadline of collectUrgentAdmissionsRows(7, new Date(), undefined, undefined, storage)) {
     if (collegeShown >= MAX_COLLEGE_WEEK_ROWS) {
       collegeOverflow += 1;
       continue;

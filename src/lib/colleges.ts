@@ -5,12 +5,33 @@ import { readJson, writeJson } from "@/lib/storageJson";
 
 export const COLLEGES_STORAGE_KEY = "learnv2_colleges_v1";
 
+export const COLLEGE_NOTES_MAX_LENGTH = 80;
+export const COLLEGE_NOTES_DISPLAY_MAX = 24;
+
 export interface CollegeEntry {
   id: string;
   name: string;
   slug: string;
   deadline?: string;
+  /** Optional label (e.g. ED, EA, RD) — copy-only, not a deadline schema. */
+  notes?: string;
   createdAt: string;
+}
+
+export function normalizeCollegeNotes(notes: string | undefined): string | undefined {
+  const trimmed = notes?.trim();
+  if (!trimmed) return undefined;
+  return trimmed.slice(0, COLLEGE_NOTES_MAX_LENGTH);
+}
+
+export function formatCollegeDisplayName(name: string, notes?: string): string {
+  const trimmed = notes?.trim();
+  if (!trimmed) return name;
+  const short =
+    trimmed.length > COLLEGE_NOTES_DISPLAY_MAX
+      ? `${trimmed.slice(0, COLLEGE_NOTES_DISPLAY_MAX)}…`
+      : trimmed;
+  return `${name} · ${short}`;
 }
 
 export interface CollegesState {
@@ -70,6 +91,7 @@ export function findCollegeByName(
 export function addCollege(
   name: string,
   deadline?: string,
+  notes?: string,
   storage: Storage = localStorage,
 ): CollegesState {
   const trimmed = name.trim();
@@ -83,6 +105,7 @@ export function addCollege(
     name: trimmed,
     slug: slugify(trimmed) || generateId(),
     deadline: deadline?.trim() || undefined,
+    notes: normalizeCollegeNotes(notes),
     createdAt: new Date().toISOString(),
   };
   const next = { colleges: [...state.colleges, entry] };
@@ -99,6 +122,21 @@ export function updateCollegeDeadline(
   const next = {
     colleges: state.colleges.map((c) =>
       c.id === id ? { ...c, deadline: deadline?.trim() || undefined } : c,
+    ),
+  };
+  saveColleges(next, storage);
+  return next;
+}
+
+export function updateCollegeNotes(
+  id: string,
+  notes: string | undefined,
+  storage: Storage = localStorage,
+): CollegesState {
+  const state = loadColleges(storage);
+  const next = {
+    colleges: state.colleges.map((c) =>
+      c.id === id ? { ...c, notes: normalizeCollegeNotes(notes) } : c,
     ),
   };
   saveColleges(next, storage);
@@ -127,7 +165,7 @@ export function discoverCollegesFromEssays(storage: Storage = localStorage): str
 
 export function importCollegesFromEssays(storage: Storage = localStorage): CollegesState {
   for (const name of discoverCollegesFromEssays(storage)) {
-    addCollege(name, undefined, storage);
+    addCollege(name, undefined, undefined, storage);
   }
   return loadColleges(storage);
 }
@@ -166,7 +204,7 @@ export function listCollegeRegistryDeadlines(
     if (daysUntil === null || daysUntil > withinDays) continue;
     rows.push({
       id: `college-${college.id}`,
-      title: college.name,
+      title: formatCollegeDisplayName(college.name, college.notes),
       collegeName: college.name,
       dueDate: college.deadline,
       daysUntil,

@@ -1,4 +1,4 @@
-const CACHE_NAME = "learnv2-v2.7.2";
+const CACHE_NAME = "learnv2-v2.7.3";
 // Scope-relative so the precache works under any base path (localhost or the
 // GitHub Pages "/learnv2/" subpath).
 const STATIC_ASSETS = ["./", "./index.html", "./manifest.json", "./favicon.svg"];
