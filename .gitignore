@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage
+test-results
+playwright-report
+blob-report
+.cursor/settings.json
+learnv2-backup*.json
+*backup*.json

@@ -1,0 +1,217 @@
+{
+  "id": "probability",
+  "name": "Probability & Statistics",
+  "description": "The math of uncertainty. From basic probability to Monte Carlo simulations.",
+  "color": "#ec4899",
+  "icon": "bar-chart-2",
+  "nodes": [
+    {
+      "id": "pr2",
+      "name": "Random Variables & Distributions",
+      "description": "Discrete vs continuous variables, PMF, PDF, CDF, mean, variance, and standard deviation.",
+      "xpValue": 100,
+      "parentIds": [],
+      "estimatedMinutes": 150,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Random variable definition",
+        "Discrete vs continuous",
+        "Probability mass function (PMF)",
+        "Probability density function (PDF)",
+        "Cumulative distribution function (CDF)",
+        "Expected value E[X] and variance Var(X)"
+      ],
+      "whyItMatters": "Random variables let you model anything uncertain \u2014 stock returns, decision outcomes, dice rolls. Distributions describe the shape of that uncertainty.",
+      "practiceProblems": [
+        "Fair die roll: E[X] and Var(X)?",
+        "Given PDF f(x)=2x on [0,1], find P(X < 0.5)",
+        "What's the difference between PMF and PDF?",
+        "If E[X]=5 and Var(X)=4, what are the units of each?"
+      ],
+      "resources": [
+        {
+          "title": "Khan Academy: Random Variables",
+          "url": "https://www.khanacademy.org/math/statistics-probability/random-variables-stats-library",
+          "type": "course",
+          "whyHelpful": "Khan Academy's course on random variables \u2014 PMF, CDF, expected value, and variance with clear examples and practice problems."
+        },
+        {
+          "title": "Seeing Theory: Probability Distributions (Interactive)",
+          "url": "https://seeing-theory.brown.edu/probability-distributions/",
+          "type": "practice",
+          "whyHelpful": "Interactive visualizations of probability distributions from Brown University. Adjust parameters and see distributions change in real time."
+        },
+        {
+          "title": "StatLect: Random Variables",
+          "url": "https://www.statlect.com/fundamentals-of-probability/random-variables",
+          "type": "article",
+          "whyHelpful": "StatLect's rigorous guide to random variables \u2014 PMF, PDF, expected value, and variance with detailed mathematical derivations and examples."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q513",
+          "question": "What is the expected value of a fair six-sided die roll?",
+          "options": [
+            "3",
+            "3.5",
+            "4",
+            "2.5"
+          ],
+          "correctIndex": 1,
+          "explanation": "E[X] = (1+2+3+4+5+6)/6 = 21/6 = 3.5"
+        },
+        {
+          "id": "q514",
+          "question": "Which distribution models the number of successes in a fixed number of independent trials?",
+          "options": [
+            "Normal",
+            "Binomial",
+            "Poisson",
+            "Exponential"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Binomial distribution models the number of successes in n independent Bernoulli trials with the same probability of success."
+        },
+        {
+          "id": "q515",
+          "question": "What is the key difference between a PMF and a PDF?",
+          "options": [
+            "PMF is for continuous variables, PDF for discrete",
+            "PMF gives probabilities directly, PDF gives density (not direct probability)",
+            "PMF is for normal distributions only",
+            "PDF is always between 0 and 1"
+          ],
+          "correctIndex": 1,
+          "explanation": "PMF (Probability Mass Function) gives exact probabilities for discrete variables. PDF (Probability Density Function) gives density; probability is the area under the curve."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "A random variable X represents the number of heads in 3 fair coin flips. What is the PMF of X, and what are E[X] and Var(X)?",
+          "solution": "PMF: P(X=0)=1/8, P(X=1)=3/8, P(X=2)=3/8, P(X=3)=1/8. E[X] = 0(1/8)+1(3/8)+2(3/8)+3(1/8) = 12/8 = 1.5. E[X\u00b2] = 0+3/8+12/8+9/8 = 24/8 = 3. Var(X) = E[X\u00b2] - (E[X])\u00b2 = 3 - 2.25 = 0.75.",
+          "explanation": "For a discrete random variable, the PMF gives the probability of each possible value. Expected value is the probability-weighted average. Variance measures spread around the mean."
+        },
+        {
+          "problem": "Your complex strategy has a 40% win rate. You take 20 decisions per day. Let X be the number of winning decisions in a day. What distribution does X follow? Find E[X], Var(X), and P(X \u2265 10).",
+          "solution": "X ~ Binomial(n=20, p=0.4). E[X] = np = 20 \u00d7 0.4 = 8. Var(X) = np(1-p) = 20 \u00d7 0.4 \u00d7 0.6 = 4.8. P(X \u2265 10) = 1 - P(X \u2264 9). Using binomial CDF: P(X \u2264 9) \u2248 0.7553, so P(X \u2264 9) \u2248 0.7553, so P(X \u2265 10) \u2248 0.2447 or about 24.5%.",
+          "explanation": "The binomial distribution models the number of successes in n independent trials. For a data thinker, this tells you how many winning decisions to expect in a day and the probability of having a really good day (10+ wins). Most days (75.5%) you'll have 9 or fewer wins."
+        },
+        {
+          "problem": "You measure daily returns of ETH over 100 days. The mean return is 0.1% per day with standard deviation 2.5%. Model returns as a continuous random variable. What is the probability of a return between -2% and +3%? What is the probability of a loss greater than 5%?",
+          "solution": "Assume returns X ~ N(\u03bc=0.1, \u03c3=2.5). For P(-2 \u2264 X \u2264 3): Z\u2081 = (-2 - 0.1)/2.5 = -0.84, Z\u2082 = (3 - 0.1)/2.5 = 1.16. From Z-table: P(-0.84 \u2264 Z \u2264 1.16) \u2248 0.876 - 0.201 = 0.675 (67.5%). For P(X < -5): Z = (-5 - 0.1)/2.5 = -2.04. P(Z < -2.04) \u2248 0.0207 (2.07%). About 1 in 48 days you'd expect a drop worse than 5%.",
+          "explanation": "The normal distribution approximates many financial variables. Converting to Z-scores standardizes any normal distribution, letting you use standard tables. The tail probability (2.07%) tells you how often to expect large losses \u2014 crucial for risk planning. But remember: real returns have fat tails, so actual extreme events are more common than the normal predicts."
+        }
+      ],
+      "commonMistakes": [
+        "Confusing PMF with PDF \u2014 PMF is for discrete variables (gives exact probabilities), PDF is for continuous (gives density, not direct probability).",
+        "Forgetting that variance is E[X\u00b2] - (E[X])\u00b2, not just E[X\u00b2] \u2014 this is the most common variance calculation error.",
+        "Treating sample statistics as population parameters \u2014 sample mean estimates the true mean but is not equal to it."
+      ]
+    },
+    {
+      "id": "pr6",
+      "name": "Correlation & Regression",
+      "description": "Measuring relationships between variables. Correlation, linear regression, and R\u00b2.",
+      "xpValue": 100,
+      "parentIds": [],
+      "estimatedMinutes": 150,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Correlation coefficient (r)",
+        "Positive, negative, zero correlation",
+        "Correlation \u2260 causation",
+        "Linear regression: y = mx + b",
+        "R\u00b2: coefficient of determination",
+        "Residuals and outliers"
+      ],
+      "whyItMatters": "Does Bitcoin follow the S&P 500? Is there a relationship between volume and volatility? Correlation and regression answer these. But beware \u2014 correlation without causation is how amateurs get rekt.",
+      "practiceProblems": [
+        "Calculate correlation between two small datasets by hand",
+        "Given regression line y = 2x + 3, predict y when x = 5",
+        "R\u00b2 = 0.85. What does that mean?",
+        "Find a spurious correlation online and explain why it's not causal"
+      ],
+      "resources": [
+        {
+          "title": "Khan Academy: Correlation",
+          "url": "https://www.khanacademy.org/math/statistics-probability/describing-relationships-quantitative-data",
+          "type": "course",
+          "whyHelpful": "Structured course on correlation, regression, and scatter plots. Interactive practice problems with instant feedback."
+        },
+        {
+          "title": "Correlation vs Causation",
+          "url": "https://www.youtube.com/watch?v=1tSqSMOyNFE",
+          "type": "video",
+          "whyHelpful": "Explains why correlated variables are often both caused by a third factor. Critical lesson for avoiding spurious time-series signals."
+        },
+        {
+          "title": "Spurious Correlations Website",
+          "url": "https://www.tylervigen.com/spurious-correlations",
+          "type": "article",
+          "whyHelpful": "Fun examples of absurdly high correlations with zero causation. Memorably demonstrates why correlation does not equal causation."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "A sensor reading drops sharply for two minutes, then partially recovers. Compare a Kalman estimate to a rolling average during the event. Why can a fast adaptive filter be risky when the data violates the model assumptions?",
+          "solution": "A sensor reading drops sharply for two minutes, then partially recovers. Compare a Kalman estimate to a rolling average during the event. Why can a fast adaptive filter be risky when the data violates the model assumptions?",
+          "explanation": "A sensor reading drops sharply for two minutes, then partially recovers. Compare a Kalman estimate to a rolling average during the event. Why can a fast adaptive filter be risky when the data violates the model assumptions?"
+        },
+        {
+          "problem": "A sensor reading drops sharply for two minutes, then partially recovers. Compare a Kalman estimate to a rolling average during the event. Why can a fast adaptive filter be risky when the data violates the model assumptions?",
+          "solution": "A sensor reading drops sharply for two minutes, then partially recovers. Compare a Kalman estimate to a rolling average during the event. Why can a fast adaptive filter be risky when the data violates the model assumptions?",
+          "explanation": "A sensor reading drops sharply for two minutes, then partially recovers. Compare a Kalman estimate to a rolling average during the event. Why can a fast adaptive filter be risky when the data violates the model assumptions?"
+        },
+        {
+          "problem": "You fit a linear regression of stock returns vs market returns: Return = 0.02 + 1.3 \u00d7 MarketReturn. Over 100 days, you get R\u00b2 = 0.72. Looking at the residuals, you notice three data points are 4 standard deviations away from the regression line. A new data thinker claims 'the model predicts well since R\u00b2 = 0.72.' How do you assess this claim?",
+          "solution": "R\u00b2 = 0.72 means 72% of variance is explained \u2014 reasonably good. But 3 outliers at 4\u03c3 (where you'd expect ~0 in a normal distribution) indicates the model is misspecified or the data has fat tails. These extreme residuals heavily influence the regression coefficients. Remove or investigate the outliers, then re-fit. If R\u00b2 drops to 0.45, the original 0.72 was inflated by extreme points. Residual analysis is essential \u2014 a high R\u00b2 with patterned residuals means the model is capturing the wrong relationships.",
+          "explanation": "Residuals reveal what R\u00b2 hides: outliers, nonlinearity, heteroskedasticity. Always plot residuals after fitting a regression. Three 4\u03c3 outliers in 100 points strongly suggests a heavy-tailed distribution or structural breaks. In finance, normal assumptions about residuals almost always fail \u2014 fat tails are the rule, not the exception."
+        }
+      ],
+      "commonMistakes": [
+        "Confusing correlation with causation \u2014 just because two assets move together doesn't mean one causes the other.",
+        "Using r = 0.35 to claim a strong relationship \u2014 correlations below 0.5 explain less than 25% of variance.",
+        "Extrapolating regression beyond the data range \u2014 relationships that hold in normal conditions may break during crises."
+      ],
+      "quiz": [
+        {
+          "id": "q184",
+          "question": "If correlation between X and Y is -0.8, what does this mean?",
+          "options": [
+            "X causes Y to decrease",
+            "When X increases, Y tends to decrease strongly",
+            "There is no relationship",
+            "X and Y are independent"
+          ],
+          "correctIndex": 1,
+          "explanation": "A strong negative correlation (-0.8) means that as X increases, Y tends to decrease in a roughly linear fashion. Correlation does not imply causation."
+        },
+        {
+          "id": "q185",
+          "question": "In regression, what does R\u00b2 = 0.64 mean?",
+          "options": [
+            "The correlation is 0.64",
+            "64% of the variance in the dependent variable is explained by the model",
+            "The prediction error is 64%",
+            "The slope is 0.64"
+          ],
+          "correctIndex": 1,
+          "explanation": "R\u00b2 (coefficient of determination) represents the proportion of variance in the dependent variable that is predictable from the independent variable(s)."
+        },
+        {
+          "id": "q186",
+          "question": "What is a spurious correlation?",
+          "options": [
+            "A correlation that is statistically significant",
+            "A correlation that appears real but is caused by a third variable or coincidence",
+            "A correlation that is negative",
+            "A correlation that is exactly 0"
+          ],
+          "correctIndex": 1,
+          "explanation": "Spurious correlations are coincidental or driven by a confounding variable. Example: ice cream sales correlate with drowning deaths (both rise in summer). They are not causal."
+        }
+      ]
+    }
+  ]
+}

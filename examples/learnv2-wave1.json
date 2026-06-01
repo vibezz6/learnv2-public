@@ -1,0 +1,37 @@
+{
+  "name": "Learn v2 — Wave 1 DAG example (batches 61–65)",
+  "targetVersion": "v2.3.9",
+  "description": "Local backend A: activity quality, quiz continue, backup truth, study intent, read APIs. Ranks can run in parallel when files do not overlap.",
+  "ranks": [
+    {
+      "rank": 1,
+      "parallel": true,
+      "batches": [
+        { "id": 61, "version": "v2.3.5", "focus": "Debounce notes activity; week plan uses today", "files": ["noteSessions.ts", "weekPlan.ts"] },
+        { "id": 63, "version": "v2.3.7", "focus": "Backup copy + activity ledger tests", "files": ["SettingsPage.tsx", "progress.ts"] }
+      ]
+    },
+    {
+      "rank": 2,
+      "parallel": false,
+      "batches": [
+        { "id": 62, "version": "v2.3.6", "focus": "Quiz-in-progress in getContinueTarget", "files": ["progress.ts", "quizProgress.ts"] }
+      ]
+    },
+    {
+      "rank": 3,
+      "parallel": false,
+      "batches": [
+        { "id": 65, "version": "v2.3.9", "focus": "getTodayStudySummary + getWeekActivityMix", "files": ["studyActivity.ts"] }
+      ]
+    },
+    {
+      "rank": 4,
+      "parallel": false,
+      "batches": [
+        { "id": 64, "version": "v2.3.8", "focus": "studyIntent + Today chips", "files": ["studyIntent.ts", "DashboardPage.tsx"] }
+      ]
+    }
+  ],
+  "gate": ["npm run test", "npm run build"]
+}

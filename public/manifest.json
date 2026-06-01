@@ -1,0 +1,19 @@
+{
+  "name": "Learn v2",
+  "short_name": "Learn v2",
+  "description": "Your personal SAT and study workspace — daily focus, streaks, and progress, all on this device.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#0e1016",
+  "theme_color": "#0e1016",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

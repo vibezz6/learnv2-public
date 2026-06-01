@@ -1,0 +1,280 @@
+{
+  "id": "programming",
+  "name": "Programming with Python",
+  "description": "Learn Python from scratch. Variables, functions, data structures, and libraries for practical data analysis.",
+  "color": "#10b981",
+  "icon": "code",
+  "nodes": [
+    {
+      "id": "p4",
+      "name": "Functions",
+      "description": "Write reusable code with functions.",
+      "xpValue": 100,
+      "parentIds": [],
+      "estimatedMinutes": 150,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "def",
+        "Parameters",
+        "Return values"
+      ],
+      "whyItMatters": "Functions are the building blocks of organized code. They let you write logic once, use it anywhere, and think in terms of high-level operations instead of line-by-line steps \u2014 essential for building anything complex.",
+      "practiceProblems": [
+        "Write a function that takes a number and returns its square",
+        "Write a function that adds two numbers and returns the result",
+        "Write a function is_palindrome(s) that returns True if a string reads the same forwards and backwards",
+        "Create a function that accepts a list of numbers and returns only the even numbers"
+      ],
+      "resources": [
+        {
+          "title": "Real Python: Functions",
+          "url": "https://realpython.com/defining-your-own-python-function/",
+          "type": "article",
+          "whyHelpful": "Real Python's practical tutorials with clear explanations and runnable code. Great for deep understanding with real-world context."
+        },
+        {
+          "title": "Python Official Docs: Defining Functions",
+          "url": "https://docs.python.org/3/tutorial/controlflow.html#defining-functions",
+          "type": "article",
+          "whyHelpful": "Official Python documentation with authoritative reference and examples. Essential for understanding the exact behavior of Python features."
+        },
+        {
+          "title": "Khan Academy: Introduction to Functions",
+          "url": "https://www.khanacademy.org/computing/computer-programming/programming/functions",
+          "type": "course",
+          "whyHelpful": "Khan Academy's interactive lessons with practice exercises. Excellent for building intuition through hands-on problem solving."
+        },
+        {
+          "title": "LeetCode: Python Functions Practice",
+          "url": "https://leetcode.com/tag/math/",
+          "type": "practice",
+          "whyHelpful": "Practice writing functions by solving algorithm problems. Filter by 'easy' to match this lesson level."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q437",
+          "question": "What does return do?",
+          "options": [
+            "Prints value",
+            "Exits with value",
+            "Restarts",
+            "Nothing"
+          ],
+          "correctIndex": 1,
+          "explanation": "return sends value back to caller."
+        },
+        {
+          "id": "q438",
+          "question": "How do you define a function?",
+          "options": [
+            "function myFunc():",
+            "def myFunc():",
+            "func myFunc():",
+            "define myFunc():"
+          ],
+          "correctIndex": 1,
+          "explanation": "def keyword is used to define functions in Python."
+        },
+        {
+          "id": "q51",
+          "question": "What does return do in a function?",
+          "options": [
+            "Prints output",
+            "Stops function and sends value back",
+            "Restarts function",
+            "Nothing"
+          ],
+          "correctIndex": 1,
+          "explanation": "return sends a value back to the caller and exits the function."
+        },
+        {
+          "id": "q439",
+          "question": "What does this return: def add(a=5, b=3): return a+b when called as add()?",
+          "options": [
+            "Error",
+            "8",
+            "5",
+            "3"
+          ],
+          "correctIndex": 1,
+          "explanation": "Default arguments (a=5, b=3) are used when no values are passed, so 5+3=8."
+        },
+        {
+          "id": "q440",
+          "question": "What does this return: def add(a=5, b=3): return a+b when called as add(2)?",
+          "options": [
+            "Error",
+            "8",
+            "5",
+            "2"
+          ],
+          "correctIndex": 2,
+          "explanation": "When called as add(2), a=2 (overrides default) and b=3 (uses default), so 2+3=5."
+        },
+        {
+          "id": "q441",
+          "question": "What is printed: def greet(name='World'): return 'Hello ' + name; print(greet())",
+          "options": [
+            "Hello World",
+            "Error",
+            "Hello ",
+            "None"
+          ],
+          "correctIndex": 0,
+          "explanation": "When no argument is passed to greet(), the default parameter 'World' is used, so it returns 'Hello World'."
+        },
+        {
+          "id": "q55",
+          "question": "What prints? x=10; def func(): x=5; print(x); func(); print(x)",
+          "options": [
+            "5 then 10",
+            "10 then 5",
+            "5 then 5",
+            "Error"
+          ],
+          "correctIndex": 0,
+          "explanation": "Inside func(), x=5 creates a LOCAL variable (shadows global x). So func() prints 5. After func(), print(x) prints global x=10."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Write area function.",
+          "solution": "def area(l,w): return l*w",
+          "explanation": "Functions return values."
+        },
+        {
+          "problem": "Write a function that returns True if a number is even.",
+          "solution": "def is_even(n): return n % 2 == 0",
+          "explanation": "Functions can return boolean values using the modulo operator."
+        },
+        {
+          "problem": "Write a function count_vowels(word) that takes a string and returns the number of vowels (a, e, i, o, u) in it. Call it with 'education' and show the result.",
+          "solution": "def count_vowels(word):\n    vowels = 'aeiou'\n    count = 0\n    for char in word.lower():\n        if char in vowels:\n            count += 1\n    return count\n\nresult = count_vowels('education')\nprint(result)  # Output: 5",
+          "explanation": "This example ties together several function concepts: a loop iterates over each character in the word, an if-statement checks if each character is a vowel, a counter local variable accumulates the total, and return sends the final count back to the caller. The function works with strings, uses the .lower() method, and demonstrates how local variables (count) are created and updated inside a function without affecting the outside scope."
+        }
+      ],
+      "commonMistakes": [
+        "Forgetting to return",
+        "Modifying globals"
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Files and APIs",
+      "description": "Read files, make HTTP requests in Python.",
+      "xpValue": 125,
+      "parentIds": [],
+      "estimatedMinutes": 180,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "File I/O",
+        "JSON",
+        "HTTP requests"
+      ],
+      "whyItMatters": "Real-world Python is about connecting to the outside world \u2014 reading datasets, fetching live prices, querying APIs. File I/O and HTTP requests are the bridge between code running on your machine and the internet's data.",
+      "practiceProblems": [
+        "Read a file line by line and print each line with its line number",
+        "Fetch JSON from an API endpoint and extract specific fields",
+        "Write a Python script that downloads a CSV from a URL and saves it locally",
+        "Build a function that reads a file, processes its contents, and writes the output to a new file"
+      ],
+      "resources": [
+        {
+          "title": "Real Python: Files",
+          "url": "https://realpython.com/working-with-files-in-python/",
+          "type": "article",
+          "whyHelpful": "Real Python's practical tutorials with clear explanations and runnable code. Great for deep understanding with real-world context."
+        },
+        {
+          "title": "Python Official Docs: Input and Output",
+          "url": "https://docs.python.org/3/tutorial/inputoutput.html",
+          "type": "article",
+          "whyHelpful": "Official Python documentation with authoritative reference and examples. Essential for understanding the exact behavior of Python features."
+        },
+        {
+          "title": "Khan Academy: APIs and JSON",
+          "url": "https://www.khanacademy.org/computing/computer-programming/html-css/json/a/json-and-apis",
+          "type": "course",
+          "whyHelpful": "Khan Academy's interactive lessons with practice exercises. Excellent for building intuition through hands-on problem solving."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q444",
+          "question": "What does with open() do?",
+          "options": [
+            "Same as open()",
+            "Auto-closes file",
+            "Binary mode",
+            "Error"
+          ],
+          "correctIndex": 1,
+          "explanation": "with open() auto-closes the file."
+        },
+        {
+          "id": "q445",
+          "question": "How do you open a file for reading?",
+          "options": [
+            "open('file.txt', 'w')",
+            "open('file.txt', 'r')",
+            "read('file.txt')",
+            "file.open('file.txt')"
+          ],
+          "correctIndex": 1,
+          "explanation": "'r' mode opens file for reading."
+        },
+        {
+          "id": "q56",
+          "question": "What library is used for HTTP requests?",
+          "options": [
+            "http",
+            "requests",
+            "urllib3",
+            "httplib"
+          ],
+          "correctIndex": 1,
+          "explanation": "requests is the most popular HTTP library for Python."
+        },
+        {
+          "id": "q806",
+          "question": "What does json.loads() do in Python?",
+          "options": [
+            "Converts a JSON string to a Python object",
+            "Converts a Python object to a JSON string",
+            "Reads a JSON file from disk",
+            "Validates JSON syntax"
+          ],
+          "correctIndex": 0,
+          "explanation": "json.loads() parses a JSON string and converts it into a Python dict or list. Use json.dumps() for the reverse."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Read a file.",
+          "solution": "with open('f.txt') as f: data = f.read()",
+          "explanation": "Use with statement."
+        },
+        {
+          "problem": "Fetch JSON from an API using requests.",
+          "solution": "import requests; r = requests.get('https://api.example.com/data'); data = r.json()",
+          "explanation": "requests.get() fetches a URL; .json() parses the JSON response into a dict."
+        },
+        {
+          "problem": "You have a CSV file 'decisions.csv' with columns: date,asset,side,qty,price. Write a Python script that: (1) reads the CSV, (2) filters to only BUY decisions, (3) calculates total spent per asset, (4) writes the results to a new file 'summary.txt'. Include error handling for missing files.",
+          "solution": "import csv\n\ntry:\n    with open('decisions.csv', 'r') as f:\n        reader = csv.DictReader(f)\n        buys = [row for row in reader if row['side'].upper() == 'BUY']\n        \n    totals = {}\n    for row in buys:\n        asset = row['asset']\n        cost = float(row['qty']) * float(row['price'])\n        totals[asset] = totals.get(asset, 0) + cost\n    \n    with open('summary.txt', 'w') as f:\n        f.write('Buy Summary\\n')\n        f.write('=' * 30 + '\\n')\n        for asset, total in totals.items():\n            f.write(f'{asset}: ${total:.2f}\\n')\n            \n    print('Summary written to summary.txt')\n    \nexcept FileNotFoundError:\n    print('Error: decisions.csv not found')\nexcept csv.Error as e:\n    print(f'CSV error: {e}')",
+          "explanation": "File I/O goes hand in hand with data processing. The 'with' statement auto-closes files even if errors occur. csv.DictReader reads each row as a dict with column headers as keys. We use a try/except block to handle the common case of a missing file gracefully \u2014 printing an error instead of crashing. The get() method on dicts provides a default value (0) when an asset key doesn't exist yet, which is cleaner than checking 'if asset in totals'."
+        },
+        {
+          "problem": "Count word frequencies in a list using a dict.",
+          "solution": "words = ['a','b','a']; counts = {}; [counts.update({w: counts.get(w,0)+1}) for w in words]",
+          "explanation": "dict.get(key, default) safely returns a default if key is missing."
+        }
+      ],
+      "commonMistakes": [
+        "Not closing files",
+        "Forgetting HTTP error handling"
+      ]
+    }
+  ]
+}

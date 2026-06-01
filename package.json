@@ -1,0 +1,82 @@
+{
+  "name": "learnv2-public",
+  "private": false,
+  "version": "2.12.0",
+  "description": "Local-first study PWA for SAT prep, college applications, spaced review, and personal learning workflows.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vibezz6/learnv2-public.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vibezz6/learnv2-public/issues"
+  },
+  "homepage": "https://learnv2-tau.vercel.app",
+  "keywords": [
+    "local-first",
+    "pwa",
+    "education",
+    "sat",
+    "spaced-repetition",
+    "college-applications",
+    "react",
+    "vite"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "doctor": "npm run lint && npm run test && npm run curriculum:lint && npm run sat:coverage:strict && npm run build",
+    "dev:host": "vite --host 127.0.0.1 --port 8080",
+    "preview:live": "npm run build && vite preview",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "openrouter:check": "node scripts/check-openrouter.mjs",
+    "openrouter:apply": "node scripts/apply-openrouter-key-from-env.mjs",
+    "test:watch": "vitest",
+    "curriculum:split": "node --experimental-strip-types scripts/split-curriculum.mts",
+    "curriculum:lint": "tsx scripts/curriculum-lint.mts",
+    "sat:coverage": "tsx scripts/sat-skill-coverage.mts",
+    "sat:coverage:strict": "tsx scripts/sat-skill-coverage.mts --strict",
+    "sat:coverage:stretch": "tsx scripts/sat-skill-coverage.mts --target=8",
+    "test:e2e": "playwright test",
+    "version:bump": "node scripts/bump-version.mjs patch",
+    "version:bump:minor": "node scripts/bump-version.mjs minor"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "clsx": "^2.1.1",
+    "katex": "^0.17.0",
+    "lucide-react": "^1.9.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.6.2",
+    "tailwind-merge": "^3.3.1",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.52.0",
+    "@tailwindcss/vite": "^4.2.4",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "tailwindcss": "^4.2.4",
+    "tsx": "^4.20.3",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.0.10",
+    "vitest": "^3.2.4"
+  }
+}

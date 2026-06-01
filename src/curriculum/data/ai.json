@@ -1,0 +1,140 @@
+{
+  "id": "ai",
+  "name": "Artificial Intelligence",
+  "description": "From basic ML to LLMs. Understand the technology reshaping software, learning, and work.",
+  "color": "#10b981",
+  "icon": "brain",
+  "nodes": [
+    {
+      "id": "ai4",
+      "name": "Large Language Models",
+      "description": "How LLMs work: tokens, embeddings, attention, and transformers.",
+      "xpValue": 150,
+      "parentIds": [],
+      "estimatedMinutes": 180,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Tokens and vocabulary",
+        "Embeddings: words as vectors",
+        "Attention mechanism (Q, K, V)",
+        "Transformer architecture",
+        "Context windows and limits",
+        "Pre-training vs fine-tuning",
+        "Hallucinations and limitations"
+      ],
+      "whyItMatters": "LLMs like Claude, ChatGPT, and other AI assistants power the tools you use daily. Understanding tokens, context windows, and limitations helps you prompt effectively and avoid hallucinations.",
+      "practiceProblems": [
+        "How many tokens is 'Hello, world!' approximately?",
+        "What happens when context window fills up?",
+        "Why do LLMs sometimes confidently state false facts?",
+        "What distinguishes pre-training from fine-tuning in terms of data and objective?"
+      ],
+      "resources": [
+        {
+          "title": "3Blue1Brown: How LLMs Work",
+          "url": "https://www.youtube.com/watch?v=wjZofJX0v4M",
+          "type": "video",
+          "whyHelpful": "Visual explanation of attention and transformer architecture. The best conceptual deep dive for understanding how LLMs process text at scale."
+        },
+        {
+          "title": "How LLMs Work (Andrej Karpathy)",
+          "url": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
+          "type": "video",
+          "whyHelpful": "Karpathy talk covering GPT architecture, training, and inference at the technical level. Best for understanding the full LLM pipeline."
+        },
+        {
+          "title": "Tokenization Explained",
+          "url": "https://en.wikipedia.org/wiki/Tokenization",
+          "type": "article",
+          "whyHelpful": "Wikipedia article on tokenization \u2014 how text gets split into tokens for LLMs. Key for understanding why LLMs have context limits and token pricing."
+        },
+        {
+          "title": "Attention Is All You Need (Original Paper)",
+          "url": "https://arxiv.org/abs/1706.03762",
+          "type": "article",
+          "whyHelpful": "The original 2017 transformer paper that started the LLM revolution. Hard but rewarding read for understanding the mathematical foundations."
+        },
+        {
+          "title": "The Illustrated Transformer (Jay Alammar)",
+          "url": "https://jalammar.github.io/illustrated-transformer/",
+          "type": "article",
+          "whyHelpful": "Jay Alammar visual guide to transformers with clear diagrams. The best place to start before tackling the original paper."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q537",
+          "question": "What is a token in an LLM?",
+          "options": [
+            "A complete sentence",
+            "A chunk of text (word, subword, or character)",
+            "A full paragraph",
+            "The model's internal memory"
+          ],
+          "correctIndex": 1,
+          "explanation": "Tokens are the basic units LLMs process. 'Hello' might be one token, but 'understanding' might be split into 'under' + 'standing'. Token count affects cost and context limits."
+        },
+        {
+          "id": "q538",
+          "question": "What is the 'attention mechanism' in transformers?",
+          "options": [
+            "It makes the model pay attention to the user",
+            "It weighs the importance of different tokens when processing each token",
+            "It focuses only on the first token",
+            "It ignores irrelevant input"
+          ],
+          "correctIndex": 1,
+          "explanation": "Attention lets the model 'look at' all other tokens when processing one token, weighing each by relevance. This is why 'The animal didn't cross the road because it was too tired' \u2014 the model knows 'it' refers to 'animal', not 'road'."
+        },
+        {
+          "id": "q539",
+          "question": "What are 'hallucinations' in LLMs?",
+          "options": [
+            "When the model sees images",
+            "When the model confidently generates false information",
+            "When the model refuses to answer",
+            "When the model runs out of tokens"
+          ],
+          "correctIndex": 1,
+          "explanation": "Hallucinations occur when LLMs generate plausible-sounding but factually incorrect information. They predict the next likely token based on patterns, not truth \u2014 so they can 'make things up' confidently."
+        },
+        {
+          "id": "q540a",
+          "question": "What is the 'context window' in an LLM?",
+          "options": [
+            "The physical screen size of the device",
+            "The maximum number of tokens the model can process in one request",
+            "The number of training epochs",
+            "The size of the model's vocabulary"
+          ],
+          "correctIndex": 1,
+          "explanation": "The context window is the maximum number of tokens (input + output) the model can handle in a single request. GPT-4 Turbo has a 128K token context window. When the context is exceeded, older tokens get truncated \u2014 the model 'forgets' the beginning of the conversation."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Tokenization Example: How would the sentence 'AI is changing the world!' be tokenized? Assume a simple tokenizer that splits on spaces and punctuation.",
+          "solution": "Step 1: Split on spaces\\n  ['AI', 'is', 'changing', 'the', 'world!']\\n\\nStep 2: Split punctuation from words\\n  ['AI', 'is', 'changing', 'the', 'world', '!']\\n\\nStep 3: Assign token IDs (example)\\n  [1234, 567, 8910, 1112, 1314, 33]\\n\\nTotal: 6 tokens. In real tokenizers (like GPT's BPE), 'changing' might be split into 'change' + 'ing' as separate tokens.",
+          "explanation": "Tokenization turns text into numbers (token IDs) that the model can process. Different tokenizers split text differently. More tokens = higher cost and longer processing time. That's why 'be concise' in prompts saves money."
+        },
+        {
+          "problem": "Attention Mechanism Intuition: Given the sentence 'The cat sat on the mat because it was tired', when the model processes the word 'it', which previous words should it 'attend' to most? How does this help the model understand the sentence?",
+          "solution": "When processing 'it', the model computes attention scores against all previous words. 'it' should attend most strongly to 'cat' (the subject that was tired). Lower attention scores for 'mat', 'sat', 'on'.\\n\\nThe attention mechanism creates a weighted sum: output = \u03a3(attention_score_i \u00d7 value_i). This lets the model 'look back' at relevant context when generating each word.\\n\\nWithout attention, the model would struggle with long-range dependencies. With attention, 'it' correctly refers to 'cat' even though they're far apart in the sentence.",
+          "explanation": "Attention is the breakthrough that made transformers work. Each token 'queries' all other tokens to find relevant context. This is why transformers handle long-range dependencies better than older RNN/LSTM architectures."
+        },
+        {
+          "problem": "Context Window Math: GPT-4 Turbo has a 128K token context window. You give it a prompt that is 90,000 tokens long (roughly 67,500 words \u2014 about a 135-page book). How many tokens remain for the model's response? If the model generates text at ~50 tokens/second, how long could it theoretically respond before hitting the limit?",
+          "solution": "Remaining tokens: 128,000 - 90,000 = 38,000 tokens. At 50 tokens/second: 38,000 / 50 = 760 seconds \u2248 12.7 minutes.\\n\\nBut there's a catch: as the model generates, each new token gets appended to the context, so the available window shrinks dynamically. If the model generates 20,000 tokens, only 18,000 remain. The oldest tokens (from the beginning of the prompt) get truncated first.\\n\\nPractical: A 90K token prompt leaves room for ~28,500 words of output \u2014 about a 57-page response \u2014 before the model starts 'forgetting' the prompt.",
+          "explanation": "Context window limits are a hard constraint. When total tokens (input + generated output) exceed the window, the model loses access to the earliest information. This is why long documents split across multiple prompts can cause the model to 'forget' earlier context. Use RAG (Retrieval Augmented Generation) to work around this."
+        }
+      ],
+      "commonMistakes": [
+        "Thinking LLMs understand language \u2014 they predict the next token based on statistical patterns. No comprehension involved.",
+        "Ignoring token limits \u2014 LLMs have context windows (e.g., 128K tokens). Long conversations get truncated.",
+        "Assuming the model knows current events \u2014 training data has a cutoff date. The model doesn't know about recent events unless told.",
+        "Confusing fluency with correctness \u2014 LLMs can be confidently wrong. Always verify important claims.",
+        "Thinking prompt engineering is 'hacking' \u2014 it's a legitimate skill. How you ask determines the quality of the answer."
+      ]
+    }
+  ]
+}

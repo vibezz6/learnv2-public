@@ -1,0 +1,393 @@
+@import "tailwindcss";
+
+/* Learn v2 — serious study workspace · cool slate + indigo accent */
+:root {
+  /* ----- Surfaces (cool slate IDE layering) ----- */
+  --bg: #0e1016;
+  --bg-app: #0e1016;
+  --bg-rail: #11141b;
+  --bg-canvas: #0e1016;
+  --bg-panel: #161a23;
+  --bg-elevated: #1a1e28;
+  --bg-sunken: #0a0c12;
+  --bg-glass: rgba(20, 23, 30, 0.92);
+  --bg-secondary: #1e2230;
+  --bg-hover: rgba(255, 255, 255, 0.04);
+  --bg-active: rgba(255, 255, 255, 0.07);
+  --bg-input: var(--bg-sunken);
+  --bg-card: var(--bg-panel);
+
+  /* ----- Text (cool neutral) -----
+     Contrast targets on --bg (#0e1016): --text / --text-heading clear AA for body,
+     --text-muted ~5.7:1 (AA), --text-subtle is small mono/meta only (~4:1, AA-large/UI). */
+  --text: #d6d9e0;
+  --text-muted: #8a92a0;
+  --text-subtle: #6b7488;
+  --text-heading: #e8eaef;
+  --text-h: var(--text-heading);
+
+  /* ----- Accent (refined indigo — IDE blue, not Halloween orange) ----- */
+  --accent: #7a93f4;
+  --accent-rgb: 122, 147, 244;
+  --accent-fg: #0a0d18;
+  --accent-2: #a3b4f8;
+  --accent-bg: rgba(122, 147, 244, 0.1);
+  --accent-bg-strong: rgba(122, 147, 244, 0.18);
+  --accent-border: rgba(122, 147, 244, 0.34);
+  --accent-glow: 0 0 0 1px rgba(122, 147, 244, 0.2);
+
+  /* ----- Hairlines / rules (cool neutral) ----- */
+  --rule: rgba(255, 255, 255, 0.07);
+  --rule-strong: rgba(255, 255, 255, 0.13);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --border-light: var(--rule);
+  --border-dark: var(--rule-strong);
+  --grid-line: rgba(255, 255, 255, 0.022);
+
+  /* ----- Status (fg + bg + border triplets — cool, calmer) ----- */
+  --success: #5bbb8d;
+  --success-fg: #95d8b3;
+  --success-rgb: 91, 187, 141;
+  --success-bg: rgba(91, 187, 141, 0.1);
+  --success-border: rgba(91, 187, 141, 0.32);
+  --warning: #e0b75d;
+  --warning-fg: #ecca85;
+  --warning-rgb: 224, 183, 93;
+  --warning-bg: rgba(224, 183, 93, 0.1);
+  --warning-border: rgba(224, 183, 93, 0.32);
+  --danger: #e07581;
+  --danger-fg: #ec98a1;
+  --danger-rgb: 224, 117, 129;
+  --danger-bg: rgba(224, 117, 129, 0.1);
+  --danger-border: rgba(224, 117, 129, 0.32);
+  --info: #7ab5e8;
+  --info-fg: #a3c8ec;
+  --info-bg: rgba(122, 181, 232, 0.1);
+  --info-border: rgba(122, 181, 232, 0.32);
+
+  /* ----- Code syntax (refined for cool slate) ----- */
+  --code-bg: #0a0c12;
+  --code-header-bg: #161a23;
+  --code-line-numbers: #6e6862;
+  --code-text: var(--text);
+  --code-keyword: #d4a574;
+  --code-string: #a8c98a;
+  --code-comment: #7a746c;
+  --code-function: #9eb8e8;
+  --code-number: #e8a87c;
+  --code-decorator: #e5c07b;
+
+  /* ----- Radius (sharp IDE geometry) ----- */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* ----- Shadows (flat) ----- */
+  --shadow-sm: 0 1px 0 var(--rule);
+  --shadow: 0 0 0 1px var(--rule);
+  --shadow-card: 0 1px 0 var(--rule);
+  --shadow-md: 0 6px 22px rgba(0, 0, 0, 0.22);
+  --shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--rule-strong);
+  --focus-ring: 0 0 0 2px var(--accent-border);
+
+  /* ----- Spacing scale ----- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-page-x: clamp(1rem, 3vw, 2.5rem);
+  --space-page-y: clamp(1.25rem, 3vw, 2.25rem);
+  --measure-prose: 68ch;
+
+  /* ----- Motion ----- */
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 350ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ----- Chrome dimensions ----- */
+  --rail-width: 56px;
+  --sidebar-width: 240px;
+  --sidebar-expanded-width: 240px;
+  --topbar-height: 48px;
+  --mobile-nav-height: 56px;
+  --statusbar-height: 28px;
+  --sessionbar-height: 3.5rem;
+
+  /* ----- Bottom-stack z-index policy (low -> high) -----
+     chrome (nav/status) < action bars (quiz/session) < overlays (toasts/banners)
+     < modals (dialogs/palette) < top modal (level-up). Keep fixed elements on these. */
+  --z-chrome: 20;
+  --z-action-bar: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-modal-top: 60;
+
+  /* ----- Typography ----- */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
+  /* Shared "Today" hero title scale (one-move / continue) for a consistent rhythm. */
+  --text-hero: clamp(1.2rem, 2.4vw, 1.5rem);
+
+  /* ----- Study calendar heatmap (matches indigo accent) ----- */
+  --cal-empty: rgba(255, 255, 255, 0.04);
+  --cal-l1: rgba(122, 147, 244, 0.22);
+  --cal-l2: rgba(122, 147, 244, 0.42);
+  --cal-l3: rgba(122, 147, 244, 0.62);
+  --cal-l4: rgba(122, 147, 244, 0.88);
+}
+
+[data-theme="light"] {
+  /* surfaces — cool off-white */
+  --bg: #f6f7f9;
+  --bg-app: #f6f7f9;
+  --bg-rail: #eef0f4;
+  --bg-canvas: #fafbfd;
+  --bg-panel: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-sunken: #eef0f4;
+  --bg-glass: rgba(255, 255, 255, 0.92);
+  --bg-secondary: #e6e9ee;
+  --bg-hover: rgba(20, 23, 30, 0.04);
+  --bg-active: rgba(20, 23, 30, 0.07);
+  --bg-input: var(--bg-panel);
+  --bg-card: var(--bg-panel);
+
+  /* text */
+  --text: #1c2230;
+  --text-muted: #5a6373;
+  --text-subtle: #6b7484;
+  --text-heading: #0e1320;
+
+  /* accent (refined indigo, slightly darker for light bg contrast) */
+  --accent: #4d6cd9;
+  --accent-rgb: 77, 108, 217;
+  --accent-fg: #ffffff;
+  --accent-2: #6d87e3;
+  --accent-bg: rgba(77, 108, 217, 0.1);
+  --accent-bg-strong: rgba(77, 108, 217, 0.18);
+  --accent-border: rgba(77, 108, 217, 0.32);
+  --accent-glow: 0 0 0 1px rgba(77, 108, 217, 0.18);
+
+  /* rules */
+  --rule: rgba(20, 23, 30, 0.08);
+  --rule-strong: rgba(20, 23, 30, 0.16);
+  --border: var(--rule);
+  --border-strong: var(--rule-strong);
+  --border-light: var(--rule);
+  --border-dark: var(--rule-strong);
+  --grid-line: rgba(20, 23, 30, 0.04);
+
+  /* status (stronger on light) */
+  --success: #2f8a5b;
+  --success-fg: #2f8a5b;
+  --success-bg: rgba(47, 138, 91, 0.1);
+  --success-border: rgba(47, 138, 91, 0.32);
+  --warning: #b97a1f;
+  --warning-fg: #b97a1f;
+  --warning-bg: rgba(185, 122, 31, 0.1);
+  --warning-border: rgba(185, 122, 31, 0.32);
+  --danger: #c2453a;
+  --danger-fg: #c2453a;
+  --danger-bg: rgba(194, 69, 58, 0.1);
+  --danger-border: rgba(194, 69, 58, 0.32);
+  --info: #2f6da6;
+  --info-fg: #2f6da6;
+  --info-bg: rgba(47, 109, 166, 0.1);
+  --info-border: rgba(47, 109, 166, 0.32);
+
+  /* code */
+  --code-bg: #eef0f4;
+  --code-header-bg: #e6e9ee;
+
+  /* shadows (light) */
+  --shadow-sm: 0 1px 0 var(--rule);
+  --shadow: 0 0 0 1px var(--rule);
+  --shadow-card: 0 1px 0 var(--rule);
+  --shadow-md: 0 6px 22px rgba(20, 23, 30, 0.08);
+  --shadow-overlay: 0 16px 48px rgba(20, 23, 30, 0.16), 0 0 0 1px var(--rule-strong);
+  --focus-ring: 0 0 0 2px var(--accent-border);
+
+  /* heatmap (light) */
+  --cal-empty: rgba(20, 23, 30, 0.05);
+  --cal-l1: rgba(77, 108, 217, 0.22);
+  --cal-l2: rgba(77, 108, 217, 0.42);
+  --cal-l3: rgba(77, 108, 217, 0.62);
+  --cal-l4: rgba(77, 108, 217, 0.88);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-rail: var(--bg-rail);
+  --color-bg-canvas: var(--bg-canvas);
+  --color-bg-sunken: var(--bg-sunken);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+  --color-text-heading: var(--text-heading);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background: var(--bg-app);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% -10%, black, transparent 72%);
+  opacity: 0.12;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* IDE-style mono eyebrow used by Section, Tag mono, status footer */
+.eyebrow-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+/* Native focus ring for all interactive elements */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
+}
+
+/* Scrollbar — quiet, IDE-feel */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
+  background-clip: content-box;
+  border: 2px solid transparent;
+}
+
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-in {
+  animation: modal-in var(--motion-normal) var(--motion-ease) both;
+}
+
+.stagger-item {
+  animation: stagger-in var(--motion-slow) var(--motion-ease) both;
+}
+
+.route-page {
+  animation: route-fade-in var(--motion-normal) var(--motion-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-item,
+  .route-page,
+  .modal-in {
+    animation: none;
+  }
+  .app-chrome {
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.focus-shell-active .app-chrome {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+}
+
+.app-chrome {
+  transition:
+    opacity var(--motion-normal) var(--motion-ease),
+    transform var(--motion-normal) var(--motion-ease);
+}
