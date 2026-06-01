@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a reproducible Learn v2 bug.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach backup files, API keys, screenshots with private data, or college/essay details you do not want public.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See ...
+    validations:
+      required: true
+  - type: input
+    id: route
+    attributes:
+      label: Route or screen
+      placeholder: /, /subjects/sat-prep, /settings
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Browser, OS, local dev or 

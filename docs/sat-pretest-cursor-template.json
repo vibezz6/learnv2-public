@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "generatedFor": "Learn v2 SAT Draft 1 analysis — paste after exporting Draft 1 from /sat/pretest",
+  "questions": [
+    {
+      "id": "draft2-example-math-1",
+      "draftId": "draft-2",
+      "section": "math",
+      "domain": "Algebra",
+      "skill": "Linear equations",
+      "difficulty": "medium",
+      "prompt": "Replace with a new stem targeting the same skill as the student's Draft 1 miss.",
+      "choices": [
+        { "id": "a", "text": "Option A" },
+        { "id": "b", "text": "Option B" },
+        { "id": "c", "text": "Option C" },
+        { "id": "d", "text": "Option D" }
+      ],
+      "correctChoiceId": "b",
+      "explanation": "Why the correct answer is right and common traps.",
+      "relatedNodeIds": ["st4", "st76"]
+    }
+  ],
+  "lessonPlan": [
+    {
+      "nodeId": "st4",
+      "reason": "Existing lesson — retarget linear equations after Draft 1 miss.",
+      "priority": 1
+    },
+    {
+      "nodeId": "st76",
+      "reason": "Proposed new drill node — add to sat-prep.json in a narrow batch if approved.",
+      "priority": 2
+    }
+  ],
+  "notes": "Optional: rationale patterns, Draft 2 focus areas, or curriculum authoring notes."
+}

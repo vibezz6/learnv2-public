@@ -1,0 +1,66 @@
+[
+  {
+    "id": "sat-prep",
+    "name": "SAT Prep",
+    "description": "August 2026 Digital SAT \u2014 Math and Reading & Writing. Study rhythm, official practice, and strategy inside Learn v2. Pair with Khan Academy SAT and Bluebook.",
+    "color": "#d97757",
+    "icon": "graduation-cap",
+    "nodeCount": 79
+  },
+  {
+    "id": "math",
+    "name": "Mathematics",
+    "description": "From pre-algebra foundations through calculus and linear algebra. Rebuild your math intuition from the ground up.",
+    "color": "#8b5cf6",
+    "icon": "function",
+    "nodeCount": 23
+  },
+  {
+    "id": "science",
+    "name": "Science Literacy",
+    "description": "Understand how the world works. Physics, chemistry, biology, and the scientific method.",
+    "color": "#10b981",
+    "icon": "atom",
+    "nodeCount": 16
+  },
+  {
+    "id": "cs",
+    "name": "Computer Science",
+    "description": "Learn to think like a programmer. From Python basics to algorithms and system design.",
+    "color": "#3b82f6",
+    "icon": "code",
+    "nodeCount": 5
+  },
+  {
+    "id": "programming",
+    "name": "Programming with Python",
+    "description": "Learn Python from scratch. Variables, functions, data structures, and libraries for practical data analysis.",
+    "color": "#10b981",
+    "icon": "code",
+    "nodeCount": 2
+  },
+  {
+    "id": "probability",
+    "name": "Probability & Statistics",
+    "description": "The math of uncertainty. From basic probability to Monte Carlo simulations.",
+    "color": "#ec4899",
+    "icon": "bar-chart-2",
+    "nodeCount": 2
+  },
+  {
+    "id": "ai",
+    "name": "Artificial Intelligence",
+    "description": "From basic ML to LLMs. Understand the technology reshaping software, learning, and work.",
+    "color": "#10b981",
+    "icon": "brain",
+    "nodeCount": 1
+  },
+  {
+    "id": "finance",
+    "name": "Personal Finance",
+    "description": "Budgeting, saving, investing, credit, and taxes. Build a durable money foundation.",
+    "color": "#14b8a6",
+    "icon": "wallet",
+    "nodeCount": 4
+  }
+]

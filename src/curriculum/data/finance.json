@@ -1,0 +1,499 @@
+{
+  "id": "finance",
+  "name": "Personal Finance",
+  "description": "Budgeting, saving, investing, credit, and taxes. Build a durable money foundation.",
+  "color": "#14b8a6",
+  "icon": "wallet",
+  "nodes": [
+    {
+      "id": "f2",
+      "name": "Credit & Debt",
+      "description": "Credit scores, interest rates, good debt vs bad debt, and how to eliminate debt fast.",
+      "xpValue": 75,
+      "parentIds": [],
+      "estimatedMinutes": 90,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Credit score components (FICO)",
+        "APR and APY",
+        "Compound interest on debt",
+        "Debt avalanche vs snowball",
+        "Secured vs unsecured debt",
+        "Credit utilization ratio"
+      ],
+      "whyItMatters": "High-interest debt destroys wealth faster than investments build it. A 20% APR credit card will double your debt in ~3.5 years. Understand this or work for the banks forever.",
+      "practiceProblems": [
+        "Calculate total interest on $5000 credit card debt at 20% APR over 3 years (minimum payments)",
+        "Credit utilization: $2000 balance on $5000 limit. What's the ratio?",
+        "Debt avalanche vs snowball: which saves more money?",
+        "How long to pay off $10k at $300/month with 15% APR?"
+      ],
+      "resources": [
+        {
+          "title": "Khan Academy: Credit & Debt",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance/pf-credit",
+          "type": "course",
+          "whyHelpful": "Khan Academy's course on credit and debt \u2014 credit scores, interest rates, and strategies for managing and eliminating debt effectively."
+        },
+        {
+          "title": "Investopedia: Debt Avalanche vs. Snowball",
+          "url": "https://www.investopedia.com/articles/personal-finance/080716/debt-avalanche-vs-debt-snowball-which-better.asp",
+          "type": "article",
+          "whyHelpful": "Investopedia comparison of debt avalanche (highest interest first) vs snowball (smallest balance first) methods. Know which strategy fits your psychology."
+        },
+        {
+          "title": "Credit Utilization: Why It Matters",
+          "url": "https://www.investopedia.com/terms/c/credit-utilization-rate.asp",
+          "type": "article",
+          "whyHelpful": "Investopedia guide to credit utilization ratio \u2014 the second most important factor in your credit score after payment history."
+        },
+        {
+          "title": "Credit Karma",
+          "url": "https://www.creditkarma.com/",
+          "type": "article",
+          "whyHelpful": "Free credit score tracking with personalized tips to improve your score. Monitor your credit utilization in real-time."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "You have $3,000 in credit card debt at 22% APR. You can afford $200/month in payments. How long will it take to pay off, and how much interest will you pay? What if you used the debt avalanche method and also had a $2,000 student loan at 5%?",
+          "solution": "Credit card only: ~18 months, ~$550 in interest. Debt avalanche: pay minimum on student loan, put all extra toward credit card. After credit card is gone (month 18), roll the $200 to the student loan. Total interest saved vs splitting payments: ~$300+.",
+          "explanation": "The debt avalanche method (highest interest first) minimizes total interest paid. The snowball method (smallest balance first) provides psychological wins. Mathematically, avalanche wins every time."
+        },
+        {
+          "problem": "Your credit score is 620. You have 3 credit cards: Card A ($2,000 balance / $5,000 limit), Card B ($4,500 balance / $5,000 limit), Card C ($500 balance / $3,000 limit). Your overall utilization is 7,000/13,000 = 54%. How do you get your score above 700?",
+          "solution": "Step 1: Pay down Card B to $1,500 (from $4,500). New total utilization: 4,000/13,000 = 31%. Step 2: Pay down Card A to $1,000. New utilization: 2,500/13,000 = 19%. Step 3: Request a credit limit increase on Card C to $5,000 (no hard pull if done online). New utilization: 2,500/15,000 = 17%. Combined with on-time payments for 6+ months, this typically pushes scores from 620 to 680-720.",
+          "explanation": "Credit utilization (balance/limit) is the #2 factor in your score after payment history. Keeping it below 30% per card and overall is critical. Below 10% is ideal. Paying down the highest-utilization card first gives the biggest score boost per dollar paid."
+        },
+        {
+          "problem": "You're 18 and just got your first credit card with a $500 limit. You want to build credit fast without going into debt. What's the optimal strategy for the next 12 months?",
+          "solution": "Strategy: Put one small recurring subscription on the card (e.g., $15/month Spotify) and set up autopay for the full balance. This keeps utilization at 3% ($15/$500) and builds 12 months of on-time payments. After 6 months, request a credit limit increase (soft pull). If approved to $1,000, your utilization drops to 1.5%. After 12 months of this, your score should be 680-720. Then apply for a second card and repeat. Never carry a balance \u2014 the 20% APR is never worth the 'credit building' myth.",
+          "explanation": "The biggest credit myth is that you need to carry a balance to build credit. You don't. Paying in full every month builds the same payment history at 0% cost. Low utilization + on-time payments + time = excellent credit. Starting at 18 gives you a massive head start."
+        }
+      ],
+      "commonMistakes": [
+        "Making only minimum payments \u2014 on high-APR debt, this can stretch repayment to 10+ years and double the principal.",
+        "Taking on debt for depreciating assets \u2014 financing a car that loses 20% value in year one creates negative equity immediately.",
+        "Not checking your credit report annually \u2014 errors on your report can cost you thousands in higher interest rates."
+      ],
+      "quiz": [
+        {
+          "id": "q509",
+          "question": "What is the debt avalanche method?",
+          "options": [
+            "Paying off the smallest balance first",
+            "Paying off the highest interest rate debt first while making minimums on others",
+            "Paying all debts equally",
+            "Consolidating all debts into one loan"
+          ],
+          "correctIndex": 1,
+          "explanation": "The debt avalanche method prioritizes the highest-interest debt first, which mathematically minimizes total interest paid over time."
+        },
+        {
+          "id": "q156",
+          "question": "If you have $5000 credit card debt at 20% APR and pay only the minimum (say $100/month), what happens?",
+          "options": [
+            "You pay it off in 50 months",
+            "It takes many years and you pay thousands in extra interest",
+            "The bank forgives the remaining balance after 2 years",
+            "Your credit score improves immediately"
+          ],
+          "correctIndex": 1,
+          "explanation": "At 20% APR with minimum payments, most of your payment goes to interest. It can take 5-7+ years and cost thousands in extra interest to pay off."
+        },
+        {
+          "id": "q157",
+          "question": "What is a good credit utilization ratio?",
+          "options": [
+            "Above 80%",
+            "Below 30%",
+            "Exactly 50%",
+            "Credit utilization doesn't affect your score"
+          ],
+          "correctIndex": 1,
+          "explanation": "Credit utilization (balance / credit limit) should be kept below 30% for a good credit score. Below 10% is even better. High utilization signals risk to lenders."
+        },
+        {
+          "id": "q804",
+          "question": "What is the difference between APR and interest rate?",
+          "options": [
+            "They are the same thing",
+            "APR includes fees and other costs while interest rate is just the borrowing cost",
+            "Interest rate is always higher than APR",
+            "APR only applies to mortgages"
+          ],
+          "correctIndex": 1,
+          "explanation": "APR (Annual Percentage Rate) includes the interest rate plus additional fees like origination fees and closing costs, giving a more complete picture of borrowing cost."
+        }
+      ]
+    },
+    {
+      "id": "f6",
+      "name": "Building Credit Early",
+      "description": "Credit cards, utilization, credit mix, and the fastest path to a 750+ score.",
+      "xpValue": 75,
+      "parentIds": [
+        "f2"
+      ],
+      "estimatedMinutes": 90,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Credit score factors (payment history, utilization, length, mix, inquiries)",
+        "Credit utilization ratio: keep under 10%",
+        "Authorized user strategy",
+        "Secured credit cards",
+        "Hard vs soft inquiries",
+        "Credit building timeline"
+      ],
+      "whyItMatters": "At 18, you have a blank slate. A 750+ credit score by 22 saves you tens of thousands on car loans, mortgages, and insurance. A bad start takes years to fix. Start now.",
+      "practiceProblems": [
+        "You have a $500 limit card. What's the maximum balance to stay under 10%?",
+        "How many years of credit history for 'excellent' length?",
+        "List 5 actions that build credit and 3 that hurt it",
+        "Why should you never miss a payment, even by one day?"
+      ],
+      "resources": [
+        {
+          "title": "NerdWallet: Build Credit",
+          "url": "https://www.nerdwallet.com/article/finance/how-to-build-credit",
+          "type": "article",
+          "whyHelpful": "NerdWallet's step-by-step credit-building guide for beginners. Covers secured cards, authorized users, and what to avoid \u2014 all the stuff schools don't teach."
+        },
+        {
+          "title": "Experian: Credit Score Basics",
+          "url": "https://www.experian.com/blogs/ask-experian/credit-education/score-basics/",
+          "type": "article",
+          "whyHelpful": "Straight from one of the three credit bureaus \u2014 learn what actually goes into your FICO score. Payment history, utilization, and the factors that matter most."
+        },
+        {
+          "title": "NerdWallet: Credit Utilization Guide",
+          "url": "https://www.nerdwallet.com/article/finance/credit-utilization",
+          "type": "article",
+          "whyHelpful": "Understanding credit utilization is the second-biggest factor in your score. This article shows exactly how to keep it under 10% and optimize your score."
+        },
+        {
+          "title": "Experian: What Affects Your Credit Score",
+          "url": "https://www.experian.com/blogs/ask-experian/credit-education/score-basics/what-affects-your-credit-scores/",
+          "type": "article",
+          "whyHelpful": "Five factors affecting your credit score explained. Build excellent credit from a young age by understanding utilization, payment history, and credit mix."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "You just turned 18 and have no credit history. You get a secured credit card with a $500 limit. What\u2019s the maximum balance you should carry? How long until you can expect a 700+ score?",
+          "solution": "Max balance for <10% utilization = $50. Set up autopay for the statement balance. With on-time payments and low utilization, you can reach 700+ in 12-18 months. Adding a second card at month 6-12 can accelerate this by increasing total available credit.",
+          "explanation": "Credit utilization is the second-biggest factor in your score. Keeping it under 10% signals responsible use. Payment history is the biggest factor \u2014 one 30-day late payment can drop your score 50-100 points."
+        },
+        {
+          "problem": "You missed a credit card payment by 30 days when you were 19. Your score dropped from 720 to 640. You\u2019re now 21 and want to buy a car. How do you recover your score before applying for a loan?",
+          "solution": "Step 1: Set up autopay on ALL cards immediately. Step 2: Pay down balances to under 10% utilization. Step 3: Request a \u2018goodwill adjustment\u2019 from the creditor \u2014 call and ask them to remove the late payment (works ~30% of the time). Step 4: Become an authorized user on a parent\u2019s old card with perfect history. Step 5: Wait 12-18 months of clean payments. Target: 700+ within 18 months.",
+          "explanation": "One late payment is not the end of the world, but it\u2019s expensive. A 640 score vs 720 on a $15,000 car loan over 5 years could cost an extra $1,500\u20132,500 in interest. The recovery playbook: autopay everything, reduce utilization, goodwill requests, and patience."
+        },
+        {
+          "problem": "You\u2019ve had a secured card for 8 months with a clean payment history. You want to graduate to an unsecured card. Your current credit score is 690. The card issuer says you can \u2018upgrade\u2019 to a $2,000 limit card with a $49 annual fee, or you can apply for a competitor\u2019s card with no annual fee and $1,500 limit. What should you do? Show the math.",
+          "solution": "Annual fee cost = $49/year = $4.08/month. Credit utilization on $1,500 vs $2,000 on a typical $300 balance: 20% vs 15%. The 5% utilization difference can move your score 10-20 points. If the same lender treats the upgrade as a hard pull vs a soft product change: hard pull = temporary 5-10 point drop, soft = no dip. Recommendation: If the upgrade is a soft product change, take the $2,000 card and convert to unsecured (no annual fee option). If it requires an application/hard pull, apply for the competitor first to build the account, then upgrade after 12 months of clean use. Opening a new account temporarily drops your score but grows your total available credit.",
+          "explanation": "Credit building requires managing 3 variables: payment history, utilization ratio (balance/limit), and total available credit. Graduating from secured to unsecured is a rite of passage. The key: understand whether the transition is a simple product upgrade (no new inquiry) vs a new credit application (hard pull)."
+        }
+      ],
+      "commonMistakes": [
+        "Maxing out a card and paying it off monthly \u2014 the credit bureaus see your statement balance, not your daily balance. Pay before the statement cuts.",
+        "Applying for 5 cards in one month \u2014 each hard inquiry dings your score and signals desperation to lenders.",
+        "Closing your oldest card \u2014 this shortens your average account age, which hurts your score."
+      ],
+      "quiz": [
+        {
+          "id": "q164",
+          "question": "What is credit utilization?",
+          "options": [
+            "How much credit you have been approved for",
+            "The percentage of your credit limit that you're currently using",
+            "How often you use your credit card",
+            "The interest rate on your card"
+          ],
+          "correctIndex": 1,
+          "explanation": "Credit utilization = current balance / credit limit. It's recommended to keep this under 10% for optimal credit scores."
+        },
+        {
+          "id": "q165",
+          "question": "At 18 with no credit history, what's the best first step?",
+          "options": [
+            "Apply for 5 credit cards at once",
+            "Get a secured credit card, use it lightly, and pay in full every month",
+            "Take out a personal loan",
+            "Wait until you have a full-time job"
+          ],
+          "correctIndex": 1,
+          "explanation": "A secured credit card (backed by a cash deposit) is the easiest way to build credit from scratch. Use it for small purchases and pay the statement balance in full each month."
+        },
+        {
+          "id": "q166",
+          "question": "What is the most important factor in your credit score?",
+          "options": [
+            "Credit utilization",
+            "Payment history (on-time payments)",
+            "Length of credit history",
+            "Number of credit cards"
+          ],
+          "correctIndex": 1,
+          "explanation": "Payment history (35% of FICO score) is the most important factor. One 30-day late payment can drop your score 50-100 points."
+        },
+        {
+          "id": "q166b",
+          "question": "You have a $1,000 credit limit. What is the maximum balance you should carry to keep utilization under 10%?",
+          "options": [
+            "$100",
+            "$500",
+            "$900",
+            "$1,000"
+          ],
+          "correctIndex": 0,
+          "explanation": "10% of $1,000 = $100. Keeping your balance under $100 at any time (especially on your statement date) shows responsible utilization and optimizes your credit score."
+        }
+      ]
+    },
+    {
+      "id": "f7",
+      "name": "Side Income & Freelancing",
+      "description": "Monetize skills, start small businesses, and diversify your income streams.",
+      "xpValue": 100,
+      "parentIds": [],
+      "estimatedMinutes": 120,
+      "difficulty": "beginner",
+      "keyConcepts": [
+        "Freelancing platforms (Upwork, Fiverr)",
+        "Pricing your services",
+        "Building a portfolio",
+        "Side hustle tax implications (1099, self-employment tax)",
+        "Time management: main job vs side income",
+        "Scaling from side hustle to business"
+      ],
+      "whyItMatters": "One income source is fragile. Two is stable. Three is freedom. At 18, even $500/month from a side hustle compounds into skills, connections, and capital that most people never build.",
+      "practiceProblems": [
+        "Calculate self-employment tax on $10,000 of 1099 income",
+        "List 3 skills you have that someone would pay for",
+        "Price a hypothetical freelance project: build a landing page",
+        "How many hours per week for a side hustle without burning out?"
+      ],
+      "resources": [
+        {
+          "title": "1099 Tax Basics",
+          "url": "https://www.irs.gov/forms-pubs/about-form-1099-nec",
+          "type": "article",
+          "whyHelpful": "The official IRS page explaining 1099-NEC forms \u2014 what triggers one, what to do with it, and how it differs from a W-2."
+        },
+        {
+          "title": "IRS: Self-Employed Tax Guide",
+          "url": "https://www.irs.gov/businesses/small-businesses-self-employed/self-employed-individuals-tax-center",
+          "type": "article",
+          "whyHelpful": "The IRS hub for self-employed tax obligations \u2014 estimated taxes, deductions, and what forms to file. Direct from the source so you don't miss anything."
+        },
+        {
+          "title": "Freelance Tax Deductions Guide (NerdWallet)",
+          "url": "https://www.nerdwallet.com/article/taxes/freelancer-tax-deductions",
+          "type": "article",
+          "whyHelpful": "NerdWallet's guide to deductions freelancers actually use \u2014 home office, equipment, software, and how to track them for tax time."
+        },
+        {
+          "title": "Upwork: How to Start Freelancing",
+          "url": "https://www.upwork.com/resources/beginners-guide-to-freelancing",
+          "type": "article",
+          "whyHelpful": "Practical guide to finding clients, setting rates, and managing freelance finances as a 1099 contractor."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "You freelance as a web developer and earn $15,000 this year through 1099 work. You're also a W-2 employee earning $25,000. Estimate your total self-employment tax and federal income tax on the freelance income.",
+          "solution": "Self-employment tax = 15.3% of 92.35% of net earnings = 15.3% \u00d7 $13,853 \u2248 $2,119. You can deduct the employer half ($1,060) as an adjustment to income. Federal tax depends on your bracket, but roughly $1,500-2,500 on $15,000 after deductions. Set aside 25-30% of 1099 income for taxes.",
+          "explanation": "1099 income has no withholding, so you must pay both employer and employee portions of Social Security/Medicare (self-employment tax). Quarterly estimated tax payments are required if you expect to owe $1,000+."
+        },
+        {
+          "problem": "You want to start freelancing on Upwork building simple landing pages. You can do one in 4 hours. Market rate is $300-500 per page. You also have a part-time job at $15/hour (20 hrs/week). How do you price your first 3 projects, and how many can you realistically complete per month without burning out?",
+          "solution": "Pricing: Start at $250 for your first project (below market to get reviews), then $350 for the second, $400+ for the third once you have reviews. Time budget: You work 20 hrs/week at your job. With sleep, meals, and life, you have ~15 hrs/week for freelancing. At 4 hours per page, that's 3-4 pages per month max. Monthly side income: 3 \u00d7 $350 = $1,050. Key: Don't underprice long-term \u2014 raise rates after 5+ reviews. Track every expense for tax deductions.",
+          "explanation": "The #1 freelancer mistake is underpricing. At $15/hour at your job, you need to charge at least $30-50/hour freelancing to make it worth the extra tax burden and lack of benefits. Start slightly low to build reviews, then raise rates quickly."
+        },
+        {
+          "problem": "You have 8 months of Upwork reviews averaging 4.9 stars. You currently charge $40/hour and are booked 60 hours/month ($2,400/month). You want to hit $10,000/month in 12 months. Option A: Raise rates to $65/hour (keep 30 hrs/month work). Option B: Hire a freelancer at $25/hour to handle 30 hrs/month of work you bill at $65/hour (net margin = $40/hr on outsourced hours). Calculate both paths and identify the key constraint for each.",
+          "solution": "Option A: $65 \u00d7 30 = $1,950/month. You still need nearly 18 months at this rate \u2014 not quite 12. Option B: Bill 30 hrs/month @ $65 = $1,950. Outsource 20 hrs/month @ $25 cost = $500 net. Your own 60 hrs: 30 hrs @ $65 + 30 hrs finding/coordinating/quality = $1,950 + $0 = $1,950. Total under Option B with full 60 hrs own + 30 hrs outsourced: $65 \u00d7 90 hrs = $5,850 (gross). Net of outsourcing cost ($500) = $5,350/month. After 12 months: aim to build a pipeline of $8,000+/month in pass-through work. The constraint for Option A: you personally can only bill so many hours. The constraint for Option B: quality control, client communication, and margin of $40 on outsourced hrs is thin without systems.",
+          "explanation": "Scaling a one-person freelance business from $2,400 to $10,000/month requires either raising your rate or removing your time from the equation. Raising rates works until you hit your personal capacity ceiling. Hiring/subcontracting works but introduces quality risk and requires client capacity to absorb the higher billable rate. The key insight: at $40/hour as a solo freelancer with $65 Aspiration pricing, the path is a tight 12-month sprint \u2014 requiring consistent client acquisition every single month."
+        }
+      ],
+      "commonMistakes": [
+        "Not setting aside money for taxes \u2014 1099 income has no withholding. A $10,000 windfall can become a $3,000 tax bill you weren't ready for.",
+        "Not tracking business expenses \u2014 internet, software, equipment, and education costs can all reduce taxable income.",
+        "Underpricing services \u2014 beginners often charge $15/hour when the market rate is $50-100/hour."
+      ],
+      "quiz": [
+        {
+          "id": "q167",
+          "question": "What tax form do freelancers typically receive from clients?",
+          "options": [
+            "W-2",
+            "1099-NEC",
+            "1040",
+            "W-4"
+          ],
+          "correctIndex": 1,
+          "explanation": "Clients issue Form 1099-NEC to freelancers who earned $600 or more. This reports non-employee compensation to the IRS."
+        },
+        {
+          "id": "q168",
+          "question": "What is self-employment tax?",
+          "options": [
+            "A tax on being unemployed",
+            "Social Security and Medicare taxes paid by self-employed individuals (15.3%)",
+            "A state income tax",
+            "A tax deduction"
+          ],
+          "correctIndex": 1,
+          "explanation": "Self-employment tax is 15.3% (Social Security + Medicare) on net earnings. Employees pay 7.65% and employers pay 7.65%; self-employed individuals pay both halves."
+        },
+        {
+          "id": "q169",
+          "question": "Which of these is a deductible business expense for freelancers?",
+          "options": [
+            "Personal groceries",
+            "Laptop used for work",
+            "Your commute to a full-time job",
+            "Gym membership"
+          ],
+          "correctIndex": 1,
+          "explanation": "Business expenses that are ordinary and necessary for work are tax-deductible. A work laptop reduces your taxable 1099 income."
+        },
+        {
+          "id": "q169b",
+          "question": "When are quarterly estimated tax payments required for freelancers?",
+          "options": [
+            "Only if you earn over $100,000",
+            "If you expect to owe $1,000 or more in taxes for the year",
+            "Never \u2014 you just pay at tax time",
+            "Only for full-time freelancers"
+          ],
+          "correctIndex": 1,
+          "explanation": "The IRS requires quarterly estimated tax payments (Form 1040-ES) if you expect to owe $1,000+ in taxes. Penalties apply for underpayment. Set aside 25-30% of every 1099 payment."
+        }
+      ]
+    },
+    {
+      "id": "f8",
+      "name": "Financial Independence",
+      "description": "FIRE, the 4% rule, Coast FIRE, and calculating your personal freedom number.",
+      "xpValue": 100,
+      "parentIds": [],
+      "estimatedMinutes": 120,
+      "difficulty": "intermediate",
+      "keyConcepts": [
+        "FIRE: Financial Independence Retire Early",
+        "The 4% rule and safe withdrawal rate",
+        "Coast FIRE: stop saving early, let compounding finish",
+        "Lean FIRE vs Fat FIRE",
+        "Savings rate and time to FI",
+        "Geo-arbitrage"
+      ],
+      "whyItMatters": "Financial independence means your money works for you, not the other way around. At 18, even modest savings can compound into freedom by 35-40. Most people start at 35 and never catch up.",
+      "practiceProblems": [
+        "You spend $30k/year. What's your FI number using 4% rule?",
+        "At $50k/year income and 50% savings rate, how long to FI?",
+        "What's the mathematical relationship between savings rate and years to FI?",
+        "Calculate Coast FIRE: you have $200k at 25, want $1M at 55. Do you need to save more?"
+      ],
+      "resources": [
+        {
+          "title": "The Shockingly Simple Math to Early Retirement",
+          "url": "https://www.mrmoneymustache.com/2012/01/13/the-shockingly-simple-math-behind-early-retirement/",
+          "type": "article",
+          "whyHelpful": "Mr. Money Mustache's classic post showing the exponential relationship between savings rate and years to FI. This article can genuinely change your financial trajectory."
+        },
+        {
+          "title": "FIRE Calculator (Networthify)",
+          "url": "https://networthify.com/calculator/earlyretirement",
+          "type": "practice",
+          "whyHelpful": "Interactive calculator to find your FI number and years to retirement. Plug in your actual numbers and see the math behind financial independence."
+        },
+        {
+          "title": "Khan Academy: Retirement Planning",
+          "url": "https://www.khanacademy.org/college-careers-more/financial-literacy/xa6995ea67a8e9fdd:retirement-and-wealth-building",
+          "type": "course",
+          "whyHelpful": "Khan Academy's full course on retirement planning, compound growth, and the 4% rule. A complete foundation for understanding FIRE concepts."
+        },
+        {
+          "title": "Mad Fientist: FI Calculator",
+          "url": "https://www.madfientist.com/fi-calculator/",
+          "type": "article",
+          "whyHelpful": "Interactive calculator showing how long until financial independence based on your savings rate and the 4 rule. See the power of high savings rates."
+        }
+      ],
+      "workedExamples": [
+        {
+          "problem": "You spend $36,000/year. Using the 4% rule, what is your FI number? If you save 50% of a $60,000 income and earn 7% returns, how many years until FI? What if you only save 20%?",
+          "solution": "FI number = $36,000 / 0.04 = $900,000. At 50% savings rate on $60k: saving $30k/year. Years to FI \u2248 17 years (from MMM's shockingly simple math table). At 20% savings rate: saving $12k/year. Years to FI \u2248 37 years. The difference between 50% and 20% is 20 years of freedom.",
+          "explanation": "The 4% rule says you can withdraw 4% of your portfolio annually with high confidence it lasts 30+ years. Your savings rate is the single biggest lever for early retirement \u2014 more important than investment returns."
+        },
+        {
+          "problem": "You're 25 and have $150,000 invested. Your FI number is $800,000 at age 60. With 7% annual returns, do you need to save more to reach Coast FIRE? What will your $150k grow to by age 60? If you stop investing entirely today, will compounding get you there?",
+          "solution": "Future Value = $150,000 \u00d7 (1.07)^35 = $150,000 \u00d7 10.677 = $1,601,550. Since $1.6M > $800k, you've already hit Coast FIRE at 25. Even without saving another dollar, compound growth alone will more than double your FI number. You only need to cover current expenses from income \u2014 no additional retirement savings required.",
+          "explanation": "Coast FIRE is achieved when your existing investments, left to compound, will reach your FI number by traditional retirement age. The formula FV = PV \u00d7 (1+r)^n shows the power of time. At 25 with 35 years to grow, even modest sums explode. This is why starting early matters more than saving large amounts."
+        },
+        {
+          "problem": "You hit Lean FIRE at 30 with $500,000 invested. Your spending target is $25,000/year (4% withdrawal = $20,000/year). You find a part-time job on the side making $18/hour \u2014 15 hours/week. Your net pay after tax is ~$14,000/year. What's your new financial picture? Are you still FI if you do this indefinitely?",
+          "solution": "With $14,000/year side income: you only need to withdraw $6,000/year from your portfolio (down from $20,000/year). Portfolio coverage = $6,000 / 4% = $150,000 required in portfolio. Your $500,000 is more than 3x overshoot. Your portfolio actually grows (invested at 7%, withdrawing only 1.2%). You work 15 hours/week covering the gap between lean budget and sustainable income. This is Barista FIRE \u2014 you have already achieved FI, the job is purely for lifestyle and extra savings. Portfolio keeps growing to Fat FIRE territory.",
+          "explanation": "Barista FIRE: you've hit your FI number but don't fully retire \u2014 you work a flexible low-stakes job covering just enough to live on without touching investments. The portfolio still compounds. Certain jobs (app, writing, design) come with side income credibility that also looks impressive. The key variable: does the job have a hard-worst-case maximum downside you'd be upset about?"
+        }
+      ],
+      "commonMistakes": [
+        "Assuming the 4% rule is guaranteed \u2014 it's based on US historical data; sequence-of-returns risk can derail it.",
+        "Ignoring healthcare costs before Medicare \u2014 this is often the biggest gap in FIRE plans for Americans.",
+        "Thinking FIRE requires extreme frugality \u2014 a 40-50% savings rate is achievable at median incomes with intentional spending."
+      ],
+      "quiz": [
+        {
+          "id": "q170",
+          "question": "Using the 4% rule, if you need $40,000/year in retirement, what is your FI number?",
+          "options": [
+            "$400,000",
+            "$800,000",
+            "$1,000,000",
+            "$1,600,000"
+          ],
+          "correctIndex": 2,
+          "explanation": "FI Number = Annual Expenses / 0.04 = $40,000 / 0.04 = $1,000,000. This is the portfolio needed to safely withdraw $40,000 per year."
+        },
+        {
+          "id": "q171",
+          "question": "What is Coast FIRE?",
+          "options": [
+            "Retiring on a beach",
+            "Having enough invested early that you no longer need to save \u2014 compounding will reach your FI number by retirement age",
+            "Working part-time forever",
+            "Living on government benefits"
+          ],
+          "correctIndex": 1,
+          "explanation": "Coast FIRE means you've saved enough that even without additional contributions, compound growth will reach your target by traditional retirement age. You only need to 'coast' and cover current expenses."
+        },
+        {
+          "id": "q172",
+          "question": "According to the shockingly simple math of FIRE, a 50% savings rate (saving half your income) leads to financial independence in approximately how many years?",
+          "options": [
+            "17 years",
+            "25 years",
+            "37 years",
+            "50 years"
+          ],
+          "correctIndex": 0,
+          "explanation": "A 50% savings rate leads to FI in ~17 years. A 25% rate takes ~37 years. Higher savings rates exponentially reduce the time to FI by increasing the gap between income and expenses."
+        },
+        {
+          "id": "q172b",
+          "question": "What is 'Lean FIRE' vs 'Fat FIRE'?",
+          "options": [
+            "Lean FIRE = low expenses lifestyle, Fat FIRE = higher spending lifestyle",
+            "Lean FIRE = only stocks, Fat FIRE = only bonds",
+            "They are the same thing",
+            "Lean FIRE requires more money than Fat FIRE"
+          ],
+          "correctIndex": 0,
+          "explanation": "Lean FIRE means achieving FI with lower annual expenses (e.g., $25-40k/year). Fat FIRE means achieving FI with a higher spending lifestyle (e.g., $100k+/year). Both use the 4% rule but with different expense bases."
+        }
+      ]
+    }
+  ]
+}

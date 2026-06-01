@@ -1,0 +1,324 @@
+{
+  "central-ideas": [
+    {
+      "id": "q_stretch_central_1",
+      "question": "A passage states that urban gardens reduce food deserts. The central idea is best summarized as:",
+      "options": [
+        "Gardens are decorative",
+        "Local growing improves food access in cities",
+        "All cities ban gardens",
+        "Food deserts only affect farms"
+      ],
+      "correctIndex": 1,
+      "explanation": "The main claim ties urban gardens to better food access."
+    },
+    {
+      "id": "q_stretch_central_2",
+      "question": "Which detail most directly supports the central idea that sleep helps memory?",
+      "options": [
+        "Students who slept 8 hours recalled 30% more vocabulary",
+        "The lab used blue walls",
+        "Some students drank coffee",
+        "The study lasted one semester"
+      ],
+      "correctIndex": 0,
+      "explanation": "Recall improvement after sleep supports the memory claim."
+    },
+    {
+      "id": "q_stretch_central_3",
+      "question": "The author argues that public transit cuts emissions. Which sentence states that central idea?",
+      "options": [
+        "Buses are painted green",
+        "Shifting drivers to trains lowers city carbon output",
+        "Tickets cost more on weekends",
+        "One station closed for repairs"
+      ],
+      "correctIndex": 1,
+      "explanation": "Lower carbon from mode shift is the main point."
+    }
+  ],
+  "coordinate-geometry": [
+    {
+      "id": "q_stretch_coord_1",
+      "question": "What is the slope of the line through (2, 3) and (6, 11)?",
+      "options": ["1", "2", "3", "4"],
+      "correctIndex": 1,
+      "explanation": "Slope = (11 - 3) / (6 - 2) = 8/4 = 2."
+    },
+    {
+      "id": "q_stretch_coord_2",
+      "question": "The line y = -x + 5 crosses the y-axis at:",
+      "options": ["(-5, 0)", "(0, 5)", "(5, 0)", "(0, -5)"],
+      "correctIndex": 1,
+      "explanation": "At x = 0, y = 5."
+    },
+    {
+      "id": "q_stretch_coord_3",
+      "question": "A circle has center (0, 0) and radius 5. Which point lies on it?",
+      "options": ["(3, 4)", "(5, 5)", "(0, 6)", "(2, 2)"],
+      "correctIndex": 0,
+      "explanation": "3² + 4² = 25, so (3, 4) is on the circle."
+    }
+  ],
+  "cross-text-connections": [
+    {
+      "id": "q_stretch_cross_1",
+      "question": "Text 1 praises renewable energy jobs; Text 2 warns retraining takes years. Together they suggest:",
+      "options": [
+        "Renewables have no costs",
+        "Benefits exist but workforce transition is slow",
+        "Fossil fuels are illegal",
+        "Jobs never change"
+      ],
+      "correctIndex": 1,
+      "explanation": "Both texts balance opportunity with transition time."
+    },
+    {
+      "id": "q_stretch_cross_2",
+      "question": "How does Text 2 qualify the claim in Text 1 that the treaty ended all conflict?",
+      "options": [
+        "It lists ongoing border skirmishes",
+        "It repeats the same claim",
+        "It ignores politics",
+        "It discusses weather"
+      ],
+      "correctIndex": 0,
+      "explanation": "Skirmishes show the treaty did not end all conflict."
+    },
+    {
+      "id": "q_stretch_cross_3",
+      "question": "Both authors agree that the discovery was important, but they differ on:",
+      "options": [
+        "Whether it was accidental",
+        "The color of the lab coat",
+        "How many scientists were involved",
+        "The year it happened"
+      ],
+      "correctIndex": 0,
+      "explanation": "One stresses accident; the other stresses deliberate research."
+    }
+  ],
+  "inequalities": [
+    {
+      "id": "q_stretch_ineq_1",
+      "question": "Which value satisfies 2x + 5 > 13?",
+      "options": ["x = 3", "x = 4", "x = 5", "x = 2"],
+      "correctIndex": 2,
+      "explanation": "2(5) + 5 = 15 > 13."
+    },
+    {
+      "id": "q_stretch_ineq_2",
+      "question": "Solve: |x - 3| ≤ 2",
+      "options": ["1 ≤ x ≤ 5", "x ≤ 1 or x ≥ 5", "x = 3 only", "No solution"],
+      "correctIndex": 0,
+      "explanation": "Distance from 3 is at most 2, so x is between 1 and 5."
+    },
+    {
+      "id": "q_stretch_ineq_3",
+      "question": "For 4 - 3x ≥ 10, which is correct?",
+      "options": ["x ≥ 2", "x ≤ -2", "x ≥ -2", "x ≤ 2"],
+      "correctIndex": 1,
+      "explanation": "-3x ≥ 6 → x ≤ -2 (flip sign when dividing by negative)."
+    }
+  ],
+  "inference": [
+    {
+      "id": "q_stretch_infer_1",
+      "question": "The narrator mentions packing boxes and forwarding mail. It is reasonable to infer the narrator is:",
+      "options": ["Starting a new job elsewhere", "Retiring at home", "On vacation", "Buying a house nearby"],
+      "correctIndex": 0,
+      "explanation": "Moving cues imply relocation for work or life change."
+    },
+    {
+      "id": "q_stretch_infer_2",
+      "question": "From \"She paused before answering, eyes on the floor,\" the reader can infer she feels:",
+      "options": ["Confident", "Uncertain or uncomfortable", "Hungry", "Amused"],
+      "correctIndex": 1,
+      "explanation": "Hesitation and downcast eyes suggest discomfort."
+    },
+    {
+      "id": "q_stretch_infer_3",
+      "question": "If soil samples show rising salt levels each year, the farm most likely faces:",
+      "options": ["Improving fertility", "Gradual salinization", "More rainfall", "Fewer pests"],
+      "correctIndex": 1,
+      "explanation": "Rising salt implies worsening soil salinity."
+    }
+  ],
+  "word-problems": [
+    {
+      "id": "q_stretch_word_1",
+      "question": "A train travels 120 miles in 2 hours at constant speed. How far in 3.5 hours?",
+      "options": ["180 miles", "200 miles", "210 miles", "240 miles"],
+      "correctIndex": 2,
+      "explanation": "Rate 60 mph × 3.5 h = 210 miles."
+    },
+    {
+      "id": "q_stretch_word_2",
+      "question": "Tickets cost $12 each plus a $5 service fee per order. Cost of 4 tickets?",
+      "options": ["$48", "$53", "$57", "$60"],
+      "correctIndex": 1,
+      "explanation": "4 × 12 + 5 = 53."
+    },
+    {
+      "id": "q_stretch_word_3",
+      "question": "A tank drains 8 gallons per hour and holds 96 gallons when full. Empty after:",
+      "options": ["8 hours", "10 hours", "12 hours", "14 hours"],
+      "correctIndex": 2,
+      "explanation": "96 ÷ 8 = 12 hours."
+    }
+  ],
+  "rhetorical-synthesis": [
+    {
+      "id": "q_stretch_rhet_1",
+      "question": "Goal: emphasize that the program reduced absences. Which sentence best achieves this?",
+      "options": [
+        "The program started in 2019",
+        "Absenteeism fell 18% the year after mentors were added",
+        "Some students play sports",
+        "The building has three floors"
+      ],
+      "correctIndex": 1,
+      "explanation": "A concrete drop in absences supports the goal."
+    },
+    {
+      "id": "q_stretch_rhet_2",
+      "question": "Notes: (1) bees pollinate crops (2) hive counts dropped 30% (3) farmers use fewer native plants. Goal: warn about crop risk. Best synthesis:",
+      "options": [
+        "Bees are insects",
+        "Fewer bees and less habitat may threaten pollination and yields",
+        "Farmers like flowers",
+        "30% is a large number"
+      ],
+      "correctIndex": 1,
+      "explanation": "Connects hive loss and habitat to pollination risk."
+    },
+    {
+      "id": "q_stretch_rhet_3",
+      "question": "Which addition best links the study's method to its conclusion about screen time?",
+      "options": [
+        "Participants logged hours nightly for six weeks before tests",
+        "Screens are bright",
+        "Many teens use phones",
+        "The lab was renovated"
+      ],
+      "correctIndex": 0,
+      "explanation": "Method detail supports the causal claim."
+    }
+  ],
+  "systems-of-equations": [
+    {
+      "id": "q_stretch_sys_1",
+      "question": "If 2x + y = 14 and x - y = 1, then x equals:",
+      "options": ["3", "4", "5", "6"],
+      "correctIndex": 2,
+      "explanation": "Add: 3x = 15 → x = 5."
+    },
+    {
+      "id": "q_stretch_sys_2",
+      "question": "A system has equations with the same slope but different intercepts. The system has:",
+      "options": ["One solution", "No solution", "Infinite solutions", "Two solutions"],
+      "correctIndex": 1,
+      "explanation": "Parallel lines never meet."
+    },
+    {
+      "id": "q_stretch_sys_3",
+      "question": "Using substitution: y = x + 2 and 3x + y = 18. What is y?",
+      "options": ["6", "7", "8", "9"],
+      "correctIndex": 2,
+      "explanation": "3x + x + 2 = 18 → x = 4, y = 8."
+    }
+  ],
+  "text-structure": [
+    {
+      "id": "q_stretch_struct_1",
+      "question": "A passage presents a problem, failed attempts, then a new solution. Its structure is:",
+      "options": ["Chronological biography", "Problem-solution", "Compare two poets", "List of definitions"],
+      "correctIndex": 1,
+      "explanation": "Problem followed by resolution is problem-solution structure."
+    },
+    {
+      "id": "q_stretch_struct_2",
+      "question": "Paragraph 2 contrasts ancient and modern maps before Paragraph 3 argues for digital tools. Paragraph 2 mainly:",
+      "options": ["Introduces the thesis", "Provides comparison to set up the argument", "Summarizes the essay", "Quotes a statistic only"],
+      "correctIndex": 1,
+      "explanation": "Contrast prepares the case for modern tools."
+    },
+    {
+      "id": "q_stretch_struct_3",
+      "question": "The author alternates between personal story and research data. This structure likely aims to:",
+      "options": [
+        "Hide the thesis",
+        "Blend emotional appeal with evidence",
+        "Avoid any claims",
+        "Eliminate transitions"
+      ],
+      "correctIndex": 1,
+      "explanation": "Narrative plus data balances pathos and logos."
+    }
+  ],
+  "transitions": [
+    {
+      "id": "q_stretch_trans_1",
+      "question": "The experiment failed twice. _____, the team redesigned the sensor.",
+      "options": ["Nevertheless", "Similarly", "For example", "In contrast"],
+      "correctIndex": 0,
+      "explanation": "Nevertheless shows action despite prior failure."
+    },
+    {
+      "id": "q_stretch_trans_2",
+      "question": "Many species rely on coral reefs. _____, bleaching events have damaged half the reef area studied.",
+      "options": ["Therefore", "However", "Specifically", "Meanwhile"],
+      "correctIndex": 2,
+      "explanation": "Specifically introduces a precise supporting fact."
+    },
+    {
+      "id": "q_stretch_trans_3",
+      "question": "First, collect samples; _____, analyze them in the lab.",
+      "options": ["instead", "next", "however", "for instance"],
+      "correctIndex": 1,
+      "explanation": "Next signals sequence in a process."
+    }
+  ],
+  "words-in-context": [
+    {
+      "id": "q_stretch_wic_1",
+      "question": "As used in the passage, \"reserved\" most nearly means:",
+      "options": ["Booked in advance", "Quiet and restrained", "Brightly colored", "Legally required"],
+      "correctIndex": 1,
+      "explanation": "Context describes someone who rarely speaks up."
+    },
+    {
+      "id": "q_stretch_wic_2",
+      "question": "The scientist called the result \"preliminary,\" suggesting it is:",
+      "options": ["Final and proven", "Initial and subject to revision", "Secret", "Unrelated to the study"],
+      "correctIndex": 1,
+      "explanation": "Preliminary means not yet final."
+    },
+    {
+      "id": "q_stretch_wic_3",
+      "question": "In context, \"charge\" most nearly means:",
+      "options": [
+        "Electrical energy stored in a battery",
+        "Accusation that someone did wrong",
+        "Price of admission",
+        "Military unit"
+      ],
+      "correctIndex": 1,
+      "explanation": "Legal/moral accusation fits courtroom context."
+    }
+  ],
+  "command-of-evidence": [
+    {
+      "id": "q_stretch_evidence_1",
+      "question": "Claim: The policy lowered traffic deaths. Which evidence best supports it?",
+      "options": [
+        "Deaths per mile driven fell 12% the year after the speed limit dropped",
+        "More cars were sold",
+        "A bridge was painted",
+        "Drivers enjoy music"
+      ],
+      "correctIndex": 0,
+      "explanation": "Direct drop in deaths per mile supports the claim."
+    }
+  ]
+}
