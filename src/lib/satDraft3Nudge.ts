@@ -17,6 +17,21 @@ export interface Draft3RetestNudge {
   resume: boolean;
 }
 
+/** Summary line when Draft 3 retest is complete (score vs Draft 1 baseline). */
+export function formatDraft3HubSummary(storage: Storage = localStorage): string | null {
+  const draft1 = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID, storage);
+  const draft3 = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_3_ID, storage);
+  if (!draft1?.scoreSummary || !draft3?.scoreSummary) return null;
+
+  const baseline = draft1.scoreSummary.correctAnswers;
+  const retest = draft3.scoreSummary.correctAnswers;
+  const total = draft3.scoreSummary.totalQuestions;
+  const delta = retest - baseline;
+  const deltaLabel =
+    delta === 0 ? "same as baseline" : delta > 0 ? `+${delta} vs baseline` : `${delta} vs baseline`;
+  return `Draft 3 retest: ${retest}/${total} (${deltaLabel})`;
+}
+
 /** SAT hub nudge for Draft 3 retest — not suppressed when SAT test date has passed. */
 export function getDraft3RetestNudge(
   storage: Storage = localStorage,

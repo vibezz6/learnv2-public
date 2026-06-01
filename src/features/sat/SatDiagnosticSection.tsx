@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Button, Card, Tag } from "@/components/ui";
@@ -7,14 +8,33 @@ import {
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
 } from "@/lib/satPretest";
-import { getDraft3RetestNudge } from "@/lib/satDraft3Nudge";
+import {
+  DRAFT_3_RETEST_HUB_SNOOZE_ID,
+  formatDraft3HubSummary,
+  getDraft3RetestNudge,
+} from "@/lib/satDraft3Nudge";
+import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
+import { snoozeNudge } from "@/lib/nudgeSnooze";
 
 /** Primary in-app entry for the optional SAT baseline (second entry: ⌘K). */
 export function SatDiagnosticSection() {
+  const [revision, setRevision] = useState(0);
+
+  const refresh = useCallback(() => setRevision((r) => r + 1), []);
+
+  useEffect(() => {
+    const handler = () => refresh();
+    window.addEventListener(ADMISSIONS_UPDATED_EVENT, handler);
+    return () => window.removeEventListener(ADMISSIONS_UPDATED_EVENT, handler);
+  }, [refresh]);
+
+  void revision;
+
   const draft1Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const draft2Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_2_ID);
   const draft2Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_2_ID);
+  const draft3Summary = formatDraft3HubSummary();
   const draft3Nudge = getDraft3RetestNudge();
 
   let detail =
@@ -26,6 +46,9 @@ export function SatDiagnosticSection() {
   } else if (draft2Active) {
     detail = "Draft 2 gap follow-up is in progress.";
     buttonLabel = "Resume Draft 2";
+  } else if (draft3Summary) {
+    detail = draft3Summary;
+    buttonLabel = "Review diagnostic";
   } else if (draft1Done?.scoreSummary) {
     const score = `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`;
     if (draft3Nudge) {
@@ -35,6 +58,11 @@ export function SatDiagnosticSection() {
     }
     buttonLabel = draft2Done ? "Review diagnostic" : "Start Draft 2 (optional)";
   }
+
+  const handleSnoozeDraft3 = () => {
+    snoozeNudge(DRAFT_3_RETEST_HUB_SNOOZE_ID, 1);
+    refresh();
+  };
 
   return (
     <Card id="diagnostic" variant="quiet" density="normal" className="scroll-mt-6 min-w-0 space-y-3">
@@ -50,7 +78,7 @@ export function SatDiagnosticSection() {
           <p className="text-sm leading-relaxed text-[var(--text-muted)]">{detail}</p>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Link to="/sat/pretest" className="inline-block">
           <Button variant="secondary" size="sm">
             {buttonLabel}
@@ -58,12 +86,19 @@ export function SatDiagnosticSection() {
           </Button>
         </Link>
         {draft3Nudge ? (
-          <Link to={draft3Nudge.href} className="inline-block">
-            <Button variant="secondary" size="sm">
-              {draft3Nudge.buttonLabel}
-              <ArrowRight size={13} aria-hidden />
-            </Button>
-          </Link>
+          <>
+            <Link to={draft3Nudge.href} className="inline-block">
+              <Button variant="secondary" size="sm">
+                {draft3Nudge.buttonLabel}
+                <ArrowRight size={13} aria-hidden />
+              </Button>
+            </Link>
+            {!draft3Nudge.resume ? (
+              <Button variant="ghost" size="sm" onClick={handleSnoozeDraft3}>
+                Snooze 24h
+              </Button>
+            ) : null}
+          </>
         ) : null}
       </div>
     </Card>

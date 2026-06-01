@@ -4,6 +4,7 @@ import { SAT_PRETEST_DRAFT_3_ID } from "@/data/satPretestDrafts";
 import { snoozeNudge } from "@/lib/nudgeSnooze";
 import {
   DRAFT_3_RETEST_HUB_SNOOZE_ID,
+  formatDraft3HubSummary,
   getDraft3RetestNudge,
 } from "@/lib/satDraft3Nudge";
 import { SAT_PRETEST_STORAGE_KEY } from "@/lib/satPretest";
@@ -93,5 +94,32 @@ describe("satDraft3Nudge", () => {
     seedCompletedDraft1(storage);
     snoozeNudge(DRAFT_3_RETEST_HUB_SNOOZE_ID, 1, storage);
     expect(getDraft3RetestNudge(storage)).toBeNull();
+  });
+
+  it("formatDraft3HubSummary shows retest score and delta vs baseline", () => {
+    seedCompletedDraft1(storage);
+    const raw = JSON.parse(storage.getItem(SAT_PRETEST_STORAGE_KEY)!);
+    raw.attempts.push({
+      id: "d3",
+      draftId: SAT_PRETEST_DRAFT_3_ID,
+      status: "completed",
+      startedAt: "2026-06-02T12:00:00.000Z",
+      completedAt: "2026-06-02T12:30:00.000Z",
+      questionOrder: ["q1"],
+      currentIndex: 0,
+      responses: {},
+      scoreSummary: {
+        totalQuestions: 24,
+        correctAnswers: 20,
+        pct: 83,
+        sectionBreakdown: [],
+        skillBreakdown: [],
+        weakSkills: [],
+        recommendedNodeIds: [],
+        timeSpentSeconds: 900,
+      },
+    });
+    storage.setItem(SAT_PRETEST_STORAGE_KEY, JSON.stringify(raw));
+    expect(formatDraft3HubSummary(storage)).toBe("Draft 3 retest: 20/24 (+2 vs baseline)");
   });
 });

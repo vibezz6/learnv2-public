@@ -24,6 +24,7 @@ import { listColleges } from "@/lib/colleges";
 import { formatActivityLabel, listActivities } from "@/lib/studyActivity";
 import { SAT_PRETEST_DRAFT_1_ID } from "@/data/satPretestDraft1";
 import { getLatestCompletedSatPretestAttempt } from "@/lib/satPretest";
+import { getDraft3RetestNudge } from "@/lib/satDraft3Nudge";
 import { getSatRecommendedLessons } from "@/lib/satRecommendedLessons";
 import { getSatSkillMastery } from "@/lib/satSkillMastery";
 import { getSubjectAccent } from "@/lib/subjectAccent";
@@ -423,6 +424,25 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 }),
             },
           ]),
+      ...((): CommandItem[] => {
+        const nudge = getDraft3RetestNudge();
+        if (!nudge) return [];
+        return [
+          {
+            id: "sat-pretest-draft3",
+            label: "Draft 3 retest",
+            description: nudge.resume ? "Resume your in-progress retest" : "Fresh diagnostic read (~20 min)",
+            section: "SAT" as const,
+            icon: GraduationCap,
+            recentPath: nudge.href,
+            action: () =>
+              go(nudge.href, {
+                id: "sat-pretest-draft3",
+                label: "Draft 3 retest",
+              }),
+          },
+        ];
+      })(),
     ];
 
     const subjectItems: CommandItem[] = subjects.map((sub) => ({

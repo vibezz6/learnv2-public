@@ -3,6 +3,7 @@ import type { SkillNode, Subject } from "@/curriculum/types";
 import { ROUTES } from "@/app/navigation";
 import { saveCollegeChecklist } from "@/lib/collegeChecklist";
 import { addCollege } from "@/lib/colleges";
+import { setStudyIntent } from "@/lib/studyIntent";
 import { buildWeekPlan } from "@/lib/weekPlan";
 
 function mockLocalStorage(): Storage {
@@ -120,5 +121,37 @@ describe("weekPlan", () => {
     expect(collegeOverflow).toBe(1);
     expect(collegeRows[0]?.href).toContain(ROUTES.applicationPackage);
     expect(collegeRows[0]?.href).toContain("college=");
+  });
+
+  it("prioritizes non-urgent college rows before track when study intent is college", () => {
+    setStudyIntent("college", storage);
+    addCollege("Far U", "2026-06-03", undefined, storage);
+
+    const subjects: Subject[] = [
+      {
+        id: "sat-prep",
+        name: "SAT Prep",
+        description: "",
+        color: "#000",
+        icon: "book",
+        nodes: [node("st1"), node("st2")],
+      },
+    ];
+
+    const { rows } = buildWeekPlan(
+      {
+        subjects,
+        getNodeStatus: (n) => (n.id === "st1" ? "available" : "locked"),
+        enrolledTrackId: "sat-august",
+        storage,
+      },
+      6,
+    );
+
+    const collegeIntentIdx = rows.findIndex((r) => r.id.startsWith("college-intent"));
+    const trackIdx = rows.findIndex((r) => r.source === "track");
+    expect(collegeIntentIdx).toBeGreaterThanOrEqual(0);
+    expect(trackIdx).toBeGreaterThan(collegeIntentIdx);
+    expect(rows[collegeIntentIdx]?.detail).toContain("College focus today");
   });
 });

@@ -4,6 +4,15 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-05-30
+
+### Added
+
+- Draft 3 **Snooze 24h** on SAT diagnostic section; **completion summary** with delta vs baseline.
+- Study intent **college** boosts package/essay rows in week plan before track filler.
+- ⌘K **Draft 3 retest** when hub nudge is eligible.
+- Playwright **`e2e/b93-n.spec.ts`**: essay badge, good-shape streak, Draft 3 snooze, palette navigation.
+
 ## [2.10.0] - 2026-05-30
 
 ### Added

@@ -7,11 +7,12 @@ Use **Plan or Discussion** in Anything (not Build). Attach screenshots of the re
 - **Phase 3 (done):** B74–B80 — study loop closure, package submit/archive, `readJsonSafe`, import confirm, mastery/drill links, SAT date sync, e2e.
 - **Phase 4 (done):** B81–B86 — Cursor-planned §L (v2.9.0); cooldown, submitted package, college modal, post-SAT, e2e, backup UI.
 - **Phase 5 (done):** B87–B92 — Cursor-planned §M (v2.10.0); Draft 3 nudge, essay badge, good-shape streak, PWA copy, e2e verify.
-- **Phase 6 (next):** B93+ — copy the block below (or extend themes in Phase 4 block).
+- **Phase 6 (done):** B93–B98 — Cursor-planned §N (v2.11.0); Draft 3 snooze/summary, college intent week plan, ⌘K, e2e.
+- **Phase 7 (next):** B99+ — copy the block below (or extend themes in Phase 4 block).
 
 After Anything answers, paste the full output in Cursor:
 
-`Here is Anything's plan — turn it into BATCHES §N B93+ implementation plan:`
+`Here is Anything's plan — turn it into BATCHES §O B99+ implementation plan:`
 
 ---
 

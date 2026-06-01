@@ -75,6 +75,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
   let collegeOverflow = 0;
 
   const prioritizeSat = intent.focus === "sat";
+  const prioritizeCollege = intent.focus === "college";
 
   const push = (row: WeekPlanRow) => {
     const key = row.href;
@@ -136,6 +137,26 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
       });
       if (rows.length >= maxRows) return { rows, collegeOverflow };
     }
+  }
+
+  if (prioritizeCollege && rows.length < maxRows) {
+    let added = 0;
+    for (const deadline of collectUrgentAdmissionsRows(14, new Date(), undefined, undefined, storage)) {
+      if (used.has(deadline.href)) continue;
+      push({
+        id: `college-intent-${deadline.id}`,
+        title: deadline.title,
+        detail: deadline.detail
+          ? `${deadline.detail} · ${dueDetail(deadline)} · College focus today`
+          : `${dueDetail(deadline)} · College focus today`,
+        href: deadline.href,
+        source: "college",
+        overdue: deadline.overdue,
+      });
+      added += 1;
+      if (added >= 2 || rows.length >= maxRows) break;
+    }
+    if (rows.length >= maxRows) return { rows, collegeOverflow };
   }
 
   const track = getTrackById(input.enrolledTrackId ?? DEFAULT_TRACK_ID);
