@@ -6,7 +6,7 @@
 
 Learn v2 is a local-first study PWA for SAT prep, college application work, spaced review, and personal learning workflows. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
 
-**Current release:** v2.12.0 · **Live demo:** https://learnv2-tau.vercel.app · **License:** MIT
+**Current release:** v2.12.0 ·· **License:** MIT
 
 ## Screenshots
 
