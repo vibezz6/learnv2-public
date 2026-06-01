@@ -19,14 +19,14 @@ export function PlacementSettingsCard({ onMessage }: Props) {
     if (goal === placementGoal) return;
     setPlacementGoal(goal);
     const title = PLACEMENT_OPTIONS.find((o) => o.goal === goal)?.title ?? goal;
-    onMessage(`Campus focus set to ${title}.`);
+    onMessage(`Study focus set to ${title}.`);
   };
 
   return (
     <Card id="campus-focus" variant="default" density="normal" className="min-w-0 scroll-mt-24 space-y-4">
       <div className="flex items-start justify-between gap-3 border-b border-[var(--rule)] pb-3">
         <div className="min-w-0">
-          <p className="eyebrow-mono">Campus focus</p>
+          <p className="eyebrow-mono">Study focus</p>
           <p className="mt-1 text-sm text-[var(--text-muted)]">
             Same choice as onboarding. Updates your default track and which admissions reminders
             appear.
@@ -39,7 +39,7 @@ export function PlacementSettingsCard({ onMessage }: Props) {
         ) : null}
       </div>
 
-      <ul className="space-y-2" role="listbox" aria-label="Campus focus">
+      <ul className="space-y-2" role="listbox" aria-label="Study focus">
         {PLACEMENT_OPTIONS.map((option) => {
           const selected = placementGoal === option.goal;
           return (
@@ -73,7 +73,7 @@ export function PlacementSettingsCard({ onMessage }: Props) {
 
       <Link to="/" className="block">
         <Button variant="secondary" size="sm" className="w-full">
-          View campus home
+          View Today
         </Button>
       </Link>
     </Card>

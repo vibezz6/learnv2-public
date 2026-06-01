@@ -85,6 +85,10 @@ interface DisplayBlock {
   items: CommandItem[];
 }
 
+const EMPTY_QUERY_NAV_LIMIT = 5;
+const EMPTY_QUERY_CONTEXT_LIMIT = 3;
+const EMPTY_QUERY_ACTION_LIMIT = 5;
+
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
   const { setTheme } = usePreferences();
@@ -322,7 +326,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...listColleges().map((college) => ({
         id: `app-package-${college.id}`,
         label: `Open application package — ${college.name}`,
-        description: college.deadline ? `Deadline ${college.deadline}` : "Campus school",
+        description: college.deadline ? `Deadline ${college.deadline}` : "College school",
         section: "Campus" as const,
         icon: GraduationCap,
         recentPath: `${ROUTES.applicationPackage}?college=${encodeURIComponent(college.name)}`,
@@ -547,10 +551,29 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         blocks.push({ key: "recent-searches", title: "Recent searches", items: recentSearchesBlock });
       }
 
-      for (const section of ["Navigate", "Campus", "SAT", "Actions", "Theme"] as const) {
-        const items = filtered.filter((c) => c.section === section);
-        if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
+      const navigateItems = filtered
+        .filter((c) => c.section === "Navigate")
+        .slice(0, EMPTY_QUERY_NAV_LIMIT);
+      if (navigateItems.length > 0) {
+        blocks.push({ key: "navigate", title: "Navigate", items: navigateItems });
       }
+
+      const contextItems = filtered
+        .filter((c) => c.section === "Campus" || c.section === "SAT")
+        .slice(0, EMPTY_QUERY_CONTEXT_LIMIT);
+      if (contextItems.length > 0) {
+        blocks.push({ key: "context", title: "Next actions", items: contextItems });
+      }
+
+      const actionItems = filtered
+        .filter((c) => c.section === "Actions")
+        .slice(0, EMPTY_QUERY_ACTION_LIMIT);
+      if (actionItems.length > 0) {
+        blocks.push({ key: "actions", title: "Actions", items: actionItems });
+      }
+
+      const themeItems = filtered.filter((c) => c.section === "Theme");
+      if (themeItems.length > 0) blocks.push({ key: "theme", title: "Theme", items: themeItems });
       return blocks;
     }
 
@@ -573,7 +596,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
     for (const section of ["Navigate", "Campus", "SAT", "Subjects", "Actions", "Theme"] as const) {
       const items = filtered.filter((c) => c.section === section);
-      if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
+      const title = section === "Campus" ? "College" : section;
+      if (items.length > 0) blocks.push({ key: section.toLowerCase(), title, items });
     }
 
     return blocks;

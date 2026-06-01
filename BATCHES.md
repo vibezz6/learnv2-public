@@ -13,7 +13,7 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B104 done.** Last session: §O shipped (v2.12.0).
+> **B01–B111 done.** Last session: §P polish/fit pass.
 > Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.12.0**.
 > **Anything workflow:** Phase 3 planner (B74+) in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); UI iteration loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
@@ -433,7 +433,25 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ---
 
-## Future ideas (after B104)
+## P. Polish and fit (B105–B111)
+
+- [x] **B105** — Today priority model for hero/week plan/secondary nudge coordination.
+- [x] **B106** — Intent-aware hero fit for college focus and catch-up.
+- [x] **B107** — Declutter Today secondary cards and empty sections.
+- [x] **B108** — Week plan copy and row polish.
+- [x] **B109** — ⌘K empty-query tiers; full search remains broad.
+- [x] **B110** — College/Campus naming and docs truth pass.
+- [x] **B111** — Focused tests + doctor/e2e verification.
+
+**Verify §P:** B105 priority unit tests → B106 intent hero check → B107 no empty Due soon → B108 week copy → B109 ⌘K lighter empty state → B111 `npm run doctor` + `npm run test:e2e`.
+
+**What NOT to do next:** Mobile redesign; backend/sync; ED/EA/RD schema; PDF library; bulk SAT MC authoring; study intent directly changing Daily 5 question selection.
+
+**PR checklist:** Keeps the 100+ batch product surface, but makes Today/intent/week plan feel like one system?
+
+---
+
+## Future ideas (after B111)
 
 - **Stretch 10 MC/skill** — `sat:coverage:stretch` is green; defer bulk authoring.
 - Print CSS polish; mastery sparklines / table redesign; PWA two-build e2e; compact mobile status row.
@@ -442,6 +460,7 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-31 — B105–B111 — Today priority model, intent-aware hero fit, less crowded Today, week plan copy, lighter ⌘K, naming/docs truth, focused tests.
 - 2026-05-30 — B99–B104 — Study intent picker, catch-up week plan, intent copy/CTAs, ⌘K focus, e2e. v2.12.0.
 - 2026-05-30 — B93–B98 — Draft 3 snooze/summary, college intent week plan, ⌘K Draft 3, e2e polish. v2.11.0.
 - 2026-05-30 — B87–B92 — Draft 3 hub nudge, campus essay badge, good-shape streak, PWA copy, e2e B83/B84 gaps. v2.10.0.

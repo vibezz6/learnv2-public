@@ -60,7 +60,7 @@ export function getCollegeSessionNextSteps(href: string): CollegeSessionNextStep
     return [{ label: "Open checklist", href: ROUTES.collegeChecklist }];
   }
   if (href === ROUTES.college || href.startsWith(`${ROUTES.college}`)) {
-    return [{ label: "Open Campus", href: ROUTES.college }];
+    return [{ label: "Open College", href: ROUTES.college }];
   }
-  return [{ label: "Open Campus", href: ROUTES.college }];
+  return [{ label: "Open College", href: ROUTES.college }];
 }

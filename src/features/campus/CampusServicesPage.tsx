@@ -88,7 +88,7 @@ export function CampusServicesPage() {
   return (
     <PageContainer size="lg" className="space-y-7">
       <PageHeader
-        title="Campus"
+        title="College"
         subtitle="College deadlines, calculators, and subject labs — outside the daily Today loop."
       />
 

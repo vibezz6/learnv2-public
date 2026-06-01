@@ -78,7 +78,7 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
     to: ROUTES.college,
     label: "College",
     commandLabel: "College hub",
-    hint: "Checklist, essays, deadlines, and campus tools",
+    hint: "Checklist, essays, deadlines, and college tools",
     section: "Applications",
     icon: LayoutGrid,
     mobilePriority: 3,
@@ -232,11 +232,11 @@ export function resolveBreadcrumb(pathname: string): BreadcrumbCrumb[] {
     return [{ label: "College", to: ROUTES.college }, { label: "Print summary" }];
   }
   if (path.startsWith("/campus/calculators")) {
-    return [{ label: "Campus", to: ROUTES.college }, { label: "Calculators" }];
+    return [{ label: "College", to: ROUTES.college }, { label: "Calculators" }];
   }
-  if (path.startsWith("/campus")) return [{ label: "Campus" }];
+  if (path.startsWith("/campus")) return [{ label: "College" }];
   if (path.startsWith("/lab/trading")) {
-    return [{ label: "Campus", to: ROUTES.college }, { label: "Trading lab" }];
+    return [{ label: "College", to: ROUTES.college }, { label: "Trading lab" }];
   }
   if (path.startsWith("/sat/pretest")) {
     return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Diagnostic" }];

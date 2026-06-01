@@ -38,7 +38,7 @@ test.describe("B99–O study intent closure", () => {
     await page.goto("/");
     await page.getByRole("button", { name: "College deadlines" }).click();
     await expect(page.getByText(/Today’s plan favors checklist and essay deadlines/i)).toBeVisible();
-    await expect(page.getByText(/College focus today/i)).toBeVisible();
+    await expect(page.getByText(/Supports college focus/i)).toBeVisible();
   });
 
   test("catch-up intent shows continue lesson row in week plan", async ({ page }) => {
@@ -67,7 +67,8 @@ test.describe("B99–O study intent closure", () => {
     await page.getByRole("button", { name: "Catch up" }).click();
     await expect(page.getByText(/Today’s plan favors finishing in-progress lessons/i)).toBeVisible();
     await expect(page.getByText(/Catch up today/i)).toBeVisible();
-    await expect(page.getByText(/Continue/i)).toBeVisible();
+    await expect(page.getByText(/Supports catch-up focus/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /Continue Your SAT Game Plan/i })).toBeVisible();
   });
 
   test("command palette Focus today SAT updates subtitle", async ({ page }) => {

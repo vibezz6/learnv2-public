@@ -50,7 +50,7 @@ export function CampusPrintSummaryPage() {
       <PageContainer size="lg" className="space-y-7 print:max-w-none">
         <div className="print-hide flex flex-wrap items-start justify-between gap-3">
           <PageHeader
-            backTo={{ to: ROUTES.college, label: "Campus" }}
+            backTo={{ to: ROUTES.college, label: "College" }}
             eyebrow="Applications"
             title="Print summary"
             subtitle="One-page overview for parents or counselors. Use Print to save as PDF."
@@ -80,7 +80,7 @@ export function CampusPrintSummaryPage() {
 
           {!hasData ? (
             <p className="text-sm text-[var(--text-muted)] print:text-black">
-              Add a school or essay in Campus to populate this summary.
+              Add a school or essay in College to populate this summary.
             </p>
           ) : (
             <>
@@ -181,7 +181,7 @@ export function CampusPrintSummaryPage() {
 
         <p className="print-hide text-sm text-[var(--text-muted)]">
           <Link to={ROUTES.college} className="text-[var(--accent)] hover:underline">
-            Back to Campus
+            Back to College
           </Link>
         </p>
       </PageContainer>

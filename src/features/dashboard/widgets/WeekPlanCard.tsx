@@ -26,13 +26,13 @@ interface Props {
 }
 
 function getWeekPlanSubtitle(focus: StudyIntentFocus): string {
-  const base = "track, deadlines, and SAT follow-ups — up to six items.";
+  const base = "supporting steps for the same focus, capped at six.";
   if (focus === "default") {
-    return "Track, deadlines, and SAT follow-ups — up to six items.";
+    return "Track, deadlines, and SAT follow-ups — supporting steps, capped at six.";
   }
   if (focus === "sat") return `SAT focus — ${base}`;
   if (focus === "college") return `College focus — ${base}`;
-  return `Catch up — ${base}`;
+  return `Catch-up focus — ${base}`;
 }
 
 export function WeekPlanCard({ subjects, embedded = false }: Props) {
@@ -98,7 +98,7 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
           to={ROUTES.college}
           className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
         >
-          Open Campus deadlines
+          Open college deadlines
           <ArrowRight size={14} aria-hidden />
         </Link>
       );
@@ -213,7 +213,7 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
           to={ROUTES.college}
           className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
         >
-          +{collegeOverflow} more in Campus
+          +{collegeOverflow} more in College
           <ArrowRight size={14} aria-hidden />
         </Link>
       ) : null}

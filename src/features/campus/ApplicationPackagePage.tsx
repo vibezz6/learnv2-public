@@ -141,15 +141,15 @@ export function ApplicationPackagePage() {
     return (
       <PageContainer size="lg" className="space-y-7">
         <PageHeader
-          backTo={{ to: ROUTES.college, label: "Campus" }}
+          backTo={{ to: ROUTES.college, label: "College" }}
           eyebrow="Applications"
           title="Application package"
           subtitle="Pick a school to see essays and shared checklist progress for that application."
         />
         <EmptyState
           title="Pick a school"
-          description="Open Campus to add schools or tag essays with a college name, then return here with a school selected."
-          actionLabel="Go to Campus"
+          description="Open College to add schools or tag essays with a college name, then return here with a school selected."
+          actionLabel="Go to College"
           actionTo={ROUTES.college}
         />
       </PageContainer>
@@ -159,7 +159,7 @@ export function ApplicationPackagePage() {
   return (
     <PageContainer size="lg" className="space-y-7">
       <PageHeader
-        backTo={{ to: ROUTES.college, label: "Campus" }}
+        backTo={{ to: ROUTES.college, label: "College" }}
         eyebrow="Applications"
         title={`Application package — ${college}`}
         subtitle="Essays for this school plus the shared checklist you use for every application."
@@ -340,7 +340,7 @@ export function ApplicationPackagePage() {
           {pkg.essays.length === 0 ? (
             <p className="text-sm text-[var(--text-muted)]">
               No essays linked to this school yet. Set <strong>college</strong> on an entry in the
-              essay tracker to link one. Add schools on Campus to set a school-level deadline.
+              essay tracker to link one. Add schools in College to set a school-level deadline.
             </p>
           ) : (
             <ul className="grid gap-3 md:grid-cols-2">

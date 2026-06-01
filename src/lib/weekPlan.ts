@@ -165,8 +165,8 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
         id: `college-intent-${deadline.id}`,
         title: deadline.title,
         detail: deadline.detail
-          ? `${deadline.detail} · ${dueDetail(deadline)} · College focus today`
-          : `${dueDetail(deadline)} · College focus today`,
+          ? `${deadline.detail} · ${dueDetail(deadline)} · Supports college focus`
+          : `${dueDetail(deadline)} · Supports college focus`,
         href: deadline.href,
         source: "college",
         overdue: deadline.overdue,
@@ -183,7 +183,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
       push({
         id: `catch-up-${lesson.nodeId}`,
         title: `Continue ${lesson.title}`,
-        detail: "Catch up today",
+        detail: "Supports catch-up focus",
         href: lesson.href,
         source: "track",
       });

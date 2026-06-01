@@ -100,7 +100,7 @@ export function EssayTrackerPage() {
   return (
     <PageContainer size="md" className="space-y-7">
       <PageHeader
-        backTo={{ to: "/campus", label: "Campus" }}
+        backTo={{ to: "/campus", label: "College" }}
         eyebrow="Applications"
         title="Essay tracker"
         subtitle="Common App and supplement prompts, draft status, and deadlines. Write in Google Docs or Word — Learn only tracks your pipeline, not the text."

@@ -18,8 +18,8 @@ const VARIANTS = [
   },
   {
     title: "Check college deadlines",
-    description: "Campus checklist and essays surface on Today when something is due soon.",
-    actionLabel: "Open Campus",
+    description: "College checklist and essays surface on Today when something is due soon.",
+    actionLabel: "Open College",
     actionTo: "/campus",
     icon: "◇",
   },

@@ -4,6 +4,12 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+### Changed
+
+- Today priority model coordinates study intent, hero choice, week plan copy, and secondary nudges so the 100+ batch surface feels less crowded.
+- ⌘K empty state is tiered to top navigation/context/actions while full search keeps SAT, college, subjects, and school package commands.
+- User-facing “College” naming is preferred over “Campus” while existing `/campus` routes remain stable.
+
 ## [2.12.0] - 2026-05-30
 
 ### Added

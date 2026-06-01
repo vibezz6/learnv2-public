@@ -20,19 +20,17 @@ import { getTrackChallengeCategory } from "@/lib/coursework";
 import { shouldShowSatTodayCard } from "@/lib/satDailyStudy";
 import { subjectToChallengeCategory } from "@/lib/subjectProgress";
 import { formatAppVersion } from "@/lib/version";
+import { buildTodayPriority, shouldShowSecondaryDrill } from "@/lib/todayPriority";
 import { ContinueHero } from "./widgets/ContinueHero";
 import { DailyChallengeCompact } from "./widgets/DailyChallengeCompact";
 import { DrillQueueTodayCard } from "./widgets/DrillQueueTodayCard";
 import { RightNowHero } from "./widgets/RightNowHero";
+import { PriorityHero } from "./widgets/PriorityHero";
 import { TodayMinimumStrip } from "./widgets/TodayMinimumStrip";
-import { EssayDueToday } from "./widgets/EssayDueToday";
+import { EssayDueToday, hasEssaysDueSoon } from "./widgets/EssayDueToday";
 import { TodayEmptyFocus } from "./widgets/TodayEmptyFocus";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
-import {
-  getStudyIntentSubtitle,
-  loadStudyIntent,
-  STUDY_INTENT_UPDATED_EVENT,
-} from "@/lib/studyIntent";
+import { STUDY_INTENT_UPDATED_EVENT } from "@/lib/studyIntent";
 import { ROUTES } from "@/app/navigation";
 import { StudyIntentPicker } from "./widgets/StudyIntentPicker";
 
@@ -47,7 +45,7 @@ export function DashboardPage() {
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(true);
-  const [intentFocus, setIntentFocus] = useState(() => loadStudyIntent().focus);
+  const [, setIntentRevision] = useState(0);
 
   useEffect(() => {
     loadAllSubjects().then((loaded) => {
@@ -57,7 +55,7 @@ export function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    const syncIntent = () => setIntentFocus(loadStudyIntent().focus);
+    const syncIntent = () => setIntentRevision((revision) => revision + 1);
     window.addEventListener(STUDY_INTENT_UPDATED_EVENT, syncIntent);
     return () => window.removeEventListener(STUDY_INTENT_UPDATED_EVENT, syncIntent);
   }, []);
@@ -81,13 +79,20 @@ export function DashboardPage() {
     reviewDue > 0 ||
     (nextReview !== null && typeof nextReview.daysUntil === "number" && nextReview.daysUntil <= 2);
 
-  const pageSubtitle =
-    getStudyIntentSubtitle(intentFocus) ??
-    "One move now. Everything else can wait until the minimum is done.";
-
   if (loadingSubjects) {
     return <PageLoading />;
   }
+
+  const priority = buildTodayPriority({
+    subjects,
+    getNodeStatus,
+    placementGoal,
+    continueTarget: target,
+    reviewDueCount: reviewDue,
+  });
+  const pageSubtitle = priority.pageSubtitle;
+  const showDrillCard = shouldShowSecondaryDrill(priority);
+  const showEssayDue = hasEssaysDueSoon();
 
   return (
     <PageContainer size="xl" className="space-y-6">
@@ -98,7 +103,11 @@ export function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
           <Section eyebrow="Right now" title="Your one move">
-            {showSatFocus ? (
+            {priority.surface === "college" || priority.surface === "review" || priority.kind === "catch_up" ? (
+              <PriorityHero priority={priority} />
+            ) : priority.surface === "continue" && target ? (
+              <ContinueHero subject={target.subject} node={target.node} />
+            ) : showSatFocus ? (
               <RightNowHero subjects={subjects} resume={target} />
             ) : target ? (
               <ContinueHero subject={target.subject} node={target.node} />
@@ -106,13 +115,15 @@ export function DashboardPage() {
               <TodayEmptyFocus />
             )}
           </Section>
-          <DrillQueueTodayCard />
+          {showDrillCard ? <DrillQueueTodayCard /> : null}
         </div>
 
         <aside className="min-w-0 space-y-6">
-          <Section eyebrow="Due soon">
-            <EssayDueToday />
-          </Section>
+          {showEssayDue ? (
+            <Section eyebrow="Due soon">
+              <EssayDueToday />
+            </Section>
+          ) : null}
 
           <Section eyebrow="This week">
             <WeekPlanCard subjects={subjects} embedded />

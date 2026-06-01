@@ -152,7 +152,7 @@ describe("weekPlan", () => {
     const trackIdx = rows.findIndex((r) => r.source === "track");
     expect(collegeIntentIdx).toBeGreaterThanOrEqual(0);
     expect(trackIdx).toBeGreaterThan(collegeIntentIdx);
-    expect(rows[collegeIntentIdx]?.detail).toContain("College focus today");
+    expect(rows[collegeIntentIdx]?.detail).toContain("Supports college focus");
   });
 
   it("prioritizes continue lesson before track when study intent is catch_up", () => {
@@ -188,7 +188,7 @@ describe("weekPlan", () => {
     const trackIdx = rows.findIndex((r) => r.id.startsWith("track-"));
     expect(catchUpIdx).toBeGreaterThanOrEqual(0);
     expect(rows[catchUpIdx]?.title).toBe("Continue Lesson st1");
-    expect(rows[catchUpIdx]?.detail).toContain("Catch up today");
+    expect(rows[catchUpIdx]?.detail).toContain("Supports catch-up focus");
     expect(trackIdx).toBeGreaterThan(catchUpIdx);
   });
 });

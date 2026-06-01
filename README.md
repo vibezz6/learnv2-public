@@ -2,7 +2,7 @@
 
 Personal learning OS — redesign of [Learn-v1](https://github.com/dishwashersol/LearnApp).
 
-**Current release:** v2.7.1 · **GitHub tags:** [v2.7.0](https://github.com/dishwashersol/learnv2/releases/tag/v2.7.0), v2.7.1 on `main` · **Cutover tag:** v2.0.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live:** https://learnv2-tau.vercel.app (auto-deploy on push to `main`) · **Repo:** https://github.com/dishwashersol/learnv2
+**Current release:** v2.12.0 · **Daily driver:** `~/liqui/projects/learnv2` (`npm run dev` → http://127.0.0.1:8080) · **Live:** https://learnv2-tau.vercel.app (auto-deploy on push to `main`) · **Repo:** https://github.com/dishwashersol/learnv2
 
 Learn-v2 is the active daily driver. Learn-v1 remains archived at `~/liqui/projects/Learn-v1` (tag `v1-final`) as a fallback and migration source.
 
@@ -28,7 +28,7 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 **Core loop**
 
-- **Today** — your one move (next SAT action), daily minimum + streak, continue (lesson/notes/quiz), week plan, essays due, spaced review, daily challenge
+- **Today** — one coordinated priority, study intent, daily minimum + streak, week plan, college/SAT nudges, spaced review, and daily challenge
 - **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
 - **SAT Prep** — study-first hub (lessons, mistake log, drills, official practice), optional Draft 1/2/3 diagnostics, 80-lesson August track, Bluebook checkpoints
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
@@ -44,11 +44,11 @@ Constants: `src/lib/devPorts.ts`. Trading Lab page links to the journal on **808
 
 **Focus & polish**
 
-- **Mobile-first layout** — 480px polish on dashboard, lessons, quiz, review, and notes
+- **Desktop-first study loop** — mobile remains usable, but new polish targets the computer study flow first
 - **Deep focus mode** — `F` hides chrome for distraction-free study
 - **Study timer** — timed sessions with summary
 - **Review & stats** — SRS spotlight cards, level/streak hero, 7-day study chart, achievement unlocks
-- **Campus services** (`/campus`) — college checklist, essay tracker, Trading Lab, calculators, SAT, algo lab
+- **College services** (`/campus`) — college checklist, essay tracker, Trading Lab, calculators, SAT, algo lab
 - **College checklist** — FAFSA, counselor, SAT send, custom deadlines (`/campus/college-checklist`)
 - **Essay tracker** — Common App / supplement prompts, draft status, due dates (`/campus/essay-tracker`)
 - **Placement onboarding** — SAT, foundations, or explore; enrolls default track on first run
@@ -136,7 +136,7 @@ Your progress is stored in the browser, not the repo, so pulling/updating never 
 
 ## Back up your data (so you never lose progress)
 
-Progress lives in your browser's localStorage for the exact origin you use (`http://127.0.0.1:8080` locally, or the GitHub Pages URL — these are separate stores). Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
+Progress lives in your browser's localStorage for the exact origin you use (`http://127.0.0.1:8080` locally, or the Vercel live URL — these are separate stores). Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
 
 1. In the app: **Settings → Backup → Export progress** — downloads `learnv2-backup-YYYY-MM-DD.json`.
 2. Save that file somewhere safe (a cloud drive). Export weekly, or whenever the app nudges you.
@@ -156,7 +156,7 @@ npm run dev
 
 If the app is dead locally, nothing is listening on 8080 — run `npm run dev` in this directory (or `npm run preview:live` after a build).
 
-**GitHub Pages** deploys on push to `main` (`.github/workflows/deploy-pages.yml`). Enable **Settings → Pages → GitHub Actions** once. Public URL: https://dishwashersol.github.io/learnv2/ (separate localStorage from localhost).
+Vercel deploys on push to `main`. Public URL: https://learnv2-tau.vercel.app (separate localStorage from localhost).
 
 ```bash
 npm run build

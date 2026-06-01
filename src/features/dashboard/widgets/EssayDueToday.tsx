@@ -50,3 +50,10 @@ export function EssayDueToday() {
     </Card>
   );
 }
+
+export function hasEssaysDueSoon(): boolean {
+  const essays = loadEssayTracker().essays.filter((e) => e.dueDate && e.status !== "final");
+  return essays
+    .map((e) => ({ essay: e, days: daysUntil(e.dueDate!) }))
+    .some((x) => x.days >= 0 && x.days <= 7);
+}

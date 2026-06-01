@@ -47,7 +47,7 @@ export function CollegeChecklistPage() {
   return (
     <PageContainer size="md" className="space-y-7">
       <PageHeader
-        backTo={{ to: "/campus", label: "Campus" }}
+        backTo={{ to: "/campus", label: "College" }}
         eyebrow="Applications"
         title="College checklist"
         subtitle="Real college steps outside Learn — FAFSA, counselor, SAT scores, essays. Check items off as you go; add your own deadlines."
