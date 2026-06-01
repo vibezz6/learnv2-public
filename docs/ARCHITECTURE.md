@@ -80,6 +80,6 @@ AI review features call OpenRouter directly from the browser when the user provi
 
 ## PWA and Deploy
 
-The app deploys as a static SPA. `vercel.json` rewrites all routes to `index.html`.
+The app is a static SPA and can be served by any host that rewrites unknown routes to `index.html`.
 
 The service worker is in `public/sw.js`; version sync is handled by `scripts/bump-version.mjs`.

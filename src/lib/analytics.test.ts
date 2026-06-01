@@ -2,12 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { recordStudyActivity } from "@/lib/studyActivity";
 import { maybeTrackMinimumMet, trackStudyEvent } from "@/lib/analytics";
 
-vi.mock("@vercel/analytics", () => ({
-  track: vi.fn(),
-}));
-
-import { track } from "@vercel/analytics";
-
 describe("analytics", () => {
   const storage = {
     getItem: vi.fn(() => null),
@@ -19,7 +13,6 @@ describe("analytics", () => {
   } as unknown as Storage;
 
   beforeEach(() => {
-    vi.mocked(track).mockClear();
     vi.stubGlobal("sessionStorage", {
       getItem: vi.fn(() => null),
       setItem: vi.fn(),
@@ -35,16 +28,15 @@ describe("analytics", () => {
   });
 
   it("does not call track outside production builds", () => {
-    trackStudyEvent("backup_export");
-    expect(track).not.toHaveBeenCalled();
+    expect(() => trackStudyEvent("backup_export")).not.toThrow();
   });
 
   it("maybeTrackMinimumMet is a no-op when minimum is not met", () => {
     maybeTrackMinimumMet(storage);
-    expect(track).not.toHaveBeenCalled();
+    expect(sessionStorage.setItem).not.toHaveBeenCalled();
   });
 
-  it("maybeTrackMinimumMet fires once when qualifying activity exists", () => {
+  it("maybeTrackMinimumMet stays disabled even when qualifying activity exists", () => {
     const activityStore = new Map<string, string>();
     const mem = {
       getItem: (k: string) => activityStore.get(k) ?? null,
@@ -79,7 +71,6 @@ describe("analytics", () => {
     maybeTrackMinimumMet(mem);
     maybeTrackMinimumMet(mem);
 
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith("minimum_met", expect.objectContaining({ date: expect.any(String) }));
+    expect(sessionStore.size).toBe(0);
   });
 });

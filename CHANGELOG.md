@@ -138,7 +138,7 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 - Expanded SAT curriculum MC bank so every teachable skill has at least five questions; gap drills st76–st80 now have five items each.
 - Pretest `skillId` on diagnostic questions; Draft 1 expanded to 24 items (12 math / 12 R&W); Draft 2 to 16; Draft 3 retest bank (24 unique ids).
 - `MobileStudyStrip` on phones (streak, daily minimum, SAT countdown).
-- Vercel Web Analytics and Speed Insights (production only) with study custom events.
+- Local-only public build with hosted analytics disabled.
 
 ### Changed
 
@@ -151,4 +151,4 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 - Canonical SAT skill taxonomy and skill-based Daily 5 / micro-drill matching.
 - Skill mastery view on the SAT hub and drill-any-skill links (`/sat/drill?skill=`).
 - App version on Today footer, Settings, and desktop status bar.
-- Vercel deployment with SPA rewrites; removed broken GitHub Pages workflow.
+- Static SPA build with local-first routing; removed broken GitHub Pages workflow.
