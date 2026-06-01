@@ -676,6 +676,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Tab") {
+                e.preventDefault();
+                inputRef.current?.focus();
+              }
+            }}
             placeholder="Quick open — type to search lessons, college, commands"
             aria-label="Search lessons, college, and commands"
             role="combobox"
