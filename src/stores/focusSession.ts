@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { createSafeStorage } from "@/lib/storageSafety";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
@@ -89,6 +90,7 @@ export const useFocusSession = create<FocusSessionState>()(
     }),
     {
       name: "learnv2_focus_session_v1",
+      storage: createJSONStorage(() => createSafeStorage()),
       partialize: (s) => ({ active: s.active }),
     },
   ),

@@ -52,7 +52,7 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
   const handleClearSnoozes = () => {
     clearAllNudgeSnoozes();
     setRevision((r) => r + 1);
-    onMessage("Dismissed admissions reminders restored on campus home.");
+    onMessage("Dismissed admissions reminders restored on the College hub.");
   };
 
   const handleImportFile = (file: File) => {
@@ -100,7 +100,7 @@ export function AdmissionsSettingsCard({ onMessage }: Props) {
         <p className="text-sm text-[var(--text-muted)]">
           No checklist or essay data yet. Start on{" "}
           <Link to="/campus" className="font-medium text-[var(--accent)] hover:underline">
-            campus services
+            College services
           </Link>
           .
         </p>

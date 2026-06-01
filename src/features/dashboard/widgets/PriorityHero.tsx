@@ -31,8 +31,9 @@ export function PriorityHero({ priority }: Props) {
     navigate(priority.href);
   };
 
-  const action =
-    priority.surface === "college" || priority.surface === "review" ? (
+  const shouldStartSession =
+    priority.surface === "continue" || priority.kind === "catch_up" || priority.kind === "urgent_college";
+  const action = !shouldStartSession ? (
       <Link to={priority.href} className="w-full sm:w-auto">
         <Button className="w-full touch-manipulation sm:w-auto">
           {priority.buttonLabel}
@@ -41,7 +42,7 @@ export function PriorityHero({ priority }: Props) {
       </Link>
     ) : (
       <Button onClick={start} className="w-full touch-manipulation sm:w-auto">
-        {priority.buttonLabel}
+        {priority.kind === "urgent_college" ? "Start focus session" : priority.buttonLabel}
         <ArrowRight size={14} aria-hidden />
       </Button>
     );
@@ -61,6 +62,14 @@ export function PriorityHero({ priority }: Props) {
           </div>
           <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
             {action}
+            {priority.kind === "urgent_college" ? (
+              <Link
+                to={priority.href}
+                className="text-sm font-medium text-[var(--accent)] hover:underline"
+              >
+                {priority.buttonLabel}
+              </Link>
+            ) : null}
           </div>
         </div>
       </div>

@@ -107,6 +107,7 @@ describe("todayPriority", () => {
     });
 
     expect(priority.kind).toBe("urgent_college");
+    expect(priority.surface).toBe("college");
     expect(priority.pageSubtitle).toContain("College deadline first");
   });
 

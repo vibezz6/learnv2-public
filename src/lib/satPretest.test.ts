@@ -520,6 +520,18 @@ describe("satPretest", () => {
     }
   });
 
+  it("quarantines corrupt pretest storage instead of silently wiping attempts", () => {
+    storage.setItem(SAT_PRETEST_STORAGE_KEY, "{ nope");
+
+    expect(loadSatPretestState(storage).attempts).toHaveLength(0);
+    expect(storage.getItem(SAT_PRETEST_STORAGE_KEY)).toBeNull();
+    const corruptKey = Array.from({ length: storage.length }, (_, i) => storage.key(i)).find((key) =>
+      key?.startsWith(`${SAT_PRETEST_STORAGE_KEY}_corrupt_`),
+    );
+    expect(corruptKey).toBeTruthy();
+    expect(corruptKey ? storage.getItem(corruptKey) : null).toBe("{ nope");
+  });
+
   it("merges skill breakdown by canonical skill id", () => {
     const mergedQuestions: SatPretestQuestion[] = [
       {

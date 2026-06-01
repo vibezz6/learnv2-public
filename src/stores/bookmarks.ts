@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { createSafeStorage } from "@/lib/storageSafety";
 
 export const V2_BOOKMARKS_KEY = "learnv2_bookmarks";
 
@@ -88,6 +89,7 @@ export const useBookmarks = create<BookmarksState>()(
     }),
     {
       name: V2_BOOKMARKS_KEY,
+      storage: createJSONStorage(() => createSafeStorage()),
       partialize: (s) => ({
         resourceBookmarks: s.resourceBookmarks,
         lessonBookmarks: s.lessonBookmarks,

@@ -74,7 +74,7 @@ export function buildTodayPriority(input: TodayPriorityInput): TodayPriority {
   if (satCommand.kind === "college_blocking") {
     return {
       kind: "urgent_college",
-      surface: "sat",
+      surface: "college",
       headline: satCommand.headline,
       detail: satCommand.detail,
       href: satCommand.href,

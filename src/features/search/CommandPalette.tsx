@@ -65,7 +65,7 @@ interface CommandItem {
     | "Recent actions"
     | "Recent searches"
     | "Navigate"
-    | "Campus"
+    | "College"
     | "SAT"
     | "Subjects"
     | "Lessons"
@@ -238,11 +238,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       };
     });
 
-    const campusItems: CommandItem[] = [
+    const collegeItems: CommandItem[] = [
       {
         id: "campus",
         label: "College hub",
-        section: "Campus",
+        section: "College",
         icon: LayoutGrid,
         recentPath: ROUTES.college,
         action: () => go(ROUTES.college, { id: "campus", label: "College hub" }),
@@ -251,7 +251,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         id: "college-checklist",
         label: "College checklist",
         description: "FAFSA, essays, deadlines",
-        section: "Campus",
+        section: "College",
         icon: ClipboardList,
         recentPath: ROUTES.collegeChecklist,
         action: () =>
@@ -264,7 +264,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
           urgentDeadlines.length > 0
             ? `${urgentDeadlines.length} overdue or due soon`
             : "Checklist and essay due dates",
-        section: "Campus",
+        section: "College",
         icon: CalendarClock,
         recentPath: urgentDeadlines[0]?.href ?? ROUTES.collegeChecklist,
         action: () => {
@@ -276,24 +276,24 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         id: "essay-tracker",
         label: "Essay tracker",
         description: "Draft status and due dates",
-        section: "Campus",
+        section: "College",
         icon: FileText,
         recentPath: ROUTES.essayTracker,
         action: () => go(ROUTES.essayTracker, { id: "essay-tracker", label: "Essay tracker" }),
       },
       {
         id: "campus-focus",
-        label: "Change campus focus",
+        label: "Change study focus",
         description: "SAT, foundations, or explore",
-        section: "Campus",
+        section: "College",
         icon: GraduationCap,
         recentPath: ROUTES.settings,
-        action: () => go(`${ROUTES.settings}#campus-focus`, { id: "campus-focus", label: "Change campus focus" }),
+        action: () => go(`${ROUTES.settings}#campus-focus`, { id: "campus-focus", label: "Change study focus" }),
       },
       {
         id: "trading-lab",
         label: "Trading Lab",
-        section: "Campus",
+        section: "College",
         icon: FlaskConical,
         recentPath: ROUTES.tradingLab,
         action: () => go(ROUTES.tradingLab, { id: "trading-lab", label: "Trading Lab" }),
@@ -327,7 +327,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         id: `app-package-${college.id}`,
         label: `Open application package — ${college.name}`,
         description: college.deadline ? `Deadline ${college.deadline}` : "College school",
-        section: "Campus" as const,
+        section: "College" as const,
         icon: GraduationCap,
         recentPath: `${ROUTES.applicationPackage}?college=${encodeURIComponent(college.name)}`,
         action: () =>
@@ -500,7 +500,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...recent,
       ...activityRecent,
       ...navigateItems,
-      ...campusItems,
+      ...collegeItems,
       ...subjectItems,
       ...actionItems,
       ...themeItems,
@@ -559,7 +559,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       }
 
       const contextItems = filtered
-        .filter((c) => c.section === "Campus" || c.section === "SAT")
+        .filter((c) => c.section === "College" || c.section === "SAT")
         .slice(0, EMPTY_QUERY_CONTEXT_LIMIT);
       if (contextItems.length > 0) {
         blocks.push({ key: "context", title: "Next actions", items: contextItems });
@@ -594,10 +594,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       });
     }
 
-    for (const section of ["Navigate", "Campus", "SAT", "Subjects", "Actions", "Theme"] as const) {
+    for (const section of ["Navigate", "College", "SAT", "Subjects", "Actions", "Theme"] as const) {
       const items = filtered.filter((c) => c.section === section);
-      const title = section === "Campus" ? "College" : section;
-      if (items.length > 0) blocks.push({ key: section.toLowerCase(), title, items });
+      if (items.length > 0) blocks.push({ key: section.toLowerCase(), title: section, items });
     }
 
     return blocks;
@@ -677,8 +676,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Quick open — type to search lessons, campus, commands"
-            aria-label="Search lessons, campus, and commands"
+            placeholder="Quick open — type to search lessons, college, commands"
+            aria-label="Search lessons, college, and commands"
             role="combobox"
             aria-expanded={flatItems.length > 0}
             aria-controls="command-palette-listbox"

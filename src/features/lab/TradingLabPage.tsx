@@ -73,7 +73,7 @@ export function TradingLabPage() {
           <p className="mt-2 text-xs text-[var(--text-muted)]">
             Start tradingv1:{" "}
             <code className="rounded bg-[var(--bg-muted)] px-1 py-0.5">
-              ~/liqui/projects/tradingv1/scripts/dev.sh
+              Start the optional local journal API on port 8000.
             </code>
           </p>
         )}

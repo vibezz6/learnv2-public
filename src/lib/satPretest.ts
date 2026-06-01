@@ -1,4 +1,6 @@
 import type { SatLessonPlanEntry } from "@/lib/satLessonPlan";
+import { recordStorageReadError } from "@/lib/storageErrors";
+import { recordStorageFailure } from "@/lib/storageSafety";
 import { recordStudyActivity } from "@/lib/studyActivity";
 import { getSkillMeta, resolveSkillId, type SatSkillId } from "@/lib/satSkills";
 
@@ -190,19 +192,39 @@ function isValidAttempt(value: unknown): value is SatPretestAttempt {
   );
 }
 
+function quarantineSatPretestStorage(storage: Storage, raw: string, reason: string): void {
+  try {
+    storage.setItem(`${SAT_PRETEST_STORAGE_KEY}_corrupt_${Date.now()}`, raw);
+    storage.removeItem(SAT_PRETEST_STORAGE_KEY);
+  } catch {
+    // Ignore quarantine failures; the storage warning is recorded below.
+  }
+  recordStorageReadError(SAT_PRETEST_STORAGE_KEY, reason, storage);
+  recordStorageFailure(SAT_PRETEST_STORAGE_KEY, "parse");
+}
+
 function loadRaw(storage: Storage = localStorage): SatPretestState {
   try {
     const raw = storage.getItem(SAT_PRETEST_STORAGE_KEY);
     if (!raw) return emptyState();
     const parsed = JSON.parse(raw) as Partial<SatPretestState>;
     if (parsed.schemaVersion !== SAT_PRETEST_SCHEMA_VERSION || !Array.isArray(parsed.attempts)) {
+      quarantineSatPretestStorage(storage, raw, "Invalid SAT pretest storage shape");
       return emptyState();
     }
     return {
       schemaVersion: SAT_PRETEST_SCHEMA_VERSION,
       attempts: parsed.attempts.filter(isValidAttempt),
     };
-  } catch {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Parse failed";
+    try {
+      const raw = storage.getItem(SAT_PRETEST_STORAGE_KEY);
+      if (raw) quarantineSatPretestStorage(storage, raw, message);
+    } catch {
+      recordStorageReadError(SAT_PRETEST_STORAGE_KEY, message, storage);
+      recordStorageFailure(SAT_PRETEST_STORAGE_KEY, "parse");
+    }
     return emptyState();
   }
 }

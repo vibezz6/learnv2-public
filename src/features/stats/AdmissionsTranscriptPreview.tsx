@@ -12,7 +12,7 @@ export function AdmissionsTranscriptPreview({ admissions }: Props) {
       <div className="mt-4 border-t border-[var(--border)] pt-4">
         <p className="text-xs leading-relaxed text-[var(--text-muted)]">
           <Link to="/campus" className="font-medium text-[var(--accent)] hover:underline">
-            Campus services
+            College services
           </Link>{" "}
           — add your college checklist or essay tracker to include admissions progress in the copied
           transcript.

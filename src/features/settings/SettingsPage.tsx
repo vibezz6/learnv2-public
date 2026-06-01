@@ -266,7 +266,7 @@ export function SettingsPage() {
       <Section
         eyebrow="AI integrations"
         title="OpenRouter API key"
-        description="Optional. Powers office-hours TA feedback and post-completion SAT rationale review on diagnostic misses (not live tutoring)."
+        description="Optional BYOK feature. Sends selected notes, answers, prompts, and completed SAT rationales to OpenRouter from your browser; offline rules still work without a key."
         divider
       >
         <Card variant="default" density="normal" className="min-w-0 space-y-3">
@@ -278,6 +278,7 @@ export function SettingsPage() {
                 <code className="font-mono text-[11px]">{OPENROUTER_KEY}</code>. Use{" "}
                 <code className="font-mono text-[11px]">npm run openrouter:check</code> with{" "}
                 <code className="font-mono text-[11px]">.env.local</code> to smoke-test the key.
+                Keys are excluded from backup exports.
               </>
             }
           >

@@ -2,6 +2,26 @@
   "name": "learnv2",
   "private": true,
   "version": "2.12.0",
+  "description": "Local-first study PWA for SAT prep, college applications, spaced review, and personal learning workflows.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vibezz6/learnv2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vibezz6/learnv2/issues"
+  },
+  "homepage": "https://learnv2-tau.vercel.app",
+  "keywords": [
+    "local-first",
+    "pwa",
+    "education",
+    "sat",
+    "spaced-repetition",
+    "college-applications",
+    "react",
+    "vite"
+  ],
   "type": "module",
   "engines": {
     "node": ">=20"

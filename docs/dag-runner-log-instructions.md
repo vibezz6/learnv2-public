@@ -7,13 +7,13 @@ Use this when running copy-audit (or any) DAG via `~/.cursor/skills/dag-task-run
 1. **API key** — on this machine it lives in Hermes (do not commit):
 
    ```bash
-   set -a && source "$HOME/.hermes/autonomous/.env" && set +a
+   set -a && source "$HOME/.config/learnv2/agent.env" && set +a
    ```
 
    Or export manually / add to `learnv2/.env` (gitignored):
 
    ```
-   CURSOR_API_KEY=crsr_...
+   CURSOR_API_KEY=<your-local-agent-key>
    ```
 
 2. **Runner deps** (first time only):
@@ -28,7 +28,7 @@ Set variables (change `<run>` to `a`, `b`, `c`, …):
 
 ```bash
 export RUNNER_DIR="$HOME/.cursor/skills/dag-task-runner/scripts"
-export CWD="/Users/clawbot/liqui/projects/learnv2"
+export CWD="$PWD"
 export CANVAS_PATH="$HOME/.cursor/projects/Users-clawbot-liqui-projects-learnv2/canvases/dag-learnv2-copy-<run>.canvas.tsx"
 export DAG_PATH="/tmp/dag-learnv2-copy-<run>.json"
 ```

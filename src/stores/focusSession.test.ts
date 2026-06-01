@@ -54,4 +54,29 @@ describe("focusSession", () => {
     expect(useFocusSession.getState().summary).toBeNull();
     expect(useProgress.getState().data.dailyMinutes[getToday()] ?? 0).toBe(0);
   });
+
+  it("uses safe persist storage for corrupt focus-session state", async () => {
+    const storage = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      get length() {
+        return storage.size;
+      },
+      clear: () => storage.clear(),
+      getItem: (k: string) => storage.get(k) ?? null,
+      key: (i: number) => [...storage.keys()][i] ?? null,
+      removeItem: (k: string) => storage.delete(k),
+      setItem: (k: string, v: string) => storage.set(k, v),
+    } satisfies Storage);
+    localStorage.setItem("learnv2_focus_session_v1", "{ nope");
+    vi.resetModules();
+
+    const { useFocusSession: freshStore } = await import("@/stores/focusSession");
+
+    expect(freshStore.getState().active).toBeNull();
+    expect(localStorage.getItem("learnv2_focus_session_v1")).toBeNull();
+    const corruptKey = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i)).find(
+      (key) => key?.startsWith("learnv2_focus_session_v1_corrupt_"),
+    );
+    expect(corruptKey).toBeTruthy();
+  });
 });

@@ -1,6 +1,6 @@
 # Learn v2 — DAG batch waves (5 per wave)
 
-Operational map for the [52-batch roadmap](file:///Users/clawbot/.cursor/plans/learn_v2_50-batch_roadmap_862ebb64.plan.md). **Do not edit the plan file** — update this doc when wave boundaries change.
+Operational map for the historical 52-batch roadmap. **Do not edit private plan files** — update this doc when wave boundaries change.
 
 ## Rules
 

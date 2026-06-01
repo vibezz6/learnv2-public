@@ -14,7 +14,7 @@ then you record progress so the next session picks up cleanly.
 ## Current position
 
 > **B01–B111 done.** Last session: §P polish/fit pass.
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.12.0**.
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from the repo root. Version **v2.12.0**.
 > **Anything workflow:** Phase 3 planner (B74+) in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); UI iteration loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
@@ -47,7 +47,7 @@ You never need Cursor to run or keep this app. Full details live in
 
 ```bash
 # Requires Node 20 or newer (Node 22 LTS recommended)
-cd ~/liqui/projects/learnv2
+cd learnv2
 npm install        # first time, or after pulling changes
 npm run dev        # → open http://127.0.0.1:8080
 ```
@@ -72,7 +72,7 @@ Backups cover every `learnv2_*` and `learnapp_*` key (OpenRouter API keys are ex
 ## Health check (run every session)
 
 ```bash
-cd ~/liqui/projects/learnv2   # required — commands fail from $HOME
+cd learnv2   # required — commands fail from outside the repo
 npm install      # ensure deps present (use `npm ci` for a clean install)
 npm run doctor   # lint + test + curriculum:lint + sat:coverage:strict + build
 npm run sat:coverage:stretch  # optional: report skills below 8 MC (non-blocking)

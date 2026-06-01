@@ -115,7 +115,7 @@ export function OnboardingModal() {
             What&apos;s your main focus?
           </h2>
           <p className="mt-2 text-sm text-[var(--text-muted)]">
-            We&apos;ll enroll you in a track on the campus home dashboard. Change focus later in{" "}
+            We&apos;ll enroll you in a track on the Today dashboard. Change focus later in{" "}
             <Link to="/settings#campus-focus" className="font-medium text-[var(--accent)] hover:underline">
               Settings
             </Link>
@@ -183,7 +183,7 @@ export function OnboardingModal() {
             relevant.
           </p>
           <Button className="mt-4 min-h-11 w-full touch-manipulation" onClick={finishWithPlacement}>
-            Go to campus home
+            Go to College hub
           </Button>
           {selectedGoal === "sat" && (
             <p className="mt-3 text-center text-xs text-[var(--text-muted)]">

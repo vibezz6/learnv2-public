@@ -92,4 +92,19 @@ describe("bookmarks", () => {
     });
     expect(parsed.state.lessonBookmarks).toEqual([{ subjectId: "cs", nodeId: "c1" }]);
   });
+
+  it("quarantines corrupt bookmark storage during rehydrate", async () => {
+    const storage = stubPersistStorage();
+    storage.setItem("learnv2_bookmarks", "{ nope");
+    vi.resetModules();
+
+    const { useBookmarks, V2_BOOKMARKS_KEY } = await import("@/stores/bookmarks");
+
+    expect(useBookmarks.getState().getResourceBookmarks()).toHaveLength(0);
+    expect(storage.getItem(V2_BOOKMARKS_KEY)).toBeNull();
+    const corruptKey = Array.from({ length: storage.length }, (_, i) => storage.key(i)).find((key) =>
+      key?.startsWith(`${V2_BOOKMARKS_KEY}_corrupt_`),
+    );
+    expect(corruptKey).toBeTruthy();
+  });
 });

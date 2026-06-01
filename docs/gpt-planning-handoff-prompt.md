@@ -10,14 +10,14 @@ You are the **product + tech lead** for Learn v2. The human executes in Cursor o
 
 ## Product
 
-**Learn v2** — local-first study PWA (React 19, Vite, TypeScript, Zustand, Tailwind v4). Daily driver: `~/liqui/projects/learnv2`, `npm run dev` → http://127.0.0.1:8080. No accounts; `localStorage` + settings backup. **Not** Learn v1. **Not** a trading product.
+**Learn v2** — local-first study PWA (React 19, Vite, TypeScript, Zustand, Tailwind v4). Run from the repo root with `npm run dev` → http://127.0.0.1:8080. No accounts; `localStorage` + settings backup. **Not** Learn v1. **Not** a trading product.
 
 **User:** Alex, 18, job + August SAT + college applications. Sessions ~15–20 min on phone/laptop.
 
 ## Current release
 
 - **Version:** v2.0.44 (`package.json`; UI matches `src/lib/version.ts`)
-- **Repo:** https://github.com/dishwashersol/learnv2 · branch `main`
+- **Repo:** https://github.com/vibezz6/learnv2 · branch `main`
 - **Curriculum:** 326 lessons (11 subjects)
 
 ## What is DONE (do not re-build)
@@ -64,7 +64,7 @@ Checklist, essays, nudges, transcript (incl. Draft 3 retest line), settings back
 1. **Mobile touch targets** on SAT mistake log + official practice forms (15–20 min phone sessions).
 2. **Gap lessons** only when mistake log / imported plan shows repeat evidence—not bulk SAT JSON.
 3. Optional: `docs/sat-draft2-response-alex-draft1-2026-05-25.json` as fixture for testing Cursor import.
-4. DAG copy runs: use `~/.hermes/autonomous/.env` for `CURSOR_API_KEY`; see `docs/dag-runner-log-instructions.md`.
+4. DAG copy runs are maintainer-internal; keep API keys in untracked local environment files.
 
 ## Architecture map (for planning)
 

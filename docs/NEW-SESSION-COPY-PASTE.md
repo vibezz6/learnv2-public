@@ -20,7 +20,7 @@ Do NOT wait for me to tell you what batches to build. I want YOU to review where
 Start by reading: README.md (cutover table), package.json version, docs/gpt-planning-handoff-prompt.md if useful, and skim src/app, src/features/dashboard, src/features/sat, src/lib/satPretest.ts, src/services/llmReview.ts.
 
 ## Session summary (last chat — for context only)
-- Repo: ~/liqui/projects/learnv2, React/Vite/TS, localStorage, no backend.
+- Repo: Learn v2, React/Vite/TS, localStorage, no backend.
 - Shipped through v2.0.36: full SAT diagnostic loop (Draft 1–3, Cursor export/import, mistake log, gap lessons st76–st80, readiness, OpenRouter review on completed misses only, SAT week card, tomorrow tasks). College admissions arc is daily-driver level.
 - I ran ONE test Draft 1 (3/10), saved export, OpenRouter review worked. I am NOT taking more drafts right now — real SAT study + college apps are the point of the app.
 - Minor debt: version.ts was out of sync with package.json (may be fixed locally). I will download pretest exports when I run drafts again.
