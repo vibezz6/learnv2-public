@@ -4,6 +4,19 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-05-30
+
+### Added
+
+- **Draft 3 retest nudge** on SAT hub (`satDraft3Nudge.ts`) with `?draft=draft-3` deep link.
+- Campus school card **essay final ratio** badge (`getEssayProgressForCollege`).
+- Good-shape Today hero **streak support line**.
+- Playwright **`e2e/b87-m.spec.ts`**: college session-complete, post-SAT suppress, Draft 3 hub.
+
+### Changed
+
+- PWA update banner shows current version; Settings note on reload-after-banner updates.
+
 ## [2.9.0] - 2026-05-30
 
 ### Added

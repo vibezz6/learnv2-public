@@ -519,6 +519,9 @@ export function SettingsPage() {
       <p className="pt-2 text-center font-mono text-[11px] text-[var(--text-subtle)]">
         Learn {formatAppVersion()} · local-first, your data stays in this browser
       </p>
+      <p className="text-center text-[11px] text-[var(--text-subtle)]">
+        App updates install when you reload after the update banner appears.
+      </p>
     </PageContainer>
   );
 }

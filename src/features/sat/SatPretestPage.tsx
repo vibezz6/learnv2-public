@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   ArrowRight,
   Check,
@@ -113,6 +113,18 @@ function loadAttemptForDraft(draftId: string): SatPretestAttempt | null {
 export function SatPretestPage() {
   const { focusMode, toggleFocusMode } = usePreferences();
   const [viewDraftId, setViewDraftId] = useState(SAT_PRETEST_DRAFT_1_ID);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const draft = searchParams.get("draft");
+    if (
+      draft === SAT_PRETEST_DRAFT_1_ID ||
+      draft === SAT_PRETEST_DRAFT_2_ID ||
+      draft === SAT_PRETEST_DRAFT_3_ID
+    ) {
+      setViewDraftId(draft);
+    }
+  }, [searchParams]);
   const [importedDraft2, setImportedDraft2] = useState<SatPretestQuestion[]>(() =>
     loadImportedDraft2Questions(),
   );

@@ -11,6 +11,7 @@ import {
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
 } from "@/lib/satPretest";
+import { getDraft3RetestNudge } from "@/lib/satDraft3Nudge";
 import {
   blockingButtonLabel,
   getBlockingApplicationItem,
@@ -132,7 +133,12 @@ export function getSatDailyStudyCommand(input: SatDailyStudyInput): SatDailyStud
   let diagnosticNote: string | undefined;
   if (draft1Done?.scoreSummary) {
     const score = `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`;
-    diagnosticNote = `Baseline: ${score}. Retest on the SAT diagnostic whenever you want a fresh read.`;
+    const draft3Nudge = getDraft3RetestNudge(storage);
+    if (draft3Nudge && !draft3Nudge.resume) {
+      diagnosticNote = "Fresh read: Draft 3 retest (~20 min).";
+    } else {
+      diagnosticNote = `Baseline: ${score}. Retest on the SAT diagnostic whenever you want a fresh read.`;
+    }
   }
 
   if (intensity === "minimum" && topMistake) {

@@ -8,7 +8,7 @@ import { getReadinessNudge } from "@/lib/satReadiness";
 import { isDailySatQuizDone } from "@/lib/satDailyQuiz";
 import { getTodayHeroPresentation } from "@/lib/todayHero";
 import { resolveContinueKind, continueHref } from "@/lib/continuePresentation";
-import { useProgress } from "@/stores/progress";
+import { resolveCurrentStudyStreak, useProgress } from "@/stores/progress";
 import { nodeIdFromHref, useFocusSession } from "@/stores/focusSession";
 import { ROUTES } from "@/app/navigation";
 
@@ -19,11 +19,12 @@ interface Props {
 
 export function RightNowHero({ subjects, resume }: Props) {
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const streakCurrent = useProgress((s) => resolveCurrentStudyStreak(s.data.streaks));
   const startSession = useFocusSession((s) => s.startSession);
   const navigate = useNavigate();
 
   const study = getSatDailyStudyCommand({ subjects, getNodeStatus });
-  const overlay = getTodayHeroPresentation({ study, subjects, getNodeStatus });
+  const overlay = getTodayHeroPresentation({ study, subjects, getNodeStatus, streakCurrent });
   const isCollegeFocus = study.kind === "college_blocking";
   const topMistakes = getTopMistakeCategories(2);
   const readinessNudge = getReadinessNudge();
@@ -69,6 +70,9 @@ export function RightNowHero({ subjects, resume }: Props) {
             <h2 className="mt-1 text-[length:var(--text-hero)] font-semibold leading-snug tracking-tight text-[var(--text-heading)]">
               {detail}
             </h2>
+            {overlay?.supportLine ? (
+              <p className="mt-1 text-sm text-[var(--text-muted)]">{overlay.supportLine}</p>
+            ) : null}
           </div>
 
           {readinessNudge ? (

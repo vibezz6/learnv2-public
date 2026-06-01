@@ -1,5 +1,5 @@
 /** App semver — bump via `npm run version:bump` after each shippable release. */
-export const APP_VERSION = "2.9.0";
+export const APP_VERSION = "2.10.0";
 
 /**
  * Scheme: 2.0.1 → … → 2.0.99 → 2.1.0 → … → 2.1.99 → 2.2.0

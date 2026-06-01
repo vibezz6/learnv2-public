@@ -4,6 +4,7 @@ import {
   addEssayFromTemplate,
   DEFAULT_ESSAY_PROMPTS,
   getEssayTrackerProgress,
+  getEssayProgressForCollege,
   getEssaysDueSoon,
   loadEssayTracker,
   saveEssayTracker,
@@ -68,5 +69,19 @@ describe("essayTracker", () => {
     const dueSoon = getEssaysDueSoon(s, 14, soonDate);
     expect(dueSoon).toHaveLength(1);
     expect(dueSoon[0]!.templateId).toBe("why-us");
+  });
+
+  it("getEssayProgressForCollege counts finals per school", () => {
+    let s = loadEssayTracker(storage);
+    s = addEssayFromTemplate(s, "why-us", { college: "Alpha U" });
+    s = addEssayFromTemplate(s, "why-us", { college: "Alpha U" });
+    s = updateEssayStatus(s, s.essays[0]!.id, "final");
+    saveEssayTracker(s, storage);
+    s = addEssayFromTemplate(s, "why-us", { college: "Beta U" });
+    saveEssayTracker(s, storage);
+
+    expect(getEssayProgressForCollege("Alpha U", storage)).toEqual({ total: 2, finalCount: 1 });
+    expect(getEssayProgressForCollege("Beta U", storage)).toEqual({ total: 1, finalCount: 0 });
+    expect(getEssayProgressForCollege("Missing U", storage)).toEqual({ total: 0, finalCount: 0 });
   });
 });

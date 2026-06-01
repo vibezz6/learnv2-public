@@ -254,6 +254,19 @@ export function getEssayTrackerProgress(state: EssayTrackerState): {
   return { total, finalCount, inProgress, pct };
 }
 
+/** Per-school essay final ratio for campus cards and print views. */
+export function getEssayProgressForCollege(
+  collegeName: string,
+  storage: Storage = localStorage,
+): { total: number; finalCount: number } {
+  const name = collegeName.trim();
+  const essays = loadEssayTracker(storage).essays.filter((e) => e.college?.trim() === name);
+  return {
+    total: essays.length,
+    finalCount: essays.filter((e) => e.status === "final").length,
+  };
+}
+
 /** Essays with a due date on or before `withinDays` from today (UTC date), not yet final. */
 export function getEssaysDueSoon(
   state: EssayTrackerState,

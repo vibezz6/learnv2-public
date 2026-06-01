@@ -17,6 +17,7 @@ import {
   updateCollegeNotes,
 } from "@/lib/colleges";
 import { daysUntilDue } from "@/lib/campusAdmissionsNudges";
+import { getEssayProgressForCollege } from "@/lib/essayTracker";
 import { getChecklistProgress, loadCollegeChecklist } from "@/lib/collegeChecklist";
 import { Button, Card, Field, Input, Section, Tag } from "@/components/ui";
 import { ADMISSIONS_UPDATED_EVENT } from "@/lib/admissionsSync";
@@ -112,6 +113,7 @@ export function CampusSchoolsSection() {
               college.deadline != null ? daysUntilDue(college.deadline, new Date()) : null;
             const badge = formatPackageDeadline(days);
             const essayCount = countEssaysForCollege(college.name);
+            const essayProgress = getEssayProgressForCollege(college.name);
             return (
               <li key={college.id}>
                 <Card variant="default" density="normal" className="flex h-full min-w-0 flex-col gap-3">
@@ -155,6 +157,14 @@ export function CampusSchoolsSection() {
                     {college.archived ? (
                       <Tag tone="muted" size="sm">
                         Archived
+                      </Tag>
+                    ) : null}
+                    {essayProgress.total > 0 ? (
+                      <Tag
+                        tone={essayProgress.finalCount === essayProgress.total ? "success" : "muted"}
+                        size="sm"
+                      >
+                        {essayProgress.finalCount}/{essayProgress.total} essays final
                       </Tag>
                     ) : null}
                   </div>

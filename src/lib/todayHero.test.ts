@@ -3,6 +3,7 @@ import type { Subject } from "@/curriculum/types";
 import { getSatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { getTodayHeroPresentation } from "@/lib/todayHero";
 import { isDailySatQuizDone, markDailySatQuizDone } from "@/lib/satDailyQuiz";
+import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { SAT_MISTAKE_LOG_KEY } from "@/lib/satMistakeLog";
 
 function mockStorage(): Storage {
@@ -121,5 +122,59 @@ describe("todayHero", () => {
         storage,
       }),
     ).toBeNull();
+  });
+
+  it("returns good_shape with streak support line when minimum met", () => {
+    storage.setItem("learnv2_sat_mistakes_v1", JSON.stringify([]));
+    storage.setItem(
+      "learnv2_activity_v1",
+      JSON.stringify([
+        {
+          id: "act-1",
+          type: "lesson_completed",
+          date: "2026-06-01",
+          at: Date.now(),
+          nodeId: "st4",
+        },
+      ]),
+    );
+    const subjects = [satSubject()];
+    const study = getSatDailyStudyCommand({ subjects, getNodeStatus: () => "available", storage });
+    const overlay = getTodayHeroPresentation({
+      study,
+      subjects,
+      getNodeStatus: () => "available",
+      storage,
+      streakCurrent: 4,
+    });
+    expect(overlay?.mode).toBe("good_shape");
+    expect(overlay?.supportLine).toBe("4-day streak — keep it going");
+    expect(getDailyMinimumStatus("2026-06-01", storage).met).toBe(true);
+  });
+
+  it("good_shape uses start-streak copy when streak is zero", () => {
+    storage.setItem("learnv2_sat_mistakes_v1", JSON.stringify([]));
+    storage.setItem(
+      "learnv2_activity_v1",
+      JSON.stringify([
+        {
+          id: "act-1",
+          type: "lesson_completed",
+          date: "2026-06-01",
+          at: Date.now(),
+          nodeId: "st4",
+        },
+      ]),
+    );
+    const subjects = [satSubject()];
+    const study = getSatDailyStudyCommand({ subjects, getNodeStatus: () => "available", storage });
+    const overlay = getTodayHeroPresentation({
+      study,
+      subjects,
+      getNodeStatus: () => "available",
+      storage,
+      streakCurrent: 0,
+    });
+    expect(overlay?.supportLine).toBe("Study today to start a streak");
   });
 });

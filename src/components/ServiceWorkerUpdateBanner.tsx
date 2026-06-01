@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui";
 import { applyServiceWorkerUpdate, onServiceWorkerUpdate } from "@/lib/serviceWorker";
+import { APP_VERSION } from "@/lib/version";
 
 export function ServiceWorkerUpdateBanner() {
   const [visible, setVisible] = useState(false);
@@ -17,7 +18,7 @@ export function ServiceWorkerUpdateBanner() {
       role="status"
     >
       <p className="text-sm text-[var(--text-heading)]">
-        A new version of Learn is ready. Reload to get the latest fixes.
+        Learn v{APP_VERSION} — a new version is ready. Reload to get the latest fixes.
       </p>
       <div className="flex gap-2">
         <Button

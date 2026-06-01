@@ -7,6 +7,7 @@ import {
   getActiveSatPretestAttempt,
   getLatestCompletedSatPretestAttempt,
 } from "@/lib/satPretest";
+import { getDraft3RetestNudge } from "@/lib/satDraft3Nudge";
 
 /** Primary in-app entry for the optional SAT baseline (second entry: ⌘K). */
 export function SatDiagnosticSection() {
@@ -14,6 +15,7 @@ export function SatDiagnosticSection() {
   const draft1Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_1_ID);
   const draft2Active = getActiveSatPretestAttempt(SAT_PRETEST_DRAFT_2_ID);
   const draft2Done = getLatestCompletedSatPretestAttempt(SAT_PRETEST_DRAFT_2_ID);
+  const draft3Nudge = getDraft3RetestNudge();
 
   let detail =
     "One optional in-app baseline — not an official score. Daily study is the August track, mistake log, and Bluebook/Khan practice.";
@@ -26,7 +28,11 @@ export function SatDiagnosticSection() {
     buttonLabel = "Resume Draft 2";
   } else if (draft1Done?.scoreSummary) {
     const score = `${draft1Done.scoreSummary.correctAnswers}/${draft1Done.scoreSummary.totalQuestions} (${draft1Done.scoreSummary.pct}%)`;
-    detail = `Baseline complete: ${score}. Draft 2 and Draft 3 are optional follow-ups when you want tighter gap targeting.`;
+    if (draft3Nudge) {
+      detail = `Baseline complete: ${score}. ${draft3Nudge.detail}`;
+    } else {
+      detail = `Baseline complete: ${score}. Draft 2 and Draft 3 are optional follow-ups when you want tighter gap targeting.`;
+    }
     buttonLabel = draft2Done ? "Review diagnostic" : "Start Draft 2 (optional)";
   }
 
@@ -44,12 +50,22 @@ export function SatDiagnosticSection() {
           <p className="text-sm leading-relaxed text-[var(--text-muted)]">{detail}</p>
         </div>
       </div>
-      <Link to="/sat/pretest" className="inline-block">
-        <Button variant="secondary" size="sm">
-          {buttonLabel}
-          <ArrowRight size={13} aria-hidden />
-        </Button>
-      </Link>
+      <div className="flex flex-wrap gap-2">
+        <Link to="/sat/pretest" className="inline-block">
+          <Button variant="secondary" size="sm">
+            {buttonLabel}
+            <ArrowRight size={13} aria-hidden />
+          </Button>
+        </Link>
+        {draft3Nudge ? (
+          <Link to={draft3Nudge.href} className="inline-block">
+            <Button variant="secondary" size="sm">
+              {draft3Nudge.buttonLabel}
+              <ArrowRight size={13} aria-hidden />
+            </Button>
+          </Link>
+        ) : null}
+      </div>
     </Card>
   );
 }

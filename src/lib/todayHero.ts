@@ -16,6 +16,8 @@ export interface TodayHeroPresentation {
   detail: string;
   primaryHref: string;
   primaryButtonLabel: string;
+  /** Muted line under detail (e.g. streak on good-shape). */
+  supportLine?: string;
   /** When set, replaces default Start focus + secondary for good-shape mode. */
   secondaryActions?: Array<{ label: string; href: string }>;
 }
@@ -25,6 +27,7 @@ export interface TodayHeroInput {
   subjects: Subject[];
   getNodeStatus: (node: SkillNode) => NodeStatus;
   storage?: Storage;
+  streakCurrent?: number;
 }
 
 /**
@@ -65,12 +68,16 @@ export function getTodayHeroPresentation(input: TodayHeroInput): TodayHeroPresen
         href: `/subjects/${satNext.subjectId}/${satNext.nodeId}`,
       });
     }
+    const streak = input.streakCurrent ?? 0;
+    const supportLine =
+      streak > 0 ? `${streak}-day streak — keep it going` : "Study today to start a streak";
     return {
       mode: "good_shape",
       headline: "You're in good shape today",
       detail: "Pick your next focus:",
       primaryHref: study.href,
       primaryButtonLabel: "Start focus session",
+      supportLine,
       secondaryActions,
     };
   }
