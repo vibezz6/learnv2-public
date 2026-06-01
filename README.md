@@ -6,7 +6,7 @@
 
 Learn v2 is a local-first study PWA for SAT prep, college application work, spaced review, and personal learning workflows. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
 
-**Current release:** v2.12.0 ·· **License:** MIT
+**Current release:** v2.12.0 · **License:** MIT
 
 ## Screenshots
 
@@ -136,7 +136,7 @@ Your progress is stored in the browser, not the repo, so pulling/updating never 
 
 ## Back up your data (so you never lose progress)
 
-Progress lives in your browser's localStorage for the exact origin you use (`http://127.0.0.1:8080` locally, or a different origin — these are separate stores). Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
+Progress lives in your browser's localStorage for the exact local origin you use, such as `http://127.0.0.1:8080`. Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
 
 1. In the app: **Settings → Backup → Export progress** — downloads `learnv2-backup-YYYY-MM-DD.json`.
 2. Save that file somewhere safe (a cloud drive). Export weekly, or whenever the app nudges you.

@@ -19,7 +19,7 @@ Credits would support OSS maintenance: issue triage, security review, PR review,
 - GitHub profile public.
 - Repository public.
 - MIT license visible.
-- README explains install, privacy, backup, and .
+- README explains local install, privacy, and backup.
 - CI badge green.
 - Security and privacy docs present.
 - No real secrets or private backups in current tree/history scan.

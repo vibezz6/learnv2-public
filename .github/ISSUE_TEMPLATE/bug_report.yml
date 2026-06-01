@@ -33,4 +33,4 @@ body:
     id: environment
     attributes:
       label: Environment
-      placeholder: Browser, OS, local dev or 
+      placeholder: Browser, OS, and local dev URL

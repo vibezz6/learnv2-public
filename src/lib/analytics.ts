@@ -1,4 +1,3 @@
-import { track } from "";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { getToday } from "@/stores/progress";
 
@@ -12,21 +11,17 @@ export type StudyEventName =
 
 type StudyEventProps = Record<string, string | number | boolean | null>;
 
-/** Client analytics only on production builds (production builds). */
+/** Public build telemetry is intentionally disabled; keep call sites as no-ops. */
 export function isAnalyticsEnabled(): boolean {
-  return import.meta.env.PROD;
+  return false;
 }
 
 export function trackStudyEvent(
   event: StudyEventName,
   properties?: StudyEventProps,
 ): void {
-  if (!isAnalyticsEnabled()) return;
-  try {
-    track(event, properties);
-  } catch {
-    // Never block study flows for telemetry.
-  }
+  void event;
+  void properties;
 }
 
 /** Fire `minimum_met` at most once per UTC day when the viable-day threshold is reached. */

@@ -11,7 +11,6 @@
   "bugs": {
     "url": "https://github.com/vibezz6/learnv2-public/issues"
   },
-  "homepage": "https://",
   "keywords": [
     "local-first",
     "pwa",
@@ -49,8 +48,6 @@
     "version:bump:minor": "node scripts/bump-version.mjs minor"
   },
   "dependencies": {
-    "": "^2.0.1",
-    "": "^2.0.0",
     "clsx": "^2.1.1",
     "katex": "^0.17.0",
     "lucide-react": "^1.9.0",

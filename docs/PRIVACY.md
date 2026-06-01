@@ -38,9 +38,7 @@ Without an OpenRouter key, the app uses built-in offline rules where available.
 
 ## Analytics
 
-The public release does not include hosted analytics. The app does not create accounts or send full localStorage backups to third parties.
-
-Forks can remove `` if they do not want analytics.
+The public app does not include telemetry or performance telemetry. Study progress, notes, backups, and settings stay in your browser unless you export them yourself.
 
 ## Browser Storage Limits
 
