@@ -46,6 +46,11 @@ import {
 } from "@/features/search/searchHelpers";
 import { usePreferences } from "@/stores/preferences";
 import { useFocusSession } from "@/stores/focusSession";
+import {
+  loadStudyIntent,
+  setStudyIntent,
+  type StudyIntentFocus,
+} from "@/lib/studyIntent";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -458,6 +463,26 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     }));
 
     const actionItems: CommandItem[] = [
+      ...(() => {
+        const currentFocus = loadStudyIntent().focus;
+        const focusOptions: { focus: StudyIntentFocus; label: string }[] = [
+          { focus: "sat", label: "Focus today: SAT prep" },
+          { focus: "college", label: "Focus today: College deadlines" },
+          { focus: "catch_up", label: "Focus today: Catch up" },
+          { focus: "default", label: "Focus today: Balanced" },
+        ];
+        return focusOptions.map(({ focus, label }) => ({
+          id: `focus-${focus}`,
+          label,
+          description: currentFocus === focus ? "Active today" : undefined,
+          section: "Actions" as const,
+          icon: Target,
+          action: () => {
+            setStudyIntent(focus);
+            onClose();
+          },
+        }));
+      })(),
       { id: "surprise", label: "Random lesson", section: "Actions", icon: Shuffle, action: surprise },
     ];
 

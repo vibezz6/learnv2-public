@@ -154,4 +154,41 @@ describe("weekPlan", () => {
     expect(trackIdx).toBeGreaterThan(collegeIntentIdx);
     expect(rows[collegeIntentIdx]?.detail).toContain("College focus today");
   });
+
+  it("prioritizes continue lesson before track when study intent is catch_up", () => {
+    setStudyIntent("catch_up", storage);
+
+    const subjects: Subject[] = [
+      {
+        id: "sat-prep",
+        name: "SAT Prep",
+        description: "",
+        color: "#000",
+        icon: "book",
+        nodes: [node("st1"), node("st2")],
+      },
+    ];
+
+    const { rows } = buildWeekPlan(
+      {
+        subjects,
+        getNodeStatus: () => "available",
+        enrolledTrackId: "sat-august",
+        continueLesson: {
+          nodeId: "st1",
+          title: "Lesson st1",
+          href: "/subjects/sat-prep/st1",
+        },
+        storage,
+      },
+      6,
+    );
+
+    const catchUpIdx = rows.findIndex((r) => r.id.startsWith("catch-up"));
+    const trackIdx = rows.findIndex((r) => r.id.startsWith("track-"));
+    expect(catchUpIdx).toBeGreaterThanOrEqual(0);
+    expect(rows[catchUpIdx]?.title).toBe("Continue Lesson st1");
+    expect(rows[catchUpIdx]?.detail).toContain("Catch up today");
+    expect(trackIdx).toBeGreaterThan(catchUpIdx);
+  });
 });

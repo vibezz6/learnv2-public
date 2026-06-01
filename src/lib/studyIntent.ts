@@ -1,5 +1,13 @@
 export const STUDY_INTENT_STORAGE_KEY = "learnv2_study_intent_v1";
 
+/** Fired when study intent localStorage changes (same tab). */
+export const STUDY_INTENT_UPDATED_EVENT = "learnv2-study-intent-updated";
+
+export function notifyStudyIntentUpdated(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(STUDY_INTENT_UPDATED_EVENT));
+}
+
 export type StudyIntentFocus = "default" | "sat" | "college" | "catch_up";
 
 export interface StudyIntentState {
@@ -38,6 +46,7 @@ export function setStudyIntent(focus: StudyIntentFocus, storage: Storage = local
   };
   try {
     storage.setItem(STUDY_INTENT_STORAGE_KEY, JSON.stringify(state));
+    notifyStudyIntentUpdated();
   } catch {
     // quota
   }

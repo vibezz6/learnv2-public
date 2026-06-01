@@ -11,6 +11,11 @@ import {
   WEEK_PLAN_SOURCE_LABELS,
 } from "@/lib/weekPlan";
 import { isDailySatQuizDone } from "@/lib/satDailyQuiz";
+import {
+  loadStudyIntent,
+  STUDY_INTENT_UPDATED_EVENT,
+  type StudyIntentFocus,
+} from "@/lib/studyIntent";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 
@@ -20,22 +25,55 @@ interface Props {
   embedded?: boolean;
 }
 
-const WEEK_PLAN_SUBTITLE = "Track, deadlines, and SAT follow-ups — up to six items.";
+function getWeekPlanSubtitle(focus: StudyIntentFocus): string {
+  const base = "track, deadlines, and SAT follow-ups — up to six items.";
+  if (focus === "default") {
+    return "Track, deadlines, and SAT follow-ups — up to six items.";
+  }
+  if (focus === "sat") return `SAT focus — ${base}`;
+  if (focus === "college") return `College focus — ${base}`;
+  return `Catch up — ${base}`;
+}
 
 export function WeekPlanCard({ subjects, embedded = false }: Props) {
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const placementGoal = usePreferences((s) => s.placementGoal);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
+  const getContinueTarget = useProgress((s) => s.getContinueTarget);
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
     const bump = () => setRevision((r) => r + 1);
     window.addEventListener(ADMISSIONS_UPDATED_EVENT, bump);
-    return () => window.removeEventListener(ADMISSIONS_UPDATED_EVENT, bump);
+    window.addEventListener(STUDY_INTENT_UPDATED_EVENT, bump);
+    return () => {
+      window.removeEventListener(ADMISSIONS_UPDATED_EVENT, bump);
+      window.removeEventListener(STUDY_INTENT_UPDATED_EVENT, bump);
+    };
   }, []);
 
   const activeTrackId = enrolledTrackId ?? DEFAULT_TRACK_ID;
   const track = getTrackById(activeTrackId);
+
+  const intent = useMemo(() => {
+    void revision;
+    return loadStudyIntent();
+  }, [revision]);
+
+  const continueTarget = useMemo(() => {
+    void revision;
+    return getContinueTarget(subjects);
+  }, [getContinueTarget, subjects, revision]);
+
+  const continueLesson = continueTarget
+    ? {
+        nodeId: continueTarget.node.id,
+        title: continueTarget.node.name,
+        href: `/subjects/${continueTarget.subject.id}/${continueTarget.node.id}`,
+      }
+    : null;
+
+  const weekPlanSubtitle = getWeekPlanSubtitle(intent.focus);
 
   const { rows, collegeOverflow } = useMemo(() => {
     void revision;
@@ -44,13 +82,59 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
       getNodeStatus,
       enrolledTrackId: activeTrackId,
       placementGoal,
+      continueLesson,
     });
-  }, [subjects, getNodeStatus, activeTrackId, placementGoal, revision]);
+  }, [subjects, getNodeStatus, activeTrackId, placementGoal, continueLesson, revision]);
 
   const dailyDone = useMemo(() => {
     void revision;
     return isDailySatQuizDone();
   }, [revision]);
+
+  const emptyPrimaryLink = (() => {
+    if (intent.focus === "college") {
+      return (
+        <Link
+          to={ROUTES.college}
+          className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+        >
+          Open Campus deadlines
+          <ArrowRight size={14} aria-hidden />
+        </Link>
+      );
+    }
+    if (intent.focus === "catch_up" && continueTarget) {
+      return (
+        <Link
+          to={`/subjects/${continueTarget.subject.id}/${continueTarget.node.id}`}
+          className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+        >
+          Continue {continueTarget.node.name}
+          <ArrowRight size={14} aria-hidden />
+        </Link>
+      );
+    }
+    if (dailyDone) {
+      return (
+        <Link
+          to={ROUTES.satDrill}
+          className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+        >
+          Drill your top mistake skill
+          <ArrowRight size={14} aria-hidden />
+        </Link>
+      );
+    }
+    return (
+      <Link
+        to={ROUTES.satDailyQuiz}
+        className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+      >
+        Take today&apos;s Daily 5
+        <ArrowRight size={14} aria-hidden />
+      </Link>
+    );
+  })();
 
   if (rows.length === 0) {
     return (
@@ -61,28 +145,12 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
             <p className="eyebrow-mono">This week</p>
           </div>
         ) : null}
-        <p className="text-sm text-[var(--text-muted)]">{WEEK_PLAN_SUBTITLE}</p>
+        <p className="text-sm text-[var(--text-muted)]">{weekPlanSubtitle}</p>
         <p className="mt-2 text-sm text-[var(--text)]">
           You&apos;re caught up on track lessons and application deadlines for the next 7 days.
         </p>
-        {dailyDone ? (
-          <Link
-            to={ROUTES.satDrill}
-            className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
-          >
-            Drill your top mistake skill
-            <ArrowRight size={14} aria-hidden />
-          </Link>
-        ) : (
-          <Link
-            to={ROUTES.satDailyQuiz}
-            className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
-          >
-            Take today&apos;s Daily 5
-            <ArrowRight size={14} aria-hidden />
-          </Link>
-        )}
-        {track ? (
+        {emptyPrimaryLink}
+        {intent.focus === "default" && track ? (
           <Link
             to={`/tracks/${track.id}`}
             className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)] hover:underline"
@@ -103,7 +171,7 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
           <p className="eyebrow-mono">This week</p>
         </div>
       ) : null}
-      <p className="text-sm text-[var(--text-muted)]">{WEEK_PLAN_SUBTITLE}</p>
+      <p className="text-sm text-[var(--text-muted)]">{weekPlanSubtitle}</p>
       <ul className="mt-3 divide-y divide-[var(--rule)] border-y border-[var(--rule)]">
         {rows.map((row) => (
           <li key={row.id}>

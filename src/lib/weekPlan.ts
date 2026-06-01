@@ -4,7 +4,7 @@ import {
   collectUrgentAdmissionsRows,
   type WeekDeadlineRow,
 } from "@/lib/admissionsSummary";
-import { listActivitiesForDate } from "@/lib/studyActivity";
+import { listActivitiesForDate, getLastActivity } from "@/lib/studyActivity";
 import { loadStudyIntent } from "@/lib/studyIntent";
 import { getPrimaryMistakeCategory } from "@/lib/satMistakeTriage";
 import { getToday } from "@/stores/progress";
@@ -38,6 +38,7 @@ export interface WeekPlanInput {
   getNodeStatus: (node: SkillNode) => NodeStatus;
   enrolledTrackId?: string | null;
   placementGoal?: PlacementGoal | null;
+  continueLesson?: { nodeId: string; title: string; href: string } | null;
   storage?: Storage;
 }
 
@@ -48,6 +49,22 @@ function dueDetail(row: WeekDeadlineRow): string {
   }
   if (row.daysUntil === 0) return "Due today";
   return `Due in ${row.daysUntil} day${row.daysUntil === 1 ? "" : "s"}`;
+}
+
+function resolveContinueLesson(
+  input: WeekPlanInput,
+  storage: Storage,
+): { nodeId: string; title: string; href: string } | null {
+  if (input.continueLesson) return input.continueLesson;
+  const lastLesson = getLastActivity(["lesson_completed", "lesson_started"], storage);
+  if (!lastLesson?.nodeId) return null;
+  const found = findNodeAcrossSubjects(input.subjects, lastLesson.nodeId);
+  if (!found || input.getNodeStatus(found.node) === "locked") return null;
+  return {
+    nodeId: found.node.id,
+    title: found.node.name,
+    href: `/subjects/${found.subject.id}/${found.node.id}`,
+  };
 }
 
 function tomorrowToWeekRow(task: TomorrowTask): WeekPlanRow {
@@ -76,6 +93,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
 
   const prioritizeSat = intent.focus === "sat";
   const prioritizeCollege = intent.focus === "college";
+  const prioritizeCatchUp = intent.focus === "catch_up";
 
   const push = (row: WeekPlanRow) => {
     const key = row.href;
@@ -157,6 +175,20 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
       if (added >= 2 || rows.length >= maxRows) break;
     }
     if (rows.length >= maxRows) return { rows, collegeOverflow };
+  }
+
+  if (prioritizeCatchUp && rows.length < maxRows) {
+    const lesson = resolveContinueLesson(input, storage);
+    if (lesson) {
+      push({
+        id: `catch-up-${lesson.nodeId}`,
+        title: `Continue ${lesson.title}`,
+        detail: "Catch up today",
+        href: lesson.href,
+        source: "track",
+      });
+      if (rows.length >= maxRows) return { rows, collegeOverflow };
+    }
   }
 
   const track = getTrackById(input.enrolledTrackId ?? DEFAULT_TRACK_ID);

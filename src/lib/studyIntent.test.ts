@@ -3,6 +3,7 @@ import {
   loadStudyIntent,
   setStudyIntent,
   STUDY_INTENT_STORAGE_KEY,
+  STUDY_INTENT_UPDATED_EVENT,
   getStudyIntentSubtitle,
 } from "@/lib/studyIntent";
 
@@ -45,5 +46,16 @@ describe("studyIntent", () => {
 
   it("returns subtitle for SAT focus", () => {
     expect(getStudyIntentSubtitle("sat")).toContain("SAT");
+  });
+
+  it("dispatches update event when intent changes", () => {
+    const handler = vi.fn();
+    const eventTarget = new EventTarget();
+    vi.stubGlobal("window", eventTarget);
+    eventTarget.addEventListener(STUDY_INTENT_UPDATED_EVENT, handler);
+    setStudyIntent("college", storage);
+    expect(handler).toHaveBeenCalledTimes(1);
+    eventTarget.removeEventListener(STUDY_INTENT_UPDATED_EVENT, handler);
+    vi.unstubAllGlobals();
   });
 });

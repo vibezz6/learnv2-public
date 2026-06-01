@@ -13,8 +13,8 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B98 done.** Last session: §N shipped (v2.11.0).
-> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.11.0**.
+> **B01–B104 done.** Last session: §O shipped (v2.12.0).
+> Live: https://learnv2-tau.vercel.app (auto-deploys on every push to `main`). Run `npm run doctor` from `~/liqui/projects/learnv2`. Version **v2.12.0**.
 > **Anything workflow:** Phase 3 planner (B74+) in [`docs/anything-planner-prompt.md`](docs/anything-planner-prompt.md); UI iteration loop in [`docs/anything-ui-iteration.md`](docs/anything-ui-iteration.md).
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
@@ -416,7 +416,24 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ---
 
-## Future ideas (after B98)
+## O. Study intent closure (B99–B104)
+
+- [x] **B99** — Study intent picker on Today + `STUDY_INTENT_UPDATED_EVENT` refresh.
+- [x] **B100** — `prioritizeCatchUp` + optional `continueLesson` in week plan.
+- [x] **B101** — Intent-aware week plan subtitle + empty-state CTAs.
+- [x] **B102** — ⌘K “Focus today: …” actions.
+- [x] **B103** — Playwright e2e: intent picker, college row, catch-up, palette.
+- [x] **B104** — Release v2.12.0.
+
+**Verify §O:** B99 picker → B100 catch-up row → B101 copy → B102 ⌘K → B103 e2e green → `npm run doctor`.
+
+**What NOT to do next:** Study intent driving Daily 5; hero overrides from intent; graduated drill cooldown; ED/EA/RD schema; print layout polish batch; ~400 new SAT MCs; browser backup detection; perf/bundle batch; drill overrides college ≤7d.
+
+**PR checklist:** Preserves desktop-only / local-first / study-first?
+
+---
+
+## Future ideas (after B104)
 
 - **Stretch 10 MC/skill** — `sat:coverage:stretch` is green; defer bulk authoring.
 - Print CSS polish; mastery sparklines / table redesign; PWA two-build e2e; compact mobile status row.
@@ -425,6 +442,7 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-05-30 — B99–B104 — Study intent picker, catch-up week plan, intent copy/CTAs, ⌘K focus, e2e. v2.12.0.
 - 2026-05-30 — B93–B98 — Draft 3 snooze/summary, college intent week plan, ⌘K Draft 3, e2e polish. v2.11.0.
 - 2026-05-30 — B87–B92 — Draft 3 hub nudge, campus essay badge, good-shape streak, PWA copy, e2e B83/B84 gaps. v2.10.0.
 - 2026-05-30 — B74–B80 — Study loop hero overlays, package essay status + submit/archive, `readJsonSafe` + import confirm, mastery/drill links, stats click-to-drill, SAT date sync, e2e extension. v2.8.0.
@@ -450,7 +468,7 @@ Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
 - Reminders fire **only while a Learn v2 browser tab is open** (no push server) — by design for the local-only model; now stated in Settings (B07) and guarded against cross-midnight false nags (B08).
 - Daily 5 / drill node-record pollution is fixed (B06): they no longer persist a node (`persistAttempt=false`) and any legacy `sat-daily-*` / `sat-drill-*` node entries are stripped on rehydrate. Their per-day quiz-progress keys clear on finish.
-- Version is synced at **2.11.0** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
+- Version is synced at **2.12.0** across `package.json`, `src/lib/version.ts`, and the SW cache; use `node scripts/bump-version.mjs patch|minor|set X.Y.Z` for the next release so all three stay in lockstep.
 - Lint is at **0 warnings** (B31). The 4 former `exhaustive-deps` warnings were intentional cache-busters and are now documented with scoped `eslint-disable` + reason comments — do not "fix" them by removing the dep (that reintroduces stale UI).
 - Dialogs share the `Modal` shell (B34): Escape + backdrop + Tab focus trap + initial focus + focus restore. New dialogs should use `Modal` (or `useFocusTrap`) rather than hand-rolling an overlay.
 - Bottom-stack layering is governed by the `--z-*` tokens in `index.css` (B37); keep new fixed bottom elements on that scale.

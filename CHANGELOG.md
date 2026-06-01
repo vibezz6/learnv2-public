@@ -4,6 +4,16 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-05-30
+
+### Added
+
+- **Study intent picker** on Today (`StudyIntentPicker`) with same-tab refresh via `STUDY_INTENT_UPDATED_EVENT`.
+- Week plan **catch-up intent**: `prioritizeCatchUp` + optional `continueLesson` row before track filler.
+- Intent-aware **week plan subtitle** and empty-state CTAs (Campus, continue lesson, SAT drill/Daily 5).
+- ⌘K **Focus today** actions (Balanced / SAT / College / Catch up) with active-intent description.
+- Playwright **`e2e/b99-o.spec.ts`**: picker, college week-plan row, catch-up continue, palette shortcut.
+
 ## [2.11.0] - 2026-05-30
 
 ### Added

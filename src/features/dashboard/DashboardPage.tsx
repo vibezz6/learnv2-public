@@ -28,8 +28,13 @@ import { TodayMinimumStrip } from "./widgets/TodayMinimumStrip";
 import { EssayDueToday } from "./widgets/EssayDueToday";
 import { TodayEmptyFocus } from "./widgets/TodayEmptyFocus";
 import { WeekPlanCard } from "./widgets/WeekPlanCard";
-import { getStudyIntentSubtitle, loadStudyIntent } from "@/lib/studyIntent";
+import {
+  getStudyIntentSubtitle,
+  loadStudyIntent,
+  STUDY_INTENT_UPDATED_EVENT,
+} from "@/lib/studyIntent";
 import { ROUTES } from "@/app/navigation";
+import { StudyIntentPicker } from "./widgets/StudyIntentPicker";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -42,12 +47,19 @@ export function DashboardPage() {
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(true);
+  const [intentFocus, setIntentFocus] = useState(() => loadStudyIntent().focus);
 
   useEffect(() => {
     loadAllSubjects().then((loaded) => {
       setSubjects(loaded);
       setLoadingSubjects(false);
     });
+  }, []);
+
+  useEffect(() => {
+    const syncIntent = () => setIntentFocus(loadStudyIntent().focus);
+    window.addEventListener(STUDY_INTENT_UPDATED_EVENT, syncIntent);
+    return () => window.removeEventListener(STUDY_INTENT_UPDATED_EVENT, syncIntent);
   }, []);
 
   const target = subjects.length ? getContinueTarget(subjects) : null;
@@ -69,9 +81,9 @@ export function DashboardPage() {
     reviewDue > 0 ||
     (nextReview !== null && typeof nextReview.daysUntil === "number" && nextReview.daysUntil <= 2);
 
-  const intentSubtitle = getStudyIntentSubtitle(loadStudyIntent().focus);
   const pageSubtitle =
-    intentSubtitle ?? "One move now. Everything else can wait until the minimum is done.";
+    getStudyIntentSubtitle(intentFocus) ??
+    "One move now. Everything else can wait until the minimum is done.";
 
   if (loadingSubjects) {
     return <PageLoading />;
@@ -80,6 +92,7 @@ export function DashboardPage() {
   return (
     <PageContainer size="xl" className="space-y-6">
       <PageHeader title="Today" subtitle={pageSubtitle} divider={false} />
+      <StudyIntentPicker />
       {stats ? <TodayMinimumStrip stats={stats} /> : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
