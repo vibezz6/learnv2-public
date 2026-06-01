@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/vibezz6/learnv2-public/actions/workflows/ci.yml/badge.svg)](https://github.com/vibezz6/learnv2-public/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://learnv2-tau.vercel.app)
+
 
 Learn v2 is a local-first study PWA for SAT prep, college application work, spaced review, and personal learning workflows. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
 
