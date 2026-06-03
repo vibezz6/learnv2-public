@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { AppShell } from "./AppShell";
 import {
   ApplicationPackagePage,
@@ -81,6 +82,7 @@ export function App() {
         <ServiceWorkerUpdateBanner />
         <SessionBar />
         <SessionCompleteModal />
+        <Analytics />
       </ComponentErrorBoundary>
     </BrowserRouter>
   );
