@@ -13,7 +13,9 @@ const SUBJECT_ACCENTS: Record<string, string> = {
   probability: "#b98cf0", // lilac
   ai: "#7e9bf0", // periwinkle
   finance: "#52b08a", // emerald
+  trading: "#5fb3e6", // sky
   engineering: "#8497ad", // slate (slightly deeper)
+  "algo-lab": "#4fc1ad", // aqua (deepened)
 };
 
 export function getSubjectAccent(subjectId: string | undefined | null): string {

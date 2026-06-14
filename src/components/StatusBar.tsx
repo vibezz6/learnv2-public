@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 interface Props {
   reviewCount: number;
   collapsed: boolean;
+  hidden?: boolean;
 }
 
 /**
@@ -21,7 +22,7 @@ interface Props {
  * today's minutes vs goal, whether the minimum is met, reviews due, and the
  * countdown to test day. Hidden in deep-focus mode (it is app chrome).
  */
-export function StatusBar({ reviewCount, collapsed }: Props) {
+export function StatusBar({ reviewCount, collapsed, hidden = false }: Props) {
   const streak = useProgress((s) => resolveCurrentStudyStreak(s.data.streaks));
   const todayMinutes = useProgress((s) => Math.round(s.data.dailyMinutes[todayKey()] ?? 0));
   const dailyGoal = useProgress((s) => s.data.dailyGoal);
@@ -33,6 +34,8 @@ export function StatusBar({ reviewCount, collapsed }: Props) {
   const countdown = getSatCountdown(satTestDate);
   const goalMet = todayMinutes >= dailyGoal;
   const urgentDeadline = getUrgentCollegeDeadlines()[0] ?? null;
+
+  if (hidden) return null;
 
   return (
     <div

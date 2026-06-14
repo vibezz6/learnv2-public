@@ -48,6 +48,7 @@ export interface MigrationResult {
 /** Infer subject from node id (matches learnv2 curriculum prefixes). */
 export function inferSubjectId(nodeId: string): string | null {
   if (nodeId.startsWith("st")) return "sat-prep";
+  if (nodeId.startsWith("lab")) return "algo-lab";
   if (nodeId.startsWith("pr")) return "probability";
   if (nodeId.startsWith("em")) return "engineering";
   if (nodeId.startsWith("ai")) return "ai";
@@ -55,6 +56,7 @@ export function inferSubjectId(nodeId: string): string | null {
   if (nodeId.startsWith("s")) return "science";
   if (nodeId.startsWith("c")) return "cs";
   if (nodeId.startsWith("f")) return "finance";
+  if (nodeId.startsWith("t")) return "trading";
   if (nodeId.startsWith("p")) return "programming";
   return null;
 }

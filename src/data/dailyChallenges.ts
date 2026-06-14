@@ -12,6 +12,16 @@ export interface DailyChallenge {
 
 const challenges: DailyChallenge[] = [
   {
+    id: "dc001",
+    question: "If you have a $2,000 account and risk 2% per trade with a stop loss 50 pips away, what is your position size (in units) for a $10/pip instrument?",
+    type: "numeric",
+    correctAnswer: "800",
+    explanation: "Risk amount = $2,000 × 2% = $40. Position size = $40 / ($10/pip × 50 pips) = $40 / $500 per lot = 0.08 lots = 800 units.",
+    subject: "Trading",
+    difficulty: "medium",
+    xpReward: 25,
+  },
+  {
     id: "dc002",
     question: "What is the probability of rolling a sum of 7 with two fair six-sided dice?",
     type: "multiple_choice",
@@ -55,6 +65,16 @@ const challenges: DailyChallenge[] = [
     xpReward: 20,
   },
   {
+    id: "dc006",
+    question: "What is the expected value of a trade with 60% win rate, +$100 profit when you win, and -$50 loss when you lose?",
+    type: "numeric",
+    correctAnswer: "40",
+    explanation: "EV = (0.60 × $100) + (0.40 × -$50) = $60 - $20 = $40.",
+    subject: "Trading",
+    difficulty: "medium",
+    xpReward: 25,
+  },
+  {
     id: "dc007",
     question: "Simplify: (2^3 × 2^5) / 2^4",
     type: "numeric",
@@ -85,6 +105,16 @@ const challenges: DailyChallenge[] = [
     subject: "Probability",
     difficulty: "medium",
     xpReward: 20,
+  },
+  {
+    id: "dc010",
+    question: "What is the Kelly Criterion fraction for a bet with 55% win probability and 1:1 payoff?",
+    type: "numeric",
+    correctAnswer: "10",
+    explanation: "Kelly = (bp - q) / b where b=1, p=0.55, q=0.45. Kelly = (0.55 - 0.45) / 1 = 0.10 = 10%.",
+    subject: "Trading",
+    difficulty: "hard",
+    xpReward: 35,
   },
   {
     id: "dc011",
@@ -134,6 +164,22 @@ const challenges: DailyChallenge[] = [
     xpReward: 30,
   },
   {
+    id: "dc015",
+    question: "In a bull flag pattern, what typically happens after the flag consolidation?",
+    type: "multiple_choice",
+    options: [
+      "Price reverses sharply down",
+      "Price continues upward",
+      "Price moves sideways forever",
+      "Volume always increases",
+    ],
+    correctAnswer: "1",
+    explanation: "A bull flag is a continuation pattern. After the brief consolidation (flag), price typically continues in the prior uptrend direction.",
+    subject: "Trading",
+    difficulty: "medium",
+    xpReward: 20,
+  },
+  {
     id: "dc016",
     question: "What is 15% of 240?",
     type: "numeric",
@@ -174,6 +220,22 @@ const challenges: DailyChallenge[] = [
     subject: "Math",
     difficulty: "easy",
     xpReward: 10,
+  },
+  {
+    id: "dc020",
+    question: "What is the maximum loss on a long call option?",
+    type: "multiple_choice",
+    options: [
+      "Unlimited",
+      "The strike price",
+      "The premium paid",
+      "The underlying price",
+    ],
+    correctAnswer: "2",
+    explanation: "When buying a call option, the maximum loss is limited to the premium you paid for the option.",
+    subject: "Trading",
+    difficulty: "medium",
+    xpReward: 20,
   },
   {
     id: "dc021",
@@ -218,6 +280,16 @@ const challenges: DailyChallenge[] = [
     xpReward: 10,
   },
   {
+    id: "dc024",
+    question: "If a stock moves from $100 to $125, what is the percentage gain?",
+    type: "numeric",
+    correctAnswer: "25",
+    explanation: "($125 - $100) / $100 × 100 = 25%.",
+    subject: "Trading",
+    difficulty: "easy",
+    xpReward: 10,
+  },
+  {
     id: "dc025",
     question: "What is the derivative of x²?",
     type: "multiple_choice",
@@ -238,6 +310,16 @@ const challenges: DailyChallenge[] = [
     subject: "CS",
     difficulty: "medium",
     xpReward: 20,
+  },
+  {
+    id: "dc027",
+    question: "A trading strategy wins 40% of the time with avg win $150 and avg loss $75. What is the expectancy per trade?",
+    type: "numeric",
+    correctAnswer: "15",
+    explanation: "Expectancy = (Win% × AvgWin) - (Loss% × AvgLoss) = (0.40 × $150) - (0.60 × $75) = $60 - $45 = $15.",
+    subject: "Trading",
+    difficulty: "medium",
+    xpReward: 30,
   },
   {
     id: "dc028",
@@ -302,4 +384,13 @@ export function getDailyChallenge(category: string = "All"): DailyChallenge {
   const list = pool.length > 0 ? pool : challenges;
   const seed = getDaySeed();
   return list[seed % list.length];
+}
+
+export function getChallengeForDate(dateStr: string): DailyChallenge {
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = (hash * 31 + dateStr.charCodeAt(i)) >>> 0;
+  }
+  const idx = hash % challenges.length;
+  return challenges[idx];
 }

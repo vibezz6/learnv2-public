@@ -22,6 +22,7 @@ import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
 import { cn } from "@/lib/cn";
 import { formatAppVersion } from "@/lib/version";
+import { useIsSimpleMode } from "@/lib/uiMode";
 import { useEffect, useMemo, useState } from "react";
 import {
   getMobileNavItems,
@@ -47,6 +48,7 @@ function readSidebarCollapsed(): boolean {
 
 export function AppShell() {
   const { theme, setTheme, focusMode, toggleFocusMode } = usePreferences();
+  const simpleMode = useIsSimpleMode();
   const getNodesNeedingReview = useProgress((s) => s.getNodesNeedingReview);
   const getStats = useProgress((s) => s.getStats);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -54,7 +56,7 @@ export function AppShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => readSidebarCollapsed());
   const reviewCount = subjects.length ? getNodesNeedingReview(subjects).length : 0;
   const stats = subjects.length ? getStats(subjects) : null;
-  const navSections = getNavSections();
+  const navSections = useMemo(() => getNavSections({ simple: simpleMode }), [simpleMode]);
   const mobileNav = getMobileNavItems();
   const location = useLocation();
   const breadcrumb = useMemo(() => resolveBreadcrumb(location.pathname), [location.pathname]);
@@ -332,14 +334,14 @@ export function AppShell() {
           </div>
         </header>
 
-        <MobileStudyStrip />
+        <MobileStudyStrip hidden={simpleMode} />
 
         <main
           className={cn(
             "flex-1",
             focusMode
               ? "pb-6"
-              : "pb-[var(--mobile-nav-height)] md:pb-[var(--statusbar-height)]",
+              : cn("pb-[var(--mobile-nav-height)]", !simpleMode && "md:pb-[var(--statusbar-height)]"),
           )}
         >
           <ComponentErrorBoundary scope="page">
@@ -386,7 +388,7 @@ export function AppShell() {
         </nav>
       </div>
 
-      <StatusBar reviewCount={reviewCount} collapsed={sidebarCollapsed} />
+      <StatusBar reviewCount={reviewCount} collapsed={sidebarCollapsed} hidden={simpleMode} />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );

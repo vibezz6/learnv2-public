@@ -12,6 +12,7 @@ import {
   Section,
   Tag,
 } from "@/components/ui";
+import { includeSat } from "@/lib/buildFeatures";
 import {
   addCustomItem,
   getChecklistProgress,
@@ -220,10 +221,14 @@ export function CollegeChecklistPage() {
         <Link to="/stats" className="font-medium text-[var(--accent)] hover:underline">
           study transcript
         </Link>
-        , and{" "}
-        <Link to="/subjects/sat-prep" className="font-medium text-[var(--accent)] hover:underline">
-          SAT Prep
-        </Link>
+        {includeSat ? (
+          <>
+            , and{" "}
+            <Link to="/subjects/sat-prep" className="font-medium text-[var(--accent)] hover:underline">
+              SAT Prep
+            </Link>
+          </>
+        ) : null}
         .
       </p>
     </PageContainer>

@@ -38,7 +38,9 @@ Without an OpenRouter key, the app uses built-in offline rules where available.
 
 ## Analytics
 
-The public app does not include telemetry or performance telemetry. Study progress, notes, backups, and settings stay in your browser unless you export them yourself.
+Production builds include Vercel Web Analytics and Speed Insights. These are used to understand app health and basic usage patterns. The app does not create accounts or send full localStorage backups to analytics.
+
+Forks can remove `VercelObservability` if they do not want analytics.
 
 ## Browser Storage Limits
 

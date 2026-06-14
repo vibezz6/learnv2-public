@@ -10,8 +10,8 @@ Requirements:
 - npm
 
 ```bash
-git clone https://github.com/vibezz6/learnv2-public.git
-cd learnv2-public
+git clone https://github.com/vibezz6/learnv2.git
+cd learnv2
 npm install
 npm run dev
 ```

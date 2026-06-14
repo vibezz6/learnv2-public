@@ -25,6 +25,8 @@ export const LESSONS_PER_WEEK = 5;
 
 const TRACK_CHALLENGE_CATEGORY: Record<string, string> = {
   "sat-august": "SAT",
+  trader: "Trading",
+  "algo-lab": "CS",
   developer: "CS",
   wealth: "Finance",
   foundation: "Math",

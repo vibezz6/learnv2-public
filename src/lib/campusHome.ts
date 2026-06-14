@@ -1,6 +1,7 @@
 import type { LearningTrack } from "@/data/tracks";
 import { tracks } from "@/data/tracks";
 import type { SkillNode, Subject } from "@/curriculum/types";
+import { includeSat, SAT_TRACK_ID } from "@/lib/buildFeatures";
 import {
   COMING_SOON_TITLE,
   countAvailableTrackLessons,
@@ -22,7 +23,7 @@ export interface SyllabusNode {
   status: NodeStatus;
 }
 
-export const DEFAULT_TRACK_ID = "sat-august";
+export const DEFAULT_TRACK_ID = includeSat ? SAT_TRACK_ID : "foundation";
 
 export function getTrackById(id: string): LearningTrack | undefined {
   return tracks.find((track) => track.id === id);

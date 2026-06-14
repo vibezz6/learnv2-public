@@ -15,9 +15,11 @@ import { ROUTES } from "@/app/navigation";
 interface Props {
   subjects: Subject[];
   resume?: { subject: Subject; node: SkillNode } | null;
+  /** Simple mode: headline, detail, and one primary CTA only. */
+  compact?: boolean;
 }
 
-export function RightNowHero({ subjects, resume }: Props) {
+export function RightNowHero({ subjects, resume, compact = false }: Props) {
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const streakCurrent = useProgress((s) => resolveCurrentStudyStreak(s.data.streaks));
   const startSession = useFocusSession((s) => s.startSession);
@@ -70,26 +72,26 @@ export function RightNowHero({ subjects, resume }: Props) {
             <h2 className="mt-1 text-[length:var(--text-hero)] font-semibold leading-snug tracking-tight text-[var(--text-heading)]">
               {detail}
             </h2>
-            {overlay?.supportLine ? (
+            {overlay?.supportLine && !compact ? (
               <p className="mt-1 text-sm text-[var(--text-muted)]">{overlay.supportLine}</p>
             ) : null}
           </div>
 
-          {readinessNudge ? (
+          {!compact && readinessNudge ? (
             <p className="flex items-start gap-2 text-sm text-[var(--text-muted)]">
               <Moon size={14} className="mt-0.5 shrink-0 text-[var(--accent-2)]" aria-hidden />
               {readinessNudge}
             </p>
           ) : null}
 
-          {topMistakes.length > 0 && !overlay ? (
+          {!compact && topMistakes.length > 0 && !overlay ? (
             <p className="text-xs text-[var(--text-muted)]">
               Top miss {topMistakes.length === 1 ? "area" : "areas"}:{" "}
               {topMistakes.map((row) => `${row.category} (${row.count})`).join(", ")}
             </p>
           ) : null}
 
-          {overlay?.mode === "good_shape" && overlay.secondaryActions ? (
+          {overlay?.mode === "good_shape" && overlay.secondaryActions && !compact ? (
             <div className="flex flex-col gap-2 pt-1">
               <Button
                 onClick={() => handleStart(primaryHref, detail)}
@@ -116,27 +118,29 @@ export function RightNowHero({ subjects, resume }: Props) {
                 className="w-full touch-manipulation sm:w-auto"
               >
                 <Play size={14} aria-hidden />
-                {overlay?.mode === "drill_after_daily5" ? primaryButtonLabel : "Start focus session"}
+                {compact || overlay?.mode === "drill_after_daily5"
+                  ? primaryButtonLabel
+                  : "Start focus session"}
               </Button>
-              {overlay?.mode !== "drill_after_daily5" ? (
+              {!compact && overlay?.mode !== "drill_after_daily5" ? (
                 <Link to={study.href} className="w-full sm:w-auto">
                   <Button variant="secondary" className="w-full touch-manipulation sm:w-auto">
                     {study.buttonLabel}
                     <ArrowRight size={14} aria-hidden />
                   </Button>
                 </Link>
-              ) : (
+              ) : !compact ? (
                 <Link to={ROUTES.sat} className="w-full sm:w-auto">
                   <Button variant="secondary" className="w-full touch-manipulation sm:w-auto">
                     Open SAT hub
                     <ArrowRight size={14} aria-hidden />
                   </Button>
                 </Link>
-              )}
+              ) : null}
             </div>
           )}
 
-          {!dailyQuizDone ? (
+          {!compact && !dailyQuizDone ? (
             <p className="text-xs text-[var(--text-muted)]">
               Short on time?{" "}
               <Link to={ROUTES.satDailyQuiz} className="font-medium text-[var(--accent)] hover:underline">
@@ -146,11 +150,11 @@ export function RightNowHero({ subjects, resume }: Props) {
             </p>
           ) : null}
 
-          {study.diagnosticNote && !overlay ? (
+          {!compact && study.diagnosticNote && !overlay ? (
             <p className="text-xs text-[var(--text-muted)]">{study.diagnosticNote}</p>
           ) : null}
 
-          {resume && resumeKind ? (
+          {!compact && resume && resumeKind ? (
             <p className="flex flex-wrap items-center gap-1.5 border-t border-[var(--rule)] pt-3 text-xs text-[var(--text-muted)]">
               <span>Or pick up where you left off:</span>
               <Link

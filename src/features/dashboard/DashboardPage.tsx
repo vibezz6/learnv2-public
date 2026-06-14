@@ -33,6 +33,8 @@ import { WeekPlanCard } from "./widgets/WeekPlanCard";
 import { STUDY_INTENT_UPDATED_EVENT } from "@/lib/studyIntent";
 import { ROUTES } from "@/app/navigation";
 import { StudyIntentPicker } from "./widgets/StudyIntentPicker";
+import { useIsSimpleMode } from "@/lib/uiMode";
+import { includeSat } from "@/lib/buildFeatures";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -43,6 +45,7 @@ export function DashboardPage() {
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const placementGoal = usePreferences((s) => s.placementGoal);
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
+  const simpleMode = useIsSimpleMode();
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(true);
   const [, setIntentRevision] = useState(0);
@@ -93,12 +96,14 @@ export function DashboardPage() {
   const pageSubtitle = priority.pageSubtitle;
   const showDrillCard = shouldShowSecondaryDrill(priority);
   const showEssayDue = hasEssaysDueSoon();
+  const showSpacedReviewAside =
+    showSpacedReview && priority.surface !== "review";
 
   return (
     <PageContainer size="xl" className="space-y-6">
       <PageHeader title="Today" subtitle={pageSubtitle} divider={false} />
-      <StudyIntentPicker />
-      {stats ? <TodayMinimumStrip stats={stats} /> : null}
+      {!simpleMode ? <StudyIntentPicker /> : null}
+      {!simpleMode && stats ? <TodayMinimumStrip stats={stats} /> : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
@@ -108,14 +113,14 @@ export function DashboardPage() {
             ) : priority.surface === "continue" && target ? (
               <ContinueHero subject={target.subject} node={target.node} />
             ) : showSatFocus ? (
-              <RightNowHero subjects={subjects} resume={target} />
+              <RightNowHero subjects={subjects} resume={target} compact={simpleMode} />
             ) : target ? (
               <ContinueHero subject={target.subject} node={target.node} />
             ) : (
               <TodayEmptyFocus />
             )}
           </Section>
-          {showDrillCard ? <DrillQueueTodayCard /> : null}
+          {showDrillCard && !simpleMode ? <DrillQueueTodayCard /> : null}
         </div>
 
         <aside className="min-w-0 space-y-6">
@@ -126,10 +131,10 @@ export function DashboardPage() {
           ) : null}
 
           <Section eyebrow="This week">
-            <WeekPlanCard subjects={subjects} embedded />
+            <WeekPlanCard subjects={subjects} embedded maxRows={simpleMode ? 3 : 6} />
           </Section>
 
-          {showSpacedReview ? (
+          {showSpacedReviewAside ? (
             <Section eyebrow="Spaced review">
               <Card variant="quiet" density="compact" className="min-w-0">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -177,34 +182,56 @@ export function DashboardPage() {
             </Section>
           ) : null}
 
-          <Section eyebrow="Daily challenge">
-            <DailyChallengeCompact defaultCategory={challengeCategory} />
-          </Section>
+          {!simpleMode ? (
+            <Section eyebrow="Daily challenge">
+              <DailyChallengeCompact defaultCategory={challengeCategory} />
+            </Section>
+          ) : null}
         </aside>
       </div>
 
       <footer className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[var(--rule)] pt-4 font-mono text-[11px] text-[var(--text-muted)]">
-        <span className="inline-flex items-center gap-1.5">
-          <KeyHint size="sm">F</KeyHint> focus
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <KeyHint size="sm">⌘K</KeyHint> quick open
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <KeyHint size="sm">[</KeyHint> sidebar
-        </span>
-        <span aria-hidden className="text-[var(--text-subtle)]">
-          ·
-        </span>
-        <Link to={ROUTES.sat} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
-          SAT
-        </Link>
-        <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
-          College
-        </Link>
-        <Link to={ROUTES.stats} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
-          Stats
-        </Link>
+        {simpleMode ? (
+          <>
+            {includeSat ? (
+              <Link to={ROUTES.sat} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+                SAT
+              </Link>
+            ) : null}
+            <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+              College
+            </Link>
+            <Link to={ROUTES.settings} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+              Settings
+            </Link>
+          </>
+        ) : (
+          <>
+            <span className="inline-flex items-center gap-1.5">
+              <KeyHint size="sm">F</KeyHint> focus
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <KeyHint size="sm">⌘K</KeyHint> quick open
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <KeyHint size="sm">[</KeyHint> sidebar
+            </span>
+            <span aria-hidden className="text-[var(--text-subtle)]">
+              ·
+            </span>
+            {includeSat ? (
+              <Link to={ROUTES.sat} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+                SAT
+              </Link>
+            ) : null}
+            <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+              College
+            </Link>
+            <Link to={ROUTES.stats} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+              Stats
+            </Link>
+          </>
+        )}
         <span className="ml-auto text-[var(--text-subtle)]" title="App version">
           {formatAppVersion()}
         </span>

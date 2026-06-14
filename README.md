@@ -1,22 +1,14 @@
 # Learn v2
 
-[![CI](https://github.com/vibezz6/learnv2-public/actions/workflows/ci.yml/badge.svg)](https://github.com/vibezz6/learnv2-public/actions/workflows/ci.yml)
+[![CI](https://github.com/vibezz6/learnv2/actions/workflows/ci.yml/badge.svg)](https://github.com/vibezz6/learnv2/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://learnv2-tau.vercel.app)
 
 Learn v2 is a local-first study PWA for SAT prep, college application work, spaced review, and personal learning workflows. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
 
-**Current release:** v2.12.0 · **License:** MIT
+**Current release:** v2.12.1 · **Live demo:** https://learnv2-tau.vercel.app (public build — no SAT curriculum) · **License:** MIT
 
-## Screenshots
-
-| Today | SAT hub |
-|-------|---------|
-| ![Today dashboard](docs/assets/today.png) | ![SAT hub](docs/assets/sat-hub.png) |
-
-| College hub | Settings and privacy |
-|-------------|----------------------|
-| ![College hub](docs/assets/college-hub.png) | ![Settings and privacy](docs/assets/settings-privacy.png) |
+**Local/private builds** include full SAT Prep by default. The public Vercel deploy sets `VITE_INCLUDE_SAT=false` so SAT subjects, routes, and study surfaces are omitted.
 
 ## Stack
 
@@ -31,7 +23,7 @@ Learn v2 is a local-first study PWA for SAT prep, college application work, spac
 **Core loop**
 
 - **Today** — one coordinated priority, study intent, daily minimum + streak, week plan, college/SAT nudges, spaced review, and daily challenge
-- **8 public subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
+- **11 subjects** — responsive skill-tree navigation with prerequisites, XP, and completion tracking
 - **SAT Prep** — study-first hub (lessons, mistake log, drills, official practice), optional Draft 1/2/3 diagnostics, 80-lesson August track, Bluebook checkpoints
 - **Lessons** — worked examples, curated resources, takeaways, quizzes with resume/retry, KaTeX math
 - **SRS review** — spaced repetition queue with due-date scheduling
@@ -50,7 +42,7 @@ Learn v2 is a local-first study PWA for SAT prep, college application work, spac
 - **Deep focus mode** — `F` hides chrome for distraction-free study
 - **Study timer** — timed sessions with summary
 - **Review & stats** — SRS spotlight cards, level/streak hero, 7-day study chart, achievement unlocks
-- **College services** (`/campus`) — college checklist, essay tracker, calculators, SAT, and finance basics
+- **College services** (`/campus`) — college checklist, essay tracker, Trading Lab, calculators, SAT, algo lab
 - **College checklist** — FAFSA, counselor, SAT send, custom deadlines (`/campus/college-checklist`)
 - **Essay tracker** — Common App / supplement prompts, draft status, due dates (`/campus/essay-tracker`)
 - **Placement onboarding** — SAT, foundations, or explore; enrolls default track on first run
@@ -73,22 +65,25 @@ Current bundled curriculum:
 
 | Metric | Count |
 |--------|------:|
-| Subjects | 8 |
-| Lessons (nodes) | **132** |
-| Quiz questions | **441** |
-| Worked examples | **163** |
+| Subjects | 11 |
+| Lessons (nodes) | **326** |
+| Quiz questions | **1,039** |
+| Worked examples | **724** |
 | Threshold flags | **110** (all SAT Prep — drill lessons, no worked examples by design) |
 
 | Subject | Nodes | Quiz Qs | Worked Examples |
 |---------|------:|--------:|----------------:|
-| sat-prep | 79 | 231 | — |
-| math | 23 | 94 | 72 |
-| science | 16 | 59 | 48 |
-| cs | 5 | 20 | 15 |
-| programming | 2 | 11 | 7 |
-| probability | 2 | 6 | 6 |
-| ai | 1 | 4 | 3 |
-| finance | 4 | 16 | 12 |
+| sat-prep | 75 | — | — |
+| algo-lab | 8 | — | — |
+| math | 55 | 234 | 169 |
+| cs | 40 | 136 | 122 |
+| trading | 38 | 168 | 115 |
+| science | 33 | 121 | 99 |
+| ai | 27 | 110 | 81 |
+| programming | 16 | 65 | 49 |
+| probability | 13 | 46 | 40 |
+| finance | 11 | 45 | 34 |
+| engineering | 5 | 16 | 15 |
 
 Maintainer note: `npm run curriculum:split` is available for regenerating curriculum JSON from the legacy source tree when that source is present locally. SAT Prep lives in `src/curriculum/data/sat-prep.json` and is maintained in this repo.
 
@@ -101,8 +96,8 @@ You never need Cursor or any AI tool to run Learn v2 — it is a plain Vite + Re
 **Start it:**
 
 ```bash
-git clone https://github.com/vibezz6/learnv2-public.git
-cd learnv2-public
+git clone https://github.com/vibezz6/learnv2.git
+cd learnv2
 npm install      # first time, and after pulling new changes
 npm run dev      # then open http://127.0.0.1:8080
 ```
@@ -136,7 +131,7 @@ Your progress is stored in the browser, not the repo, so pulling/updating never 
 
 ## Back up your data (so you never lose progress)
 
-Progress lives in your browser's localStorage for the exact local origin you use, such as `http://127.0.0.1:8080`. Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
+Progress lives in your browser's localStorage for the exact origin you use (`http://127.0.0.1:8080` locally, or the Vercel live URL — these are separate stores). Clearing browser data, switching browsers, or using a different URL means different or empty data, so keep your own backups:
 
 1. In the app: **Settings → Backup → Export progress** — downloads `learnv2-backup-YYYY-MM-DD.json`.
 2. Save that file somewhere safe (a cloud drive). Export weekly, or whenever the app nudges you.

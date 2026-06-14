@@ -49,22 +49,38 @@ describe("campusHome", () => {
   });
 
   it("getTrackProgress counts completed lessons in track order", () => {
-    const track = tracks.find((t) => t.id === "wealth")!;
+    const track = tracks.find((t) => t.id === "trader")!;
     const subjects: Subject[] = [
       {
-        id: "finance",
-        name: "Finance",
+        id: "math",
+        name: "Math",
         description: "",
         color: "#000",
-        icon: "wallet",
-        nodes: [node("f1"), node("f2"), node("f3")],
+        icon: "function",
+        nodes: [node("m1"), node("m2"), node("m3")],
+      },
+      {
+        id: "probability",
+        name: "Probability",
+        description: "",
+        color: "#000",
+        icon: "function",
+        nodes: [node("pr1"), node("pr2"), node("pr4")],
+      },
+      {
+        id: "trading",
+        name: "Trading",
+        description: "",
+        color: "#000",
+        icon: "trending-up",
+        nodes: [node("t1")],
       },
     ];
 
-    const progress = getTrackProgress(track, subjects, statusMap({ f1: "completed", f2: "available" }));
+    const progress = getTrackProgress(track, subjects, statusMap({ m1: "completed", m2: "available" }));
     expect(progress.completed).toBe(1);
-    expect(progress.total).toBe(3);
-    expect(progress.pct).toBe(33);
+    expect(progress.total).toBe(7);
+    expect(progress.pct).toBe(14);
   });
 
   it("getTrackProgress excludes missing lessons from the total", () => {
