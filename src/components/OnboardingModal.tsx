@@ -9,6 +9,7 @@ import {
 } from "@/lib/placement";
 import { cn } from "@/lib/cn";
 import { usePreferences } from "@/stores/preferences";
+import { includeSat } from "@/lib/buildFeatures";
 
 const STEP_COUNT = 3;
 
@@ -21,7 +22,7 @@ export function OnboardingModal() {
   );
   const [hydrated, setHydrated] = useState(() => usePreferences.persist.hasHydrated());
   const [step, setStep] = useState(0);
-  const [selectedGoal, setSelectedGoal] = useState<PlacementGoal>("sat");
+  const [selectedGoal, setSelectedGoal] = useState<PlacementGoal>(includeSat ? "sat" : "foundation");
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const fromV1 = hasV1Data();
 
@@ -103,8 +104,11 @@ export function OnboardingModal() {
             Welcome to Learn v2
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
-            Your college-style study app: tracks, lessons, SAT prep, notes, and a transcript of
-            your work. A short placement picks your default degree plan.
+            A local study app for SAT prep and college applications. Pick a focus and Today will
+            show your one next step.
+          </p>
+          <p className="mt-3 text-sm text-[var(--text-muted)]">
+            Simple mode is on — you can switch to Full in Settings anytime.
           </p>
         </>
       )}
@@ -115,7 +119,7 @@ export function OnboardingModal() {
             What&apos;s your main focus?
           </h2>
           <p className="mt-2 text-sm text-[var(--text-muted)]">
-            We&apos;ll enroll you in a track on the Today dashboard. Change focus later in{" "}
+            We&apos;ll enroll you in a track. Change focus later in{" "}
             <Link to="/settings#campus-focus" className="font-medium text-[var(--accent)] hover:underline">
               Settings
             </Link>
@@ -179,11 +183,10 @@ export function OnboardingModal() {
             )}
           </p>
           <p className="mt-3 text-sm text-[var(--text-muted)]">
-            Your dashboard shows this week&apos;s plan, daily assignments, and SAT next steps when
-            relevant.
+            Open Today for your next study action and this week&apos;s supporting steps.
           </p>
           <Button className="mt-4 min-h-11 w-full touch-manipulation" onClick={finishWithPlacement}>
-            Go to College hub
+            Go to Today
           </Button>
           {selectedGoal === "sat" && (
             <p className="mt-3 text-center text-xs text-[var(--text-muted)]">

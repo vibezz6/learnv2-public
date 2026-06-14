@@ -1,3 +1,5 @@
+import { includeSat, SAT_TRACK_ID } from "@/lib/buildFeatures";
+
 export interface TrackLesson {
   subjectId: string;
   nodeId: string;
@@ -16,7 +18,7 @@ function lesson(subjectId: string, nodeId: string): TrackLesson {
   return { subjectId, nodeId };
 }
 
-export const tracks: LearningTrack[] = [
+const ALL_TRACKS: LearningTrack[] = [
   {
     id: "sat-august",
     name: "August SAT Track",
@@ -214,3 +216,7 @@ export const tracks: LearningTrack[] = [
     ],
   },
 ];
+
+export const tracks: LearningTrack[] = includeSat
+  ? ALL_TRACKS
+  : ALL_TRACKS.filter((track) => track.id !== SAT_TRACK_ID);

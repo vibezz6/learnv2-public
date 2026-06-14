@@ -51,6 +51,7 @@ describe("preferences", () => {
     usePreferences.setState({
       theme: "dark",
       focusMode: false,
+      uiMode: "simple",
       onboardingCompleted: false,
       enrolledTrackId: null,
       placementGoal: null,
@@ -128,6 +129,17 @@ describe("preferences", () => {
 
     mediaQueryList.dispatchChange(true);
     expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  it("defaults uiMode to simple for new users", () => {
+    expect(usePreferences.getState().uiMode).toBe("simple");
+  });
+
+  it("setUiMode updates interface mode", () => {
+    usePreferences.getState().setUiMode("full");
+    expect(usePreferences.getState().uiMode).toBe("full");
+    usePreferences.getState().setUiMode("simple");
+    expect(usePreferences.getState().uiMode).toBe("simple");
   });
 
   it("leaving system theme stops OS theme changes from updating the document", () => {

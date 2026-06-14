@@ -36,6 +36,7 @@ import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
 import { PageLoading } from "@/components/ui";
 import { VercelObservability } from "@/components/VercelObservability";
+import { includeSat } from "@/lib/buildFeatures";
 
 function RouteFallback() {
   return <PageLoading />;
@@ -57,9 +58,18 @@ export function App() {
               <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
               <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
               <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
-              <Route path="sat/pretest" element={<SatPretestPage />} />
-              <Route path="sat/daily-quiz" element={<DailySatQuizPage />} />
-              <Route path="sat/drill" element={<SatDrillPage />} />
+              {includeSat ? (
+                <>
+                  <Route path="sat/pretest" element={<SatPretestPage />} />
+                  <Route path="sat/daily-quiz" element={<DailySatQuizPage />} />
+                  <Route path="sat/drill" element={<SatDrillPage />} />
+                </>
+              ) : (
+                <>
+                  <Route path="sat/*" element={<Navigate to="/" replace />} />
+                  <Route path="subjects/sat-prep/*" element={<Navigate to="/subjects" replace />} />
+                </>
+              )}
               <Route path="bookmarks" element={<BookmarksPage />} />
               <Route path="review" element={<ReviewPage />} />
               <Route path="stats" element={<StatsPage />} />

@@ -54,6 +54,16 @@ describe("RightNowHero", () => {
     );
     expect(html).toContain("Start focus session");
   });
+
+  it("compact mode hides secondary SAT hero lines", () => {
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <RightNowHero subjects={subjects} resume={null} compact />
+      </MemoryRouter>,
+    );
+    expect(html).not.toContain("Short on time?");
+    expect(html).not.toContain("Or pick up where you left off");
+  });
 });
 
 describe("TodayMinimumStrip", () => {

@@ -23,6 +23,7 @@ interface Props {
   subjects: Subject[];
   /** When true, parent Section supplies the "This week" eyebrow. */
   embedded?: boolean;
+  maxRows?: number;
 }
 
 function getWeekPlanSubtitle(focus: StudyIntentFocus): string {
@@ -35,7 +36,7 @@ function getWeekPlanSubtitle(focus: StudyIntentFocus): string {
   return `Catch-up focus — ${base}`;
 }
 
-export function WeekPlanCard({ subjects, embedded = false }: Props) {
+export function WeekPlanCard({ subjects, embedded = false, maxRows = 6 }: Props) {
   const enrolledTrackId = usePreferences((s) => s.enrolledTrackId);
   const placementGoal = usePreferences((s) => s.placementGoal);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
@@ -83,8 +84,8 @@ export function WeekPlanCard({ subjects, embedded = false }: Props) {
       enrolledTrackId: activeTrackId,
       placementGoal,
       continueLesson,
-    });
-  }, [subjects, getNodeStatus, activeTrackId, placementGoal, continueLesson, revision]);
+    }, maxRows);
+  }, [subjects, getNodeStatus, activeTrackId, placementGoal, continueLesson, revision, maxRows]);
 
   const dailyDone = useMemo(() => {
     void revision;

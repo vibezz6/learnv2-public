@@ -7,10 +7,14 @@ import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
 import { subscribeActivityUpdated } from "@/lib/studyActivity";
 import { cn } from "@/lib/cn";
 
+interface Props {
+  hidden?: boolean;
+}
+
 /**
  * Compact accountability row for phones (desktop uses StatusBar).
  */
-export function MobileStudyStrip() {
+export function MobileStudyStrip({ hidden = false }: Props) {
   const focusMode = usePreferences((s) => s.focusMode);
   const satTestDate = usePreferences((s) => s.satTestDate);
   const streak = useProgress((s) => resolveCurrentStudyStreak(s.data.streaks));
@@ -18,7 +22,7 @@ export function MobileStudyStrip() {
 
   useEffect(() => subscribeActivityUpdated(() => setMinimum(getDailyMinimumStatus())), []);
 
-  if (focusMode) return null;
+  if (focusMode || hidden) return null;
 
   const countdown = getSatCountdown(satTestDate);
 

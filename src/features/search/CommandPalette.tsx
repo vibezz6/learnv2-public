@@ -34,6 +34,7 @@ import { KeyHint } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { getCommandNavItems, ROUTES } from "@/app/navigation";
+import { includeSat } from "@/lib/buildFeatures";
 import {
   addRecentCommandAction,
   getRecentCommandActions,
@@ -88,6 +89,15 @@ interface DisplayBlock {
 const EMPTY_QUERY_NAV_LIMIT = 5;
 const EMPTY_QUERY_CONTEXT_LIMIT = 3;
 const EMPTY_QUERY_ACTION_LIMIT = 5;
+
+function pickRandomLesson(subjects: Subject[]): { subId: string; nodeId: string } | null {
+  const picks: Array<{ subId: string; nodeId: string }> = [];
+  for (const sub of subjects) {
+    for (const node of sub.nodes) picks.push({ subId: sub.id, nodeId: node.id });
+  }
+  if (picks.length === 0) return null;
+  return picks[Math.floor(Math.random() * picks.length)] ?? null;
+}
 
 export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const navigate = useNavigate();
@@ -178,12 +188,8 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
 
   const staticCommands = useMemo((): CommandItem[] => {
     const surprise = () => {
-      const picks: Array<{ subId: string; nodeId: string }> = [];
-      for (const sub of subjects) {
-        for (const node of sub.nodes) picks.push({ subId: sub.id, nodeId: node.id });
-      }
-      if (picks.length === 0) return;
-      const pick = picks[Math.floor(Math.random() * picks.length)];
+      const pick = pickRandomLesson(subjects);
+      if (!pick) return;
       const path = `/subjects/${pick.subId}/${pick.nodeId}`;
       go(path, { id: "surprise", label: "Random lesson" });
     };
@@ -470,7 +476,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...(() => {
         const currentFocus = loadStudyIntent().focus;
         const focusOptions: { focus: StudyIntentFocus; label: string }[] = [
-          { focus: "sat", label: "Focus today: SAT prep" },
+          ...(includeSat ? [{ focus: "sat" as const, label: "Focus today: SAT prep" }] : []),
           { focus: "college", label: "Focus today: College deadlines" },
           { focus: "catch_up", label: "Focus today: Catch up" },
           { focus: "default", label: "Focus today: Balanced" },
@@ -504,7 +510,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...subjectItems,
       ...actionItems,
       ...themeItems,
-    ];
+    ].filter(
+      (item) =>
+        includeSat ||
+        (item.section !== "SAT" &&
+          item.id !== "log-mistake" &&
+          item.id !== "start-focus" &&
+          !item.id.startsWith("sat-")),
+    );
   }, [
     subjects,
     go,

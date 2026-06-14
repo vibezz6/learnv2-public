@@ -4,11 +4,17 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.12.1] - 2026-06-14
+
+### Added
+
+- **Simple mode** (`Settings → Interface`) — calmer Today, SAT, and College views with one clear next step; Full mode restores all cards and navigation.
+- New users default to Simple mode; existing users stay on Full until they opt in.
+
 ### Changed
 
-- Today priority model coordinates study intent, hero choice, week plan copy, and secondary nudges so the 100+ batch surface feels less crowded.
-- ⌘K empty state is tiered to top navigation/context/actions while full search keeps SAT, college, subjects, and school package commands.
-- User-facing “College” naming is preferred over “Campus” while existing `/campus` routes remain stable.
+- Onboarding finishes on **Go to Today** with shorter copy.
+- Review priority no longer duplicates the spaced-review sidebar card.
 
 ## [2.12.0] - 2026-05-30
 
