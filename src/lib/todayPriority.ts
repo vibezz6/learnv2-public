@@ -5,6 +5,7 @@ import type { NodeStatus } from "@/lib/campusHome";
 import type { PlacementGoal } from "@/lib/placement";
 import { getSatDailyStudyCommand, shouldShowSatTodayCard, type SatDailyStudyCommand } from "@/lib/satDailyStudy";
 import { getStudyIntentSubtitle, loadStudyIntent, type StudyIntentFocus } from "@/lib/studyIntent";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 export type TodayPriorityKind =
   | "urgent_college"
@@ -71,7 +72,7 @@ export function buildTodayPriority(input: TodayPriorityInput): TodayPriority {
     storage,
   });
 
-  if (satCommand.kind === "college_blocking") {
+  if (includeCollege && satCommand.kind === "college_blocking") {
     return {
       kind: "urgent_college",
       surface: "college",
@@ -101,7 +102,7 @@ export function buildTodayPriority(input: TodayPriorityInput): TodayPriority {
     };
   }
 
-  if (intentFocus === "college") {
+  if (includeCollege && intentFocus === "college") {
     const collegeRow = firstCollegeFocusRow(storage);
     return {
       kind: "college_focus",
@@ -120,7 +121,7 @@ export function buildTodayPriority(input: TodayPriorityInput): TodayPriority {
     };
   }
 
-  if (shouldShowSatTodayCard(input.placementGoal, input.subjects, input.getNodeStatus, storage)) {
+  if (includeSat && shouldShowSatTodayCard(input.placementGoal, input.subjects, input.getNodeStatus, storage)) {
     return {
       kind: "sat",
       surface: "sat",
@@ -175,7 +176,11 @@ export function buildTodayPriority(input: TodayPriorityInput): TodayPriority {
     kind: "empty",
     surface: "empty",
     headline: "Pick a starting point",
-    detail: "Choose a lesson, SAT task, or college deadline.",
+    detail: includeCollege
+      ? "Choose a lesson, SAT task, or college deadline."
+      : includeSat
+        ? "Choose a lesson or SAT task."
+        : "Choose a lesson or review task.",
     href: ROUTES.subjects,
     buttonLabel: "Browse subjects",
     intentFocus,

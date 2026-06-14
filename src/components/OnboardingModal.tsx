@@ -9,7 +9,7 @@ import {
 } from "@/lib/placement";
 import { cn } from "@/lib/cn";
 import { usePreferences } from "@/stores/preferences";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 const STEP_COUNT = 3;
 
@@ -104,8 +104,9 @@ export function OnboardingModal() {
             Welcome to Learn v2
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
-            A local study app for SAT prep and college applications. Pick a focus and Today will
-            show your one next step.
+            {includeCollege
+              ? "A local study app for SAT prep and college applications. Pick a focus and Today will show your one next step."
+              : "A local study app for math foundations. Pick a focus and Today will show your one next step."}
           </p>
           <p className="mt-3 text-sm text-[var(--text-muted)]">
             Simple mode is on — you can switch to Full in Settings anytime.
@@ -188,7 +189,7 @@ export function OnboardingModal() {
           <Button className="mt-4 min-h-11 w-full touch-manipulation" onClick={finishWithPlacement}>
             Go to Today
           </Button>
-          {selectedGoal === "sat" && (
+          {includeSat && includeCollege && selectedGoal === "sat" && (
             <p className="mt-3 text-center text-xs text-[var(--text-muted)]">
               Also open{" "}
               <Link

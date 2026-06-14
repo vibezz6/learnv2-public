@@ -33,7 +33,7 @@ import { SimpleModeSettingsCard } from "@/features/settings/SimpleModeSettingsCa
 import { LessonDraftWorkspace } from "@/features/settings/LessonDraftWorkspace";
 import { OPENROUTER_KEY } from "@/services/llmReview";
 import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 import { trackStudyEvent } from "@/lib/analytics";
 import { getDaysSinceBackup, isBackupOverdue, markBackupDone } from "@/lib/backupReminder";
 import { cn } from "@/lib/cn";
@@ -284,7 +284,11 @@ export function SettingsPage() {
       <Section
         eyebrow="AI integrations"
         title="OpenRouter API key"
-        description="Optional BYOK feature. Sends selected notes, answers, prompts, and completed SAT rationales to OpenRouter from your browser; offline rules still work without a key."
+        description={
+          includeSat
+            ? "Optional BYOK feature. Sends selected notes, answers, prompts, and completed SAT rationales to OpenRouter from your browser; offline rules still work without a key."
+            : "Optional BYOK feature. Sends selected notes, answers, prompts, and completed lesson rationales to OpenRouter from your browser; offline rules still work without a key."
+        }
         divider
       >
         <Card variant="default" density="normal" className="min-w-0 space-y-3">
@@ -359,12 +363,16 @@ export function SettingsPage() {
             <SatPretestSettingsCard onMessage={setMessage} />
           </div>
         </Section>
-      ) : (
+      ) : includeCollege ? (
         <Section eyebrow="Admissions" title="Placement and college" divider>
           <div className="space-y-4">
             <PlacementSettingsCard onMessage={setMessage} />
             <AdmissionsSettingsCard onMessage={setMessage} />
           </div>
+        </Section>
+      ) : (
+        <Section eyebrow="Study path" title="Placement" divider>
+          <PlacementSettingsCard onMessage={setMessage} />
         </Section>
       )}
 

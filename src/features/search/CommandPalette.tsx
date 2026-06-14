@@ -34,7 +34,7 @@ import { KeyHint } from "@/components/ui";
 import { loadAllSubjects } from "@/curriculum/loader";
 import type { Subject } from "@/curriculum/types";
 import { getCommandNavItems, ROUTES } from "@/app/navigation";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 import {
   addRecentCommandAction,
   getRecentCommandActions,
@@ -477,7 +477,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         const currentFocus = loadStudyIntent().focus;
         const focusOptions: { focus: StudyIntentFocus; label: string }[] = [
           ...(includeSat ? [{ focus: "sat" as const, label: "Focus today: SAT prep" }] : []),
-          { focus: "college", label: "Focus today: College deadlines" },
+          ...(includeCollege ? [{ focus: "college" as const, label: "Focus today: College deadlines" }] : []),
           { focus: "catch_up", label: "Focus today: Catch up" },
           { focus: "default", label: "Focus today: Balanced" },
         ];
@@ -506,7 +506,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       ...recent,
       ...activityRecent,
       ...navigateItems,
-      ...collegeItems,
+      ...(includeCollege ? collegeItems : []),
       ...subjectItems,
       ...actionItems,
       ...themeItems,

@@ -13,6 +13,7 @@ import { getWeekAssignments } from "@/lib/coursework";
 import type { PlacementGoal } from "@/lib/placement";
 import { buildTomorrowTasks, type TomorrowTask } from "@/lib/tomorrowTasks";
 import type { NodeStatus } from "@/lib/campusHome";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 export type WeekPlanSource = "college" | "track" | "sat" | "pretest";
 
@@ -104,22 +105,24 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
 
   let hasUrgentCollege = false;
   let collegeShown = 0;
-  for (const deadline of collectUrgentAdmissionsRows(7, new Date(), undefined, undefined, storage)) {
-    if (collegeShown >= MAX_COLLEGE_WEEK_ROWS) {
-      collegeOverflow += 1;
-      continue;
+  if (includeCollege) {
+    for (const deadline of collectUrgentAdmissionsRows(7, new Date(), undefined, undefined, storage)) {
+      if (collegeShown >= MAX_COLLEGE_WEEK_ROWS) {
+        collegeOverflow += 1;
+        continue;
+      }
+      collegeShown += 1;
+      if (deadline.overdue || deadline.daysUntil <= 1) hasUrgentCollege = true;
+      push({
+        id: deadline.id,
+        title: deadline.title,
+        detail: deadline.detail ? `${deadline.detail} · ${dueDetail(deadline)}` : dueDetail(deadline),
+        href: deadline.href,
+        source: "college",
+        overdue: deadline.overdue,
+      });
+      if (rows.length >= maxRows) return { rows, collegeOverflow };
     }
-    collegeShown += 1;
-    if (deadline.overdue || deadline.daysUntil <= 1) hasUrgentCollege = true;
-    push({
-      id: deadline.id,
-      title: deadline.title,
-      detail: deadline.detail ? `${deadline.detail} · ${dueDetail(deadline)}` : dueDetail(deadline),
-      href: deadline.href,
-      source: "college",
-      overdue: deadline.overdue,
-    });
-    if (rows.length >= maxRows) return { rows, collegeOverflow };
   }
 
   if (!hasUrgentCollege) {
@@ -141,7 +144,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
     }
   }
 
-  if (prioritizeSat && rows.length < maxRows) {
+  if (includeSat && prioritizeSat && rows.length < maxRows) {
     const topMistake = getPrimaryMistakeCategory(storage);
     if (topMistake) {
       push({
@@ -157,7 +160,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
     }
   }
 
-  if (prioritizeCollege && rows.length < maxRows) {
+  if (includeCollege && prioritizeCollege && rows.length < maxRows) {
     let added = 0;
     for (const deadline of collectUrgentAdmissionsRows(14, new Date(), undefined, undefined, storage)) {
       if (used.has(deadline.href)) continue;
@@ -226,6 +229,7 @@ export function buildWeekPlan(input: WeekPlanInput, maxRows = 6): WeekPlanResult
 
   for (const task of extras) {
     if (task.source === "review" || task.source === "college") continue;
+    if (!includeSat && (task.source === "sat" || task.source === "pretest")) continue;
     push(tomorrowToWeekRow(task));
     if (rows.length >= maxRows) return { rows, collegeOverflow };
   }

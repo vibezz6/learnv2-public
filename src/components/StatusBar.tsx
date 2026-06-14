@@ -9,6 +9,7 @@ import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
 import { formatAppVersion } from "@/lib/version";
 import { subscribeActivityUpdated } from "@/lib/studyActivity";
 import { ROUTES } from "@/app/navigation";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 import { cn } from "@/lib/cn";
 
 interface Props {
@@ -31,9 +32,9 @@ export function StatusBar({ reviewCount, collapsed, hidden = false }: Props) {
 
   useEffect(() => subscribeActivityUpdated(() => setMinimum(getDailyMinimumStatus())), []);
 
-  const countdown = getSatCountdown(satTestDate);
+  const countdown = includeSat ? getSatCountdown(satTestDate) : null;
   const goalMet = todayMinutes >= dailyGoal;
-  const urgentDeadline = getUrgentCollegeDeadlines()[0] ?? null;
+  const urgentDeadline = includeCollege ? getUrgentCollegeDeadlines()[0] ?? null : null;
 
   if (hidden) return null;
 
@@ -108,17 +109,19 @@ export function StatusBar({ reviewCount, collapsed, hidden = false }: Props) {
       </div>
 
       <div className="flex items-center gap-3">
-        <NavLink
-          to={ROUTES.settings}
-          className={cn(
-            "inline-flex items-center gap-1.5 hover:text-[var(--accent)]",
-            countdown && !countdown.past ? "text-[var(--warning-fg)]" : undefined,
-          )}
-          title={countdown ? "Days until your SAT" : "Set your SAT date"}
-        >
-          <GraduationCap size={11} aria-hidden />
-          {formatCountdownLabel(countdown)}
-        </NavLink>
+        {includeSat ? (
+          <NavLink
+            to={ROUTES.settings}
+            className={cn(
+              "inline-flex items-center gap-1.5 hover:text-[var(--accent)]",
+              countdown && !countdown.past ? "text-[var(--warning-fg)]" : undefined,
+            )}
+            title={countdown ? "Days until your SAT" : "Set your SAT date"}
+          >
+            <GraduationCap size={11} aria-hidden />
+            {formatCountdownLabel(countdown)}
+          </NavLink>
+        ) : null}
         <span className="text-[var(--text-subtle)]" title="App version">
           {formatAppVersion()}
         </span>

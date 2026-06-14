@@ -5,6 +5,7 @@ import { usePreferences } from "@/stores/preferences";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
 import { subscribeActivityUpdated } from "@/lib/studyActivity";
+import { includeSat } from "@/lib/buildFeatures";
 import { cn } from "@/lib/cn";
 
 interface Props {
@@ -24,7 +25,7 @@ export function MobileStudyStrip({ hidden = false }: Props) {
 
   if (focusMode || hidden) return null;
 
-  const countdown = getSatCountdown(satTestDate);
+  const countdown = includeSat ? getSatCountdown(satTestDate) : null;
 
   return (
     <div

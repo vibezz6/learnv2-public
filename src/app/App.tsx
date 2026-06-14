@@ -36,7 +36,7 @@ import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
 import { PageLoading } from "@/components/ui";
 import { VercelObservability } from "@/components/VercelObservability";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 function RouteFallback() {
   return <PageLoading />;
@@ -74,16 +74,26 @@ export function App() {
               <Route path="review" element={<ReviewPage />} />
               <Route path="stats" element={<StatsPage />} />
               <Route path="timer" element={<TimerPage />} />
-              <Route path="campus" element={<CampusServicesPage />} />
-              <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
-              <Route path="campus/application" element={<ApplicationPackagePage />} />
-              <Route path="campus/print-summary" element={<CampusPrintSummaryPage />} />
-              <Route path="campus/essay-tracker" element={<EssayTrackerPage />} />
-              <Route path="campus/calculators" element={<ToolsPage />} />
-              <Route path="tools" element={<Navigate to="/campus" replace />} />
-              <Route path="tools/ev" element={<ExpectedValueToolPage />} />
-              <Route path="tools/compound" element={<CompoundInterestToolPage />} />
-              <Route path="lab/trading" element={<TradingLabPage />} />
+              {includeCollege ? (
+                <>
+                  <Route path="campus" element={<CampusServicesPage />} />
+                  <Route path="campus/college-checklist" element={<CollegeChecklistPage />} />
+                  <Route path="campus/application" element={<ApplicationPackagePage />} />
+                  <Route path="campus/print-summary" element={<CampusPrintSummaryPage />} />
+                  <Route path="campus/essay-tracker" element={<EssayTrackerPage />} />
+                  <Route path="campus/calculators" element={<ToolsPage />} />
+                  <Route path="tools" element={<Navigate to="/campus" replace />} />
+                  <Route path="tools/ev" element={<ExpectedValueToolPage />} />
+                  <Route path="tools/compound" element={<CompoundInterestToolPage />} />
+                  <Route path="lab/trading" element={<TradingLabPage />} />
+                </>
+              ) : (
+                <>
+                  <Route path="campus/*" element={<Navigate to="/" replace />} />
+                  <Route path="tools/*" element={<Navigate to="/" replace />} />
+                  <Route path="lab/*" element={<Navigate to="/" replace />} />
+                </>
+              )}
               <Route path="settings" element={<SettingsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

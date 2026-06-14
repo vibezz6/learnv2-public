@@ -1,12 +1,12 @@
 import type { SkillNode, Subject } from "./types";
 import fullManifest from "./data/manifest.json";
-import { includeSat, SAT_SUBJECT_ID } from "../lib/buildFeatures";
+import { isSubjectAllowed } from "../lib/buildFeatures";
 
 export type SubjectManifest = (typeof fullManifest)[number];
 
-export const manifest: SubjectManifest[] = includeSat
-  ? fullManifest
-  : fullManifest.filter((entry) => entry.id !== SAT_SUBJECT_ID);
+export const manifest: SubjectManifest[] = fullManifest.filter((entry) =>
+  isSubjectAllowed(entry.id),
+);
 
 export type LoadSubjectResult =
   | { status: "ok"; subject: Subject }

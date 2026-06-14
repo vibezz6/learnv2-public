@@ -1,4 +1,4 @@
-import { includeSat, SAT_TRACK_ID } from "@/lib/buildFeatures";
+import { isTrackAllowed } from "@/lib/buildFeatures";
 
 export interface TrackLesson {
   subjectId: string;
@@ -217,6 +217,4 @@ const ALL_TRACKS: LearningTrack[] = [
   },
 ];
 
-export const tracks: LearningTrack[] = includeSat
-  ? ALL_TRACKS
-  : ALL_TRACKS.filter((track) => track.id !== SAT_TRACK_ID);
+export const tracks: LearningTrack[] = ALL_TRACKS.filter((track) => isTrackAllowed(track.id));

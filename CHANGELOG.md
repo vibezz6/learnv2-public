@@ -4,6 +4,16 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.12.2] - 2026-06-14
+
+### Added
+
+- **`VITE_APP_PROFILE=public`** — public/Vercel builds expose only math, CS, and probability subjects plus the Complete Foundation track.
+
+### Changed
+
+- Public deploy removes remaining SAT UI leaks (status bar countdown, Today minimum strip), all college/campus surfaces, and non-foundation subjects/tracks.
+
 ## [2.12.1] - 2026-06-14
 
 ### Added

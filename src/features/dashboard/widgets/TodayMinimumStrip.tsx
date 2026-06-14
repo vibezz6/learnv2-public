@@ -8,6 +8,7 @@ import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
 import { subscribeActivityUpdated } from "@/lib/studyActivity";
 import { usePreferences } from "@/stores/preferences";
 import { ROUTES } from "@/app/navigation";
+import { includeSat } from "@/lib/buildFeatures";
 
 interface Props {
   stats: Stats;
@@ -23,7 +24,7 @@ export function TodayMinimumStrip({ stats }: Props) {
 
   useEffect(() => subscribeActivityUpdated(() => setMinimum(getDailyMinimumStatus())), []);
 
-  const countdown = getSatCountdown(satTestDate);
+  const countdown = includeSat ? getSatCountdown(satTestDate) : null;
   const todayMinutes = Math.round(stats.todayMinutes);
   const goal = stats.dailyGoal;
 
@@ -41,11 +42,11 @@ export function TodayMinimumStrip({ stats }: Props) {
               {minimum.met ? "Today's minimum is done" : "Today's minimum: one real study action"}
             </p>
             <p className="text-xs text-[var(--text-muted)]">
-              {countdown?.past
+              {includeSat && countdown?.past
                 ? "SAT date passed — update your test date in Settings if you are retesting."
                 : minimum.met
                   ? `${minimum.actionsToday} action${minimum.actionsToday === 1 ? "" : "s"} logged — streak protected.`
-                  : "Finish one SAT lesson, quiz, or mistake log to keep the chain alive."}
+                  : "Finish one lesson, quiz, or review to keep the chain alive."}
             </p>
           </div>
         </div>
@@ -54,17 +55,19 @@ export function TodayMinimumStrip({ stats }: Props) {
             <Flame size={11} aria-hidden />
             {stats.streakCurrent}d
           </Tag>
-          {countdown ? (
-            <Tag tone={countdown.past ? "danger" : "warning"} size="sm" mono>
-              {formatCountdownLabel(countdown)}
-            </Tag>
-          ) : (
-            <Link to={ROUTES.settings} title="Set your SAT date">
-              <Tag tone="muted" size="sm" mono>
-                Set SAT date
+          {includeSat ? (
+            countdown ? (
+              <Tag tone={countdown.past ? "danger" : "warning"} size="sm" mono>
+                {formatCountdownLabel(countdown)}
               </Tag>
-            </Link>
-          )}
+            ) : (
+              <Link to={ROUTES.settings} title="Set your SAT date">
+                <Tag tone="muted" size="sm" mono>
+                  Set SAT date
+                </Tag>
+              </Link>
+            )
+          ) : null}
         </div>
       </div>
       <div className="mt-3">

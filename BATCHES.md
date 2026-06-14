@@ -13,9 +13,10 @@ then you record progress so the next session picks up cleanly.
 
 ## Current position
 
-> **B01–B115 done.** Last session: Simple mode (readability + getting started).
-> Local dev: `npm run dev` → http://127.0.0.1:8080. Run `npm run doctor` from the repo root. Version **v2.12.1**.
-> **Simple mode:** Settings → Interface — calmer Today, SAT, and College; Full mode restores all cards.
+> **B01–B116 done.** Last session: Public slim app profile.
+> Local dev: `npm run dev` → http://127.0.0.1:8080. Run `npm run doctor` from the repo root. Version **v2.12.2**.
+> **Public deploy:** `VITE_APP_PROFILE=public` — math/CS/probability only; no SAT or college.
+> **Simple mode:** Settings → Interface — calmer Today; Full mode restores all cards.
 > **Scope:** computer/desktop study loop only — no new mobile nav, strips, or 480px layout batches until explicitly requested.
 
 Update this line at the end of every session.
@@ -462,7 +463,15 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 ---
 
-## Future ideas (after B115)
+## R. Public slim app (B116) — done
+
+- [x] **B116** — `VITE_APP_PROFILE=public`; foundation-only catalog; gate SAT/college UI leaks; v2.12.2.
+
+**Verify §R:** `VITE_APP_PROFILE=public` build → no Set SAT date → no College nav → 3 subjects → foundation track only → `npm run doctor`.
+
+---
+
+## Future ideas (after B116)
 
 - **Stretch 10 MC/skill** — `sat:coverage:stretch` is green; defer bulk authoring.
 - Print CSS polish; mastery sparklines / table redesign; PWA two-build e2e; compact mobile status row.
@@ -471,6 +480,7 @@ Optional: `npm run test:e2e` (Playwright) for end-to-end smoke.
 
 Append newest at the top. Format: `YYYY-MM-DD — batches — notes`.
 
+- 2026-06-14 — B116 — Public app profile: math/CS/probability only; no SAT or college leaks. v2.12.2.
 - 2026-06-14 — B112–B115 — Simple mode Settings toggle; calmer Today/SAT/College; onboarding CTA to Today. v2.12.1.
 - 2026-05-31 — B105–B111 — Today priority model, intent-aware hero fit, less crowded Today, week plan copy, lighter ⌘K, naming/docs truth, focused tests.
 - 2026-05-30 — B99–B104 — Study intent picker, catch-up week plan, intent copy/CTAs, ⌘K focus, e2e. v2.12.0.

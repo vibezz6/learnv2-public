@@ -7,11 +7,13 @@ import {
   STUDY_INTENT_UPDATED_EVENT,
   type StudyIntentFocus,
 } from "@/lib/studyIntent";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 const OPTIONS: StudyIntentFocus[] = includeSat
   ? ["default", "sat", "college", "catch_up"]
-  : ["default", "college", "catch_up"];
+  : includeCollege
+    ? ["default", "college", "catch_up"]
+    : ["default", "catch_up"];
 
 export function StudyIntentPicker() {
   const [focus, setFocus] = useState(() => loadStudyIntent().focus);

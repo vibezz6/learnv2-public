@@ -45,6 +45,7 @@ import { buildStudyRecommendations } from "@/lib/studyRecommendations";
 import { getSubjectAccent } from "@/lib/subjectAccent";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/cn";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 function downloadTranscriptJson(summary: TranscriptSummary) {
   const json = JSON.stringify(summary, null, 2);
@@ -243,14 +244,16 @@ export function StatsPage() {
             </Card>
           </Section>
 
-          <SatWeeklyProgressCard />
+          {includeSat ? <SatWeeklyProgressCard /> : null}
 
+          {includeSat ? (
           <Section eyebrow="SAT study" title="Mistakes and time" divider>
             <div className="grid gap-4 md:grid-cols-2">
               <MistakeCategoriesBars />
               <Minutes14DayChart />
             </div>
           </Section>
+          ) : null}
 
           {recommendations.length > 0 ? (
             <Section eyebrow="Recommended next" divider>
@@ -318,7 +321,9 @@ export function StatsPage() {
                     </li>
                   ))}
                 </ul>
-                <AdmissionsTranscriptPreview admissions={transcript.admissions} />
+                {includeCollege ? (
+                  <AdmissionsTranscriptPreview admissions={transcript.admissions} />
+                ) : null}
               </Card>
             </Section>
           ) : null}

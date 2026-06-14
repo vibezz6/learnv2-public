@@ -11,7 +11,7 @@ import {
   Star,
   Timer,
 } from "lucide-react";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 export const ROUTES = {
   today: "/",
@@ -148,9 +148,11 @@ const ALL_NAV_ITEMS: AppNavItem[] = [
   },
 ];
 
-export const APP_NAV_ITEMS: AppNavItem[] = includeSat
-  ? ALL_NAV_ITEMS
-  : ALL_NAV_ITEMS.filter((item) => item.id !== "sat");
+export const APP_NAV_ITEMS: AppNavItem[] = ALL_NAV_ITEMS.filter((item) => {
+  if (item.id === "sat" && !includeSat) return false;
+  if (item.id === "college" && !includeCollege) return false;
+  return true;
+});
 
 export const NAV_SECTION_LABELS: Record<AppNavItem["section"], string> = {
   Study: "Study",
@@ -163,7 +165,7 @@ export function getNavSections(options?: { simple?: boolean }): Array<{ label: s
   const simpleIds = new Set<AppRouteId>([
     "today",
     ...(includeSat ? (["sat"] as const) : []),
-    "college",
+    ...(includeCollege ? (["college"] as const) : []),
     "review",
     "settings",
   ]);

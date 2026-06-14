@@ -1,7 +1,7 @@
 {
   "build": {
     "env": {
-      "VITE_INCLUDE_SAT": "false"
+      "VITE_APP_PROFILE": "public"
     }
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
