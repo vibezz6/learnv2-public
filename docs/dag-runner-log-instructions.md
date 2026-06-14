@@ -4,16 +4,16 @@ Use this when running copy-audit (or any) DAG via `~/.cursor/skills/dag-task-run
 
 ## One-time setup
 
-1. **API key** — on this machine it lives in Hermes (do not commit):
+1. **API key** — keep it local (do not commit):
 
    ```bash
-   set -a && source "$HOME/.config/learnv2/agent.env" && set +a
+   export CURSOR_API_KEY=<your-local-agent-key>
    ```
 
-   Or export manually / add to `learnv2/.env` (gitignored):
+   Or load from a gitignored env file in the repo root:
 
-   ```
-   CURSOR_API_KEY=<your-local-agent-key>
+   ```bash
+   set -a && source .env && set +a
    ```
 
 2. **Runner deps** (first time only):
@@ -29,7 +29,7 @@ Set variables (change `<run>` to `a`, `b`, `c`, …):
 ```bash
 export RUNNER_DIR="$HOME/.cursor/skills/dag-task-runner/scripts"
 export CWD="$PWD"
-export CANVAS_PATH="$HOME/.cursor/projects/Users-clawbot-liqui-projects-learnv2/canvases/dag-learnv2-copy-<run>.canvas.tsx"
+export CANVAS_PATH="$HOME/.cursor/projects/<your-cursor-project>/canvases/dag-learnv2-copy-<run>.canvas.tsx"
 export DAG_PATH="/tmp/dag-learnv2-copy-<run>.json"
 ```
 
@@ -48,9 +48,7 @@ cd "$CWD"
   --cwd "$CWD"
 ```
 
-**Open the log UI:** in Cursor, open the canvas file:
-
-`~/.cursor/projects/Users-clawbot-liqui-projects-learnv2/canvases/dag-learnv2-copy-<run>.canvas.tsx`
+**Open the log UI:** in Cursor, open the canvas file at `$CANVAS_PATH`.
 
 Or from terminal (macOS):
 

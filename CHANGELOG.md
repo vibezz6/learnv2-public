@@ -4,6 +4,12 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.12.4] - 2026-06-14
+
+### Changed
+
+- Scrub machine-specific paths from DAG runner docs; update public README tagline.
+
 ## [2.12.3] - 2026-06-14
 
 ### Fixed
