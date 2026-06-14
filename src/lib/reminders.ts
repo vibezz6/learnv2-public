@@ -3,6 +3,7 @@ import { getSatCountdown } from "@/lib/satCountdown";
 import { hasActivitySince, REAL_STUDY_ACTIVITY_TYPES } from "@/lib/studyActivity";
 import { resolveCurrentStudyStreak, useProgress } from "@/stores/progress";
 import { usePreferences } from "@/stores/preferences";
+import { includeSat } from "@/lib/buildFeatures";
 
 export const REMINDER_PREFS_KEY = "learnv2_reminders_v1";
 const REMINDER_FIRED_KEY = "learnv2_reminders_fired_v1";
@@ -134,7 +135,7 @@ function streakLine(): string {
   const countdown = getSatCountdown(usePreferences.getState().satTestDate);
   const parts: string[] = [];
   if (streak > 0) parts.push(`${streak}-day streak on the line`);
-  if (countdown && !countdown.past) {
+  if (includeSat && countdown && !countdown.past) {
     parts.push(countdown.daysUntil === 1 ? "1 day to the SAT" : `${countdown.daysUntil} days to the SAT`);
   }
   return parts.join(" · ");

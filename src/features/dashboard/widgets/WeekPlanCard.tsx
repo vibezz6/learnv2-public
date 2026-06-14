@@ -18,6 +18,7 @@ import {
 } from "@/lib/studyIntent";
 import { usePreferences } from "@/stores/preferences";
 import { useProgress } from "@/stores/progress";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 interface Props {
   subjects: Subject[];
@@ -29,10 +30,13 @@ interface Props {
 function getWeekPlanSubtitle(focus: StudyIntentFocus): string {
   const base = "supporting steps for the same focus, capped at six.";
   if (focus === "default") {
+    if (!includeSat && !includeCollege) {
+      return "Track lessons — supporting steps, capped at six.";
+    }
     return "Track, deadlines, and SAT follow-ups — supporting steps, capped at six.";
   }
-  if (focus === "sat") return `SAT focus — ${base}`;
-  if (focus === "college") return `College focus — ${base}`;
+  if (focus === "sat") return includeSat ? `SAT focus — ${base}` : `Track focus — ${base}`;
+  if (focus === "college") return includeCollege ? `College focus — ${base}` : `Track focus — ${base}`;
   return `Catch-up focus — ${base}`;
 }
 
@@ -93,7 +97,7 @@ export function WeekPlanCard({ subjects, embedded = false, maxRows = 6 }: Props)
   }, [revision]);
 
   const emptyPrimaryLink = (() => {
-    if (intent.focus === "college") {
+    if (includeCollege && intent.focus === "college") {
       return (
         <Link
           to={ROUTES.college}
@@ -115,7 +119,7 @@ export function WeekPlanCard({ subjects, embedded = false, maxRows = 6 }: Props)
         </Link>
       );
     }
-    if (dailyDone) {
+    if (includeSat && dailyDone) {
       return (
         <Link
           to={ROUTES.satDrill}
@@ -126,12 +130,34 @@ export function WeekPlanCard({ subjects, embedded = false, maxRows = 6 }: Props)
         </Link>
       );
     }
+    if (includeSat) {
+      return (
+        <Link
+          to={ROUTES.satDailyQuiz}
+          className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+        >
+          Take today&apos;s Daily 5
+          <ArrowRight size={14} aria-hidden />
+        </Link>
+      );
+    }
+    if (continueTarget) {
+      return (
+        <Link
+          to={`/subjects/${continueTarget.subject.id}/${continueTarget.node.id}`}
+          className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
+        >
+          Continue {continueTarget.node.name}
+          <ArrowRight size={14} aria-hidden />
+        </Link>
+      );
+    }
     return (
       <Link
-        to={ROUTES.satDailyQuiz}
+        to={ROUTES.subjects}
         className="mt-3 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
       >
-        Take today&apos;s Daily 5
+        Browse subjects
         <ArrowRight size={14} aria-hidden />
       </Link>
     );
@@ -148,7 +174,9 @@ export function WeekPlanCard({ subjects, embedded = false, maxRows = 6 }: Props)
         ) : null}
         <p className="text-sm text-[var(--text-muted)]">{weekPlanSubtitle}</p>
         <p className="mt-2 text-sm text-[var(--text)]">
-          You&apos;re caught up on track lessons and application deadlines for the next 7 days.
+          {includeCollege
+            ? "You're caught up on track lessons and application deadlines for the next 7 days."
+            : "You're caught up on track lessons for the next 7 days."}
         </p>
         {emptyPrimaryLink}
         {intent.focus === "default" && track ? (
@@ -209,7 +237,7 @@ export function WeekPlanCard({ subjects, embedded = false, maxRows = 6 }: Props)
           </li>
         ))}
       </ul>
-      {collegeOverflow > 0 ? (
+      {includeCollege && collegeOverflow > 0 ? (
         <Link
           to={ROUTES.college}
           className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-[var(--accent)] hover:underline"
