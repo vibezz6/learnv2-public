@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://learnv2-tau.vercel.app)
 
-Learn v2 is a local-first study PWA for SAT prep, college application work, spaced review, and personal learning workflows. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
+Learn v2 is a local-first study PWA for math foundations, spaced review, and self-paced learning. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
 
-**Current release:** v2.12.2 · **Live demo:** https://learnv2-tau.vercel.app (public build — math, CS, and probability only) · **License:** MIT
+**Current release:** v2.12.4 · **Live demo:** https://learnv2-tau.vercel.app (public build — math, CS, and probability only) · **License:** MIT
 
 **Local/private builds** include full SAT Prep and college tools by default. The public Vercel deploy sets `VITE_APP_PROFILE=public` so only foundation subjects, the foundation track, and core study surfaces ship.
 
