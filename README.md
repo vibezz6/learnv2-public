@@ -6,9 +6,9 @@
 
 Learn v2 is a local-first study PWA for SAT prep, college application work, spaced review, and personal learning workflows. It runs entirely in the browser with no accounts or backend. Your progress lives in localStorage, and you control backups through JSON export/import.
 
-**Current release:** v2.12.1 · **Live demo:** https://learnv2-tau.vercel.app (public build — no SAT curriculum) · **License:** MIT
+**Current release:** v2.12.2 · **Live demo:** https://learnv2-tau.vercel.app (public build — math, CS, and probability only) · **License:** MIT
 
-**Local/private builds** include full SAT Prep by default. The public Vercel deploy sets `VITE_INCLUDE_SAT=false` so SAT subjects, routes, and study surfaces are omitted.
+**Local/private builds** include full SAT Prep and college tools by default. The public Vercel deploy sets `VITE_APP_PROFILE=public` so only foundation subjects, the foundation track, and core study surfaces ship.
 
 ## Stack
 

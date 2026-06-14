@@ -34,7 +34,7 @@ import { STUDY_INTENT_UPDATED_EVENT } from "@/lib/studyIntent";
 import { ROUTES } from "@/app/navigation";
 import { StudyIntentPicker } from "./widgets/StudyIntentPicker";
 import { useIsSimpleMode } from "@/lib/uiMode";
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 export function DashboardPage() {
   const getContinueTarget = useProgress((s) => s.getContinueTarget);
@@ -76,7 +76,9 @@ export function DashboardPage() {
   // SAT is the daily driver: when SAT context applies, the SAT command is the
   // single dominant action. An in-progress lesson becomes a "resume" shortcut.
   const showSatFocus =
-    subjects.length > 0 && shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
+    includeSat &&
+    subjects.length > 0 &&
+    shouldShowSatTodayCard(placementGoal, subjects, getNodeStatus);
 
   const showSpacedReview =
     reviewDue > 0 ||
@@ -95,7 +97,7 @@ export function DashboardPage() {
   });
   const pageSubtitle = priority.pageSubtitle;
   const showDrillCard = shouldShowSecondaryDrill(priority);
-  const showEssayDue = hasEssaysDueSoon();
+  const showEssayDue = includeCollege && hasEssaysDueSoon();
   const showSpacedReviewAside =
     showSpacedReview && priority.surface !== "review";
 
@@ -198,9 +200,11 @@ export function DashboardPage() {
                 SAT
               </Link>
             ) : null}
-            <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
-              College
-            </Link>
+            {includeCollege ? (
+              <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+                College
+              </Link>
+            ) : null}
             <Link to={ROUTES.settings} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
               Settings
             </Link>
@@ -224,9 +228,11 @@ export function DashboardPage() {
                 SAT
               </Link>
             ) : null}
-            <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
-              College
-            </Link>
+            {includeCollege ? (
+              <Link to={ROUTES.college} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
+                College
+              </Link>
+            ) : null}
             <Link to={ROUTES.stats} className="text-[var(--text-muted)] hover:text-[var(--accent)]">
               Stats
             </Link>

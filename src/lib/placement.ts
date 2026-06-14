@@ -1,4 +1,4 @@
-import { includeSat } from "@/lib/buildFeatures";
+import { includeSat, appProfile } from "@/lib/buildFeatures";
 
 export type PlacementGoal = "sat" | "foundation" | "explore";
 
@@ -19,7 +19,10 @@ const ALL_PLACEMENT_OPTIONS: PlacementOption[] = [
   {
     goal: "foundation",
     title: "Math & foundations",
-    description: "Rebuild math, CS, and probability basics before harder subjects — good if GPA/SAT need a stronger base.",
+    description:
+      appProfile === "public"
+        ? "Rebuild math, CS, and probability basics — the core quantitative foundation."
+        : "Rebuild math, CS, and probability basics before harder subjects — good if GPA/SAT need a stronger base.",
     trackName: "Complete Foundation",
   },
   {
