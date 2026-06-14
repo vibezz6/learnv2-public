@@ -1,3 +1,5 @@
+import { includeSat } from "@/lib/buildFeatures";
+
 export type PlacementGoal = "sat" | "foundation" | "explore";
 
 export interface PlacementOption {
@@ -7,7 +9,7 @@ export interface PlacementOption {
   trackName: string;
 }
 
-export const PLACEMENT_OPTIONS: PlacementOption[] = [
+const ALL_PLACEMENT_OPTIONS: PlacementOption[] = [
   {
     goal: "sat",
     title: "August SAT",
@@ -28,10 +30,14 @@ export const PLACEMENT_OPTIONS: PlacementOption[] = [
   },
 ];
 
+export const PLACEMENT_OPTIONS: PlacementOption[] = includeSat
+  ? ALL_PLACEMENT_OPTIONS
+  : ALL_PLACEMENT_OPTIONS.filter((option) => option.goal !== "sat");
+
 export function trackIdForPlacement(goal: PlacementGoal): string | null {
   switch (goal) {
     case "sat":
-      return "sat-august";
+      return includeSat ? "sat-august" : null;
     case "foundation":
       return "foundation";
     case "explore":

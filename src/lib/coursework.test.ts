@@ -46,8 +46,8 @@ function statusMap(entries: Record<string, NodeStatus>) {
 describe("coursework", () => {
   it("getTrackChallengeCategory maps track ids to challenge labels", () => {
     expect(getTrackChallengeCategory("sat-august")).toBe("SAT");
+    expect(getTrackChallengeCategory("trader")).toBe("Trading");
     expect(getTrackChallengeCategory("developer")).toBe("CS");
-    expect(getTrackChallengeCategory("wealth")).toBe("Finance");
     expect(getTrackChallengeCategory("unknown-track")).toBeNull();
   });
 

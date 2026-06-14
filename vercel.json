@@ -1,0 +1,8 @@
+{
+  "build": {
+    "env": {
+      "VITE_INCLUDE_SAT": "false"
+    }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

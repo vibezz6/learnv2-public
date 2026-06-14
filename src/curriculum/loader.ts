@@ -1,15 +1,18 @@
 import type { SkillNode, Subject } from "./types";
-import manifest from "./data/manifest.json";
+import fullManifest from "./data/manifest.json";
+import { includeSat, SAT_SUBJECT_ID } from "../lib/buildFeatures";
 
-export type SubjectManifest = (typeof manifest)[number];
+export type SubjectManifest = (typeof fullManifest)[number];
+
+export const manifest: SubjectManifest[] = includeSat
+  ? fullManifest
+  : fullManifest.filter((entry) => entry.id !== SAT_SUBJECT_ID);
 
 export type LoadSubjectResult =
   | { status: "ok"; subject: Subject }
   | { status: "not_listed" }
   | { status: "missing_file" }
   | { status: "invalid_data"; error: string };
-
-export { manifest };
 
 const cache = new Map<string, Subject>();
 

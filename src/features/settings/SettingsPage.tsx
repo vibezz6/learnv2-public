@@ -29,9 +29,11 @@ import { StorageHealthPanel } from "@/features/settings/widgets/StorageHealthPan
 import { SatPretestSettingsCard } from "@/features/settings/SatPretestSettingsCard";
 import { PlacementSettingsCard } from "@/features/settings/PlacementSettingsCard";
 import { RemindersSettingsCard } from "@/features/settings/RemindersSettingsCard";
+import { SimpleModeSettingsCard } from "@/features/settings/SimpleModeSettingsCard";
 import { LessonDraftWorkspace } from "@/features/settings/LessonDraftWorkspace";
 import { OPENROUTER_KEY } from "@/services/llmReview";
 import { formatCountdownLabel, getSatCountdown } from "@/lib/satCountdown";
+import { includeSat } from "@/lib/buildFeatures";
 import { trackStudyEvent } from "@/lib/analytics";
 import { getDaysSinceBackup, isBackupOverdue, markBackupDone } from "@/lib/backupReminder";
 import { cn } from "@/lib/cn";
@@ -138,6 +140,16 @@ export function SettingsPage() {
         </Card>
       ) : null}
 
+      {/* ─────────────── Interface ─────────────── */}
+      <Section
+        eyebrow="Interface"
+        title="Simple mode"
+        description="Calm the dashboard when everything feels like too much. Toggle back to Full anytime."
+        divider
+      >
+        <SimpleModeSettingsCard onMessage={setMessage} />
+      </Section>
+
       {/* ─────────────── Workspace ─────────────── */}
       <Section eyebrow="Workspace" title="Theme & sounds" divider>
         <Card variant="default" density="normal" className="min-w-0 space-y-4">
@@ -180,8 +192,12 @@ export function SettingsPage() {
       {/* ─────────────── Study targets ─────────────── */}
       <Section
         eyebrow="Study targets"
-        title="Daily goal & SAT date"
-        description="Your daily minute goal drives the Today progress, and the SAT date powers the countdown in the status bar."
+        title={includeSat ? "Daily goal & SAT date" : "Daily goal"}
+        description={
+          includeSat
+            ? "Your daily minute goal drives the Today progress, and the SAT date powers the countdown in the status bar."
+            : "Your daily minute goal drives the Today progress meter."
+        }
         divider
       >
         <Card variant="default" density="normal" className="min-w-0 space-y-4">
@@ -219,6 +235,7 @@ export function SettingsPage() {
               </div>
             )}
           </Field>
+          {includeSat ? (
           <div className="border-t border-[var(--rule)] pt-3">
             <Field
               label="SAT date"
@@ -256,6 +273,7 @@ export function SettingsPage() {
               )}
             </Field>
           </div>
+          ) : null}
         </Card>
         <div className="mt-4">
           <RemindersSettingsCard onMessage={setMessage} />
@@ -333,14 +351,22 @@ export function SettingsPage() {
         </Card>
       </Section>
 
-      {/* ─────────────── Admissions & SAT ─────────────── */}
-      <Section eyebrow="Admissions & SAT" title="Placement, college, diagnostic" divider>
-        <div className="space-y-4">
-          <PlacementSettingsCard onMessage={setMessage} />
-          <AdmissionsSettingsCard onMessage={setMessage} />
-          <SatPretestSettingsCard onMessage={setMessage} />
-        </div>
-      </Section>
+      {includeSat ? (
+        <Section eyebrow="Admissions & SAT" title="Placement, college, diagnostic" divider>
+          <div className="space-y-4">
+            <PlacementSettingsCard onMessage={setMessage} />
+            <AdmissionsSettingsCard onMessage={setMessage} />
+            <SatPretestSettingsCard onMessage={setMessage} />
+          </div>
+        </Section>
+      ) : (
+        <Section eyebrow="Admissions" title="Placement and college" divider>
+          <div className="space-y-4">
+            <PlacementSettingsCard onMessage={setMessage} />
+            <AdmissionsSettingsCard onMessage={setMessage} />
+          </div>
+        </Section>
+      )}
 
       {/* ─────────────── Lesson drafts ─────────────── */}
       <Section eyebrow="Lesson drafts" title="Author + review tool" divider>

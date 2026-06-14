@@ -22,6 +22,7 @@ import {
   TimerPage,
   ToolsPage,
   TracksPage,
+  TradingLabPage,
 } from "./lazyPages";
 import { AchievementToast } from "@/components/AchievementToast";
 import { LevelUpModal } from "@/components/LevelUpModal";
@@ -34,6 +35,8 @@ import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { SubjectsPage } from "@/features/subjects/SubjectsPage";
 import { SubjectDetailPage } from "@/features/subjects/SubjectDetailPage";
 import { PageLoading } from "@/components/ui";
+import { VercelObservability } from "@/components/VercelObservability";
+import { includeSat } from "@/lib/buildFeatures";
 
 function RouteFallback() {
   return <PageLoading />;
@@ -42,6 +45,7 @@ function RouteFallback() {
 export function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <VercelObservability />
       <ComponentErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
@@ -54,9 +58,18 @@ export function App() {
               <Route path="subjects/:subjectId/:nodeId" element={<LessonPage />} />
               <Route path="subjects/:subjectId/:nodeId/quiz" element={<QuizRoutePage />} />
               <Route path="subjects/:subjectId/:nodeId/notes" element={<NotesPage />} />
-              <Route path="sat/pretest" element={<SatPretestPage />} />
-              <Route path="sat/daily-quiz" element={<DailySatQuizPage />} />
-              <Route path="sat/drill" element={<SatDrillPage />} />
+              {includeSat ? (
+                <>
+                  <Route path="sat/pretest" element={<SatPretestPage />} />
+                  <Route path="sat/daily-quiz" element={<DailySatQuizPage />} />
+                  <Route path="sat/drill" element={<SatDrillPage />} />
+                </>
+              ) : (
+                <>
+                  <Route path="sat/*" element={<Navigate to="/" replace />} />
+                  <Route path="subjects/sat-prep/*" element={<Navigate to="/subjects" replace />} />
+                </>
+              )}
               <Route path="bookmarks" element={<BookmarksPage />} />
               <Route path="review" element={<ReviewPage />} />
               <Route path="stats" element={<StatsPage />} />
@@ -70,6 +83,7 @@ export function App() {
               <Route path="tools" element={<Navigate to="/campus" replace />} />
               <Route path="tools/ev" element={<ExpectedValueToolPage />} />
               <Route path="tools/compound" element={<CompoundInterestToolPage />} />
+              <Route path="lab/trading" element={<TradingLabPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

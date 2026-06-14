@@ -9,9 +9,13 @@ export type ThemeMode = "dark" | "light" | "system";
 /** How hard the app pushes you: gentle nudges, balanced, or unrelenting. */
 export type AccountabilityLevel = "gentle" | "standard" | "strict";
 
+/** Calm default UI vs full feature surface. */
+export type UiMode = "full" | "simple";
+
 interface PreferencesState {
   theme: ThemeMode;
   focusMode: boolean;
+  uiMode: UiMode;
   onboardingCompleted: boolean;
   enrolledTrackId: string | null;
   placementGoal: PlacementGoal | null;
@@ -27,6 +31,7 @@ interface PreferencesState {
   setEnrolledTrack: (id: string | null) => void;
   setSatTestDate: (date: string | null) => void;
   setAccountabilityLevel: (level: AccountabilityLevel) => void;
+  setUiMode: (mode: UiMode) => void;
 }
 
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
@@ -76,6 +81,7 @@ export const usePreferences = create<PreferencesState>()(
     (set, get) => ({
       theme: "dark",
       focusMode: false,
+      uiMode: "simple",
       onboardingCompleted: false,
       enrolledTrackId: null,
       placementGoal: null,
@@ -109,13 +115,23 @@ export const usePreferences = create<PreferencesState>()(
       setEnrolledTrack: (id) => set({ enrolledTrackId: id }),
       setSatTestDate: (date) => set({ satTestDate: date && date.trim() ? date : null }),
       setAccountabilityLevel: (level) => set({ accountabilityLevel: level }),
+      setUiMode: (mode) => set({ uiMode: mode }),
     }),
     {
       name: "learnv2_preferences",
+      version: 1,
       storage: createJSONStorage(() => createSafeStorage()),
+      migrate: (persisted) => {
+        const state = persisted as Partial<PreferencesState>;
+        if (!state.uiMode) {
+          state.uiMode = state.onboardingCompleted ? "full" : "simple";
+        }
+        return state as PreferencesState;
+      },
       partialize: (s) => ({
         theme: s.theme,
         focusMode: s.focusMode,
+        uiMode: s.uiMode,
         onboardingCompleted: s.onboardingCompleted,
         enrolledTrackId: s.enrolledTrackId,
         placementGoal: s.placementGoal,

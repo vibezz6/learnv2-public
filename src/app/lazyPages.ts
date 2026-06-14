@@ -70,3 +70,6 @@ export const ExpectedValueToolPage = lazy(() =>
     default: m.ExpectedValueToolPage,
   })),
 );
+export const TradingLabPage = lazy(() =>
+  import("@/features/lab/TradingLabPage").then((m) => ({ default: m.TradingLabPage })),
+);

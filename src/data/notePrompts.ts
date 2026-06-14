@@ -74,6 +74,17 @@ export const SUBJECT_PROMPTS: PromptSet[] = [
     ],
   },
   {
+    subjectId: "trading",
+    prompts: [
+      { key: "strategy", label: "The Strategy", placeholder: "What trading strategy or concept did you learn?" },
+      { key: "setup", label: "Setup", placeholder: "What's the ideal setup? What are the entry/exit criteria?" },
+      { key: "risk-management", label: "Risk Management", placeholder: "How do you manage risk with this strategy?" },
+      { key: "psychology", label: "Psychology", placeholder: "What psychological challenges come with this approach?" },
+      { key: "market-context", label: "Market Context", placeholder: "In what market conditions does this work best?" },
+      { key: "review-question", label: "Review Question", placeholder: "Write a question you should revisit before using this live..." },
+    ],
+  },
+  {
     subjectId: "programming",
     prompts: [
       { key: "concept", label: "The Concept", placeholder: "What programming concept did you learn? Explain it..." },
@@ -91,7 +102,7 @@ export const SUBJECT_PROMPTS: PromptSet[] = [
       { key: "intuition", label: "Intuition", placeholder: "What's the intuition behind this? Use a real-world example..." },
       { key: "calculation", label: "Calculation Walkthrough", placeholder: "Work through a calculation step by step..." },
       { key: "misconception", label: "Common Misconception", placeholder: "What's a common mistake people make with this?" },
-      { key: "where-else", label: "Where Else?", placeholder: "Where else does this concept appear — in science, finance, or daily life?" },
+      { key: "where-else", label: "Where Else?", placeholder: "Where else does this concept appear — in trading, science, or daily life?" },
       { key: "explain", label: "Explain It", placeholder: "Explain this concept to someone who's never studied probability..." },
     ],
   },

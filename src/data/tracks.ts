@@ -1,3 +1,5 @@
+import { includeSat, SAT_TRACK_ID } from "@/lib/buildFeatures";
+
 export interface TrackLesson {
   subjectId: string;
   nodeId: string;
@@ -16,7 +18,7 @@ function lesson(subjectId: string, nodeId: string): TrackLesson {
   return { subjectId, nodeId };
 }
 
-export const tracks: LearningTrack[] = [
+const ALL_TRACKS: LearningTrack[] = [
   {
     id: "sat-august",
     name: "August SAT Track",
@@ -108,6 +110,48 @@ export const tracks: LearningTrack[] = [
     ],
   },
   {
+    id: "trader",
+    name: "The Trader Track",
+    description:
+      "Mathematical and statistical foundation for serious trading — algebra through probability to risk management.",
+    color: "#f59e0b",
+    icon: "trending-up",
+    lessons: [
+      lesson("math", "m1"),
+      lesson("math", "m2"),
+      lesson("math", "m3"),
+      lesson("probability", "pr1"),
+      lesson("probability", "pr2"),
+      lesson("probability", "pr4"),
+      lesson("trading", "t1"),
+      lesson("trading", "t2"),
+      lesson("trading", "t3"),
+      lesson("trading", "t4"),
+      lesson("trading", "t5"),
+      lesson("probability", "pr10"),
+      lesson("trading", "t11"),
+      lesson("trading", "t12"),
+    ],
+  },
+  {
+    id: "algo-lab",
+    name: "Algo Lab Track",
+    description:
+      "From tick data to coach review — build the full algo trading stack after core trading foundations.",
+    color: "#6366f1",
+    icon: "code",
+    lessons: [
+      lesson("algo-lab", "lab1"),
+      lesson("algo-lab", "lab2"),
+      lesson("algo-lab", "lab3"),
+      lesson("algo-lab", "lab4"),
+      lesson("algo-lab", "lab5"),
+      lesson("algo-lab", "lab6"),
+      lesson("algo-lab", "lab7"),
+      lesson("algo-lab", "lab8"),
+    ],
+  },
+  {
     id: "developer",
     name: "The Developer Track",
     description: "From zero to building real software — Python, data structures, web dev, system design.",
@@ -172,3 +216,7 @@ export const tracks: LearningTrack[] = [
     ],
   },
 ];
+
+export const tracks: LearningTrack[] = includeSat
+  ? ALL_TRACKS
+  : ALL_TRACKS.filter((track) => track.id !== SAT_TRACK_ID);

@@ -49,6 +49,7 @@ import { getSatSkillMastery } from "@/lib/satSkillMastery";
 import { ROUTES } from "@/app/navigation";
 import { getLockTooltip } from "@/lib/lockRules";
 import { cn } from "@/lib/cn";
+import { useIsSimpleMode } from "@/lib/uiMode";
 import type { NodeProgress } from "@/stores/progress";
 
 type NodeStatus = "locked" | "available" | "completed";
@@ -622,12 +623,19 @@ function SatTodayPrimary({
 export function SubjectDetailPage() {
   const { subjectId = "" } = useParams();
   const location = useLocation();
+  const simpleMode = useIsSimpleMode();
   const progressNodes = useProgress((s) => s.data.nodes);
   const getNodeStatus = useProgress((s) => s.getNodeStatus);
   const getNodeProgress = useProgress((s) => s.getNodeProgress);
   const [loadState, setLoadState] = useState<SubjectLoadState>({ phase: "loading" });
-  const [skillTreeOpen, setSkillTreeOpen] = useState(true);
+  const [skillTreeOpen, setSkillTreeOpen] = useState(() => !simpleMode);
   const [secondaryOpen, setSecondaryOpen] = useState(false);
+
+  useEffect(() => {
+    if (simpleMode && subjectId === "sat-prep") {
+      setSkillTreeOpen(false);
+    }
+  }, [simpleMode, subjectId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -718,7 +726,7 @@ export function SubjectDetailPage() {
           className="mt-4"
         />
       ) : (
-        <SatHeroBand subject={subject} completed={completedCount} />
+        !simpleMode ? <SatHeroBand subject={subject} completed={completedCount} /> : null
       )}
 
       {isSatPrep ? (
@@ -730,52 +738,56 @@ export function SubjectDetailPage() {
 
           <SatDrillQueueSection subject={subject} />
 
-          <Section eyebrow="Recommended" id="recommended">
-            <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
-          </Section>
+          {!simpleMode ? (
+            <>
+              <Section eyebrow="Recommended" id="recommended">
+                <SatRecommendedLessonsCard subjects={[subject]} getNodeStatus={getNodeStatus} />
+              </Section>
 
-          <Section eyebrow="Practice rhythm">
-            <Card variant="default" density="normal" className="min-w-0">
-              <SatPracticeWeekCard />
-            </Card>
-          </Section>
+              <Section eyebrow="Practice rhythm">
+                <Card variant="default" density="normal" className="min-w-0">
+                  <SatPracticeWeekCard />
+                </Card>
+              </Section>
 
-          <Section eyebrow="Skill mastery" id="skills" divider>
-            <SatSkillMasterySection subject={subject} />
-          </Section>
+              <Section eyebrow="Skill mastery" id="skills" divider>
+                <SatSkillMasterySection subject={subject} />
+              </Section>
 
-          <Section eyebrow="Mistake log" id="mistakes" divider>
-            <SatMistakeLogPanel />
-          </Section>
+              <Section eyebrow="Mistake log" id="mistakes" divider>
+                <SatMistakeLogPanel />
+              </Section>
 
-          <section className="space-y-3" aria-label="Optional SAT tools">
-            <button
-              type="button"
-              onClick={() => setSecondaryOpen((v) => !v)}
-              className="flex w-full items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-canvas)] px-4 py-3 text-left transition hover:border-[var(--rule-strong)]"
-              aria-expanded={secondaryOpen}
-            >
-              <div className="min-w-0">
-                <p className="eyebrow-mono">Optional · diagnostic & official</p>
-                <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-                  In-app baseline (Drafts 1/2/3) and Bluebook/Khan reference links.
-                </p>
-              </div>
-              {secondaryOpen ? (
-                <ChevronUp size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
-              ) : (
-                <ChevronDown size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
-              )}
-            </button>
-            {secondaryOpen ? (
-              <div className="space-y-4">
-                <div id="diagnostic" className="scroll-mt-6">
-                  <SatDiagnosticSection />
-                </div>
-                <SatOfficialResourcesCard id="official" />
-              </div>
-            ) : null}
-          </section>
+              <section className="space-y-3" aria-label="Optional SAT tools">
+                <button
+                  type="button"
+                  onClick={() => setSecondaryOpen((v) => !v)}
+                  className="flex w-full items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--bg-canvas)] px-4 py-3 text-left transition hover:border-[var(--rule-strong)]"
+                  aria-expanded={secondaryOpen}
+                >
+                  <div className="min-w-0">
+                    <p className="eyebrow-mono">Optional · diagnostic & official</p>
+                    <p className="mt-0.5 text-sm text-[var(--text-muted)]">
+                      In-app baseline (Drafts 1/2/3) and Bluebook/Khan reference links.
+                    </p>
+                  </div>
+                  {secondaryOpen ? (
+                    <ChevronUp size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
+                  ) : (
+                    <ChevronDown size={16} className="shrink-0 text-[var(--text-subtle)]" aria-hidden />
+                  )}
+                </button>
+                {secondaryOpen ? (
+                  <div className="space-y-4">
+                    <div id="diagnostic" className="scroll-mt-6">
+                      <SatDiagnosticSection />
+                    </div>
+                    <SatOfficialResourcesCard id="official" />
+                  </div>
+                ) : null}
+              </section>
+            </>
+          ) : null}
         </>
       ) : null}
 

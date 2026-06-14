@@ -3,11 +3,11 @@ import { manifest, loadSubjectResult } from "@/curriculum";
 
 describe("curriculum", () => {
   it("loads manifest with all subjects including SAT prep", () => {
-    expect(manifest.length).toBe(8);
-    expect(manifest.find((m) => m.id === "sat-prep")?.nodeCount).toBe(79);
-    expect(manifest.find((m) => m.id === "math")?.nodeCount).toBe(23);
-    expect(manifest.find((m) => m.id === "finance")?.nodeCount).toBe(4);
-    expect(manifest.reduce((n, m) => n + m.nodeCount, 0)).toBe(132);
+    expect(manifest.length).toBe(11);
+    expect(manifest.find((m) => m.id === "sat-prep")?.nodeCount).toBe(80);
+    expect(manifest.find((m) => m.id === "math")?.nodeCount).toBe(55);
+    expect(manifest.find((m) => m.id === "algo-lab")?.nodeCount).toBe(8);
+    expect(manifest.reduce((n, m) => n + m.nodeCount, 0)).toBe(326);
   });
 });
 

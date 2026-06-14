@@ -1,3 +1,4 @@
+import { track } from "@vercel/analytics";
 import { getDailyMinimumStatus } from "@/lib/dailyMinimum";
 import { getToday } from "@/stores/progress";
 
@@ -11,17 +12,21 @@ export type StudyEventName =
 
 type StudyEventProps = Record<string, string | number | boolean | null>;
 
-/** Public build telemetry is intentionally disabled; keep call sites as no-ops. */
+/** Client analytics only on production builds (Vercel deploys). */
 export function isAnalyticsEnabled(): boolean {
-  return false;
+  return import.meta.env.PROD;
 }
 
 export function trackStudyEvent(
   event: StudyEventName,
   properties?: StudyEventProps,
 ): void {
-  void event;
-  void properties;
+  if (!isAnalyticsEnabled()) return;
+  try {
+    track(event, properties);
+  } catch {
+    // Never block study flows for telemetry.
+  }
 }
 
 /** Fire `minimum_met` at most once per UTC day when the viable-day threshold is reached. */

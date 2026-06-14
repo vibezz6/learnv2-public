@@ -11,6 +11,7 @@ import {
   Star,
   Timer,
 } from "lucide-react";
+import { includeSat } from "@/lib/buildFeatures";
 
 export const ROUTES = {
   today: "/",
@@ -35,6 +36,7 @@ export const ROUTES = {
   satPretest: "/sat/pretest",
   satDailyQuiz: "/sat/daily-quiz",
   satDrill: "/sat/drill",
+  tradingLab: "/lab/trading",
 } as const;
 
 export type AppRouteId = keyof typeof ROUTES;
@@ -51,7 +53,7 @@ export interface AppNavItem {
   mobilePriority?: number;
 }
 
-export const APP_NAV_ITEMS: AppNavItem[] = [
+const ALL_NAV_ITEMS: AppNavItem[] = [
   {
     id: "today",
     to: ROUTES.today,
@@ -146,6 +148,10 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
   },
 ];
 
+export const APP_NAV_ITEMS: AppNavItem[] = includeSat
+  ? ALL_NAV_ITEMS
+  : ALL_NAV_ITEMS.filter((item) => item.id !== "sat");
+
 export const NAV_SECTION_LABELS: Record<AppNavItem["section"], string> = {
   Study: "Study",
   Applications: "Applications",
@@ -153,11 +159,21 @@ export const NAV_SECTION_LABELS: Record<AppNavItem["section"], string> = {
   System: "System",
 };
 
-export function getNavSections(): Array<{ label: string; items: AppNavItem[] }> {
+export function getNavSections(options?: { simple?: boolean }): Array<{ label: string; items: AppNavItem[] }> {
+  const simpleIds = new Set<AppRouteId>([
+    "today",
+    ...(includeSat ? (["sat"] as const) : []),
+    "college",
+    "review",
+    "settings",
+  ]);
+  const items = options?.simple
+    ? APP_NAV_ITEMS.filter((item) => simpleIds.has(item.id))
+    : APP_NAV_ITEMS;
   return (Object.keys(NAV_SECTION_LABELS) as AppNavItem["section"][])
     .map((section) => ({
       label: NAV_SECTION_LABELS[section],
-      items: APP_NAV_ITEMS.filter((item) => item.section === section),
+      items: items.filter((item) => item.section === section),
     }))
     .filter((section) => section.items.length > 0);
 }
@@ -234,6 +250,9 @@ export function resolveBreadcrumb(pathname: string): BreadcrumbCrumb[] {
     return [{ label: "College", to: ROUTES.college }, { label: "Calculators" }];
   }
   if (path.startsWith("/campus")) return [{ label: "College" }];
+  if (path.startsWith("/lab/trading")) {
+    return [{ label: "College", to: ROUTES.college }, { label: "Trading lab" }];
+  }
   if (path.startsWith("/sat/pretest")) {
     return [{ label: "SAT Prep", to: ROUTES.sat }, { label: "Diagnostic" }];
   }
