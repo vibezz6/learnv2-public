@@ -1,7 +1,7 @@
 {
   "name": "learnv2",
   "private": true,
-  "version": "2.12.2",
+  "version": "2.12.3",
   "description": "Local-first study PWA for SAT prep, college applications, spaced review, and personal learning workflows.",
   "license": "MIT",
   "repository": {

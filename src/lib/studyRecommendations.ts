@@ -5,6 +5,7 @@ import { loadCollegeChecklist } from "@/lib/collegeChecklist";
 import { loadEssayTracker } from "@/lib/essayTracker";
 import { buildSatMicroDrill } from "@/lib/satMicroDrills";
 import { getTodayStudySummary } from "@/lib/studyActivity";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
 export interface StudyRecommendation {
   id: string;
@@ -33,7 +34,7 @@ export function buildStudyRecommendations(
     loadCollegeChecklist(storage),
     loadEssayTracker(storage),
   );
-  if (blocker) {
+  if (includeCollege && blocker) {
     rows.push({
       id: "college-blocker",
       title: blocker.title,
@@ -43,8 +44,8 @@ export function buildStudyRecommendations(
     });
   }
 
-  const drill = buildSatMicroDrill(input.subjects, storage, 3);
-  if (drill.questions.length > 0) {
+  const drill = includeSat ? buildSatMicroDrill(input.subjects, storage, 3) : { questions: [], title: "", reason: "", href: "" };
+  if (includeSat && drill.questions.length > 0) {
     rows.push({
       id: "sat-micro-drill",
       title: drill.title,
@@ -75,5 +76,6 @@ export function buildStudyRecommendations(
     });
   }
 
-  return rows.slice(0, limit);
+  const result = rows.slice(0, limit);
+  return result;
 }

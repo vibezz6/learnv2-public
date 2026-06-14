@@ -1,7 +1,8 @@
 import { Card, EmptyState } from "@/components/ui";
 import { getToday } from "@/stores/progress";
+import { includeSat, includeCollege } from "@/lib/buildFeatures";
 
-const VARIANTS = [
+const ALL_VARIANTS = [
   {
     title: "Start your first lesson",
     description: "Pick a subject and complete one lesson today — the streak and activity log begin there.",
@@ -15,6 +16,7 @@ const VARIANTS = [
     actionLabel: "SAT mistake log",
     actionTo: "/subjects/sat-prep#mistakes",
     icon: "△",
+    requiresSat: true,
   },
   {
     title: "Check college deadlines",
@@ -22,18 +24,29 @@ const VARIANTS = [
     actionLabel: "Open College",
     actionTo: "/campus",
     icon: "◇",
+    requiresCollege: true,
   },
 ] as const;
 
+function visibleVariants() {
+  return ALL_VARIANTS.filter((variant) => {
+    if ("requiresSat" in variant && variant.requiresSat && !includeSat) return false;
+    if ("requiresCollege" in variant && variant.requiresCollege && !includeCollege) return false;
+    return true;
+  });
+}
+
 function variantIndex(): number {
+  const variants = visibleVariants();
   const day = getToday();
   let hash = 0;
-  for (let i = 0; i < day.length; i++) hash = (hash + day.charCodeAt(i)) % VARIANTS.length;
+  for (let i = 0; i < day.length; i++) hash = (hash + day.charCodeAt(i)) % variants.length;
   return hash;
 }
 
 export function TodayEmptyFocus() {
-  const v = VARIANTS[variantIndex()];
+  const variants = visibleVariants();
+  const v = variants[variantIndex() % variants.length] ?? variants[0]!;
   return (
     <Card variant="primary">
       <EmptyState

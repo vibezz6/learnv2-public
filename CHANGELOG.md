@@ -4,6 +4,12 @@ All notable changes to Learn v2 are documented here. Version numbers match `pack
 
 ## [Unreleased]
 
+## [2.12.3] - 2026-06-14
+
+### Fixed
+
+- Public profile no longer leaks SAT/college copy in Today empty states, week plan subtitles/CTAs, stats recommendations, or reminder notifications.
+
 ## [2.12.2] - 2026-06-14
 
 ### Added
